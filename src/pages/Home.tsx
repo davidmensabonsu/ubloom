@@ -1,0 +1,175 @@
+import { motion } from 'framer-motion';
+import { useUserStore } from '@/stores/userStore';
+import { Sparkles, Heart, Sun, Moon, Cloud } from 'lucide-react';
+import BottomNav from '@/components/BottomNav';
+
+const timeGreetings = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return { text: 'Good morning', icon: Sun };
+  if (hour < 17) return { text: 'Good afternoon', icon: Cloud };
+  if (hour < 21) return { text: 'Good evening', icon: Moon };
+  return { text: 'Sweet dreams', icon: Moon };
+};
+
+const generateFutureSelfMessage = (profile: any) => {
+  const messages = [
+    `You're exactly where you need to be. Every step you take is bringing you closer to becoming the woman you've always known you could be.`,
+    `Remember, healing isn't linear. Some days will feel harder than others, but you're doing the work, and that's what matters.`,
+    `The peace you're seeking is already within you. Today, let yourself rest in that truth.`,
+    `You are worthy of all the beautiful things you desire. Keep believing in yourself, love.`,
+  ];
+  return messages[Math.floor(Math.random() * messages.length)];
+};
+
+export default function Home() {
+  const { profile } = useUserStore();
+  const greeting = timeGreetings();
+  const GreetingIcon = greeting.icon;
+
+  const todayFormatted = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  return (
+    <div className="min-h-screen gradient-background pb-24">
+      {/* Header */}
+      <div className="px-5 pt-12 pb-6">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-2 text-muted-foreground mb-1"
+        >
+          <GreetingIcon size={18} />
+          <span className="text-sm">{todayFormatted}</span>
+        </motion.div>
+        <motion.h1
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="page-title"
+        >
+          {greeting.text}, beautiful
+        </motion.h1>
+      </div>
+
+      {/* Main content */}
+      <div className="px-5 space-y-5">
+        {/* Future Self Message */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="glass-card rounded-3xl p-5"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+              <Sparkles size={16} className="text-primary" />
+            </div>
+            <span className="text-sm font-medium text-muted-foreground">
+              From your future self
+            </span>
+          </div>
+          <p className="font-display text-lg leading-relaxed text-foreground/90 italic">
+            "{generateFutureSelfMessage(profile)}"
+          </p>
+        </motion.div>
+
+        {/* Today's Intention */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="glass-card rounded-3xl p-5"
+        >
+          <h2 className="section-title mb-3 flex items-center gap-2">
+            <Heart size={18} className="text-primary" />
+            Today's Mindset
+          </h2>
+          <p className="text-foreground/80">
+            You are not behind. You are not late. You are exactly where you need to
+            be on your journey.
+          </p>
+        </motion.div>
+
+        {/* Quick Actions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="grid grid-cols-2 gap-4"
+        >
+          <QuickAction
+            icon="📝"
+            title="Journal"
+            subtitle="What's on your heart?"
+            href="/alignment"
+          />
+          <QuickAction
+            icon="✨"
+            title="Routine"
+            subtitle="Your daily glow"
+            href="/routine"
+          />
+          <QuickAction
+            icon="🎯"
+            title="Goals"
+            subtitle="Your vision"
+            href="/goals"
+          />
+          <QuickAction
+            icon="🌸"
+            title="Moodboard"
+            subtitle="Manifest & dream"
+            href="/moodboard"
+          />
+        </motion.div>
+
+        {/* Recent Journal */}
+        {profile.journalEntries.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="glass-card rounded-3xl p-5"
+          >
+            <h2 className="section-title mb-3">Recent Reflection</h2>
+            <p className="text-foreground/70 text-sm line-clamp-3">
+              {profile.journalEntries[0].content}
+            </p>
+            <p className="text-xs text-muted-foreground mt-2">
+              {new Date(profile.journalEntries[0].date).toLocaleDateString()}
+            </p>
+          </motion.div>
+        )}
+      </div>
+
+      <BottomNav />
+    </div>
+  );
+}
+
+function QuickAction({
+  icon,
+  title,
+  subtitle,
+  href,
+}: {
+  icon: string;
+  title: string;
+  subtitle: string;
+  href: string;
+}) {
+  return (
+    <motion.a
+      href={href}
+      className="glass-card rounded-2xl p-4 flex flex-col items-start"
+      whileTap={{ scale: 0.97 }}
+    >
+      <span className="text-2xl mb-2">{icon}</span>
+      <span className="font-medium text-foreground">{title}</span>
+      <span className="text-xs text-muted-foreground">{subtitle}</span>
+    </motion.a>
+  );
+}
