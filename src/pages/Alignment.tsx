@@ -1,8 +1,9 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useUserStore } from '@/stores/userStore';
-import { Sparkles, Heart, Feather } from 'lucide-react';
+import { Sparkles, Heart, Feather, BookOpen, ChevronDown } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 const feelingOptions = [
   { value: 'calm', label: 'Calm', emoji: '🌿' },
@@ -20,6 +21,7 @@ export default function Alignment() {
   const [selectedFeelings, setSelectedFeelings] = useState<string[]>([]);
   const [journalText, setJournalText] = useState('');
   const [saved, setSaved] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   const toggleFeeling = (value: string) => {
     if (selectedFeelings.includes(value)) {
@@ -39,9 +41,32 @@ export default function Alignment() {
         date: new Date().toISOString(),
         mood: selectedFeelings[0],
       });
+      setJournalText(''); // Clear the input after saving
     }
     setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    setTimeout(() => {
+      setSaved(false);
+      setSelectedFeelings([]); // Reset feelings after save
+    }, 2000);
+  };
+
+  const formatEntryDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
+
+  const formatEntryTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
   };
 
   const todayFormatted = new Date().toLocaleDateString('en-US', {
@@ -148,6 +173,81 @@ export default function Alignment() {
             className="journal-input"
             rows={5}
           />
+        </motion.div>
+
+        {/* Journal History */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45 }}
+        >
+          <Collapsible open={historyOpen} onOpenChange={setHistoryOpen}>
+            <CollapsibleTrigger className="w-full">
+              <div className="glass-card rounded-3xl p-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <BookOpen size={18} className="text-primary" />
+                  <span className="section-title text-sm">Journal History</span>
+                </div>
+                <motion.div
+                  animate={{ rotate: historyOpen ? 180 : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <ChevronDown size={18} className="text-muted-foreground" />
+                </motion.div>
+              </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <AnimatePresence>
+                {historyOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="mt-3 space-y-3"
+                  >
+                    {profile.journalEntries.length === 0 ? (
+                      <div className="glass-card rounded-2xl p-4 text-center">
+                        <p className="text-sm text-muted-foreground italic">
+                          Your past journal entries will appear here once you save your first alignment.
+                        </p>
+                      </div>
+                    ) : (
+                      profile.journalEntries.map((entry, index) => (
+                        <motion.div
+                          key={entry.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          className="glass-card rounded-2xl p-4"
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs font-medium text-primary">
+                              {formatEntryDate(entry.date)}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {formatEntryTime(entry.date)}
+                            </span>
+                          </div>
+                          <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">
+                            {entry.content}
+                          </p>
+                          {entry.mood && (
+                            <div className="mt-2 pt-2 border-t border-primary/10">
+                              <span className="text-xs text-muted-foreground">
+                                Mood: {feelingOptions.find(f => f.value === entry.mood)?.emoji}{' '}
+                                {feelingOptions.find(f => f.value === entry.mood)?.label}
+                              </span>
+                            </div>
+                          )}
+                        </motion.div>
+                      ))
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </CollapsibleContent>
+          </Collapsible>
         </motion.div>
 
         {/* Save button */}
