@@ -1,10 +1,11 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useMemo } from 'react';
 import { useUserStore } from '@/stores/userStore';
-import { Sparkles, Heart, Feather, BookOpen, ChevronDown, Search, X } from 'lucide-react';
+import { Sparkles, Heart, Feather, BookOpen, ChevronDown, Search, X, Calendar } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Input } from '@/components/ui/input';
+import { format, isSameMonth, isSameDay } from 'date-fns';
 
 const feelingOptions = [
   { value: 'calm', label: 'Calm', emoji: '🌿' },
@@ -24,24 +25,76 @@ export default function Alignment() {
   const [saved, setSaved] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [moodFilter, setMoodFilter] = useState<string | null>(null);
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
-  // Filter journal entries based on search and mood
+  // Get unique months from journal entries
+  const availableMonths = useMemo(() => {
+    const months = new Map<string, Date>();
+    profile.journalEntries.forEach((entry) => {
+      const date = new Date(entry.date);
+      const monthKey = format(date, 'yyyy-MM');
+      if (!months.has(monthKey)) {
+        months.set(monthKey, date);
+      }
+    });
+    return Array.from(months.entries())
+      .sort((a, b) => b[0].localeCompare(a[0])) // Most recent first
+      .map(([key, date]) => ({
+        key,
+        label: format(date, 'MMMM yyyy'),
+        date,
+      }));
+  }, [profile.journalEntries]);
+
+  // Get unique dates within selected month
+  const availableDates = useMemo(() => {
+    if (!selectedMonth) return [];
+    const dates = new Map<string, Date>();
+    profile.journalEntries.forEach((entry) => {
+      const date = new Date(entry.date);
+      const monthKey = format(date, 'yyyy-MM');
+      if (monthKey === selectedMonth) {
+        const dateKey = format(date, 'yyyy-MM-dd');
+        if (!dates.has(dateKey)) {
+          dates.set(dateKey, date);
+        }
+      }
+    });
+    return Array.from(dates.entries())
+      .sort((a, b) => b[0].localeCompare(a[0])) // Most recent first
+      .map(([key, date]) => ({
+        key,
+        label: format(date, 'EEE, MMM d'),
+        date,
+      }));
+  }, [profile.journalEntries, selectedMonth]);
+
+  // Filter journal entries based on search and date
   const filteredEntries = useMemo(() => {
     return profile.journalEntries.filter((entry) => {
+      const entryDate = new Date(entry.date);
       const matchesSearch = searchQuery.trim() === '' || 
         entry.content.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesMood = moodFilter === null || entry.mood === moodFilter;
-      return matchesSearch && matchesMood;
+      
+      let matchesDate = true;
+      if (selectedDate) {
+        matchesDate = format(entryDate, 'yyyy-MM-dd') === selectedDate;
+      } else if (selectedMonth) {
+        matchesDate = format(entryDate, 'yyyy-MM') === selectedMonth;
+      }
+      
+      return matchesSearch && matchesDate;
     });
-  }, [profile.journalEntries, searchQuery, moodFilter]);
+  }, [profile.journalEntries, searchQuery, selectedMonth, selectedDate]);
 
   const clearFilters = () => {
     setSearchQuery('');
-    setMoodFilter(null);
+    setSelectedMonth(null);
+    setSelectedDate(null);
   };
 
-  const hasActiveFilters = searchQuery.trim() !== '' || moodFilter !== null;
+  const hasActiveFilters = searchQuery.trim() !== '' || selectedMonth !== null;
 
   const toggleFeeling = (value: string) => {
     if (selectedFeelings.includes(value)) {
@@ -249,25 +302,59 @@ export default function Alignment() {
                           )}
                         </div>
 
-                        {/* Mood Filter Pills */}
+                        {/* Date Filter */}
                         <div className="space-y-2">
-                          <p className="text-xs text-muted-foreground">Filter by mood</p>
+                          <div className="flex items-center gap-1.5">
+                            <Calendar size={14} className="text-muted-foreground" />
+                            <p className="text-xs text-muted-foreground">Filter by date</p>
+                          </div>
+                          
+                          {/* Month Pills */}
                           <div className="flex flex-wrap gap-1.5">
-                            {feelingOptions.map((feeling) => (
+                            {availableMonths.map((month) => (
                               <button
-                                key={feeling.value}
-                                onClick={() => setMoodFilter(moodFilter === feeling.value ? null : feeling.value)}
-                                className={`px-2.5 py-1 rounded-full text-xs flex items-center gap-1 transition-all ${
-                                  moodFilter === feeling.value
+                                key={month.key}
+                                onClick={() => {
+                                  if (selectedMonth === month.key) {
+                                    setSelectedMonth(null);
+                                    setSelectedDate(null);
+                                  } else {
+                                    setSelectedMonth(month.key);
+                                    setSelectedDate(null);
+                                  }
+                                }}
+                                className={`px-2.5 py-1 rounded-full text-xs transition-all ${
+                                  selectedMonth === month.key
                                     ? 'bg-primary text-primary-foreground'
                                     : 'bg-background/50 text-muted-foreground hover:bg-primary/10'
                                 }`}
                               >
-                                <span>{feeling.emoji}</span>
-                                <span>{feeling.label}</span>
+                                {month.label}
                               </button>
                             ))}
                           </div>
+
+                          {/* Date Pills (shown when month is selected) */}
+                          {selectedMonth && availableDates.length > 0 && (
+                            <div className="pt-2 space-y-1.5">
+                              <p className="text-xs text-muted-foreground">Select a day</p>
+                              <div className="flex flex-wrap gap-1.5">
+                                {availableDates.map((date) => (
+                                  <button
+                                    key={date.key}
+                                    onClick={() => setSelectedDate(selectedDate === date.key ? null : date.key)}
+                                    className={`px-2.5 py-1 rounded-full text-xs transition-all ${
+                                      selectedDate === date.key
+                                        ? 'bg-primary text-primary-foreground'
+                                        : 'bg-background/50 text-muted-foreground hover:bg-primary/10'
+                                    }`}
+                                  >
+                                    {date.label}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
 
                         {/* Clear Filters */}
