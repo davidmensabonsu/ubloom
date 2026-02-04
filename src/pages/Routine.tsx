@@ -6,6 +6,7 @@ import BottomNav from '@/components/BottomNav';
 import RoutineSetup from '@/components/routine/RoutineSetup';
 import CoreHabitsSection from '@/components/routine/CoreHabitsSection';
 import OneOffTasksSection from '@/components/routine/OneOffTasksSection';
+import WeeklyProgress from '@/components/routine/WeeklyProgress';
 
 export default function Routine() {
   const { profile, skipRoutineSetup } = useUserStore();
@@ -68,6 +69,9 @@ export default function Routine() {
 
       {/* Content */}
       <div className="px-5 space-y-6">
+        {/* Weekly Progress & Streak */}
+        <WeeklyProgress />
+
         {/* Core Daily Habits */}
         <CoreHabitsSection onEditHabits={() => setEditingHabits(true)} />
 
