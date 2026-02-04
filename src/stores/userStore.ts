@@ -1,6 +1,21 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+export type TimeOfDay = 'morning' | 'midday' | 'evening';
+
+export interface CoreHabit {
+  id: string;
+  title: string;
+  timeOfDay: TimeOfDay;
+  icon?: string;
+}
+
+export interface HabitCompletion {
+  habitId: string;
+  date: string; // yyyy-MM-dd format
+  completed: boolean;
+}
+
 export interface UserProfile {
   // Onboarding answers
   currentFeeling: string;
@@ -27,7 +42,10 @@ export interface UserProfile {
   // App data
   journalEntries: JournalEntry[];
   moodHistory: MoodEntry[];
-  routineTasks: RoutineTask[];
+  routineTasks: RoutineTask[]; // Now used for one-off daily tasks only
+  coreHabits: CoreHabit[];
+  habitCompletions: HabitCompletion[];
+  routineSetupComplete: boolean;
   goals: Goal[];
   onboardingComplete: boolean;
 }
@@ -73,6 +91,12 @@ interface UserStore {
   addGoal: (goal: Omit<Goal, 'id'>) => void;
   completeOnboarding: () => void;
   resetProfile: () => void;
+  // Core habits
+  setCoreHabits: (habits: CoreHabit[]) => void;
+  toggleHabitCompletion: (habitId: string) => void;
+  isHabitCompletedToday: (habitId: string) => boolean;
+  completeRoutineSetup: () => void;
+  skipRoutineSetup: () => void;
 }
 
 const initialProfile: UserProfile = {
@@ -95,6 +119,9 @@ const initialProfile: UserProfile = {
   journalEntries: [],
   moodHistory: [],
   routineTasks: [],
+  coreHabits: [],
+  habitCompletions: [],
+  routineSetupComplete: false,
   goals: [],
   onboardingComplete: false,
 };
@@ -174,6 +201,62 @@ export const useUserStore = create<UserStore>()(
         })),
       
       resetProfile: () => set({ profile: initialProfile }),
+
+      // Core habits functions
+      setCoreHabits: (habits) =>
+        set((state) => ({
+          profile: { ...state.profile, coreHabits: habits },
+        })),
+
+      toggleHabitCompletion: (habitId) => {
+        const today = new Date().toISOString().split('T')[0];
+        set((state) => {
+          const existingCompletion = state.profile.habitCompletions.find(
+            (c) => c.habitId === habitId && c.date === today
+          );
+          
+          if (existingCompletion) {
+            return {
+              profile: {
+                ...state.profile,
+                habitCompletions: state.profile.habitCompletions.map((c) =>
+                  c.habitId === habitId && c.date === today
+                    ? { ...c, completed: !c.completed }
+                    : c
+                ),
+              },
+            };
+          } else {
+            return {
+              profile: {
+                ...state.profile,
+                habitCompletions: [
+                  ...state.profile.habitCompletions,
+                  { habitId, date: today, completed: true },
+                ],
+              },
+            };
+          }
+        });
+      },
+
+      isHabitCompletedToday: (habitId) => {
+        const today = new Date().toISOString().split('T')[0];
+        const completion = get().profile.habitCompletions.find(
+          (c) => c.habitId === habitId && c.date === today
+        );
+        return completion?.completed ?? false;
+      },
+
+      completeRoutineSetup: () =>
+        set((state) => ({
+          profile: { ...state.profile, routineSetupComplete: true },
+        })),
+
+      skipRoutineSetup: () =>
+        set((state) => ({
+          profile: { ...state.profile, routineSetupComplete: true },
+        })),
     }),
     {
       name: 'ubloom-user-storage',
