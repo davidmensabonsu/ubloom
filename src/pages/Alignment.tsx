@@ -1,9 +1,10 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useUserStore } from '@/stores/userStore';
-import { Sparkles, Heart, Feather, BookOpen, ChevronDown } from 'lucide-react';
+import { Sparkles, Heart, Feather, BookOpen, ChevronDown, Search, X } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Input } from '@/components/ui/input';
 
 const feelingOptions = [
   { value: 'calm', label: 'Calm', emoji: '🌿' },
@@ -22,6 +23,25 @@ export default function Alignment() {
   const [journalText, setJournalText] = useState('');
   const [saved, setSaved] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [moodFilter, setMoodFilter] = useState<string | null>(null);
+
+  // Filter journal entries based on search and mood
+  const filteredEntries = useMemo(() => {
+    return profile.journalEntries.filter((entry) => {
+      const matchesSearch = searchQuery.trim() === '' || 
+        entry.content.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesMood = moodFilter === null || entry.mood === moodFilter;
+      return matchesSearch && matchesMood;
+    });
+  }, [profile.journalEntries, searchQuery, moodFilter]);
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setMoodFilter(null);
+  };
+
+  const hasActiveFilters = searchQuery.trim() !== '' || moodFilter !== null;
 
   const toggleFeeling = (value: string) => {
     if (selectedFeelings.includes(value)) {
@@ -206,14 +226,83 @@ export default function Alignment() {
                     transition={{ duration: 0.3 }}
                     className="mt-3 space-y-3"
                   >
+                    {/* Search and Filters */}
+                    {profile.journalEntries.length > 0 && (
+                      <div className="glass-card rounded-2xl p-4 space-y-3">
+                        {/* Search Input */}
+                        <div className="relative">
+                          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                          <Input
+                            type="text"
+                            placeholder="Search entries..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="pl-9 pr-9 bg-background/50 border-primary/20 rounded-xl text-sm"
+                          />
+                          {searchQuery && (
+                            <button
+                              onClick={() => setSearchQuery('')}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                            >
+                              <X size={14} />
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Mood Filter Pills */}
+                        <div className="space-y-2">
+                          <p className="text-xs text-muted-foreground">Filter by mood</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {feelingOptions.map((feeling) => (
+                              <button
+                                key={feeling.value}
+                                onClick={() => setMoodFilter(moodFilter === feeling.value ? null : feeling.value)}
+                                className={`px-2.5 py-1 rounded-full text-xs flex items-center gap-1 transition-all ${
+                                  moodFilter === feeling.value
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-background/50 text-muted-foreground hover:bg-primary/10'
+                                }`}
+                              >
+                                <span>{feeling.emoji}</span>
+                                <span>{feeling.label}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Clear Filters */}
+                        {hasActiveFilters && (
+                          <button
+                            onClick={clearFilters}
+                            className="text-xs text-primary hover:underline flex items-center gap-1"
+                          >
+                            <X size={12} />
+                            Clear filters
+                          </button>
+                        )}
+
+                        {/* Results Count */}
+                        <p className="text-xs text-muted-foreground">
+                          {filteredEntries.length} of {profile.journalEntries.length} entries
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Empty State */}
                     {profile.journalEntries.length === 0 ? (
                       <div className="glass-card rounded-2xl p-4 text-center">
                         <p className="text-sm text-muted-foreground italic">
                           Your past journal entries will appear here once you save your first alignment.
                         </p>
                       </div>
+                    ) : filteredEntries.length === 0 ? (
+                      <div className="glass-card rounded-2xl p-4 text-center">
+                        <p className="text-sm text-muted-foreground italic">
+                          No entries match your filters.
+                        </p>
+                      </div>
                     ) : (
-                      profile.journalEntries.map((entry, index) => (
+                      filteredEntries.map((entry, index) => (
                         <motion.div
                           key={entry.id}
                           initial={{ opacity: 0, y: 10 }}
