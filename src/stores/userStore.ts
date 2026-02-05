@@ -46,6 +46,7 @@ export interface UserProfile {
   coreHabits: CoreHabit[];
   habitCompletions: HabitCompletion[];
   routineSetupComplete: boolean;
+   reminderSettings: ReminderSettings;
   goals: Goal[];
   onboardingComplete: boolean;
 }
@@ -80,6 +81,20 @@ export interface Goal {
   completed: boolean;
 }
 
+ export interface ReminderSettings {
+   enabled: boolean;
+   times: {
+     morning: string; // HH:mm format
+     midday: string;
+     evening: string;
+   };
+   lastNotified: {
+     morning?: string; // yyyy-MM-dd
+     midday?: string;
+     evening?: string;
+   };
+ }
+ 
 interface UserStore {
   profile: UserProfile;
   updateProfile: (updates: Partial<UserProfile>) => void;
@@ -97,6 +112,8 @@ interface UserStore {
   isHabitCompletedToday: (habitId: string) => boolean;
   completeRoutineSetup: () => void;
   skipRoutineSetup: () => void;
+   updateReminderSettings: (settings: Partial<ReminderSettings>) => void;
+   markReminderSent: (timeOfDay: TimeOfDay) => void;
 }
 
 const initialProfile: UserProfile = {
@@ -122,6 +139,15 @@ const initialProfile: UserProfile = {
   coreHabits: [],
   habitCompletions: [],
   routineSetupComplete: false,
+   reminderSettings: {
+     enabled: false,
+     times: {
+       morning: '08:00',
+       midday: '12:00',
+       evening: '20:00',
+     },
+     lastNotified: {},
+   },
   goals: [],
   onboardingComplete: false,
 };
@@ -257,6 +283,30 @@ export const useUserStore = create<UserStore>()(
         set((state) => ({
           profile: { ...state.profile, routineSetupComplete: true },
         })),
+ 
+       updateReminderSettings: (settings) =>
+         set((state) => ({
+           profile: {
+             ...state.profile,
+             reminderSettings: { ...state.profile.reminderSettings, ...settings },
+           },
+         })),
+ 
+       markReminderSent: (timeOfDay) => {
+         const today = new Date().toISOString().split('T')[0];
+         set((state) => ({
+           profile: {
+             ...state.profile,
+             reminderSettings: {
+               ...state.profile.reminderSettings,
+               lastNotified: {
+                 ...state.profile.reminderSettings.lastNotified,
+                 [timeOfDay]: today,
+               },
+             },
+           },
+         }));
+       },
     }),
     {
       name: 'ubloom-user-storage',
