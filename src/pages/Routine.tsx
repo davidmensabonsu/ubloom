@@ -1,17 +1,89 @@
-import { motion } from 'framer-motion';
-import { useState } from 'react';
+ import { motion } from 'framer-motion';
+ import { useState, useEffect, useRef } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { Plus } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import RoutineSetup from '@/components/routine/RoutineSetup';
 import CoreHabitsSection from '@/components/routine/CoreHabitsSection';
 import OneOffTasksSection from '@/components/routine/OneOffTasksSection';
-import WeeklyProgress from '@/components/routine/WeeklyProgress';
+ import WeeklyProgress from '@/components/routine/WeeklyProgress';
+ import CelebrationOverlay from '@/components/routine/CelebrationOverlay';
 
 export default function Routine() {
-  const { profile, skipRoutineSetup } = useUserStore();
+   const { profile, skipRoutineSetup, isHabitCompletedToday } = useUserStore();
   const [showSetup, setShowSetup] = useState(!profile.routineSetupComplete);
   const [editingHabits, setEditingHabits] = useState(false);
+   const [celebration, setCelebration] = useState<{
+     show: boolean;
+     type: 'all-complete' | 'streak-milestone';
+     streakDays?: number;
+   }>({ show: false, type: 'all-complete' });
+   
+   // Track previous completion state to detect transitions
+   const prevAllCompletedRef = useRef(false);
+   const celebratedStreaksRef = useRef<Set<number>>(new Set());
+ 
+   // Calculate completion status
+   const { coreHabits } = profile;
+   const completedCount = coreHabits.filter((h) => isHabitCompletedToday(h.id)).length;
+   const allCompleted = coreHabits.length > 0 && completedCount === coreHabits.length;
+ 
+   // Calculate streak (same logic as WeeklyProgress)
+   const calculateStreak = () => {
+     if (coreHabits.length === 0) return 0;
+     const { habitCompletions } = profile;
+     let currentStreak = 0;
+     const today = new Date();
+     today.setHours(0, 0, 0, 0);
+ 
+     for (let i = 0; i <= 365; i++) {
+       const date = new Date(today);
+       date.setDate(date.getDate() - i);
+       const dateStr = date.toISOString().split('T')[0];
+ 
+       const dayCompletions = habitCompletions.filter(
+         (c) => c.date === dateStr && c.completed
+       );
+ 
+       const completionRate = dayCompletions.length / coreHabits.length;
+ 
+       if (completionRate >= 0.5) {
+         currentStreak++;
+       } else if (i > 0) {
+         break;
+       }
+     }
+ 
+     return currentStreak;
+   };
+ 
+   const streak = calculateStreak();
+   const streakMilestones = [3, 7, 14, 30, 60, 90, 180, 365];
+ 
+   // Trigger celebrations
+   useEffect(() => {
+     // All habits completed celebration
+     if (allCompleted && !prevAllCompletedRef.current) {
+       setCelebration({ show: true, type: 'all-complete' });
+     }
+     prevAllCompletedRef.current = allCompleted;
+   }, [allCompleted]);
+ 
+   useEffect(() => {
+     // Streak milestone celebration
+     if (streakMilestones.includes(streak) && !celebratedStreaksRef.current.has(streak)) {
+       celebratedStreaksRef.current.add(streak);
+       // Delay slightly if all-complete is also showing
+       const delay = celebration.show ? 3500 : 0;
+       setTimeout(() => {
+         setCelebration({ show: true, type: 'streak-milestone', streakDays: streak });
+       }, delay);
+     }
+   }, [streak]);
+ 
+   const handleCelebrationComplete = () => {
+     setCelebration({ show: false, type: 'all-complete' });
+   };
 
   const todayFormatted = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -40,6 +112,14 @@ export default function Routine() {
 
   return (
     <div className="min-h-screen gradient-background pb-24">
+       {/* Celebration Overlay */}
+       <CelebrationOverlay
+         show={celebration.show}
+         type={celebration.type}
+         streakDays={celebration.streakDays}
+         onComplete={handleCelebrationComplete}
+       />
+ 
       {/* Header */}
       <div className="px-5 pt-12 pb-6">
         <motion.p
