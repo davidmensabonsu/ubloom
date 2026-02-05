@@ -8,6 +8,8 @@ import CoreHabitsSection from '@/components/routine/CoreHabitsSection';
 import OneOffTasksSection from '@/components/routine/OneOffTasksSection';
  import WeeklyProgress from '@/components/routine/WeeklyProgress';
  import CelebrationOverlay from '@/components/routine/CelebrationOverlay';
+ import ReminderSettings from '@/components/routine/ReminderSettings';
+ import { useReminders } from '@/hooks/useReminders';
 
 export default function Routine() {
    const { profile, skipRoutineSetup, isHabitCompletedToday } = useUserStore();
@@ -84,6 +86,9 @@ export default function Routine() {
    const handleCelebrationComplete = () => {
      setCelebration({ show: false, type: 'all-complete' });
    };
+ 
+   // Initialize reminders hook
+   useReminders();
 
   const todayFormatted = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -157,6 +162,12 @@ export default function Routine() {
 
         {/* One-Off Tasks for Today */}
         <OneOffTasksSection />
+ 
+         {/* Reminder Settings */}
+         <div className="pt-2">
+           <h2 className="section-title mb-3">Settings</h2>
+           <ReminderSettings />
+         </div>
       </div>
 
       {/* Floating Action Button for quick task add */}
