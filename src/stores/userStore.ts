@@ -268,7 +268,8 @@ export const useUserStore = create<UserStore>()(
 
       isHabitCompletedToday: (habitId) => {
         const today = new Date().toISOString().split('T')[0];
-        const completion = get().profile.habitCompletions.find(
+        const habitCompletions = get().profile.habitCompletions || [];
+        const completion = habitCompletions.find(
           (c) => c.habitId === habitId && c.date === today
         );
         return completion?.completed ?? false;
