@@ -26,7 +26,7 @@ export default function Routine() {
    const celebratedStreaksRef = useRef<Set<number>>(new Set());
  
    // Calculate completion status
-   const { coreHabits } = profile;
+   const coreHabits = profile.coreHabits || [];
    const completedCount = coreHabits.filter((h) => isHabitCompletedToday(h.id)).length;
    const allCompleted = coreHabits.length > 0 && completedCount === coreHabits.length;
  
