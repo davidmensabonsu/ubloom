@@ -8,9 +8,16 @@
    evening: '🌙 Evening reminder!',
  };
  
- export function useReminders() {
-   const { profile, markReminderSent, isHabitCompletedToday } = useUserStore();
-   const { reminderSettings, coreHabits } = profile;
+export function useReminders() {
+  const { profile, markReminderSent, isHabitCompletedToday } = useUserStore();
+  
+  // Safe defaults for users with old persisted data
+  const reminderSettings = profile.reminderSettings || {
+    enabled: false,
+    times: { morning: '08:00', midday: '12:00', evening: '20:00' },
+    lastNotified: {},
+  };
+  const coreHabits = profile.coreHabits || [];
  
    const requestPermission = useCallback(async () => {
      if (!('Notification' in window)) {
