@@ -30,18 +30,18 @@ export default function Routine() {
    const completedCount = coreHabits.filter((h) => isHabitCompletedToday(h.id)).length;
    const allCompleted = coreHabits.length > 0 && completedCount === coreHabits.length;
  
-   // Calculate streak (same logic as WeeklyProgress)
-   const calculateStreak = () => {
-     if (coreHabits.length === 0) return 0;
-     const { habitCompletions } = profile;
-     let currentStreak = 0;
-     const today = new Date();
-     today.setHours(0, 0, 0, 0);
- 
-     for (let i = 0; i <= 365; i++) {
-       const date = new Date(today);
-       date.setDate(date.getDate() - i);
-       const dateStr = date.toISOString().split('T')[0];
+    // Calculate streak (same logic as WeeklyProgress)
+    const calculateStreak = () => {
+      if (coreHabits.length === 0) return 0;
+      const habitCompletions = profile.habitCompletions || [];
+      let currentStreak = 0;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+  
+      for (let i = 0; i <= 365; i++) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
  
        const dayCompletions = habitCompletions.filter(
          (c) => c.date === dateStr && c.completed
