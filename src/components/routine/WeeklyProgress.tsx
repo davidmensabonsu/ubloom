@@ -6,7 +6,8 @@ import { format, subDays, startOfDay } from 'date-fns';
 
 export default function WeeklyProgress() {
   const { profile } = useUserStore();
-  const { coreHabits, habitCompletions } = profile;
+  const coreHabits = profile.coreHabits || [];
+  const habitCompletions = profile.habitCompletions || [];
 
   const weekData = useMemo(() => {
     const today = startOfDay(new Date());
