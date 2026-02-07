@@ -1,8 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
-import { Check, Sparkles } from 'lucide-react';
+import { Check, Sparkles, ImagePlus, X } from 'lucide-react';
 
 const dreamCategories = [
   {
@@ -81,9 +81,11 @@ const dreamCategories = [
 
 export default function DreamLife() {
   const navigate = useNavigate();
-  const { updateProfile } = useUserStore();
+  const { updateProfile, profile } = useUserStore();
   const [currentCategory, setCurrentCategory] = useState(0);
   const [selections, setSelections] = useState<Record<string, string[]>>({});
+  const [categoryImages, setCategoryImages] = useState<Record<string, string>>(profile.dreamImages || {});
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const category = dreamCategories[currentCategory];
   const progress = ((currentCategory + 1) / dreamCategories.length) * 100;
@@ -107,6 +109,31 @@ export default function DreamLife() {
     return (selections[category.id] || []).includes(statement);
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setCategoryImages({
+          ...categoryImages,
+          [category.id]: base64,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+    // Reset input so same file can be selected again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const removeImage = () => {
+    const newImages = { ...categoryImages };
+    delete newImages[category.id];
+    setCategoryImages(newImages);
+  };
+
   const handleNext = () => {
     if (currentCategory < dreamCategories.length - 1) {
       setCurrentCategory(currentCategory + 1);
@@ -120,12 +147,14 @@ export default function DreamLife() {
           lifestyle: selections.lifestyle || [],
           love: selections.love || [],
         },
+        dreamImages: categoryImages,
       });
       navigate('/choose-aesthetic');
     }
   };
 
   const hasSelections = (selections[category.id] || []).length > 0;
+  const currentImage = categoryImages[category.id];
 
   return (
     <div className="min-h-screen gradient-background px-5 py-8 flex flex-col">
@@ -157,7 +186,7 @@ export default function DreamLife() {
           className="flex-1 flex flex-col"
         >
           {/* Category header */}
-          <div className="glass-card rounded-2xl p-4 mb-6 flex items-center gap-3">
+          <div className="glass-card rounded-2xl p-4 mb-4 flex items-center gap-3">
             <span className="text-2xl">{category.icon}</span>
             <div>
               <h2 className="font-display text-lg font-medium text-foreground">
@@ -168,6 +197,39 @@ export default function DreamLife() {
               </p>
             </div>
           </div>
+
+          {/* Image upload section */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImageUpload}
+            accept="image/*"
+            className="hidden"
+          />
+          
+          {currentImage ? (
+            <div className="relative mb-4 rounded-2xl overflow-hidden">
+              <img
+                src={currentImage}
+                alt={`${category.title} vision`}
+                className="w-full h-32 object-cover"
+              />
+              <button
+                onClick={removeImage}
+                className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center text-foreground hover:bg-background transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full mb-4 py-4 rounded-2xl border-2 border-dashed border-primary/30 bg-glow/30 flex items-center justify-center gap-2 text-primary/70 hover:border-primary/50 hover:text-primary transition-colors"
+            >
+              <ImagePlus size={20} />
+              <span className="text-sm font-medium">Add vision image</span>
+            </button>
+          )}
 
           {/* Statements */}
           <div className="space-y-3 flex-1">

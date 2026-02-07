@@ -36,6 +36,16 @@ export interface UserProfile {
     love: string[];
   };
   
+  // Dream images by category
+  dreamImages: {
+    career?: string;
+    selfWorth?: string;
+    wellness?: string;
+    peace?: string;
+    lifestyle?: string;
+    love?: string;
+  };
+  
   // Visual theme
   aesthetic: string;
   
@@ -132,6 +142,7 @@ const initialProfile: UserProfile = {
     lifestyle: [],
     love: [],
   },
+  dreamImages: {},
   aesthetic: 'blush',
   journalEntries: [],
   moodHistory: [],
