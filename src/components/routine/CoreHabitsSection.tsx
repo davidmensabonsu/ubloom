@@ -1,6 +1,7 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
 import { useUserStore, TimeOfDay } from '@/stores/userStore';
-import { Check, Sun, Clock, Moon, Settings2 } from 'lucide-react';
+import { Check, Sun, Clock, Moon, Settings2, Plus, X } from 'lucide-react';
 
 const timeOfDayConfig = {
   morning: { label: 'Morning', icon: Sun, color: 'text-amber-500' },
@@ -13,8 +14,20 @@ interface CoreHabitsSectionProps {
 }
 
 export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionProps) {
-  const { profile, toggleHabitCompletion, isHabitCompletedToday } = useUserStore();
+  const { profile, toggleHabitCompletion, isHabitCompletedToday, addRoutineTask, toggleTask } = useUserStore();
   const { coreHabits } = profile;
+  
+  const [addingToSection, setAddingToSection] = useState<TimeOfDay | null>(null);
+  const [newTaskTitle, setNewTaskTitle] = useState('');
+
+  const today = new Date().toISOString().split('T')[0];
+  
+  // Get today's one-off tasks for a specific time of day
+  const getTodayTasks = (time: TimeOfDay) => {
+    return (profile.routineTasks || []).filter(
+      (task) => task.date.split('T')[0] === today && task.timeOfDay === time
+    );
+  };
 
   const getHabitsByTime = (time: TimeOfDay) => {
     return coreHabits.filter((h) => h.timeOfDay === time);
@@ -22,13 +35,46 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
 
   const getCompletedCount = (time: TimeOfDay) => {
     const habits = getHabitsByTime(time);
-    return habits.filter((h) => isHabitCompletedToday(h.id)).length;
+    const habitCompleted = habits.filter((h) => isHabitCompletedToday(h.id)).length;
+    const tasks = getTodayTasks(time);
+    const taskCompleted = tasks.filter((t) => t.completed).length;
+    return habitCompleted + taskCompleted;
+  };
+
+  const getTotalCount = (time: TimeOfDay) => {
+    return getHabitsByTime(time).length + getTodayTasks(time).length;
   };
 
   const totalHabits = coreHabits.length;
-  const totalCompleted = coreHabits.filter((h) => isHabitCompletedToday(h.id)).length;
+  const totalTasks = (['morning', 'midday', 'evening'] as TimeOfDay[]).reduce(
+    (sum, time) => sum + getTodayTasks(time).length, 0
+  );
+  const totalItems = totalHabits + totalTasks;
+  const totalCompleted = coreHabits.filter((h) => isHabitCompletedToday(h.id)).length +
+    (['morning', 'midday', 'evening'] as TimeOfDay[]).reduce(
+      (sum, time) => sum + getTodayTasks(time).filter((t) => t.completed).length, 0
+    );
 
-  if (coreHabits.length === 0) {
+  const handleAddTask = (time: TimeOfDay) => {
+    if (newTaskTitle.trim()) {
+      addRoutineTask({
+        title: newTaskTitle,
+        category: 'plans',
+        completed: false,
+        date: new Date().toISOString(),
+        timeOfDay: time,
+      });
+      setNewTaskTitle('');
+      setAddingToSection(null);
+    }
+  };
+
+  // Check if any section has content (habits or tasks)
+  const hasAnyContent = (['morning', 'midday', 'evening'] as TimeOfDay[]).some(
+    (time) => getHabitsByTime(time).length > 0 || getTodayTasks(time).length > 0
+  );
+
+  if (coreHabits.length === 0 && !hasAnyContent) {
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -55,7 +101,7 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
         <div>
           <h2 className="section-title">Daily Habits</h2>
           <p className="text-xs text-muted-foreground">
-            {totalCompleted} of {totalHabits} completed today
+            {totalCompleted} of {totalItems} completed today
           </p>
         </div>
         <button
@@ -70,7 +116,7 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
       <div className="h-2 bg-muted rounded-full overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
-          animate={{ width: `${totalHabits > 0 ? (totalCompleted / totalHabits) * 100 : 0}%` }}
+          animate={{ width: `${totalItems > 0 ? (totalCompleted / totalItems) * 100 : 0}%` }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
           className="h-full bg-primary rounded-full"
         />
@@ -79,11 +125,14 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
       {/* Habits by time of day */}
       {(['morning', 'midday', 'evening'] as TimeOfDay[]).map((time, sectionIndex) => {
         const habits = getHabitsByTime(time);
-        if (habits.length === 0) return null;
-
+        const tasks = getTodayTasks(time);
         const config = timeOfDayConfig[time];
         const Icon = config.icon;
         const completedCount = getCompletedCount(time);
+        const totalCount = getTotalCount(time);
+
+        // Always show sections if there are habits OR tasks
+        if (habits.length === 0 && tasks.length === 0) return null;
 
         return (
           <motion.div
@@ -98,12 +147,22 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
                 <Icon size={18} className={config.color} />
                 <h3 className="font-medium text-sm">{config.label}</h3>
               </div>
-              <span className="text-xs text-muted-foreground">
-                {completedCount}/{habits.length}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">
+                  {completedCount}/{totalCount}
+                </span>
+                <button
+                  onClick={() => setAddingToSection(time)}
+                  className="p-1.5 rounded-full hover:bg-muted transition-colors"
+                  aria-label={`Add task to ${config.label}`}
+                >
+                  <Plus size={16} className="text-muted-foreground" />
+                </button>
+              </div>
             </div>
 
             <div className="space-y-2">
+              {/* Core habits */}
               {habits.map((habit) => {
                 const isCompleted = isHabitCompletedToday(habit.id);
 
@@ -127,6 +186,74 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
                   </motion.button>
                 );
               })}
+
+              {/* One-off tasks for this time of day */}
+              {tasks.map((task) => (
+                <motion.button
+                  key={task.id}
+                  onClick={() => toggleTask(task.id)}
+                  className="check-item w-full"
+                  whileTap={{ scale: 0.98 }}
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                >
+                  <div className={`check-circle ${task.completed ? 'checked' : ''}`}>
+                    {task.completed && <Check size={14} />}
+                  </div>
+                  <span
+                    className={`text-sm ${
+                      task.completed ? 'line-through text-muted-foreground' : ''
+                    }`}
+                  >
+                    {task.title}
+                  </span>
+                  <span className="ml-auto text-xs text-muted-foreground/50">today only</span>
+                </motion.button>
+              ))}
+
+              {/* Inline add task input */}
+              <AnimatePresence>
+                {addingToSection === time && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="flex items-center gap-2 pt-2"
+                  >
+                    <input
+                      type="text"
+                      value={newTaskTitle}
+                      onChange={(e) => setNewTaskTitle(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleAddTask(time);
+                        if (e.key === 'Escape') {
+                          setAddingToSection(null);
+                          setNewTaskTitle('');
+                        }
+                      }}
+                      placeholder="Add a task for today..."
+                      className="flex-1 text-sm p-2 rounded-xl bg-muted border-0 focus:ring-2 focus:ring-primary/30 focus:outline-none"
+                      autoFocus
+                    />
+                    <button
+                      onClick={() => handleAddTask(time)}
+                      disabled={!newTaskTitle.trim()}
+                      className="p-2 rounded-full bg-primary text-primary-foreground disabled:opacity-50"
+                    >
+                      <Check size={16} />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setAddingToSection(null);
+                        setNewTaskTitle('');
+                      }}
+                      className="p-2 rounded-full hover:bg-muted"
+                    >
+                      <X size={16} />
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
         );

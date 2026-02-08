@@ -81,6 +81,7 @@ export interface RoutineTask {
   completed: boolean;
   date: string;
   icon?: string;
+  timeOfDay?: TimeOfDay;
 }
 
 export interface Goal {
