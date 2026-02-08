@@ -296,32 +296,71 @@ export const useUserStore = create<UserStore>()(
           profile: { ...state.profile, routineSetupComplete: true },
         })),
  
-       updateReminderSettings: (settings) =>
-         set((state) => ({
-           profile: {
-             ...state.profile,
-             reminderSettings: { ...state.profile.reminderSettings, ...settings },
-           },
-         })),
- 
-       markReminderSent: (timeOfDay) => {
-         const today = new Date().toISOString().split('T')[0];
-         set((state) => ({
-           profile: {
-             ...state.profile,
-             reminderSettings: {
-               ...state.profile.reminderSettings,
-               lastNotified: {
-                 ...state.profile.reminderSettings.lastNotified,
-                 [timeOfDay]: today,
-               },
-             },
-           },
-         }));
-       },
+      updateReminderSettings: (settings) =>
+        set((state) => {
+          const current = state.profile.reminderSettings ?? initialProfile.reminderSettings;
+          return {
+            profile: {
+              ...state.profile,
+              reminderSettings: { ...current, ...settings },
+            },
+          };
+        }),
+
+      markReminderSent: (timeOfDay) => {
+        const today = new Date().toISOString().split('T')[0];
+        set((state) => {
+          const current = state.profile.reminderSettings ?? initialProfile.reminderSettings;
+          return {
+            profile: {
+              ...state.profile,
+              reminderSettings: {
+                ...current,
+                lastNotified: {
+                  ...(current.lastNotified ?? {}),
+                  [timeOfDay]: today,
+                },
+              },
+            },
+          };
+        });
+      },
     }),
     {
       name: 'ubloom-user-storage',
+      merge: (persistedState, currentState) => {
+        const persisted = (persistedState as Partial<UserStore>) ?? {};
+        const persistedProfile = (persisted.profile as Partial<UserProfile>) ?? {};
+
+        return {
+          ...currentState,
+          ...persisted,
+          profile: {
+            ...currentState.profile,
+            ...persistedProfile,
+            dreamSelf: {
+              ...currentState.profile.dreamSelf,
+              ...(persistedProfile.dreamSelf ?? {}),
+            },
+            dreamImages: {
+              ...currentState.profile.dreamImages,
+              ...(persistedProfile.dreamImages ?? {}),
+            },
+            reminderSettings: {
+              ...currentState.profile.reminderSettings,
+              ...(persistedProfile.reminderSettings ?? {}),
+              times: {
+                ...currentState.profile.reminderSettings.times,
+                ...(persistedProfile.reminderSettings?.times ?? {}),
+              },
+              lastNotified: {
+                ...currentState.profile.reminderSettings.lastNotified,
+                ...(persistedProfile.reminderSettings?.lastNotified ?? {}),
+              },
+            },
+          },
+        } as UserStore;
+      },
     }
   )
 );
