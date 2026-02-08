@@ -11,13 +11,17 @@
 export function useReminders() {
   const { profile, markReminderSent, isHabitCompletedToday } = useUserStore();
   
-  // Safe defaults for users with old persisted data
-  const reminderSettings = profile.reminderSettings || {
-    enabled: false,
-    times: { morning: '08:00', midday: '12:00', evening: '20:00' },
-    lastNotified: {},
+  // Safe defaults for users with old persisted data (and partial nested objects)
+  const defaultTimes = { morning: '08:00', midday: '12:00', evening: '20:00' };
+  const reminderSettingsFromProfile = profile.reminderSettings as any;
+
+  const reminderSettings = {
+    enabled: reminderSettingsFromProfile?.enabled ?? false,
+    times: { ...defaultTimes, ...(reminderSettingsFromProfile?.times ?? {}) },
+    lastNotified: { ...(reminderSettingsFromProfile?.lastNotified ?? {}) },
   };
-  const coreHabits = profile.coreHabits || [];
+
+  const coreHabits = profile.coreHabits ?? [];
  
    const requestPermission = useCallback(async () => {
      if (!('Notification' in window)) {

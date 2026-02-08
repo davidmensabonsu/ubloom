@@ -5,10 +5,20 @@
  import { Switch } from '@/components/ui/switch';
  import { toast } from 'sonner';
  
- export default function ReminderSettings() {
-   const { profile, updateReminderSettings } = useUserStore();
-   const { reminderSettings } = profile;
-   const { requestPermission, isSupported, permissionStatus } = useReminders();
+export default function ReminderSettings() {
+  const { profile, updateReminderSettings } = useUserStore();
+
+  // Safe defaults for older persisted profiles (and partial nested objects)
+  const defaultTimes = { morning: '08:00', midday: '12:00', evening: '20:00' };
+  const reminderSettingsFromProfile = profile.reminderSettings as any;
+
+  const reminderSettings = {
+    enabled: reminderSettingsFromProfile?.enabled ?? false,
+    times: { ...defaultTimes, ...(reminderSettingsFromProfile?.times ?? {}) },
+    lastNotified: { ...(reminderSettingsFromProfile?.lastNotified ?? {}) },
+  };
+
+  const { requestPermission, isSupported, permissionStatus } = useReminders();
  
    const handleToggle = async (enabled: boolean) => {
      if (enabled) {
