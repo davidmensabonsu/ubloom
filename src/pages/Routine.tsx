@@ -5,7 +5,7 @@ import { Plus } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import RoutineSetup from '@/components/routine/RoutineSetup';
 import CoreHabitsSection from '@/components/routine/CoreHabitsSection';
-import OneOffTasksSection from '@/components/routine/OneOffTasksSection';
+
  import WeeklyProgress from '@/components/routine/WeeklyProgress';
  import CelebrationOverlay from '@/components/routine/CelebrationOverlay';
  import ReminderSettings from '@/components/routine/ReminderSettings';
@@ -160,8 +160,6 @@ export default function Routine() {
         {/* Core Daily Habits */}
         <CoreHabitsSection onEditHabits={() => setEditingHabits(true)} />
 
-        {/* One-Off Tasks for Today */}
-        <OneOffTasksSection />
  
          {/* Reminder Settings */}
          <div className="pt-2">
