@@ -49,14 +49,14 @@ function MoodboardCard({
       {/* Drag handle */}
       <div
         onPointerDown={(e) => controls.start(e)}
-        className="absolute top-2 left-2 w-6 h-6 rounded-full bg-background/80 backdrop-blur flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing touch-none"
+        className="absolute top-2 left-2 w-7 h-7 md:w-6 md:h-6 rounded-full bg-background/80 backdrop-blur flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing touch-none"
       >
-        <GripVertical size={12} className="text-foreground" />
+        <GripVertical size={14} className="text-foreground md:[size:12px]" />
       </div>
 
       <button
         onClick={() => onRemove(item)}
-        className="absolute top-2 right-2 w-6 h-6 rounded-full bg-background/80 backdrop-blur flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+        className="absolute top-2 right-2 w-7 h-7 md:w-6 md:h-6 rounded-full bg-background/80 backdrop-blur flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
       >
         <X size={12} className="text-foreground" />
       </button>
