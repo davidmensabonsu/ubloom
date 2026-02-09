@@ -58,6 +58,7 @@ export interface UserProfile {
   routineSetupComplete: boolean;
    reminderSettings: ReminderSettings;
   goals: Goal[];
+  moodboardItems: MoodboardItem[];
   onboardingComplete: boolean;
 }
 
@@ -92,6 +93,14 @@ export interface Goal {
   completed: boolean;
 }
 
+export interface MoodboardItem {
+  id: string;
+  type: 'image' | 'quote';
+  content: string; // URL for images, text for quotes
+  board: string;
+  createdAt: string;
+}
+
  export interface ReminderSettings {
    enabled: boolean;
    times: {
@@ -124,7 +133,9 @@ interface UserStore {
   completeRoutineSetup: () => void;
   skipRoutineSetup: () => void;
    updateReminderSettings: (settings: Partial<ReminderSettings>) => void;
-   markReminderSent: (timeOfDay: TimeOfDay) => void;
+    markReminderSent: (timeOfDay: TimeOfDay) => void;
+  addMoodboardItem: (item: Omit<MoodboardItem, 'id' | 'createdAt'>) => void;
+  removeMoodboardItem: (id: string) => void;
 }
 
 const initialProfile: UserProfile = {
@@ -161,6 +172,7 @@ const initialProfile: UserProfile = {
      lastNotified: {},
    },
   goals: [],
+  moodboardItems: [],
   onboardingComplete: false,
 };
 
@@ -307,6 +319,25 @@ export const useUserStore = create<UserStore>()(
             },
           };
         }),
+
+      addMoodboardItem: (item) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            moodboardItems: [
+              { ...item, id: Date.now().toString(), createdAt: new Date().toISOString() },
+              ...(state.profile.moodboardItems || []),
+            ],
+          },
+        })),
+
+      removeMoodboardItem: (id) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            moodboardItems: (state.profile.moodboardItems || []).filter((item) => item.id !== id),
+          },
+        })),
 
       markReminderSent: (timeOfDay) => {
         const today = new Date().toISOString().split('T')[0];
