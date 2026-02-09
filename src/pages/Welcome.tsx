@@ -1,17 +1,19 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
+import { useAuth } from '@/hooks/useAuth';
 import { Sparkles, Heart, ArrowRight } from 'lucide-react';
 
 export default function Welcome() {
   const navigate = useNavigate();
   const { profile } = useUserStore();
+  const { user } = useAuth();
 
   const handleStart = () => {
-    if (profile.onboardingComplete) {
-      navigate('/home');
+    if (user) {
+      navigate(profile.onboardingComplete ? '/home' : '/onboarding');
     } else {
-      navigate('/onboarding');
+      navigate('/auth');
     }
   };
 

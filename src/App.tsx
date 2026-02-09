@@ -2,12 +2,15 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useUserStore } from "@/stores/userStore";
 import { useEffect } from "react";
+import { AuthProvider } from "@/hooks/useAuth";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 // Pages
 import Welcome from "./pages/Welcome";
+import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import DreamLife from "./pages/DreamLife";
 import ChooseAesthetic from "./pages/ChooseAesthetic";
@@ -42,19 +45,22 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <ThemeManager />
-        <Routes>
-          <Route path="/" element={<Welcome />} />
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/dream-life" element={<DreamLife />} />
-          <Route path="/choose-aesthetic" element={<ChooseAesthetic />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/alignment" element={<Alignment />} />
-          <Route path="/routine" element={<Routine />} />
-          <Route path="/goals" element={<Goals />} />
-          <Route path="/moodboard" element={<Moodboard />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <ThemeManager />
+          <Routes>
+            <Route path="/" element={<Welcome />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
+            <Route path="/dream-life" element={<ProtectedRoute><DreamLife /></ProtectedRoute>} />
+            <Route path="/choose-aesthetic" element={<ProtectedRoute><ChooseAesthetic /></ProtectedRoute>} />
+            <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+            <Route path="/alignment" element={<ProtectedRoute><Alignment /></ProtectedRoute>} />
+            <Route path="/routine" element={<ProtectedRoute><Routine /></ProtectedRoute>} />
+            <Route path="/goals" element={<ProtectedRoute><Goals /></ProtectedRoute>} />
+            <Route path="/moodboard" element={<ProtectedRoute><Moodboard /></ProtectedRoute>} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
