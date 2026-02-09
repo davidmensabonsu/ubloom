@@ -20,7 +20,7 @@ const BOARDS = [
 
 export default function Moodboard() {
   const { user } = useAuth();
-  const { profile, addMoodboardItem, removeMoodboardItem } = useUserStore();
+  const { profile, addMoodboardItem, removeMoodboardItem, reorderMoodboardItems } = useUserStore();
   const items = profile.moodboardItems || [];
 
   const [selectedBoard, setSelectedBoard] = useState<string>('All');
@@ -180,7 +180,7 @@ export default function Moodboard() {
             </div>
           </motion.div>
         ) : (
-          <MoodboardGrid items={filteredItems} onRemove={handleRemove} />
+          <MoodboardGrid items={filteredItems} onRemove={handleRemove} onReorder={reorderMoodboardItems} />
         )}
       </div>
 
