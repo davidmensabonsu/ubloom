@@ -1,53 +1,43 @@
 
-# Implement Moodboard Image Upload and Management
+# Profile Page (Bottom Nav)
 
 ## Overview
-The Moodboard page currently displays placeholder UI with non-functional buttons. This plan implements full image upload, quote creation, and board management so users can build visual moodboards.
+Add a "Profile" page as a full tab in the bottom navigation bar, alongside Home, Align, Routine, Goals, and Dream. No changes to the Home page.
 
-## What Will Change
+## Navigation Change
+- Replace one nav slot or add a 6th tab in `BottomNav.tsx`
+- New tab: **Profile** with a `User` icon, route `/profile`
+- Position: last item (rightmost)
 
-### 1. Extend User Store with Moodboard Data
-Add new types and state for moodboard items (images and quotes) organized into boards:
-- `MoodboardItem` type with fields for `id`, `type` (image/quote), `url` or `text`, `board` category, and `createdAt`
-- Store actions: `addMoodboardItem`, `removeMoodboardItem`
+## Profile Page Sections
 
-### 2. Build the Moodboard Page
-Replace the current placeholder with a working moodboard that supports:
-- **Add Image**: Opens file picker, uploads to the `vision-images` storage bucket under the user's folder, and displays it on the board
-- **Add Quote**: Opens a dialog/input to type an inspirational quote
-- **Board Categories**: Tapping a board category (e.g., "Soft Life", "Travel Dreams") filters or groups items
-- **Delete Items**: Long-press or tap an X button to remove an item (also deletes from storage)
-- **Masonry/Grid Layout**: Display uploaded images and quotes in a visually appealing grid
+### Account Info
+- Avatar display/upload (using existing `vision-images` storage bucket, stored in `profiles.avatar_url`)
+- Editable display name (synced to `profiles` table)
+- Email (read-only, from auth)
 
-### 3. Image Upload Flow
-Reuses the same pattern already working in `DreamLife.tsx`:
-- Upload to `vision-images` bucket at path `{user.id}/moodboard/{timestamp}.{ext}`
-- Store the public URL in the Zustand store (synced to cloud via existing `useCloudSync`)
-- Show upload progress indicator
+### App Preferences
+- Theme/aesthetic picker reusing the aesthetic options from `ChooseAesthetic.tsx` (extracted into a shared constant)
 
-### 4. Cloud Persistence
-No database changes needed -- moodboard items will be stored in the existing `user_data` JSONB column via the Zustand store and cloud sync, same as all other profile data. Images themselves are stored in the existing `vision-images` bucket.
+### Account Actions
+- Sign out button
+- "Reset data" danger zone (clears Zustand store + `user_data` row)
 
 ## Technical Details
 
-### New Types (in `userStore.ts`)
-```typescript
-interface MoodboardItem {
-  id: string;
-  type: 'image' | 'quote';
-  content: string; // URL for images, text for quotes
-  board: string;   // category name
-  createdAt: string;
-}
-```
+### New Files
+- **`src/pages/Profile.tsx`** -- Settings page with avatar upload, display name editing, theme picker, sign out, and reset data
 
-### Files Modified
-- **`src/stores/userStore.ts`** -- Add `moodboardItems: MoodboardItem[]` to `UserProfile`, plus `addMoodboardItem` and `removeMoodboardItem` actions
-- **`src/pages/Moodboard.tsx`** -- Full rewrite with upload logic, quote dialog, board filtering, and item grid display
+### Modified Files
+- **`src/components/BottomNav.tsx`** -- Add Profile tab (`/profile`, `User` icon) as the 6th nav item
+- **`src/App.tsx`** -- Add `/profile` route wrapped in `ProtectedRoute`
 
-### Files Created
-- **`src/components/moodboard/AddQuoteDialog.tsx`** -- Dialog component for adding text quotes
-- **`src/components/moodboard/MoodboardGrid.tsx`** -- Grid/masonry layout for displaying items
+### Data Flow
+- Display name reads/writes to `profiles` table via Supabase client
+- Avatar uploads to `vision-images/{user_id}/avatar.{ext}`, URL saved to `profiles.avatar_url`
+- Theme selection uses existing `setAesthetic` from `useUserStore`
+- Sign out uses `useAuth().signOut()`, navigates to `/`
+- Reset calls `resetProfile()` and deletes the `user_data` row
 
-### Storage
-Uses the existing `vision-images` bucket with existing RLS policies (user can only write to their own folder).
+### No Database Changes Needed
+Existing `profiles` table already has `display_name`, `avatar_url`, and `bio` columns.
