@@ -136,6 +136,7 @@ interface UserStore {
     markReminderSent: (timeOfDay: TimeOfDay) => void;
   addMoodboardItem: (item: Omit<MoodboardItem, 'id' | 'createdAt'>) => void;
   removeMoodboardItem: (id: string) => void;
+  reorderMoodboardItems: (items: MoodboardItem[]) => void;
 }
 
 const initialProfile: UserProfile = {
@@ -337,6 +338,11 @@ export const useUserStore = create<UserStore>()(
             ...state.profile,
             moodboardItems: (state.profile.moodboardItems || []).filter((item) => item.id !== id),
           },
+        })),
+
+      reorderMoodboardItems: (items) =>
+        set((state) => ({
+          profile: { ...state.profile, moodboardItems: items },
         })),
 
       markReminderSent: (timeOfDay) => {
