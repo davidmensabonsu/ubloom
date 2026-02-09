@@ -1,0 +1,288 @@
+import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { useUserStore } from '@/stores/userStore';
+import { supabase } from '@/integrations/supabase/client';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Check, Camera, LogOut, Trash2, Pencil } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import BottomNav from '@/components/BottomNav';
+
+const aesthetics = [
+  { id: 'blush', name: 'Blush Pink', preview: 'bg-gradient-to-br from-rose-100 to-pink-200', accent: 'bg-rose-300' },
+  { id: 'beige', name: 'Warm Beige', preview: 'bg-gradient-to-br from-amber-50 to-orange-100', accent: 'bg-amber-300' },
+  { id: 'cream', name: 'Soft Cream', preview: 'bg-gradient-to-br from-yellow-50 to-amber-100', accent: 'bg-yellow-200' },
+  { id: 'sage', name: 'Sage Green', preview: 'bg-gradient-to-br from-green-50 to-emerald-100', accent: 'bg-emerald-300' },
+  { id: 'lilac', name: 'Lilac', preview: 'bg-gradient-to-br from-purple-50 to-violet-100', accent: 'bg-violet-300' },
+  { id: 'champagne', name: 'Champagne', preview: 'bg-gradient-to-br from-orange-50 to-amber-100', accent: 'bg-amber-400' },
+  { id: 'mocha', name: 'Mocha', preview: 'bg-gradient-to-br from-stone-100 to-amber-100', accent: 'bg-amber-600' },
+  { id: 'grey', name: 'Soft Grey', preview: 'bg-gradient-to-br from-slate-50 to-gray-100', accent: 'bg-slate-400' },
+];
+
+export default function Profile() {
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+  const { profile, setAesthetic, resetProfile } = useUserStore();
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [displayName, setDisplayName] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
+  // Load profile data from Supabase
+  useEffect(() => {
+    if (!user) return;
+    const loadProfile = async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('display_name, avatar_url')
+        .eq('user_id', user.id)
+        .single();
+      if (data) {
+        setDisplayName(data.display_name || user.email || '');
+        setAvatarUrl(data.avatar_url);
+      } else {
+        setDisplayName(user.email || '');
+      }
+    };
+    loadProfile();
+  }, [user]);
+
+  const handleSaveName = async () => {
+    if (!user) return;
+    setIsSaving(true);
+    const { error } = await supabase
+      .from('profiles')
+      .update({ display_name: displayName })
+      .eq('user_id', user.id);
+    setIsSaving(false);
+    setIsEditingName(false);
+    if (error) {
+      toast({ title: 'Could not update name', variant: 'destructive' });
+    } else {
+      toast({ title: 'Name updated ✨' });
+    }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    setIsUploading(true);
+    const ext = file.name.split('.').pop();
+    const path = `${user.id}/avatar.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('vision-images')
+      .upload(path, file, { upsert: true });
+
+    if (uploadError) {
+      toast({ title: 'Upload failed', variant: 'destructive' });
+      setIsUploading(false);
+      return;
+    }
+
+    const { data: urlData } = supabase.storage
+      .from('vision-images')
+      .getPublicUrl(path);
+
+    const publicUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+
+    await supabase
+      .from('profiles')
+      .update({ avatar_url: publicUrl })
+      .eq('user_id', user.id);
+
+    setAvatarUrl(publicUrl);
+    setIsUploading(false);
+    toast({ title: 'Avatar updated ✨' });
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
+
+  const handleResetData = async () => {
+    if (!user) return;
+    if (!window.confirm('This will erase all your data and reset the app. Are you sure?')) return;
+
+    resetProfile();
+    await supabase.from('user_data').delete().eq('user_id', user.id);
+    toast({ title: 'Data reset complete' });
+    navigate('/');
+  };
+
+  const initials = (displayName || user?.email || '?')
+    .split(/[\s@]/)
+    .map(s => s[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+
+  return (
+    <div className="min-h-screen gradient-background pb-24">
+      {/* Header */}
+      <div className="px-5 pt-12 pb-6 text-center">
+        <motion.h1
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="page-title"
+        >
+          Profile
+        </motion.h1>
+      </div>
+
+      <div className="px-5 space-y-6">
+        {/* Avatar + Name Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="glass-card rounded-3xl p-6 flex flex-col items-center"
+        >
+          {/* Avatar */}
+          <div className="relative mb-4">
+            <Avatar className="w-24 h-24">
+              {avatarUrl ? (
+                <AvatarImage src={avatarUrl} alt="Profile" />
+              ) : null}
+              <AvatarFallback className="text-xl font-medium bg-primary/20 text-primary">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md"
+              disabled={isUploading}
+            >
+              <Camera size={14} />
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleAvatarUpload}
+            />
+          </div>
+
+          {/* Display Name */}
+          {isEditingName ? (
+            <div className="flex items-center gap-2 w-full max-w-xs">
+              <Input
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                className="text-center"
+                autoFocus
+                onKeyDown={(e) => e.key === 'Enter' && handleSaveName()}
+              />
+              <button
+                onClick={handleSaveName}
+                disabled={isSaving}
+                className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0"
+              >
+                <Check size={16} />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsEditingName(true)}
+              className="flex items-center gap-2 group"
+            >
+              <span className="text-xl font-display font-medium text-foreground">
+                {displayName}
+              </span>
+              <Pencil size={14} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+            </button>
+          )}
+
+          {/* Email */}
+          <p className="text-sm text-muted-foreground mt-1">{user?.email}</p>
+        </motion.div>
+
+        {/* Theme Picker */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="glass-card rounded-3xl p-5"
+        >
+          <h2 className="section-title mb-4">Theme</h2>
+          <div className="grid grid-cols-4 gap-3">
+            {aesthetics.map((aesthetic) => (
+              <motion.button
+                key={aesthetic.id}
+                onClick={() => setAesthetic(aesthetic.id)}
+                className={`relative rounded-2xl aspect-square transition-all duration-300 ${
+                  profile.aesthetic === aesthetic.id
+                    ? 'ring-2 ring-primary ring-offset-2 ring-offset-background'
+                    : ''
+                }`}
+                whileTap={{ scale: 0.9 }}
+              >
+                <div className={`absolute inset-0 rounded-2xl ${aesthetic.preview}`} />
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <div className={`w-6 h-6 rounded-full ${aesthetic.accent} shadow-sm`} />
+                </div>
+                {profile.aesthetic === aesthetic.id && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute top-1 right-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center"
+                  >
+                    <Check size={10} className="text-primary-foreground" />
+                  </motion.div>
+                )}
+              </motion.button>
+            ))}
+          </div>
+          <div className="mt-3 text-center">
+            <span className="text-xs text-muted-foreground">
+              {aesthetics.find((a) => a.id === profile.aesthetic)?.name}
+            </span>
+          </div>
+        </motion.div>
+
+        {/* Account Actions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="space-y-3"
+        >
+          <button
+            onClick={handleSignOut}
+            className="w-full glass-card rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98]"
+          >
+            <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+              <LogOut size={18} className="text-muted-foreground" />
+            </div>
+            <span className="font-medium text-foreground">Sign out</span>
+          </button>
+
+          <button
+            onClick={handleResetData}
+            className="w-full glass-card rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98] border border-destructive/20"
+          >
+            <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center">
+              <Trash2 size={18} className="text-destructive" />
+            </div>
+            <div>
+              <span className="font-medium text-destructive">Reset all data</span>
+              <p className="text-xs text-muted-foreground">Erase everything and start fresh</p>
+            </div>
+          </button>
+        </motion.div>
+      </div>
+
+      <BottomNav />
+    </div>
+  );
+}

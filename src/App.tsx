@@ -20,6 +20,7 @@ import Alignment from "./pages/Alignment";
 import Routine from "./pages/Routine";
 import Goals from "./pages/Goals";
 import Moodboard from "./pages/Moodboard";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -65,6 +66,7 @@ const App = () => (
             <Route path="/routine" element={<ProtectedRoute><Routine /></ProtectedRoute>} />
             <Route path="/goals" element={<ProtectedRoute><Goals /></ProtectedRoute>} />
             <Route path="/moodboard" element={<ProtectedRoute><Moodboard /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
