@@ -2,7 +2,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
-import { Check, Sparkles, ImagePlus, X } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { Check, Sparkles, ImagePlus, X, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const dreamCategories = [
   {
@@ -82,9 +85,11 @@ const dreamCategories = [
 export default function DreamLife() {
   const navigate = useNavigate();
   const { updateProfile, profile } = useUserStore();
+  const { user } = useAuth();
   const [currentCategory, setCurrentCategory] = useState(0);
   const [selections, setSelections] = useState<Record<string, string[]>>({});
   const [categoryImages, setCategoryImages] = useState<Record<string, string>>(profile.dreamImages || {});
+  const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const category = dreamCategories[currentCategory];
@@ -109,30 +114,61 @@ export default function DreamLife() {
     return (selections[category.id] || []).includes(statement);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result as string;
-        setCategoryImages({
-          ...categoryImages,
-          [category.id]: base64,
-        });
-      };
-      reader.readAsDataURL(file);
-    }
-    // Reset input so same file can be selected again
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+    if (!file || !user) return;
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${user.id}/${category.id}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('vision-images')
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('vision-images')
+        .getPublicUrl(filePath);
+
+      setCategoryImages({
+        ...categoryImages,
+        [category.id]: publicUrl,
+      });
+    } catch (err) {
+      console.error('Image upload failed:', err);
+      toast.error('Failed to upload image');
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
-  const removeImage = () => {
+  const removeImage = async () => {
+    if (!user) return;
+    const currentUrl = categoryImages[category.id];
+    
+    // Try to delete from storage if it's a storage URL
+    if (currentUrl && currentUrl.includes('vision-images')) {
+      try {
+        const pathMatch = currentUrl.split('vision-images/')[1];
+        if (pathMatch) {
+          await supabase.storage.from('vision-images').remove([pathMatch]);
+        }
+      } catch (err) {
+        console.error('Failed to delete image from storage:', err);
+      }
+    }
+
     const newImages = { ...categoryImages };
     delete newImages[category.id];
     setCategoryImages(newImages);
   };
+
 
   const handleNext = () => {
     if (currentCategory < dreamCategories.length - 1) {
@@ -224,10 +260,11 @@ export default function DreamLife() {
           ) : (
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="w-full mb-4 py-4 rounded-2xl border-2 border-dashed border-primary/30 bg-glow/30 flex items-center justify-center gap-2 text-primary/70 hover:border-primary/50 hover:text-primary transition-colors"
+              disabled={uploading}
+              className="w-full mb-4 py-4 rounded-2xl border-2 border-dashed border-primary/30 bg-glow/30 flex items-center justify-center gap-2 text-primary/70 hover:border-primary/50 hover:text-primary transition-colors disabled:opacity-50"
             >
-              <ImagePlus size={20} />
-              <span className="text-sm font-medium">Add vision image</span>
+              {uploading ? <Loader2 size={20} className="animate-spin" /> : <ImagePlus size={20} />}
+              <span className="text-sm font-medium">{uploading ? 'Uploading...' : 'Add vision image'}</span>
             </button>
           )}
 
