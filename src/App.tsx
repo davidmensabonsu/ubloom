@@ -7,6 +7,7 @@ import { useUserStore } from "@/stores/userStore";
 import { useEffect } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { useCloudSync } from "@/hooks/useCloudSync";
 
 // Pages
 import Welcome from "./pages/Welcome";
@@ -39,6 +40,11 @@ function ThemeManager() {
   return null;
 }
 
+function CloudSync() {
+  useCloudSync();
+  return null;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -47,6 +53,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <ThemeManager />
+          <CloudSync />
           <Routes>
             <Route path="/" element={<Welcome />} />
             <Route path="/auth" element={<Auth />} />
