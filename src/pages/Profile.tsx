@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -6,9 +6,25 @@ import { useUserStore } from '@/stores/userStore';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Check, Camera, LogOut, Trash2, Pencil } from 'lucide-react';
+import { Check, Camera, LogOut, Trash2, Pencil, Flame, BookOpen, Target, Lock, KeyRound, Sparkles, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import ReminderSettings from '@/components/routine/ReminderSettings';
 import BottomNav from '@/components/BottomNav';
 
 const aesthetics = [
@@ -35,6 +51,13 @@ export default function Profile() {
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
+  // Change password state
+  const [passwordOpen, setPasswordOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+
   // Load profile data from Supabase
   useEffect(() => {
     if (!user) return;
@@ -53,6 +76,49 @@ export default function Profile() {
     };
     loadProfile();
   }, [user]);
+
+  // Journey stats
+  const stats = useMemo(() => {
+    const journalCount = profile.journalEntries?.length || 0;
+    const habitsCompleted = (profile.habitCompletions || []).filter(c => c.completed).length;
+
+    // Days on app: from earliest journal entry or mood entry
+    const dates: string[] = [
+      ...(profile.journalEntries || []).map(e => e.date),
+      ...(profile.moodHistory || []).map(e => e.date),
+    ];
+    let daysOnApp = 0;
+    if (dates.length > 0) {
+      const earliest = new Date(Math.min(...dates.map(d => new Date(d).getTime())));
+      daysOnApp = Math.max(1, Math.ceil((Date.now() - earliest.getTime()) / (1000 * 60 * 60 * 24)));
+    }
+
+    // Current streak: consecutive days (most recent first) with ≥50% habit completion
+    let streak = 0;
+    if ((profile.coreHabits || []).length > 0) {
+      const totalHabits = profile.coreHabits.length;
+      const completionsByDate: Record<string, number> = {};
+      for (const c of profile.habitCompletions || []) {
+        if (c.completed) {
+          completionsByDate[c.date] = (completionsByDate[c.date] || 0) + 1;
+        }
+      }
+      const today = new Date();
+      for (let i = 0; i < 365; i++) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const key = d.toISOString().split('T')[0];
+        const done = completionsByDate[key] || 0;
+        if (done / totalHabits >= 0.5) {
+          streak++;
+        } else {
+          break;
+        }
+      }
+    }
+
+    return { journalCount, habitsCompleted, daysOnApp, streak };
+  }, [profile.journalEntries, profile.moodHistory, profile.habitCompletions, profile.coreHabits]);
 
   const handleSaveName = async () => {
     if (!user) return;
@@ -104,6 +170,28 @@ export default function Profile() {
     toast({ title: 'Avatar updated ✨' });
   };
 
+  const handleChangePassword = async () => {
+    if (newPassword.length < 6) {
+      toast({ title: 'Password must be at least 6 characters', variant: 'destructive' });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast({ title: 'Passwords do not match', variant: 'destructive' });
+      return;
+    }
+    setIsChangingPassword(true);
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    setIsChangingPassword(false);
+    if (error) {
+      toast({ title: 'Could not update password', description: error.message, variant: 'destructive' });
+    } else {
+      toast({ title: 'Password updated ✨' });
+      setNewPassword('');
+      setConfirmPassword('');
+      setPasswordOpen(false);
+    }
+  };
+
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
@@ -111,8 +199,6 @@ export default function Profile() {
 
   const handleResetData = async () => {
     if (!user) return;
-    if (!window.confirm('This will erase all your data and reset the app. Are you sure?')) return;
-
     resetProfile();
     await supabase.from('user_data').delete().eq('user_id', user.id);
     toast({ title: 'Data reset complete' });
@@ -125,6 +211,8 @@ export default function Profile() {
     .slice(0, 2)
     .join('')
     .toUpperCase();
+
+  const hasIdentity = profile.identityStatement || (profile.dreamSelfFeels && profile.dreamSelfFeels.length > 0);
 
   return (
     <div className="min-h-screen gradient-background pb-24">
@@ -147,7 +235,6 @@ export default function Profile() {
           transition={{ delay: 0.1 }}
           className="glass-card rounded-3xl p-6 flex flex-col items-center"
         >
-          {/* Avatar */}
           <div className="relative mb-4">
             <Avatar className="w-24 h-24">
               {avatarUrl ? (
@@ -173,7 +260,6 @@ export default function Profile() {
             />
           </div>
 
-          {/* Display Name */}
           {isEditingName ? (
             <div className="flex items-center gap-2 w-full max-w-xs">
               <Input
@@ -203,15 +289,70 @@ export default function Profile() {
             </button>
           )}
 
-          {/* Email */}
           <p className="text-sm text-muted-foreground mt-1">{user?.email}</p>
+        </motion.div>
+
+        {/* Identity Statement */}
+        {hasIdentity && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="glass-card rounded-3xl p-5"
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <Sparkles size={16} className="text-primary" />
+              <h2 className="section-title">Your Identity</h2>
+            </div>
+            {profile.identityStatement && (
+              <p className="text-sm text-foreground/90 italic leading-relaxed">
+                "{profile.identityStatement}"
+              </p>
+            )}
+            {profile.dreamSelfFeels && profile.dreamSelfFeels.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-3">
+                {profile.dreamSelfFeels.map((feel) => (
+                  <span
+                    key={feel}
+                    className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium"
+                  >
+                    {feel}
+                  </span>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
+
+        {/* Journey Stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="glass-card rounded-3xl p-5"
+        >
+          <h2 className="section-title mb-4">Your Journey</h2>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { label: 'Days on app', value: stats.daysOnApp || '—', icon: Target, color: 'text-primary' },
+              { label: 'Journal entries', value: stats.journalCount, icon: BookOpen, color: 'text-primary' },
+              { label: 'Habits done', value: stats.habitsCompleted, icon: Check, color: 'text-primary' },
+              { label: 'Current streak', value: stats.streak ? `${stats.streak}🔥` : '—', icon: Flame, color: 'text-primary' },
+            ].map(({ label, value, icon: Icon, color }) => (
+              <div key={label} className="bg-muted/50 rounded-2xl p-4 text-center">
+                <Icon size={18} className={`${color} mx-auto mb-1`} />
+                <p className="text-lg font-semibold text-foreground">{value}</p>
+                <p className="text-xs text-muted-foreground">{label}</p>
+              </div>
+            ))}
+          </div>
         </motion.div>
 
         {/* Theme Picker */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.25 }}
           className="glass-card rounded-3xl p-5"
         >
           <h2 className="section-title mb-4">Theme</h2>
@@ -250,11 +391,72 @@ export default function Profile() {
           </div>
         </motion.div>
 
-        {/* Account Actions */}
+        {/* Reminder Settings */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
+        >
+          <ReminderSettings />
+        </motion.div>
+
+        {/* Change Password */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+        >
+          <Collapsible open={passwordOpen} onOpenChange={setPasswordOpen}>
+            <CollapsibleTrigger asChild>
+              <button className="w-full glass-card rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98]">
+                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                  <Lock size={18} className="text-muted-foreground" />
+                </div>
+                <span className="font-medium text-foreground">Change password</span>
+                <KeyRound size={14} className="ml-auto text-muted-foreground" />
+              </button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="glass-card rounded-2xl p-4 mt-2 space-y-3">
+                <div className="relative">
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="New password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Confirm password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleChangePassword()}
+                />
+                <button
+                  onClick={handleChangePassword}
+                  disabled={isChangingPassword || !newPassword}
+                  className="w-full rounded-xl bg-primary text-primary-foreground py-2.5 text-sm font-medium disabled:opacity-50 transition-all active:scale-[0.98]"
+                >
+                  {isChangingPassword ? 'Updating…' : 'Update password'}
+                </button>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </motion.div>
+
+        {/* Account Actions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
           className="space-y-3"
         >
           <button
@@ -267,18 +469,36 @@ export default function Profile() {
             <span className="font-medium text-foreground">Sign out</span>
           </button>
 
-          <button
-            onClick={handleResetData}
-            className="w-full glass-card rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98] border border-destructive/20"
-          >
-            <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center">
-              <Trash2 size={18} className="text-destructive" />
-            </div>
-            <div>
-              <span className="font-medium text-destructive">Reset all data</span>
-              <p className="text-xs text-muted-foreground">Erase everything and start fresh</p>
-            </div>
-          </button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button className="w-full glass-card rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98] border border-destructive/20">
+                <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center">
+                  <Trash2 size={18} className="text-destructive" />
+                </div>
+                <div>
+                  <span className="font-medium text-destructive">Reset all data</span>
+                  <p className="text-xs text-muted-foreground">Erase everything and start fresh</p>
+                </div>
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="rounded-3xl">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Reset all data?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently erase all your journal entries, habits, goals, moodboard, and settings. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleResetData}
+                  className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Yes, reset everything
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </motion.div>
       </div>
 
