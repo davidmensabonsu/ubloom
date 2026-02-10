@@ -353,42 +353,52 @@ export default function Profile() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
-          className="glass-card rounded-3xl p-5"
         >
-          <h2 className="section-title mb-4">Theme</h2>
-          <div className="grid grid-cols-4 gap-3">
-            {aesthetics.map((aesthetic) => (
-              <motion.button
-                key={aesthetic.id}
-                onClick={() => setAesthetic(aesthetic.id)}
-                className={`relative rounded-2xl aspect-square transition-all duration-300 ${
-                  profile.aesthetic === aesthetic.id
-                    ? 'ring-2 ring-primary ring-offset-2 ring-offset-background'
-                    : ''
-                }`}
-                whileTap={{ scale: 0.9 }}
-              >
-                <div className={`absolute inset-0 rounded-2xl ${aesthetic.preview}`} />
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <div className={`w-6 h-6 rounded-full ${aesthetic.accent} shadow-sm`} />
+          <Collapsible>
+            <CollapsibleTrigger asChild>
+              <button className="w-full glass-card rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98]">
+                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                  <div className={`w-5 h-5 rounded-full ${aesthetics.find(a => a.id === profile.aesthetic)?.accent || 'bg-primary'}`} />
                 </div>
-                {profile.aesthetic === aesthetic.id && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute top-1 right-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center"
-                  >
-                    <Check size={10} className="text-primary-foreground" />
-                  </motion.div>
-                )}
-              </motion.button>
-            ))}
-          </div>
-          <div className="mt-3 text-center">
-            <span className="text-xs text-muted-foreground">
-              {aesthetics.find((a) => a.id === profile.aesthetic)?.name}
-            </span>
-          </div>
+                <div>
+                  <span className="font-medium text-foreground">Theme</span>
+                  <p className="text-xs text-muted-foreground">{aesthetics.find(a => a.id === profile.aesthetic)?.name}</p>
+                </div>
+              </button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="glass-card rounded-2xl p-4 mt-2">
+                <div className="grid grid-cols-4 gap-3">
+                  {aesthetics.map((aesthetic) => (
+                    <motion.button
+                      key={aesthetic.id}
+                      onClick={() => setAesthetic(aesthetic.id)}
+                      className={`relative rounded-2xl aspect-square transition-all duration-300 ${
+                        profile.aesthetic === aesthetic.id
+                          ? 'ring-2 ring-primary ring-offset-2 ring-offset-background'
+                          : ''
+                      }`}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      <div className={`absolute inset-0 rounded-2xl ${aesthetic.preview}`} />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <div className={`w-6 h-6 rounded-full ${aesthetic.accent} shadow-sm`} />
+                      </div>
+                      {profile.aesthetic === aesthetic.id && (
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="absolute top-1 right-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center"
+                        >
+                          <Check size={10} className="text-primary-foreground" />
+                        </motion.div>
+                      )}
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
         </motion.div>
 
         {/* Reminder Settings */}
