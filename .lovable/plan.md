@@ -1,43 +1,44 @@
 
-# Profile Page (Bottom Nav)
+
+# Profile Page Enhancements
 
 ## Overview
-Add a "Profile" page as a full tab in the bottom navigation bar, alongside Home, Align, Routine, Goals, and Dream. No changes to the Home page.
+Add four new sections to the existing Profile page: Identity Statement display, Journey Stats, Reminder Settings, Change Password, and a styled confirmation dialog for the reset action.
 
-## Navigation Change
-- Replace one nav slot or add a 6th tab in `BottomNav.tsx`
-- New tab: **Profile** with a `User` icon, route `/profile`
-- Position: last item (rightmost)
+## New Sections (in order on page)
 
-## Profile Page Sections
+### 1. Identity Statement
+A read-only card showing the user's identity statement and dream-self feelings from onboarding. Displayed between the avatar/name section and the theme picker. Only shown if the user has completed onboarding and has data to display.
 
-### Account Info
-- Avatar display/upload (using existing `vision-images` storage bucket, stored in `profiles.avatar_url`)
-- Editable display name (synced to `profiles` table)
-- Email (read-only, from auth)
+### 2. Journey Stats
+A card with key metrics displayed in a clean grid:
+- **Days on app** (calculated from the earliest journal or mood entry date)
+- **Journal entries** (count from `profile.journalEntries`)
+- **Habits completed** (count from `profile.habitCompletions` where `completed === true`)
+- **Current streak** (calculated from `habitCompletions` data, days with at least 50% completion)
 
-### App Preferences
-- Theme/aesthetic picker reusing the aesthetic options from `ChooseAesthetic.tsx` (extracted into a shared constant)
+### 3. Reminder Settings
+Embed the existing `ReminderSettings` component directly into the Profile page. This component already handles toggling notifications on/off and setting custom times for morning, midday, and evening.
 
-### Account Actions
-- Sign out button
-- "Reset data" danger zone (clears Zustand store + `user_data` row)
+### 4. Change Password
+A collapsible section with two password fields (new password + confirm). Uses the existing `supabase.auth.updateUser({ password })` method. Shows success/error feedback via toast.
+
+### 5. Styled Reset Confirmation
+Replace the native `window.confirm` with a Radix AlertDialog for the "Reset all data" action, matching the app's visual style.
 
 ## Technical Details
 
-### New Files
-- **`src/pages/Profile.tsx`** -- Settings page with avatar upload, display name editing, theme picker, sign out, and reset data
+### Files Modified
+- **`src/pages/Profile.tsx`** -- Add all new sections:
+  - Import `ReminderSettings` component
+  - Import `AlertDialog` components from `@/components/ui/alert-dialog`
+  - Add identity statement card (reads `profile.identityStatement` and `profile.dreamSelfFeels`)
+  - Add journey stats card (computes counts from store data)
+  - Add `<ReminderSettings />` between theme and account actions
+  - Add change password section with local state for fields and `supabase.auth.updateUser`
+  - Replace `window.confirm` with `AlertDialog` for reset data
+  - Add new icons: `Flame`, `BookOpen`, `Target`, `Lock`, `KeyRound` from lucide-react
 
-### Modified Files
-- **`src/components/BottomNav.tsx`** -- Add Profile tab (`/profile`, `User` icon) as the 6th nav item
-- **`src/App.tsx`** -- Add `/profile` route wrapped in `ProtectedRoute`
+### No New Files or Database Changes
+All data is already available in the Zustand store or via existing auth APIs.
 
-### Data Flow
-- Display name reads/writes to `profiles` table via Supabase client
-- Avatar uploads to `vision-images/{user_id}/avatar.{ext}`, URL saved to `profiles.avatar_url`
-- Theme selection uses existing `setAesthetic` from `useUserStore`
-- Sign out uses `useAuth().signOut()`, navigates to `/`
-- Reset calls `resetProfile()` and deletes the `user_data` row
-
-### No Database Changes Needed
-Existing `profiles` table already has `display_name`, `avatar_url`, and `bio` columns.
