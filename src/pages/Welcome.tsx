@@ -2,7 +2,8 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 import { useAuth } from '@/hooks/useAuth';
-import { Sparkles, Heart, ArrowRight } from 'lucide-react';
+import { Heart, ArrowRight } from 'lucide-react';
+import logo from '@/assets/logo.png';
 
 export default function Welcome() {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ export default function Welcome() {
       {/* Logo / Brand */}
       <div className="text-center mb-12">
         <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-glow flex items-center justify-center mx-auto mb-6">
-          <Sparkles size={32} className="text-primary" />
+          <img src={logo} alt="ubloom logo" className="w-12 h-12" />
         </div>
         <h1 className="text-5xl font-display font-light tracking-tight text-foreground mb-2">
           ubloom
