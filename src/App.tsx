@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useUserStore } from "@/stores/userStore";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useCloudSync } from "@/hooks/useCloudSync";
@@ -48,24 +48,35 @@ function CloudSync() {
   return null;
 }
 
+const routeOrder = ['/', '/auth', '/onboarding', '/dream-life', '/choose-aesthetic', '/home', '/alignment', '/routine', '/goals', '/moodboard', '/profile'];
+
 function AnimatedRoutes() {
   const location = useLocation();
+  const prevPath = useRef(location.pathname);
+  
+  const prevIndex = routeOrder.indexOf(prevPath.current);
+  const currIndex = routeOrder.indexOf(location.pathname);
+  const direction = currIndex >= prevIndex ? 1 : -1;
+  
+  useEffect(() => {
+    prevPath.current = location.pathname;
+  }, [location.pathname]);
   
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="wait" initial={false}>
       <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<PageTransition><Welcome /></PageTransition>} />
-        <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
-        <Route path="/onboarding" element={<ProtectedRoute><PageTransition><Onboarding /></PageTransition></ProtectedRoute>} />
-        <Route path="/dream-life" element={<ProtectedRoute><PageTransition><DreamLife /></PageTransition></ProtectedRoute>} />
-        <Route path="/choose-aesthetic" element={<ProtectedRoute><PageTransition><ChooseAesthetic /></PageTransition></ProtectedRoute>} />
-        <Route path="/home" element={<ProtectedRoute><PageTransition><Home /></PageTransition></ProtectedRoute>} />
-        <Route path="/alignment" element={<ProtectedRoute><PageTransition><Alignment /></PageTransition></ProtectedRoute>} />
-        <Route path="/routine" element={<ProtectedRoute><PageTransition><Routine /></PageTransition></ProtectedRoute>} />
-        <Route path="/goals" element={<ProtectedRoute><PageTransition><Goals /></PageTransition></ProtectedRoute>} />
-        <Route path="/moodboard" element={<ProtectedRoute><PageTransition><Moodboard /></PageTransition></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><PageTransition><Profile /></PageTransition></ProtectedRoute>} />
-        <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+        <Route path="/" element={<PageTransition direction={direction}><Welcome /></PageTransition>} />
+        <Route path="/auth" element={<PageTransition direction={direction}><Auth /></PageTransition>} />
+        <Route path="/onboarding" element={<ProtectedRoute><PageTransition direction={direction}><Onboarding /></PageTransition></ProtectedRoute>} />
+        <Route path="/dream-life" element={<ProtectedRoute><PageTransition direction={direction}><DreamLife /></PageTransition></ProtectedRoute>} />
+        <Route path="/choose-aesthetic" element={<ProtectedRoute><PageTransition direction={direction}><ChooseAesthetic /></PageTransition></ProtectedRoute>} />
+        <Route path="/home" element={<ProtectedRoute><PageTransition direction={direction}><Home /></PageTransition></ProtectedRoute>} />
+        <Route path="/alignment" element={<ProtectedRoute><PageTransition direction={direction}><Alignment /></PageTransition></ProtectedRoute>} />
+        <Route path="/routine" element={<ProtectedRoute><PageTransition direction={direction}><Routine /></PageTransition></ProtectedRoute>} />
+        <Route path="/goals" element={<ProtectedRoute><PageTransition direction={direction}><Goals /></PageTransition></ProtectedRoute>} />
+        <Route path="/moodboard" element={<ProtectedRoute><PageTransition direction={direction}><Moodboard /></PageTransition></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><PageTransition direction={direction}><Profile /></PageTransition></ProtectedRoute>} />
+        <Route path="*" element={<PageTransition direction={direction}><NotFound /></PageTransition>} />
       </Routes>
     </AnimatePresence>
   );
