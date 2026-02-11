@@ -1,14 +1,15 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Compass, Calendar, Target, Image, User } from 'lucide-react';
+import { Compass, Calendar, Target, Image, User } from 'lucide-react';
 import { motion } from 'framer-motion';
+import logo from '@/assets/logo.png';
 
 const navItems = [
-  { path: '/home', icon: Home, label: 'Home' },
-  { path: '/alignment', icon: Compass, label: 'Align' },
-  { path: '/routine', icon: Calendar, label: 'Routine' },
-  { path: '/goals', icon: Target, label: 'Goals' },
-  { path: '/moodboard', icon: Image, label: 'Dream' },
-  { path: '/profile', icon: User, label: 'Profile' },
+  { path: '/home', icon: null, label: 'Home', isLogo: true },
+  { path: '/alignment', icon: Compass, label: 'Align', isLogo: false },
+  { path: '/routine', icon: Calendar, label: 'Routine', isLogo: false },
+  { path: '/goals', icon: Target, label: 'Goals', isLogo: false },
+  { path: '/moodboard', icon: Image, label: 'Dream', isLogo: false },
+  { path: '/profile', icon: User, label: 'Profile', isLogo: false },
 ];
 
 export default function BottomNav() {
@@ -32,7 +33,11 @@ export default function BottomNav() {
                 animate={isActive ? { scale: 1.1 } : { scale: 1 }}
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
               >
-                <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
+                {item.isLogo ? (
+                  <img src={logo} alt="Home" className="h-[22px] w-[22px] object-contain" />
+                ) : (
+                  Icon && <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
+                )}
               </motion.div>
               <span className="text-xs font-medium">{item.label}</span>
               {isActive && (
