@@ -9,10 +9,10 @@ interface PageTransitionProps {
 export default function PageTransition({ children, direction = 1 }: PageTransitionProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, x: direction * 30 }}
+      initial={{ opacity: 0, x: direction * 20 }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: direction * -30 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 28, mass: 0.8 }}
+      exit={{ opacity: 0, x: direction * -20 }}
+      transition={{ type: 'spring', stiffness: 500, damping: 35, mass: 0.6 }}
       className="min-h-screen"
     >
       {children}
