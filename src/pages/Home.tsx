@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useUserStore } from '@/stores/userStore';
 import { Sparkles, Heart, Sun, Moon, Cloud } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
+import logo from '@/assets/logo.png';
 
 const timeGreetings = () => {
   const hour = new Date().getHours();
@@ -36,14 +37,24 @@ export default function Home() {
     <div className="min-h-screen gradient-background pb-24">
       {/* Header */}
       <div className="px-5 pt-12 pb-6">
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-2 text-muted-foreground mb-1"
-        >
-          <GreetingIcon size={18} />
-          <span className="text-sm">{todayFormatted}</span>
-        </motion.div>
+        <div className="flex items-center justify-between mb-3">
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-2 text-muted-foreground"
+          >
+            <GreetingIcon size={18} />
+            <span className="text-sm">{todayFormatted}</span>
+          </motion.div>
+          <motion.img
+            src={logo}
+            alt="ubloom"
+            className="h-8 w-8 object-contain"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 }}
+          />
+        </div>
         <motion.h1
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
