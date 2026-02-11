@@ -3,14 +3,15 @@ import { ReactNode } from 'react';
 
 interface PageTransitionProps {
   children: ReactNode;
+  direction?: number; // 1 = forward, -1 = back
 }
 
-export default function PageTransition({ children }: PageTransitionProps) {
+export default function PageTransition({ children, direction = 1 }: PageTransitionProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
+      initial={{ opacity: 0, x: direction * 60 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: direction * -60 }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
       className="min-h-screen"
     >
