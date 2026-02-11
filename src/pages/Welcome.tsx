@@ -19,56 +19,33 @@ export default function Welcome() {
   };
 
   return (
-    <div className="min-h-screen gradient-background flex flex-col items-center justify-center px-8 relative overflow-hidden">
-      {/* Decorative elements */}
-      <div className="absolute top-20 left-10 w-24 h-24 rounded-full bg-primary/10 blur-3xl animate-pulse" />
-      <div className="absolute bottom-32 right-8 w-32 h-32 rounded-full bg-glow-strong/20 blur-3xl animate-pulse" />
-
-      {/* Logo / Brand */}
-      <div className="text-center mb-12">
-        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-glow flex items-center justify-center mx-auto mb-6">
-          <img src={logo} alt="ubloom logo" className="w-12 h-12" />
-        </div>
-        <h1 className="text-5xl font-display font-light tracking-tight text-foreground mb-2">
-          ubloom
-        </h1>
-        <p className="text-muted-foreground text-lg font-light">
-          Become who you are meant to be
-        </p>
-      </div>
-
-      {/* Tagline */}
-      <div className="text-center mb-12 max-w-sm">
-        <p className="font-display text-xl leading-relaxed text-foreground/80">
-          A gentle space for reflection, alignment, and becoming your most radiant self
-        </p>
-      </div>
-
-      {/* Features preview */}
-      <div className="flex gap-6 mb-12">
-        {['✨ Reflect', '🌸 Align', '💫 Bloom'].map((feature) => (
-          <span key={feature} className="text-sm text-muted-foreground">
-            {feature}
-          </span>
-        ))}
-      </div>
+    <div
+      className="min-h-screen flex flex-col items-center justify-center px-8"
+      style={{ backgroundColor: '#faf5f3' }}
+    >
+      {/* Flower logo */}
+      <motion.img
+        src={logo}
+        alt="ubloom"
+        className="w-32 h-32 object-contain mb-16"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+      />
 
       {/* CTA Button */}
       <motion.button
         onClick={handleStart}
         className="soft-button flex items-center gap-2 text-lg px-8 py-4"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
         whileTap={{ scale: 0.98 }}
-        whileHover={{ scale: 1.02 }}
       >
         <Heart size={20} className="fill-current" />
         <span>{profile.onboardingComplete ? 'Enter my space' : 'Begin your journey'}</span>
         <ArrowRight size={18} />
       </motion.button>
-
-      {/* Footer note */}
-      <p className="absolute bottom-8 text-xs text-muted-foreground">
-        Made with love for women who dare to bloom
-      </p>
     </div>
   );
 }
