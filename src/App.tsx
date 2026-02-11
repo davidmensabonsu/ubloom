@@ -2,12 +2,14 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useUserStore } from "@/stores/userStore";
 import { useEffect } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useCloudSync } from "@/hooks/useCloudSync";
+import { AnimatePresence } from "framer-motion";
+import PageTransition from "@/components/PageTransition";
 
 // Pages
 import Welcome from "./pages/Welcome";
@@ -46,6 +48,29 @@ function CloudSync() {
   return null;
 }
 
+function AnimatedRoutes() {
+  const location = useLocation();
+  
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<PageTransition><Welcome /></PageTransition>} />
+        <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+        <Route path="/onboarding" element={<ProtectedRoute><PageTransition><Onboarding /></PageTransition></ProtectedRoute>} />
+        <Route path="/dream-life" element={<ProtectedRoute><PageTransition><DreamLife /></PageTransition></ProtectedRoute>} />
+        <Route path="/choose-aesthetic" element={<ProtectedRoute><PageTransition><ChooseAesthetic /></PageTransition></ProtectedRoute>} />
+        <Route path="/home" element={<ProtectedRoute><PageTransition><Home /></PageTransition></ProtectedRoute>} />
+        <Route path="/alignment" element={<ProtectedRoute><PageTransition><Alignment /></PageTransition></ProtectedRoute>} />
+        <Route path="/routine" element={<ProtectedRoute><PageTransition><Routine /></PageTransition></ProtectedRoute>} />
+        <Route path="/goals" element={<ProtectedRoute><PageTransition><Goals /></PageTransition></ProtectedRoute>} />
+        <Route path="/moodboard" element={<ProtectedRoute><PageTransition><Moodboard /></PageTransition></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><PageTransition><Profile /></PageTransition></ProtectedRoute>} />
+        <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+      </Routes>
+    </AnimatePresence>
+  );
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -55,20 +80,7 @@ const App = () => (
         <AuthProvider>
           <ThemeManager />
           <CloudSync />
-          <Routes>
-            <Route path="/" element={<Welcome />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
-            <Route path="/dream-life" element={<ProtectedRoute><DreamLife /></ProtectedRoute>} />
-            <Route path="/choose-aesthetic" element={<ProtectedRoute><ChooseAesthetic /></ProtectedRoute>} />
-            <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-            <Route path="/alignment" element={<ProtectedRoute><Alignment /></ProtectedRoute>} />
-            <Route path="/routine" element={<ProtectedRoute><Routine /></ProtectedRoute>} />
-            <Route path="/goals" element={<ProtectedRoute><Goals /></ProtectedRoute>} />
-            <Route path="/moodboard" element={<ProtectedRoute><Moodboard /></ProtectedRoute>} />
-            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AnimatedRoutes />
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
