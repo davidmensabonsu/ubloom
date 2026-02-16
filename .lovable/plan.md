@@ -1,27 +1,44 @@
 
-## Remove Re-Setup Option and Improve First-Time Setup Visibility
 
-### Changes
+## Custom Tasks Section
 
-**1. Remove the "edit habits" gear icon for users who have completed setup**
-Once a user has saved their core habits, the Settings2 (gear) icon next to "Daily Habits" will be removed. This prevents re-entering the full setup flow after initial configuration. Users can still add one-off tasks via the `+` buttons.
+Add a new "My Tasks" section below Core Daily Habits on the Routine page, allowing users to create custom tasks with three recurrence types.
 
-**2. Make the first-time setup prompt more prominent**
-For users who haven't set their core habits yet, replace the current small card with a larger, more visually engaging call-to-action featuring the Sparkles icon, a descriptive subtitle, and a prominent button — making it unmissable.
+### Task Types
 
-### Technical details
+1. **Daily** -- repeats every single day
+2. **Weekly** -- repeats on selected days of the week (e.g., Mon, Wed, Fri)
+3. **One-off** -- scheduled for a specific day (today, tomorrow, or any day of the current week)
 
-| File | Change |
+### How It Works
+
+- A new "My Tasks" section appears below the existing "Daily Habits" section
+- Tapping "Add Task" opens a bottom sheet / dialog with:
+  - Task title input
+  - Time of day picker (Morning / Midday / Evening)
+  - Recurrence type selector (Daily, Weekly, One-off)
+  - If Weekly: day-of-week multi-select chips (Mon-Sun)
+  - If One-off: day picker showing today through end of current week
+- Tasks appear in their respective time-of-day groups, interleaved or in a separate section below core habits
+- Tasks can be checked off, edited, and deleted
+- One-off tasks auto-hide after their date passes
+- The FAB (+) button will open this new Add Task dialog instead of the current inline input
+
+### Technical Details
+
+| Area | Change |
 |------|--------|
-| `src/components/routine/CoreHabitsSection.tsx` | Remove the `onEditHabits` prop entirely. Remove the Settings2 gear button from the header (lines 149-154). Replace the empty-state card (lines 119-137) with a larger, more eye-catching CTA using the Sparkles icon and descriptive text. |
-| `src/pages/Routine.tsx` | Remove the `editingHabits` state and the `onEditHabits` callback. Remove the `RoutineSetup` import and the conditional render for `editingHabits`. Keep the first-time `showSetup` flow as-is (triggered by `!profile.routineSetupComplete`). |
-| `src/components/routine/RoutineSetup.tsx` | No changes needed — it still serves the initial setup flow. |
+| **`src/stores/userStore.ts`** | Add a new `CustomTask` interface with fields: `id`, `title`, `timeOfDay`, `icon` (emoji), `recurrence` (`'daily' | 'weekly' | 'oneoff'`), `weeklyDays` (optional `number[]` for 0=Sun..6=Sat), `scheduledDate` (optional `string` for one-off), `createdAt`. Add `customTasks: CustomTask[]` to `UserProfile`. Add store actions: `addCustomTask`, `removeCustomTask`, `toggleCustomTaskCompletion`, `isCustomTaskCompletedToday`. Reuse the existing `habitCompletions` array (with task IDs prefixed `custom-`) to track daily completion state. |
+| **`src/components/routine/AddTaskDialog.tsx`** | New component. A Drawer (vaul) containing the task creation form: title input, time-of-day radio group, recurrence type selector, conditional day pickers. Uses existing UI primitives (Input, RadioGroup, Button, Drawer). |
+| **`src/components/routine/CustomTasksSection.tsx`** | New component. Renders custom tasks grouped by time of day, filtered to only show tasks relevant to today (daily tasks always show, weekly tasks on matching days, one-off tasks on their scheduled date). Includes check-off, edit mode with delete, similar styling to CoreHabitsSection. |
+| **`src/pages/Routine.tsx`** | Import and render `CustomTasksSection` below `CoreHabitsSection`. Update FAB to open the new `AddTaskDialog` instead of dispatching `open-add-task`. |
+| **`src/components/routine/CoreHabitsSection.tsx`** | Remove the inline "add task" input and the old `open-add-task` event listener since the FAB now opens the new dialog. Keep the existing one-off `routineTasks` rendering for backward compatibility. |
 
-The empty-state CTA will look something like:
-- A Sparkles icon with animated entrance
-- Heading: "Set Up Your Daily Habits"
-- Subtitle: "Choose the habits that matter most to you. They'll appear here every day."
-- A prominent "Choose My Habits" button that navigates to the setup flow via a custom event or callback
-- The callback will set `showSetup` to true in `Routine.tsx`
+### Visibility Logic
 
-Since `onEditHabits` is being removed from `CoreHabitsSection`, the empty-state button needs a way to trigger the setup. This will be done by dispatching a custom event (`open-habit-setup`) that `Routine.tsx` listens for to set `showSetup = true`.
+A custom task shows on a given day if:
+- **Daily**: always visible
+- **Weekly**: `new Date().getDay()` is in `weeklyDays`
+- **One-off**: `scheduledDate === today` (formatted as `yyyy-MM-dd`)
+
+Completion tracking reuses the existing `habitCompletions` array with a `custom-` prefix on IDs to distinguish from core habits.
