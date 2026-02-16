@@ -145,6 +145,8 @@ interface UserStore {
   isHabitCompletedToday: (habitId: string) => boolean;
   completeRoutineSetup: () => void;
   skipRoutineSetup: () => void;
+  removeHabit: (habitId: string) => void;
+  reorderHabit: (habitId: string, direction: 'up' | 'down') => void;
    updateReminderSettings: (settings: Partial<ReminderSettings>) => void;
     markReminderSent: (timeOfDay: TimeOfDay) => void;
   addMoodboardItem: (item: Omit<MoodboardItem, 'id' | 'createdAt'>) => void;
@@ -339,6 +341,32 @@ export const useUserStore = create<UserStore>()(
           };
         }),
  
+      removeHabit: (habitId) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            coreHabits: state.profile.coreHabits.filter((h) => h.id !== habitId),
+          },
+        })),
+
+      reorderHabit: (habitId, direction) =>
+        set((state) => {
+          const habits = [...state.profile.coreHabits];
+          const idx = habits.findIndex((h) => h.id === habitId);
+          if (idx === -1) return state;
+          const habit = habits[idx];
+          // Find habits in the same timeOfDay section
+          const sectionHabits = habits.filter((h) => h.timeOfDay === habit.timeOfDay);
+          const sectionIdx = sectionHabits.findIndex((h) => h.id === habitId);
+          const swapIdx = direction === 'up' ? sectionIdx - 1 : sectionIdx + 1;
+          if (swapIdx < 0 || swapIdx >= sectionHabits.length) return state;
+          // Find the global indices and swap
+          const globalIdx = habits.indexOf(sectionHabits[sectionIdx]);
+          const globalSwapIdx = habits.indexOf(sectionHabits[swapIdx]);
+          [habits[globalIdx], habits[globalSwapIdx]] = [habits[globalSwapIdx], habits[globalIdx]];
+          return { profile: { ...state.profile, coreHabits: habits } };
+        }),
+
       updateReminderSettings: (settings) =>
         set((state) => {
           const current = state.profile.reminderSettings ?? initialProfile.reminderSettings;
