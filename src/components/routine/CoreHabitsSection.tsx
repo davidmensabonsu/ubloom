@@ -142,7 +142,7 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
         const completedCount = getCompletedCount(time);
         const totalCount = getTotalCount(time);
 
-        if (habits.length === 0 && tasks.length === 0) return null;
+        const isEmpty = habits.length === 0 && tasks.length === 0;
 
         return (
           <motion.div
