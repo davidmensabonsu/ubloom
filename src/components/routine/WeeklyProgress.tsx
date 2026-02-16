@@ -86,18 +86,18 @@ export default function WeeklyProgress() {
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 bg-primary/10 px-3 py-2 rounded-2xl">
-            <Flame size={18} className="text-primary" />
+            <Flame size={18} strokeWidth={2.5} className="text-primary" />
             <div>
-              <p className="text-xs text-muted-foreground">Streak</p>
+              <p className="text-xs text-muted-foreground font-medium">Streak</p>
               <p className="font-semibold text-lg leading-none">
                 {streak} {streak === 1 ? 'day' : 'days'}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-2xl">
-            <TrendingUp size={18} className="text-muted-foreground" />
+            <TrendingUp size={18} strokeWidth={2.5} className="text-muted-foreground" />
             <div>
-              <p className="text-xs text-muted-foreground">Weekly avg</p>
+              <p className="text-xs text-muted-foreground font-medium">Weekly avg</p>
               <p className="font-semibold text-lg leading-none">{weeklyAverage}%</p>
             </div>
           </div>

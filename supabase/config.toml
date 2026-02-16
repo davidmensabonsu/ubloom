@@ -2,3 +2,6 @@ project_id = "dgyynvfzoepjhcpjpdbs"
 
 [functions.generate-home-messages]
 verify_jwt = false
+
+[functions.generate-habit-icon]
+verify_jwt = false

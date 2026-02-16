@@ -8,6 +8,7 @@ export interface CoreHabit {
   title: string;
   timeOfDay: TimeOfDay;
   icon?: string;
+  iconImage?: string;
 }
 
 export interface HabitCompletion {
@@ -149,6 +150,7 @@ interface UserStore {
   addMoodboardItem: (item: Omit<MoodboardItem, 'id' | 'createdAt'>) => void;
   removeMoodboardItem: (id: string) => void;
   reorderMoodboardItems: (items: MoodboardItem[]) => void;
+  updateHabitIcon: (habitId: string, iconImage: string) => void;
 }
 
 const initialProfile: UserProfile = {
@@ -355,6 +357,16 @@ export const useUserStore = create<UserStore>()(
       reorderMoodboardItems: (items) =>
         set((state) => ({
           profile: { ...state.profile, moodboardItems: items },
+        })),
+
+      updateHabitIcon: (habitId, iconImage) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            coreHabits: state.profile.coreHabits.map((h) =>
+              h.id === habitId ? { ...h, iconImage } : h
+            ),
+          },
         })),
 
       markReminderSent: (timeOfDay) => {

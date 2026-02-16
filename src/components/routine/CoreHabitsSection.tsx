@@ -6,11 +6,24 @@ import { Check, Sun, Clock, Moon, Settings2, Plus, X } from 'lucide-react';
 const timeOfDayConfig = {
   morning: { label: 'Morning', icon: Sun, color: 'text-amber-500' },
   midday: { label: 'Midday', icon: Clock, color: 'text-sky-500' },
-  evening: { label: 'Evening', icon: Moon, color: 'text-indigo-400' },
+  evening: { label: 'Evening', icon: Moon, color: 'text-indigo-500' },
 };
 
 interface CoreHabitsSectionProps {
   onEditHabits: () => void;
+}
+
+function HabitIcon({ habit }: { habit: { icon?: string; iconImage?: string } }) {
+  if (habit.iconImage) {
+    return (
+      <img
+        src={habit.iconImage}
+        alt=""
+        className="w-7 h-7 rounded-lg object-cover"
+      />
+    );
+  }
+  return <span>{habit.icon}</span>;
 }
 
 export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionProps) {
@@ -22,7 +35,6 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
 
   const today = new Date().toISOString().split('T')[0];
   
-  // Get today's one-off tasks for a specific time of day
   const getTodayTasks = (time: TimeOfDay) => {
     return (profile.routineTasks || []).filter(
       (task) => task.date.split('T')[0] === today && task.timeOfDay === time
@@ -69,7 +81,6 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
     }
   };
 
-  // Check if any section has content (habits or tasks)
   const hasAnyContent = (['morning', 'midday', 'evening'] as TimeOfDay[]).some(
     (time) => getHabitsByTime(time).length > 0 || getTodayTasks(time).length > 0
   );
@@ -100,7 +111,7 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
       <div className="flex items-center justify-between">
         <div>
           <h2 className="section-title">Daily Habits</h2>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground font-medium">
             {totalCompleted} of {totalItems} completed today
           </p>
         </div>
@@ -108,7 +119,7 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
           onClick={onEditHabits}
           className="p-2 rounded-full hover:bg-muted transition-colors"
         >
-          <Settings2 size={18} className="text-muted-foreground" />
+          <Settings2 size={18} strokeWidth={2.5} className="text-muted-foreground" />
         </button>
       </div>
 
@@ -131,7 +142,6 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
         const completedCount = getCompletedCount(time);
         const totalCount = getTotalCount(time);
 
-        // Always show sections if there are habits OR tasks
         if (habits.length === 0 && tasks.length === 0) return null;
 
         return (
@@ -144,11 +154,11 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
           >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <Icon size={18} className={config.color} />
-                <h3 className="font-medium text-sm">{config.label}</h3>
+                <Icon size={18} strokeWidth={2.5} className={config.color} />
+                <h3 className="font-semibold text-sm">{config.label}</h3>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs text-muted-foreground font-medium">
                   {completedCount}/{totalCount}
                 </span>
                 <button
@@ -156,7 +166,7 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
                   className="p-1.5 rounded-full hover:bg-muted transition-colors"
                   aria-label={`Add task to ${config.label}`}
                 >
-                  <Plus size={16} className="text-muted-foreground" />
+                  <Plus size={16} strokeWidth={2.5} className="text-muted-foreground" />
                 </button>
               </div>
             </div>
@@ -174,14 +184,15 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
                     whileTap={{ scale: 0.98 }}
                   >
                     <div className={`check-circle ${isCompleted ? 'checked' : ''}`}>
-                      {isCompleted && <Check size={14} />}
+                      {isCompleted && <Check size={14} strokeWidth={2.5} />}
                     </div>
                     <span
-                      className={`text-sm ${
+                      className={`text-sm font-medium flex items-center gap-2 ${
                         isCompleted ? 'line-through text-muted-foreground' : ''
                       }`}
                     >
-                      {habit.icon} {habit.title}
+                      <HabitIcon habit={habit} />
+                      {habit.title}
                     </span>
                   </motion.button>
                 );
@@ -198,10 +209,10 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
                   animate={{ opacity: 1, height: 'auto' }}
                 >
                   <div className={`check-circle ${task.completed ? 'checked' : ''}`}>
-                    {task.completed && <Check size={14} />}
+                    {task.completed && <Check size={14} strokeWidth={2.5} />}
                   </div>
                   <span
-                    className={`text-sm ${
+                    className={`text-sm font-medium ${
                       task.completed ? 'line-through text-muted-foreground' : ''
                     }`}
                   >
@@ -240,7 +251,7 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
                       disabled={!newTaskTitle.trim()}
                       className="p-2 rounded-full bg-primary text-primary-foreground disabled:opacity-50"
                     >
-                      <Check size={16} />
+                      <Check size={16} strokeWidth={2.5} />
                     </button>
                     <button
                       onClick={() => {
@@ -249,7 +260,7 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
                       }}
                       className="p-2 rounded-full hover:bg-muted"
                     >
-                      <X size={16} />
+                      <X size={16} strokeWidth={2.5} />
                     </button>
                   </motion.div>
                 )}

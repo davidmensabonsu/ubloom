@@ -30,7 +30,7 @@ const presetHabits: { title: string; icon: string; timeOfDay: TimeOfDay }[] = [
 const timeOfDayConfig = {
   morning: { label: 'Morning', icon: Sun, color: 'text-amber-500' },
   midday: { label: 'Midday', icon: Clock, color: 'text-sky-500' },
-  evening: { label: 'Evening', icon: Moon, color: 'text-indigo-400' },
+  evening: { label: 'Evening', icon: Moon, color: 'text-indigo-500' },
 };
 
 interface RoutineSetupProps {
@@ -119,7 +119,7 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-2 mb-2"
         >
-          <Sparkles size={24} className="text-primary" />
+          <Sparkles size={24} strokeWidth={2.5} className="text-primary" />
           <h1 className="page-title">Set Your Core Daily Habits</h1>
         </motion.div>
         <motion.p
@@ -147,7 +147,7 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
               className="glass-card rounded-3xl p-5"
             >
               <div className="flex items-center gap-2 mb-4">
-                <Icon size={18} className={config.color} />
+                <Icon size={18} strokeWidth={2.5} className={config.color} />
                 <h2 className="section-title text-base">{config.label}</h2>
               </div>
 
@@ -167,9 +167,9 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
                       whileTap={{ scale: 0.98 }}
                     >
                       <div className={`check-circle ${isSelected ? 'checked' : ''}`}>
-                        {isSelected && <Check size={14} />}
+                        {isSelected && <Check size={14} strokeWidth={2.5} />}
                       </div>
-                      <span className="text-sm flex-1 text-left">
+                      <span className="text-sm font-medium flex-1 text-left">
                         {habit.icon} {habit.title}
                       </span>
                       {isCustom && (
@@ -180,7 +180,7 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
                           }}
                           className="p-1 rounded-full hover:bg-muted"
                         >
-                          <X size={14} className="text-muted-foreground" />
+                          <X size={14} strokeWidth={2.5} className="text-muted-foreground" />
                         </button>
                       )}
                     </motion.button>
@@ -254,7 +254,7 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
                 onClick={() => setShowCustomInput(true)}
                 className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl border-2 border-dashed border-muted-foreground/30 text-muted-foreground hover:border-primary hover:text-primary transition-colors"
               >
-                <Plus size={18} />
+                <Plus size={18} strokeWidth={2.5} />
                 <span className="text-sm">Add Custom Habit</span>
               </motion.button>
             )}
@@ -275,7 +275,7 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
             onClick={handleComplete}
             className="flex-1 soft-button flex items-center justify-center gap-2"
           >
-            <Sparkles size={18} />
+            <Sparkles size={18} strokeWidth={2.5} />
             <span>Save Habits</span>
             {selectedHabits.size > 0 && (
               <span className="bg-background/30 px-2 py-0.5 rounded-full text-xs">
