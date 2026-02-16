@@ -1,21 +1,59 @@
 
 
-## Remove White Background from Logo
+## AI-Powered Personalized Messages from Your Future Self
 
-The logo image (`src/assets/logo.png`) currently has a white background. We'll use the Lovable AI image editing API to generate a version with a transparent background, then replace the file.
+Instead of rotating through static message pools, we'll use AI to generate truly personalized messages that draw from your journal entries, identity statement, and dream self profile.
 
-### Steps
+### How It Will Work
 
-1. **Create a backend function** that takes the current logo, sends it to the AI image model (`google/gemini-2.5-flash-image`) with an instruction to remove the white background and output only the flower/petals on a transparent background.
+- **Future Self message (weekly)**: Every Monday (or on first visit of the week), an AI generates a new message inspired by your recent journal entries, mood patterns, and identity statement. It stays the same all week.
+- **Today's Mindset (daily)**: Each day, an AI generates a fresh mindset message that gently references themes from your journal -- without quoting entries directly, keeping it feeling like intuitive wisdom rather than a summary.
+- Messages are cached locally so the AI is only called once per period (not on every page load).
 
-2. **Download and replace** `src/assets/logo.png` with the transparent version.
+### Technical Approach
 
-3. **Verify** the logo renders correctly across all pages (Welcome, Home header, Bottom Nav) without any white box behind the petals.
+**1. New backend function: `generate-home-messages`**
 
-### Technical Details
+- Accepts the user's recent journal entries (last 5-10), identity statement, dream self categories, and current mood history
+- Calls `google/gemini-2.5-flash` via the Lovable AI gateway
+- Returns two messages: a weekly "future self" letter and a daily mindset affirmation
+- The prompt instructs the AI to weave in themes from journal entries subtly (e.g., if someone journaled about feeling overwhelmed, the future self might speak to finding calm)
 
-- Use the `google/gemini-2.5-flash-image` model via the Lovable AI gateway with the editing prompt: "Remove the white background from this logo, keep only the flower petals, output on a fully transparent background"
-- The result will be a PNG with alpha transparency
-- An edge function will handle the processing, returning the cleaned image as base64
-- The base64 output will be saved as the new `src/assets/logo.png`
+**2. New store fields in `userStore.ts`**
+
+- `cachedFutureSelfMessage`: the generated weekly message + the week key it was generated for (e.g., `2026-W07`)
+- `cachedMindsetMessage`: the generated daily message + the date it was generated for (e.g., `2026-02-16`)
+- These persist locally so we don't re-generate on every visit
+
+**3. New hook: `useHomeMessages.ts`**
+
+- On mount, checks if the cached messages are still fresh (same week / same day)
+- If stale, calls the backend function with relevant profile data
+- Returns the messages + a loading state
+- Falls back to a static default message while loading or if the user has no journal entries yet
+
+**4. Updated `Home.tsx`**
+
+- Uses the new hook to display AI-generated messages
+- Shows a subtle shimmer/skeleton while a new message is being generated
+- The "Future Self" and "Today's Mindset" cards use the returned messages instead of hardcoded text
+
+### Fallback Behavior
+
+- If the user has no journal entries, the AI still generates uplifting messages based on identity statement and dream self
+- If the user has no profile data at all, a curated set of static messages rotates (date-seeded, same approach as previously planned)
+- Network errors gracefully fall back to static messages
+
+### Files to Create/Modify
+
+| File | Action |
+|------|--------|
+| `supabase/functions/generate-home-messages/index.ts` | Create -- backend function that calls AI |
+| `src/hooks/useHomeMessages.ts` | Create -- manages caching and fetching |
+| `src/stores/userStore.ts` | Modify -- add cached message fields |
+| `src/pages/Home.tsx` | Modify -- use hook instead of static messages |
+
+### Privacy Consideration
+
+Journal content is sent to the AI only to generate the message -- it is not stored anywhere beyond the user's own device and the transient API call. The generated messages themselves are cached locally in the browser.
 
