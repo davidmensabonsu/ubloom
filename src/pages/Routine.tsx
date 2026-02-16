@@ -5,7 +5,7 @@ import { Plus } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import RoutineSetup from '@/components/routine/RoutineSetup';
 import CoreHabitsSection from '@/components/routine/CoreHabitsSection';
-import { useHabitIcons } from '@/hooks/useHabitIcons';
+
 
  import WeeklyProgress from '@/components/routine/WeeklyProgress';
  import CelebrationOverlay from '@/components/routine/CelebrationOverlay';
@@ -90,7 +90,7 @@ export default function Routine() {
  
    // Initialize reminders hook
     useReminders();
-    useHabitIcons();
+    
 
   const todayFormatted = new Date().toLocaleDateString('en-US', {
     weekday: 'long',

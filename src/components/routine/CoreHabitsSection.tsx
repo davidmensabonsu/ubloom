@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useUserStore, TimeOfDay } from '@/stores/userStore';
 import { Check, Sun, Clock, Moon, Settings2, Plus, X } from 'lucide-react';
+import { useHabitIcons } from '@/hooks/useHabitIcons';
 
 const timeOfDayConfig = {
   morning: { label: 'Morning', icon: Sun, color: 'text-amber-500' },
@@ -13,21 +14,36 @@ interface CoreHabitsSectionProps {
   onEditHabits: () => void;
 }
 
-function HabitIcon({ habit }: { habit: { icon?: string; iconImage?: string } }) {
+function HabitIcon({ habit, isLoading }: { habit: { icon?: string; iconImage?: string }; isLoading?: boolean }) {
   if (habit.iconImage) {
     return (
       <img
         src={habit.iconImage}
         alt=""
         className="w-8 h-8 object-contain"
+        onError={(e) => {
+          // On load failure, hide the broken image so emoji fallback shows
+          (e.currentTarget as HTMLImageElement).style.display = 'none';
+          const fallback = e.currentTarget.nextElementSibling;
+          if (fallback) (fallback as HTMLElement).style.display = 'inline';
+        }}
       />
     );
   }
-  return <span>{habit.icon}</span>;
+  if (isLoading) {
+    return (
+      <span className="relative inline-flex items-center justify-center w-8 h-8">
+        <span className="text-base">{habit.icon || '⏳'}</span>
+        <span className="absolute inset-0 rounded-full animate-pulse bg-primary/10" />
+      </span>
+    );
+  }
+  return <span className="text-base">{habit.icon || '✨'}</span>;
 }
 
 export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionProps) {
   const { profile, toggleHabitCompletion, isHabitCompletedToday, addRoutineTask, toggleTask } = useUserStore();
+  const { isGenerating } = useHabitIcons();
   const { coreHabits } = profile;
   
   const [addingToSection, setAddingToSection] = useState<TimeOfDay | null>(null);
@@ -207,7 +223,7 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
                         isCompleted ? 'line-through text-muted-foreground' : ''
                       }`}
                     >
-                      <HabitIcon habit={habit} />
+                      <HabitIcon habit={habit} isLoading={isGenerating(habit.id)} />
                       {habit.title}
                     </span>
                   </motion.button>
