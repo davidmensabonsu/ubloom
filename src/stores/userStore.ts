@@ -55,6 +55,7 @@ export interface UserProfile {
   moodHistory: MoodEntry[];
   routineTasks: RoutineTask[]; // Now used for one-off daily tasks only
   coreHabits: CoreHabit[];
+  customTasks: CustomTask[];
   habitCompletions: HabitCompletion[];
   routineSetupComplete: boolean;
    reminderSettings: ReminderSettings;
@@ -106,6 +107,17 @@ export interface CachedMindsetMessage {
   dateKey: string; // e.g. "2026-02-16"
 }
 
+export interface CustomTask {
+  id: string;
+  title: string;
+  timeOfDay: TimeOfDay;
+  icon: string; // emoji
+  recurrence: 'daily' | 'weekly' | 'oneoff';
+  weeklyDays?: number[]; // 0=Sun..6=Sat
+  scheduledDate?: string; // yyyy-MM-dd for one-off
+  createdAt: string;
+}
+
 export interface MoodboardItem {
   id: string;
   type: 'image' | 'quote';
@@ -154,6 +166,12 @@ interface UserStore {
   reorderMoodboardItems: (items: MoodboardItem[]) => void;
   updateHabitIcon: (habitId: string, iconImage: string) => void;
   clearAllHabitIcons: () => void;
+  // Custom tasks
+  addCustomTask: (task: Omit<CustomTask, 'id' | 'createdAt'>) => void;
+  removeCustomTask: (id: string) => void;
+  toggleCustomTaskCompletion: (taskId: string) => void;
+  isCustomTaskCompletedToday: (taskId: string) => boolean;
+  getVisibleCustomTasks: () => CustomTask[];
 }
 
 const initialProfile: UserProfile = {
@@ -178,6 +196,7 @@ const initialProfile: UserProfile = {
   moodHistory: [],
   routineTasks: [],
   coreHabits: [],
+  customTasks: [],
   habitCompletions: [],
   routineSetupComplete: false,
    reminderSettings: {
@@ -419,6 +438,75 @@ export const useUserStore = create<UserStore>()(
             coreHabits: state.profile.coreHabits.map(({ iconImage, ...rest }) => rest),
           },
         })),
+
+      // Custom tasks
+      addCustomTask: (task) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            customTasks: [
+              ...(state.profile.customTasks || []),
+              { ...task, id: `custom-${Date.now()}`, createdAt: new Date().toISOString() },
+            ],
+          },
+        })),
+
+      removeCustomTask: (id) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            customTasks: (state.profile.customTasks || []).filter((t) => t.id !== id),
+          },
+        })),
+
+      toggleCustomTaskCompletion: (taskId) => {
+        const today = new Date().toISOString().split('T')[0];
+        set((state) => {
+          const existing = state.profile.habitCompletions.find(
+            (c) => c.habitId === taskId && c.date === today
+          );
+          if (existing) {
+            return {
+              profile: {
+                ...state.profile,
+                habitCompletions: state.profile.habitCompletions.map((c) =>
+                  c.habitId === taskId && c.date === today
+                    ? { ...c, completed: !c.completed }
+                    : c
+                ),
+              },
+            };
+          }
+          return {
+            profile: {
+              ...state.profile,
+              habitCompletions: [
+                ...state.profile.habitCompletions,
+                { habitId: taskId, date: today, completed: true },
+              ],
+            },
+          };
+        });
+      },
+
+      isCustomTaskCompletedToday: (taskId) => {
+        const today = new Date().toISOString().split('T')[0];
+        const completions = get().profile.habitCompletions || [];
+        const c = completions.find((c) => c.habitId === taskId && c.date === today);
+        return c?.completed ?? false;
+      },
+
+      getVisibleCustomTasks: () => {
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0];
+        const dayOfWeek = today.getDay();
+        return (get().profile.customTasks || []).filter((task) => {
+          if (task.recurrence === 'daily') return true;
+          if (task.recurrence === 'weekly') return task.weeklyDays?.includes(dayOfWeek) ?? false;
+          if (task.recurrence === 'oneoff') return task.scheduledDate === todayStr;
+          return false;
+        });
+      },
 
       markReminderSent: (timeOfDay) => {
         const today = new Date().toISOString().split('T')[0];

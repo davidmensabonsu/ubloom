@@ -1,21 +1,22 @@
- import { motion } from 'framer-motion';
- import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { Plus } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import RoutineSetup from '@/components/routine/RoutineSetup';
 import CoreHabitsSection from '@/components/routine/CoreHabitsSection';
+import CustomTasksSection from '@/components/routine/CustomTasksSection';
+import AddTaskDialog from '@/components/routine/AddTaskDialog';
 import { useCallback } from 'react';
-
-
- import WeeklyProgress from '@/components/routine/WeeklyProgress';
- import CelebrationOverlay from '@/components/routine/CelebrationOverlay';
- import ReminderSettings from '@/components/routine/ReminderSettings';
- import { useReminders } from '@/hooks/useReminders';
+import WeeklyProgress from '@/components/routine/WeeklyProgress';
+import CelebrationOverlay from '@/components/routine/CelebrationOverlay';
+import ReminderSettings from '@/components/routine/ReminderSettings';
+import { useReminders } from '@/hooks/useReminders';
 
 export default function Routine() {
    const { profile, skipRoutineSetup, isHabitCompletedToday } = useUserStore();
   const [showSetup, setShowSetup] = useState(!profile.routineSetupComplete);
+  const [showAddTask, setShowAddTask] = useState(false);
   
    const [celebration, setCelebration] = useState<{
      show: boolean;
@@ -166,6 +167,9 @@ export default function Routine() {
         {/* Core Daily Habits */}
         <CoreHabitsSection />
 
+        {/* Custom Tasks */}
+        <CustomTasksSection />
+
  
          {/* Reminder Settings */}
          <div className="pt-2">
@@ -174,12 +178,12 @@ export default function Routine() {
          </div>
       </div>
 
-      {/* Floating Action Button for quick task add */}
+      {/* Add Task Dialog */}
+      <AddTaskDialog open={showAddTask} onOpenChange={setShowAddTask} />
+
+      {/* Floating Action Button */}
        <motion.button
-        onClick={() => {
-          // Dispatch a custom event that CoreHabitsSection can listen to
-          window.dispatchEvent(new CustomEvent('open-add-task'));
-        }}
+        onClick={() => setShowAddTask(true)}
         className="floating-action"
         whileTap={{ scale: 0.95 }}
         initial={{ opacity: 0, scale: 0 }}

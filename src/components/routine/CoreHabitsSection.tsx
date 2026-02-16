@@ -49,20 +49,6 @@ export default function CoreHabitsSection() {
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [editMode, setEditMode] = useState(false);
 
-  // Listen for FAB open-add-task event
-  useEffect(() => {
-    const handler = () => {
-      const firstSection: TimeOfDay = 'morning';
-      setAddingToSection(firstSection);
-      // Scroll the morning section into view
-      setTimeout(() => {
-        const el = document.querySelector('[data-section="morning"]');
-        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 100);
-    };
-    window.addEventListener('open-add-task', handler);
-    return () => window.removeEventListener('open-add-task', handler);
-  }, []);
 
   const today = new Date().toISOString().split('T')[0];
   
