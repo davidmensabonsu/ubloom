@@ -28,7 +28,7 @@
     --secondary-foreground: 30 15% 25%;
 
     --muted: 30 15% 94%;
-    --muted-foreground: 30 10% 50%;
+    --muted-foreground: 30 10% 40%;
 
     --accent: var(--theme-hue) calc(var(--theme-sat) - 20%) 85%;
     --accent-foreground: 30 15% 20%;
@@ -267,13 +267,13 @@
 
   .section-title {
     font-family: var(--font-display);
-    @apply text-xl font-medium tracking-tight;
+    @apply text-xl font-semibold tracking-tight;
     color: hsl(var(--foreground));
   }
 
   .page-title {
     font-family: var(--font-display);
-    @apply text-3xl font-normal tracking-tight;
+    @apply text-3xl font-medium tracking-tight;
     color: hsl(var(--foreground));
   }
 
