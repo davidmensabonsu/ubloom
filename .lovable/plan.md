@@ -1,25 +1,27 @@
 
+## Remove Re-Setup Option and Improve First-Time Setup Visibility
 
-## Routine Page Flow Adjustments
+### Changes
 
-### What changes
+**1. Remove the "edit habits" gear icon for users who have completed setup**
+Once a user has saved their core habits, the Settings2 (gear) icon next to "Daily Habits" will be removed. This prevents re-entering the full setup flow after initial configuration. Users can still add one-off tasks via the `+` buttons.
 
-**1. Default habits when skipping setup**
-When a user taps "Set Up Later" on the habit selection screen, instead of landing on an empty routine page, they'll get a small set of starter habits pre-populated across the three time periods:
-- Morning: "Drink a glass of water", "Morning skincare"
-- Midday: "Take a walk", "Drink water"
-- Evening: "Journal or reflect", "Unplug from screens"
-
-These give the user something to work with immediately while they decide on their own habits.
-
-**2. More prominent one-off task adding**
-The existing `+` button in each time section already supports adding one-off tasks for the day. To make this more discoverable, each empty section will show a subtle "Tap + to add a task for today" hint, and the floating action button at the bottom will scroll to and open the add-task input in the first available section.
+**2. Make the first-time setup prompt more prominent**
+For users who haven't set their core habits yet, replace the current small card with a larger, more visually engaging call-to-action featuring the Sparkles icon, a descriptive subtitle, and a prominent button — making it unmissable.
 
 ### Technical details
 
 | File | Change |
 |------|--------|
-| `src/stores/userStore.ts` | Update `skipRoutineSetup` to also call `setCoreHabits` with a default set of starter habits |
-| `src/components/routine/CoreHabitsSection.tsx` | Add empty-state hint text in sections with no habits/tasks ("Tap + to add a task") |
-| `src/pages/Routine.tsx` | Wire the floating `+` button to open the inline task input in the first section instead of scrolling to a non-existent element |
+| `src/components/routine/CoreHabitsSection.tsx` | Remove the `onEditHabits` prop entirely. Remove the Settings2 gear button from the header (lines 149-154). Replace the empty-state card (lines 119-137) with a larger, more eye-catching CTA using the Sparkles icon and descriptive text. |
+| `src/pages/Routine.tsx` | Remove the `editingHabits` state and the `onEditHabits` callback. Remove the `RoutineSetup` import and the conditional render for `editingHabits`. Keep the first-time `showSetup` flow as-is (triggered by `!profile.routineSetupComplete`). |
+| `src/components/routine/RoutineSetup.tsx` | No changes needed — it still serves the initial setup flow. |
 
+The empty-state CTA will look something like:
+- A Sparkles icon with animated entrance
+- Heading: "Set Up Your Daily Habits"
+- Subtitle: "Choose the habits that matter most to you. They'll appear here every day."
+- A prominent "Choose My Habits" button that navigates to the setup flow via a custom event or callback
+- The callback will set `showSetup` to true in `Routine.tsx`
+
+Since `onEditHabits` is being removed from `CoreHabitsSection`, the empty-state button needs a way to trigger the setup. This will be done by dispatching a custom event (`open-habit-setup`) that `Routine.tsx` listens for to set `showSetup = true`.
