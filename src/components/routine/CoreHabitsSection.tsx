@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useUserStore, TimeOfDay } from '@/stores/userStore';
-import { Check, Sun, Clock, Moon, Plus, X, Sparkles } from 'lucide-react';
+import { Check, Sun, Clock, Moon, Plus, X, Sparkles, Pencil, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
 import { useHabitIcons } from '@/hooks/useHabitIcons';
 
 const timeOfDayConfig = {
@@ -41,12 +41,13 @@ function HabitIcon({ habit, isLoading }: { habit: { icon?: string; iconImage?: s
 }
 
 export default function CoreHabitsSection() {
-  const { profile, toggleHabitCompletion, isHabitCompletedToday, addRoutineTask, toggleTask } = useUserStore();
+  const { profile, toggleHabitCompletion, isHabitCompletedToday, addRoutineTask, toggleTask, removeHabit, reorderHabit } = useUserStore();
   const { isGenerating } = useHabitIcons();
   const { coreHabits } = profile;
   
   const [addingToSection, setAddingToSection] = useState<TimeOfDay | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [editMode, setEditMode] = useState(false);
 
   // Listen for FAB open-add-task event
   useEffect(() => {
@@ -153,6 +154,12 @@ export default function CoreHabitsSection() {
             {totalCompleted} of {totalItems} completed today
           </p>
         </div>
+        <button
+          onClick={() => setEditMode(!editMode)}
+          className={`p-2 rounded-full transition-colors ${editMode ? 'bg-primary/10 text-primary' : 'hover:bg-muted text-muted-foreground'}`}
+        >
+          <Pencil size={16} strokeWidth={2.5} />
+        </button>
       </div>
 
       {/* Progress bar */}
@@ -206,8 +213,45 @@ export default function CoreHabitsSection() {
 
             <div className="space-y-2">
               {/* Core habits */}
-              {habits.map((habit) => {
+              {habits.map((habit, habitIndex) => {
                 const isCompleted = isHabitCompletedToday(habit.id);
+
+                if (editMode) {
+                  return (
+                    <motion.div
+                      key={habit.id}
+                      className="check-item w-full"
+                      layout
+                    >
+                      <span className="text-sm font-medium flex items-center gap-2 flex-1">
+                        <HabitIcon habit={habit} isLoading={isGenerating(habit.id)} />
+                        {habit.title}
+                      </span>
+                      <div className="flex items-center gap-1 ml-auto">
+                        <button
+                          onClick={() => reorderHabit(habit.id, 'up')}
+                          disabled={habitIndex === 0}
+                          className="p-1.5 rounded-full hover:bg-muted transition-colors disabled:opacity-30"
+                        >
+                          <ChevronUp size={14} strokeWidth={2.5} />
+                        </button>
+                        <button
+                          onClick={() => reorderHabit(habit.id, 'down')}
+                          disabled={habitIndex === habits.length - 1}
+                          className="p-1.5 rounded-full hover:bg-muted transition-colors disabled:opacity-30"
+                        >
+                          <ChevronDown size={14} strokeWidth={2.5} />
+                        </button>
+                        <button
+                          onClick={() => removeHabit(habit.id)}
+                          className="p-1.5 rounded-full hover:bg-destructive/10 text-destructive transition-colors"
+                        >
+                          <Trash2 size={14} strokeWidth={2.5} />
+                        </button>
+                      </div>
+                    </motion.div>
+                  );
+                }
 
                 return (
                   <motion.button
