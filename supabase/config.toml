@@ -1,1 +1,4 @@
 project_id = "dgyynvfzoepjhcpjpdbs"
+
+[functions.generate-home-messages]
+verify_jwt = false

@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { useUserStore } from '@/stores/userStore';
 import { Sparkles, Heart, Sun, Moon, Cloud } from 'lucide-react';
+import { useHomeMessages } from '@/hooks/useHomeMessages';
+import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/BottomNav';
 import logo from '@/assets/logo.png';
 
@@ -12,17 +14,10 @@ const timeGreetings = () => {
   return { text: 'Sweet dreams', icon: Moon };
 };
 
-const generateFutureSelfMessage = (profile: any) => {
-  const messages = [
-    `You're exactly where you need to be. Every step you take is bringing you closer to becoming the woman you've always known you could be.`,
-    `Remember, healing isn't linear. Some days will feel harder than others, but you're doing the work, and that's what matters.`,
-    `The peace you're seeking is already within you. Today, let yourself rest in that truth.`,
-    `You are worthy of all the beautiful things you desire. Keep believing in yourself, love.`,
-  ];
-  return messages[Math.floor(Math.random() * messages.length)];
-};
+// Removed static message generators - now using AI via useHomeMessages
 
 export default function Home() {
+  const { futureSelfMessage, mindsetMessage, loading } = useHomeMessages();
   const { profile } = useUserStore();
   const greeting = timeGreetings();
   const GreetingIcon = greeting.icon;
@@ -82,12 +77,19 @@ export default function Home() {
               From your future self
             </span>
           </div>
-          <p className="font-display text-lg leading-relaxed text-foreground/90 italic">
-            "{generateFutureSelfMessage(profile)}"
-          </p>
+          {loading ? (
+            <div className="space-y-2">
+              <Skeleton className="h-5 w-full" />
+              <Skeleton className="h-5 w-4/5" />
+            </div>
+          ) : (
+            <p className="font-display text-lg leading-relaxed text-foreground/90 italic">
+              "{futureSelfMessage}"
+            </p>
+          )}
         </motion.div>
 
-        {/* Today's Intention */}
+        {/* Today's Mindset */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -98,10 +100,11 @@ export default function Home() {
             <Heart size={18} className="text-primary" />
             Today's Mindset
           </h2>
-          <p className="text-foreground/80">
-            You are not behind. You are not late. You are exactly where you need to
-            be on your journey.
-          </p>
+          {loading ? (
+            <Skeleton className="h-5 w-3/4" />
+          ) : (
+            <p className="text-foreground/80">{mindsetMessage}</p>
+          )}
         </motion.div>
 
         {/* Quick Actions */}
