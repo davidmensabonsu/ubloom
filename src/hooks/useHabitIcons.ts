@@ -2,9 +2,23 @@ import { useEffect, useRef } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { supabase } from '@/integrations/supabase/client';
 
+const ICON_STYLE_VERSION = 2; // Bump this to regenerate all icons
+
 export function useHabitIcons() {
-  const { profile, updateHabitIcon } = useUserStore();
+  const { profile, updateHabitIcon, clearAllHabitIcons } = useUserStore();
   const generatingRef = useRef<Set<string>>(new Set());
+  const clearedRef = useRef(false);
+
+  // Clear old-style icons once when version changes
+  useEffect(() => {
+    if (clearedRef.current) return;
+    const storedVersion = localStorage.getItem('habitIconStyleVersion');
+    if (storedVersion !== String(ICON_STYLE_VERSION)) {
+      clearAllHabitIcons();
+      localStorage.setItem('habitIconStyleVersion', String(ICON_STYLE_VERSION));
+    }
+    clearedRef.current = true;
+  }, [clearAllHabitIcons]);
 
   useEffect(() => {
     const habitsNeedingIcons = profile.coreHabits.filter(

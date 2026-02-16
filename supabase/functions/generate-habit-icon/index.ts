@@ -25,7 +25,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const prompt = `Generate a single cute 3D rendered miniature icon of "${habitTitle}". Soft pastel pink and white color palette, clean minimal pure white background, rounded glossy style, no text whatsoever, tiny app icon aesthetic, centered composition, high quality render. The icon should be simple, adorable, and immediately recognizable.`;
+    const prompt = `Generate a single bold, vibrant 3D rendered icon of "${habitTitle}". The icon must have a fully transparent background with NO background shape, NO circle, NO square behind it — just the object floating. Use rich, saturated colors with strong contrast and defined edges. The object should be chunky, solid, and eye-catching — not faint or pastel. No text whatsoever. Centered composition, high quality render, PNG style with transparency.`;
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
