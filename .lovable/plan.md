@@ -1,41 +1,57 @@
 
 
-## Improve Visual Weight and Readability on the Routine Page
+## AI-Generated Habit Icons and Bolder Text for the Routine Page
 
-A typography and icon weight refinement -- no layout, spacing, color, or structural changes.
+Two changes: replace emoji icons with cute AI-generated illustrations (like the reference image), and boost text/icon visual weight.
 
-### What will change
+---
 
-**1. Section titles** (`section-title` class in `src/index.css`)
-- Change from `font-medium` (400-weight display font) to `font-semibold` so headings like "Daily Habits" and "Settings" read as clearly bold.
+### Part 1: AI-Generated Habit Images
 
-**2. Page title** (`page-title` class in `src/index.css`)
-- Change from `font-normal` to `font-medium` for a slightly bolder page header ("Your Routine").
+Each habit will get a unique, cute 3D-style illustration (similar to the pink dumbbells, bed, shower icons in the reference) instead of plain emoji text.
 
-**3. Task / habit text** (in `CoreHabitsSection.tsx`)
-- Change habit and task labels from `text-sm` to `text-sm font-medium` so they read as medium-bold.
+**How it works:**
 
-**4. Time-of-day sub-headers** (e.g., "Morning", "Midday", "Evening" in `CoreHabitsSection.tsx`)
-- Change from `font-medium text-sm` to `font-semibold text-sm` for stronger subsection labels.
+- A new backend function `generate-habit-icon` calls the image generation model (`google/gemini-2.5-flash-image`) with a prompt like: *"Cute 3D rendered icon of [habit description], soft pink and pastel color palette, minimal background, app icon style"*
+- Icons are generated once when habits are first created (during setup) and cached in the habit data as base64 data URLs
+- The `CoreHabit` interface gets a new optional `iconImage` field (string URL) alongside the existing `icon` emoji field
+- A new hook `useHabitIcons` manages generation: it checks each habit for a missing `iconImage`, generates one, and updates the store
+- In the habit list, if `iconImage` exists, a small round image is shown instead of the emoji; otherwise the emoji remains as fallback
+- A subtle shimmer/skeleton shows while an icon is generating
 
-**5. Reminder setting labels** (in `ReminderSettings.tsx`)
-- "Daily Reminders" h3: change from `font-medium text-sm` to `font-semibold text-sm`.
-- Time-of-day labels (Morning/Midday/Evening): add `font-medium` to their `text-sm`.
+**Image style prompt template:**
+> "Cute 3D rendered miniature icon of [habit title], soft pastel pink and white color palette, clean minimal white background, rounded glossy style, no text, app icon aesthetic"
 
-**6. Text contrast boost**
-- Change `--muted-foreground` from `30 10% 50%` to `30 10% 40%` in `src/index.css` -- a subtle darkening of secondary text (dates, counters, helper text) for improved readability without harshness.
+**Storage:** Images are stored as base64 data URLs directly in the zustand persisted store. At ~5-10KB per small icon and a max of ~20 habits, this adds ~100-200KB to localStorage -- well within limits.
 
-**7. Icon visual weight**
-- Increase Lucide icon `strokeWidth` from the default 2 to 2.5 on all routine-page icons (Sun, Clock, Moon, Settings2, Plus, Check, Flame, TrendingUp, Bell, BellOff, X) to make them appear more solid and defined.
-- Time-of-day icon colors: strengthen from pastel to slightly deeper tones (`text-amber-500` stays, `text-sky-500` stays, `text-indigo-400` becomes `text-indigo-500`).
+---
 
-### Files to modify
+### Part 2: Text and Icon Weight Refinements
 
-| File | Changes |
-|------|---------|
-| `src/index.css` | Bump `section-title` to `font-semibold`, `page-title` to `font-medium`, darken `--muted-foreground` |
-| `src/components/routine/CoreHabitsSection.tsx` | Add `font-medium` to habit/task text, `font-semibold` to sub-headers, `strokeWidth={2.5}` on all icons |
-| `src/components/routine/WeeklyProgress.tsx` | `strokeWidth={2.5}` on Flame and TrendingUp icons |
-| `src/components/routine/ReminderSettings.tsx` | `font-semibold` on h3, `font-medium` on labels, `strokeWidth={2.5}` on Bell/BellOff/Clock icons |
-| `src/pages/Routine.tsx` | `strokeWidth={2.5}` on Plus icon |
+Same changes as the previously approved plan:
+
+- **Section titles** (`section-title` in index.css): `font-medium` to `font-semibold`
+- **Page title** (`page-title` in index.css): `font-normal` to `font-medium`
+- **Habit/task text** in CoreHabitsSection: add `font-medium`
+- **Time-of-day sub-headers**: `font-medium` to `font-semibold`
+- **Reminder labels**: `font-semibold` on h3, `font-medium` on time labels
+- **Muted text contrast**: darken `--muted-foreground` from `50%` to `40%`
+- **Lucide icon stroke**: increase to `strokeWidth={2.5}` on all routine-page icons
+- **Icon color**: `text-indigo-400` to `text-indigo-500`
+
+---
+
+### Files to create/modify
+
+| File | Action |
+|------|--------|
+| `supabase/functions/generate-habit-icon/index.ts` | **Create** -- backend function that generates a single habit icon image via AI |
+| `src/hooks/useHabitIcons.ts` | **Create** -- hook that checks habits for missing icons and triggers generation |
+| `src/stores/userStore.ts` | **Modify** -- add `iconImage?: string` to `CoreHabit` interface, add `updateHabitIcon` action |
+| `src/components/routine/CoreHabitsSection.tsx` | **Modify** -- display AI images instead of emojis, add font weight classes, icon strokeWidth |
+| `src/components/routine/RoutineSetup.tsx` | **Modify** -- display AI images in setup view too |
+| `src/components/routine/WeeklyProgress.tsx` | **Modify** -- icon strokeWidth |
+| `src/components/routine/ReminderSettings.tsx` | **Modify** -- font weight and icon strokeWidth |
+| `src/pages/Routine.tsx` | **Modify** -- use `useHabitIcons` hook, icon strokeWidth |
+| `src/index.css` | **Modify** -- font weight and contrast tweaks |
 
