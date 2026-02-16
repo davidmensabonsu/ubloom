@@ -1,57 +1,25 @@
 
 
-## AI-Generated Habit Icons and Bolder Text for the Routine Page
+## Routine Page Flow Adjustments
 
-Two changes: replace emoji icons with cute AI-generated illustrations (like the reference image), and boost text/icon visual weight.
+### What changes
 
----
+**1. Default habits when skipping setup**
+When a user taps "Set Up Later" on the habit selection screen, instead of landing on an empty routine page, they'll get a small set of starter habits pre-populated across the three time periods:
+- Morning: "Drink a glass of water", "Morning skincare"
+- Midday: "Take a walk", "Drink water"
+- Evening: "Journal or reflect", "Unplug from screens"
 
-### Part 1: AI-Generated Habit Images
+These give the user something to work with immediately while they decide on their own habits.
 
-Each habit will get a unique, cute 3D-style illustration (similar to the pink dumbbells, bed, shower icons in the reference) instead of plain emoji text.
+**2. More prominent one-off task adding**
+The existing `+` button in each time section already supports adding one-off tasks for the day. To make this more discoverable, each empty section will show a subtle "Tap + to add a task for today" hint, and the floating action button at the bottom will scroll to and open the add-task input in the first available section.
 
-**How it works:**
+### Technical details
 
-- A new backend function `generate-habit-icon` calls the image generation model (`google/gemini-2.5-flash-image`) with a prompt like: *"Cute 3D rendered icon of [habit description], soft pink and pastel color palette, minimal background, app icon style"*
-- Icons are generated once when habits are first created (during setup) and cached in the habit data as base64 data URLs
-- The `CoreHabit` interface gets a new optional `iconImage` field (string URL) alongside the existing `icon` emoji field
-- A new hook `useHabitIcons` manages generation: it checks each habit for a missing `iconImage`, generates one, and updates the store
-- In the habit list, if `iconImage` exists, a small round image is shown instead of the emoji; otherwise the emoji remains as fallback
-- A subtle shimmer/skeleton shows while an icon is generating
-
-**Image style prompt template:**
-> "Cute 3D rendered miniature icon of [habit title], soft pastel pink and white color palette, clean minimal white background, rounded glossy style, no text, app icon aesthetic"
-
-**Storage:** Images are stored as base64 data URLs directly in the zustand persisted store. At ~5-10KB per small icon and a max of ~20 habits, this adds ~100-200KB to localStorage -- well within limits.
-
----
-
-### Part 2: Text and Icon Weight Refinements
-
-Same changes as the previously approved plan:
-
-- **Section titles** (`section-title` in index.css): `font-medium` to `font-semibold`
-- **Page title** (`page-title` in index.css): `font-normal` to `font-medium`
-- **Habit/task text** in CoreHabitsSection: add `font-medium`
-- **Time-of-day sub-headers**: `font-medium` to `font-semibold`
-- **Reminder labels**: `font-semibold` on h3, `font-medium` on time labels
-- **Muted text contrast**: darken `--muted-foreground` from `50%` to `40%`
-- **Lucide icon stroke**: increase to `strokeWidth={2.5}` on all routine-page icons
-- **Icon color**: `text-indigo-400` to `text-indigo-500`
-
----
-
-### Files to create/modify
-
-| File | Action |
+| File | Change |
 |------|--------|
-| `supabase/functions/generate-habit-icon/index.ts` | **Create** -- backend function that generates a single habit icon image via AI |
-| `src/hooks/useHabitIcons.ts` | **Create** -- hook that checks habits for missing icons and triggers generation |
-| `src/stores/userStore.ts` | **Modify** -- add `iconImage?: string` to `CoreHabit` interface, add `updateHabitIcon` action |
-| `src/components/routine/CoreHabitsSection.tsx` | **Modify** -- display AI images instead of emojis, add font weight classes, icon strokeWidth |
-| `src/components/routine/RoutineSetup.tsx` | **Modify** -- display AI images in setup view too |
-| `src/components/routine/WeeklyProgress.tsx` | **Modify** -- icon strokeWidth |
-| `src/components/routine/ReminderSettings.tsx` | **Modify** -- font weight and icon strokeWidth |
-| `src/pages/Routine.tsx` | **Modify** -- use `useHabitIcons` hook, icon strokeWidth |
-| `src/index.css` | **Modify** -- font weight and contrast tweaks |
+| `src/stores/userStore.ts` | Update `skipRoutineSetup` to also call `setCoreHabits` with a default set of starter habits |
+| `src/components/routine/CoreHabitsSection.tsx` | Add empty-state hint text in sections with no habits/tasks ("Tap + to add a task") |
+| `src/pages/Routine.tsx` | Wire the floating `+` button to open the inline task input in the first section instead of scrolling to a non-existent element |
 
