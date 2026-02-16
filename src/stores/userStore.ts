@@ -59,6 +59,8 @@ export interface UserProfile {
    reminderSettings: ReminderSettings;
   goals: Goal[];
   moodboardItems: MoodboardItem[];
+  cachedFutureSelfMessage?: CachedFutureSelfMessage;
+  cachedMindsetMessage?: CachedMindsetMessage;
   onboardingComplete: boolean;
 }
 
@@ -91,6 +93,16 @@ export interface Goal {
   category: 'lifestyle' | 'career' | 'wellness' | 'travel';
   vision?: string;
   completed: boolean;
+}
+
+export interface CachedFutureSelfMessage {
+  message: string;
+  weekKey: string; // e.g. "2026-W07"
+}
+
+export interface CachedMindsetMessage {
+  message: string;
+  dateKey: string; // e.g. "2026-02-16"
 }
 
 export interface MoodboardItem {
