@@ -1,59 +1,41 @@
 
 
-## AI-Powered Personalized Messages from Your Future Self
+## Improve Visual Weight and Readability on the Routine Page
 
-Instead of rotating through static message pools, we'll use AI to generate truly personalized messages that draw from your journal entries, identity statement, and dream self profile.
+A typography and icon weight refinement -- no layout, spacing, color, or structural changes.
 
-### How It Will Work
+### What will change
 
-- **Future Self message (weekly)**: Every Monday (or on first visit of the week), an AI generates a new message inspired by your recent journal entries, mood patterns, and identity statement. It stays the same all week.
-- **Today's Mindset (daily)**: Each day, an AI generates a fresh mindset message that gently references themes from your journal -- without quoting entries directly, keeping it feeling like intuitive wisdom rather than a summary.
-- Messages are cached locally so the AI is only called once per period (not on every page load).
+**1. Section titles** (`section-title` class in `src/index.css`)
+- Change from `font-medium` (400-weight display font) to `font-semibold` so headings like "Daily Habits" and "Settings" read as clearly bold.
 
-### Technical Approach
+**2. Page title** (`page-title` class in `src/index.css`)
+- Change from `font-normal` to `font-medium` for a slightly bolder page header ("Your Routine").
 
-**1. New backend function: `generate-home-messages`**
+**3. Task / habit text** (in `CoreHabitsSection.tsx`)
+- Change habit and task labels from `text-sm` to `text-sm font-medium` so they read as medium-bold.
 
-- Accepts the user's recent journal entries (last 5-10), identity statement, dream self categories, and current mood history
-- Calls `google/gemini-2.5-flash` via the Lovable AI gateway
-- Returns two messages: a weekly "future self" letter and a daily mindset affirmation
-- The prompt instructs the AI to weave in themes from journal entries subtly (e.g., if someone journaled about feeling overwhelmed, the future self might speak to finding calm)
+**4. Time-of-day sub-headers** (e.g., "Morning", "Midday", "Evening" in `CoreHabitsSection.tsx`)
+- Change from `font-medium text-sm` to `font-semibold text-sm` for stronger subsection labels.
 
-**2. New store fields in `userStore.ts`**
+**5. Reminder setting labels** (in `ReminderSettings.tsx`)
+- "Daily Reminders" h3: change from `font-medium text-sm` to `font-semibold text-sm`.
+- Time-of-day labels (Morning/Midday/Evening): add `font-medium` to their `text-sm`.
 
-- `cachedFutureSelfMessage`: the generated weekly message + the week key it was generated for (e.g., `2026-W07`)
-- `cachedMindsetMessage`: the generated daily message + the date it was generated for (e.g., `2026-02-16`)
-- These persist locally so we don't re-generate on every visit
+**6. Text contrast boost**
+- Change `--muted-foreground` from `30 10% 50%` to `30 10% 40%` in `src/index.css` -- a subtle darkening of secondary text (dates, counters, helper text) for improved readability without harshness.
 
-**3. New hook: `useHomeMessages.ts`**
+**7. Icon visual weight**
+- Increase Lucide icon `strokeWidth` from the default 2 to 2.5 on all routine-page icons (Sun, Clock, Moon, Settings2, Plus, Check, Flame, TrendingUp, Bell, BellOff, X) to make them appear more solid and defined.
+- Time-of-day icon colors: strengthen from pastel to slightly deeper tones (`text-amber-500` stays, `text-sky-500` stays, `text-indigo-400` becomes `text-indigo-500`).
 
-- On mount, checks if the cached messages are still fresh (same week / same day)
-- If stale, calls the backend function with relevant profile data
-- Returns the messages + a loading state
-- Falls back to a static default message while loading or if the user has no journal entries yet
+### Files to modify
 
-**4. Updated `Home.tsx`**
-
-- Uses the new hook to display AI-generated messages
-- Shows a subtle shimmer/skeleton while a new message is being generated
-- The "Future Self" and "Today's Mindset" cards use the returned messages instead of hardcoded text
-
-### Fallback Behavior
-
-- If the user has no journal entries, the AI still generates uplifting messages based on identity statement and dream self
-- If the user has no profile data at all, a curated set of static messages rotates (date-seeded, same approach as previously planned)
-- Network errors gracefully fall back to static messages
-
-### Files to Create/Modify
-
-| File | Action |
-|------|--------|
-| `supabase/functions/generate-home-messages/index.ts` | Create -- backend function that calls AI |
-| `src/hooks/useHomeMessages.ts` | Create -- manages caching and fetching |
-| `src/stores/userStore.ts` | Modify -- add cached message fields |
-| `src/pages/Home.tsx` | Modify -- use hook instead of static messages |
-
-### Privacy Consideration
-
-Journal content is sent to the AI only to generate the message -- it is not stored anywhere beyond the user's own device and the transient API call. The generated messages themselves are cached locally in the browser.
+| File | Changes |
+|------|---------|
+| `src/index.css` | Bump `section-title` to `font-semibold`, `page-title` to `font-medium`, darken `--muted-foreground` |
+| `src/components/routine/CoreHabitsSection.tsx` | Add `font-medium` to habit/task text, `font-semibold` to sub-headers, `strokeWidth={2.5}` on all icons |
+| `src/components/routine/WeeklyProgress.tsx` | `strokeWidth={2.5}` on Flame and TrendingUp icons |
+| `src/components/routine/ReminderSettings.tsx` | `font-semibold` on h3, `font-medium` on labels, `strokeWidth={2.5}` on Bell/BellOff/Clock icons |
+| `src/pages/Routine.tsx` | `strokeWidth={2.5}` on Plus icon |
 
