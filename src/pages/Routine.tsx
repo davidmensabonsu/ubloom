@@ -5,6 +5,7 @@ import { Plus } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import RoutineSetup from '@/components/routine/RoutineSetup';
 import CoreHabitsSection from '@/components/routine/CoreHabitsSection';
+import { useCallback } from 'react';
 
 
  import WeeklyProgress from '@/components/routine/WeeklyProgress';
@@ -15,7 +16,7 @@ import CoreHabitsSection from '@/components/routine/CoreHabitsSection';
 export default function Routine() {
    const { profile, skipRoutineSetup, isHabitCompletedToday } = useUserStore();
   const [showSetup, setShowSetup] = useState(!profile.routineSetupComplete);
-  const [editingHabits, setEditingHabits] = useState(false);
+  
    const [celebration, setCelebration] = useState<{
      show: boolean;
      type: 'all-complete' | 'streak-milestone';
@@ -90,7 +91,12 @@ export default function Routine() {
  
    // Initialize reminders hook
     useReminders();
-    
+    // Listen for open-habit-setup event from CoreHabitsSection empty state
+    useEffect(() => {
+      const handler = () => setShowSetup(true);
+      window.addEventListener('open-habit-setup', handler);
+      return () => window.removeEventListener('open-habit-setup', handler);
+    }, []);
 
   const todayFormatted = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -101,17 +107,15 @@ export default function Routine() {
   const currentMood = profile.moodHistory[0]?.moods[0] || 'peaceful';
 
   // Show setup flow for first-time users or when editing habits
-  if (showSetup || editingHabits) {
+  if (showSetup) {
     return (
       <RoutineSetup
         onComplete={() => {
           setShowSetup(false);
-          setEditingHabits(false);
         }}
         onSkip={() => {
           skipRoutineSetup();
           setShowSetup(false);
-          setEditingHabits(false);
         }}
       />
     );
@@ -160,7 +164,7 @@ export default function Routine() {
         <WeeklyProgress />
 
         {/* Core Daily Habits */}
-        <CoreHabitsSection onEditHabits={() => setEditingHabits(true)} />
+        <CoreHabitsSection />
 
  
          {/* Reminder Settings */}

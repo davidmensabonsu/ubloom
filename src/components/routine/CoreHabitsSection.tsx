@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useUserStore, TimeOfDay } from '@/stores/userStore';
-import { Check, Sun, Clock, Moon, Settings2, Plus, X } from 'lucide-react';
+import { Check, Sun, Clock, Moon, Plus, X, Sparkles } from 'lucide-react';
 import { useHabitIcons } from '@/hooks/useHabitIcons';
 
 const timeOfDayConfig = {
@@ -10,9 +10,8 @@ const timeOfDayConfig = {
   evening: { label: 'Evening', icon: Moon, color: 'text-indigo-500' },
 };
 
-interface CoreHabitsSectionProps {
-  onEditHabits: () => void;
-}
+
+
 
 function HabitIcon({ habit, isLoading }: { habit: { icon?: string; iconImage?: string }; isLoading?: boolean }) {
   if (habit.iconImage) {
@@ -41,7 +40,7 @@ function HabitIcon({ habit, isLoading }: { habit: { icon?: string; iconImage?: s
   return <span className="text-base">{habit.icon || '✨'}</span>;
 }
 
-export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionProps) {
+export default function CoreHabitsSection() {
   const { profile, toggleHabitCompletion, isHabitCompletedToday, addRoutineTask, toggleTask } = useUserStore();
   const { isGenerating } = useHabitIcons();
   const { coreHabits } = profile;
@@ -121,16 +120,24 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass-card rounded-3xl p-5 text-center"
+        className="glass-card rounded-3xl p-8 text-center space-y-4"
       >
-        <p className="text-muted-foreground mb-3">
-          No daily habits set yet
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+        >
+          <Sparkles size={40} strokeWidth={2} className="text-primary mx-auto" />
+        </motion.div>
+        <h2 className="text-lg font-bold">Set Up Your Daily Habits</h2>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Choose the habits that matter most to you. They'll appear here every day.
         </p>
         <button
-          onClick={onEditHabits}
-          className="soft-button text-sm"
+          onClick={() => window.dispatchEvent(new CustomEvent('open-habit-setup'))}
+          className="soft-button text-sm px-6 py-3 font-semibold bg-primary text-primary-foreground rounded-2xl"
         >
-          Set Up Daily Habits
+          Choose My Habits
         </button>
       </motion.div>
     );
@@ -146,12 +153,6 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
             {totalCompleted} of {totalItems} completed today
           </p>
         </div>
-        <button
-          onClick={onEditHabits}
-          className="p-2 rounded-full hover:bg-muted transition-colors"
-        >
-          <Settings2 size={18} strokeWidth={2.5} className="text-muted-foreground" />
-        </button>
       </div>
 
       {/* Progress bar */}
