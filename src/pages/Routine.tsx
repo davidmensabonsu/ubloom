@@ -171,13 +171,10 @@ export default function Routine() {
       </div>
 
       {/* Floating Action Button for quick task add */}
-      <motion.button
+       <motion.button
         onClick={() => {
-          // Scroll to one-off section and open modal
-          const section = document.querySelector('[data-one-off-section]');
-          if (section) {
-            section.scrollIntoView({ behavior: 'smooth' });
-          }
+          // Dispatch a custom event that CoreHabitsSection can listen to
+          window.dispatchEvent(new CustomEvent('open-add-task'));
         }}
         className="floating-action"
         whileTap={{ scale: 0.95 }}

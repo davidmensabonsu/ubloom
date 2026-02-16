@@ -321,9 +321,23 @@ export const useUserStore = create<UserStore>()(
         })),
 
       skipRoutineSetup: () =>
-        set((state) => ({
-          profile: { ...state.profile, routineSetupComplete: true },
-        })),
+        set((state) => {
+          const defaultHabits: CoreHabit[] = [
+            { id: 'default-water-morning', title: 'Drink a glass of water', timeOfDay: 'morning', icon: '💧' },
+            { id: 'default-skincare', title: 'Morning skincare', timeOfDay: 'morning', icon: '✨' },
+            { id: 'default-walk', title: 'Take a walk', timeOfDay: 'midday', icon: '🚶' },
+            { id: 'default-water-midday', title: 'Drink water', timeOfDay: 'midday', icon: '💧' },
+            { id: 'default-journal', title: 'Journal or reflect', timeOfDay: 'evening', icon: '📝' },
+            { id: 'default-unplug', title: 'Unplug from screens', timeOfDay: 'evening', icon: '📴' },
+          ];
+          return {
+            profile: {
+              ...state.profile,
+              routineSetupComplete: true,
+              coreHabits: state.profile.coreHabits.length === 0 ? defaultHabits : state.profile.coreHabits,
+            },
+          };
+        }),
  
       updateReminderSettings: (settings) =>
         set((state) => {

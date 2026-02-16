@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUserStore, TimeOfDay } from '@/stores/userStore';
 import { Check, Sun, Clock, Moon, Settings2, Plus, X } from 'lucide-react';
 
@@ -32,6 +32,21 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
   
   const [addingToSection, setAddingToSection] = useState<TimeOfDay | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState('');
+
+  // Listen for FAB open-add-task event
+  useEffect(() => {
+    const handler = () => {
+      const firstSection: TimeOfDay = 'morning';
+      setAddingToSection(firstSection);
+      // Scroll the morning section into view
+      setTimeout(() => {
+        const el = document.querySelector('[data-section="morning"]');
+        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    };
+    window.addEventListener('open-add-task', handler);
+    return () => window.removeEventListener('open-add-task', handler);
+  }, []);
 
   const today = new Date().toISOString().split('T')[0];
   
@@ -147,6 +162,7 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
         return (
           <motion.div
             key={time}
+            data-section={time}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: sectionIndex * 0.1 }}
@@ -221,6 +237,16 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
                   <span className="ml-auto text-xs text-muted-foreground/50">today only</span>
                 </motion.button>
               ))}
+
+              {/* Empty section hint */}
+              {isEmpty && addingToSection !== time && (
+                <button
+                  onClick={() => setAddingToSection(time)}
+                  className="w-full text-xs text-muted-foreground/60 py-2 hover:text-muted-foreground transition-colors"
+                >
+                  Tap + to add a task for today
+                </button>
+              )}
 
               {/* Inline add task input */}
               <AnimatePresence>
