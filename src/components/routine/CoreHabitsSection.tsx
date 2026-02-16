@@ -183,18 +183,9 @@ export default function CoreHabitsSection() {
                 <Icon size={18} strokeWidth={2.5} className={config.color} />
                 <h3 className="font-semibold text-sm">{config.label}</h3>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground font-medium">
+              <span className="text-xs text-muted-foreground font-medium">
                   {completedCount}/{totalCount}
                 </span>
-                <button
-                  onClick={() => setAddingToSection(time)}
-                  className="p-1.5 rounded-full hover:bg-muted transition-colors"
-                  aria-label={`Add task to ${config.label}`}
-                >
-                  <Plus size={16} strokeWidth={2.5} className="text-muted-foreground" />
-                </button>
-              </div>
             </div>
 
             <div className="space-y-2">
