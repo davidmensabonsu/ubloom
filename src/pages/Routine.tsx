@@ -183,7 +183,7 @@ export default function Routine() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.5 }}
       >
-        <Plus size={24} strokeWidth={2.5} />
+        <Plus size={24} />
       </motion.button>
 
       <BottomNav />

@@ -49,7 +49,7 @@ export default function ReminderSettings() {
          className="glass-card rounded-3xl p-5"
        >
          <div className="flex items-center gap-3 text-muted-foreground">
-           <BellOff size={18} strokeWidth={2.5} />
+           <BellOff size={18} />
            <p className="text-sm">Notifications not supported in this browser</p>
          </div>
        </motion.div>
@@ -66,10 +66,10 @@ export default function ReminderSettings() {
        <div className="flex items-center justify-between mb-4">
          <div className="flex items-center gap-3">
            <div className={`p-2 rounded-xl ${reminderSettings.enabled ? 'bg-primary/10' : 'bg-muted'}`}>
-             <Bell size={18} strokeWidth={2.5} className={reminderSettings.enabled ? 'text-primary' : 'text-muted-foreground'} />
+             <Bell size={18} className={reminderSettings.enabled ? 'text-primary' : 'text-muted-foreground'} />
            </div>
            <div>
-             <h3 className="font-semibold text-sm">Daily Reminders</h3>
+             <h3 className="font-medium text-sm">Daily Reminders</h3>
              <p className="text-xs text-muted-foreground">
                {permissionStatus === 'denied' 
                  ? 'Blocked in browser settings' 
@@ -98,9 +98,9 @@ export default function ReminderSettings() {
              { key: 'evening' as const, label: '🌙 Evening', icon: '🌙' },
            ].map(({ key, label }) => (
              <div key={key} className="flex items-center justify-between">
-               <span className="text-sm font-medium">{label}</span>
+               <span className="text-sm">{label}</span>
                <div className="flex items-center gap-2">
-                 <Clock size={14} strokeWidth={2.5} className="text-muted-foreground" />
+                 <Clock size={14} className="text-muted-foreground" />
                  <input
                    type="time"
                    value={reminderSettings.times[key]}

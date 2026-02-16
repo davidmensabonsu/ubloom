@@ -6,7 +6,7 @@ import { Check, Sun, Clock, Moon, Settings2, Plus, X } from 'lucide-react';
 const timeOfDayConfig = {
   morning: { label: 'Morning', icon: Sun, color: 'text-amber-500' },
   midday: { label: 'Midday', icon: Clock, color: 'text-sky-500' },
-  evening: { label: 'Evening', icon: Moon, color: 'text-indigo-500' },
+  evening: { label: 'Evening', icon: Moon, color: 'text-indigo-400' },
 };
 
 interface CoreHabitsSectionProps {
@@ -108,7 +108,7 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
           onClick={onEditHabits}
           className="p-2 rounded-full hover:bg-muted transition-colors"
         >
-          <Settings2 size={18} strokeWidth={2.5} className="text-muted-foreground" />
+          <Settings2 size={18} className="text-muted-foreground" />
         </button>
       </div>
 
@@ -144,8 +144,8 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
           >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <Icon size={18} strokeWidth={2.5} className={config.color} />
-                <h3 className="font-semibold text-sm">{config.label}</h3>
+                <Icon size={18} className={config.color} />
+                <h3 className="font-medium text-sm">{config.label}</h3>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-muted-foreground">
@@ -156,7 +156,7 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
                   className="p-1.5 rounded-full hover:bg-muted transition-colors"
                   aria-label={`Add task to ${config.label}`}
                 >
-                  <Plus size={16} strokeWidth={2.5} className="text-muted-foreground" />
+                  <Plus size={16} className="text-muted-foreground" />
                 </button>
               </div>
             </div>
@@ -174,10 +174,10 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
                     whileTap={{ scale: 0.98 }}
                   >
                     <div className={`check-circle ${isCompleted ? 'checked' : ''}`}>
-                      {isCompleted && <Check size={14} strokeWidth={2.5} />}
+                      {isCompleted && <Check size={14} />}
                     </div>
                     <span
-                      className={`text-sm font-medium ${
+                      className={`text-sm ${
                         isCompleted ? 'line-through text-muted-foreground' : ''
                       }`}
                     >
@@ -198,10 +198,10 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
                   animate={{ opacity: 1, height: 'auto' }}
                 >
                   <div className={`check-circle ${task.completed ? 'checked' : ''}`}>
-                    {task.completed && <Check size={14} strokeWidth={2.5} />}
+                    {task.completed && <Check size={14} />}
                   </div>
                   <span
-                    className={`text-sm font-medium ${
+                    className={`text-sm ${
                       task.completed ? 'line-through text-muted-foreground' : ''
                     }`}
                   >
@@ -240,7 +240,7 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
                       disabled={!newTaskTitle.trim()}
                       className="p-2 rounded-full bg-primary text-primary-foreground disabled:opacity-50"
                     >
-                      <Check size={16} strokeWidth={2.5} />
+                      <Check size={16} />
                     </button>
                     <button
                       onClick={() => {
@@ -249,7 +249,7 @@ export default function CoreHabitsSection({ onEditHabits }: CoreHabitsSectionPro
                       }}
                       className="p-2 rounded-full hover:bg-muted"
                     >
-                      <X size={16} strokeWidth={2.5} />
+                      <X size={16} />
                     </button>
                   </motion.div>
                 )}
