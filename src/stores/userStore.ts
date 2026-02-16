@@ -151,6 +151,7 @@ interface UserStore {
   removeMoodboardItem: (id: string) => void;
   reorderMoodboardItems: (items: MoodboardItem[]) => void;
   updateHabitIcon: (habitId: string, iconImage: string) => void;
+  clearAllHabitIcons: () => void;
 }
 
 const initialProfile: UserProfile = {
@@ -366,6 +367,14 @@ export const useUserStore = create<UserStore>()(
             coreHabits: state.profile.coreHabits.map((h) =>
               h.id === habitId ? { ...h, iconImage } : h
             ),
+          },
+        })),
+
+      clearAllHabitIcons: () =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            coreHabits: state.profile.coreHabits.map(({ iconImage, ...rest }) => rest),
           },
         })),
 

@@ -19,7 +19,7 @@ function HabitIcon({ habit }: { habit: { icon?: string; iconImage?: string } }) 
       <img
         src={habit.iconImage}
         alt=""
-        className="w-7 h-7 rounded-lg object-cover"
+        className="w-8 h-8 object-contain"
       />
     );
   }
