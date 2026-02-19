@@ -7,9 +7,24 @@ import { format, subDays, startOfDay } from 'date-fns';
 export default function WeeklyProgress() {
   const { profile } = useUserStore();
   const coreHabits = profile.coreHabits || [];
+  const customTasks = profile.customTasks || [];
   const habitCompletions = profile.habitCompletions || [];
 
-  const coreHabitIds = useMemo(() => new Set(coreHabits.map((h) => h.id)), [coreHabits]);
+  const allTrackableIds = useMemo(() => {
+    const coreIds = coreHabits.map((h) => h.id);
+    const customIds = customTasks.map((t) => t.id);
+    return new Set([...coreIds, ...customIds]);
+  }, [coreHabits, customTasks]);
+
+  // For each past day, figure out which custom tasks were visible
+  const getCustomTaskCountForDate = (dateStr: string, dayOfWeek: number) => {
+    return customTasks.filter((task) => {
+      if (task.recurrence === 'daily') return true;
+      if (task.recurrence === 'weekly') return task.weeklyDays?.includes(dayOfWeek) ?? false;
+      if (task.recurrence === 'oneoff') return task.scheduledDate === dateStr;
+      return false;
+    }).length;
+  };
 
   const weekData = useMemo(() => {
     const today = startOfDay(new Date());
@@ -22,13 +37,15 @@ export default function WeeklyProgress() {
       const isToday = i === 0;
 
       const completedHabits = habitCompletions.filter(
-        (c) => c.date === dateStr && c.completed && coreHabitIds.has(c.habitId)
+        (c) => c.date === dateStr && c.completed && allTrackableIds.has(c.habitId)
       ).length;
 
-      // For past days, use max of current count and completed count so a fully-completed past day stays 100%
+      const dayOfWeek = date.getDay();
+      const expectedTotal = coreHabits.length + getCustomTaskCountForDate(dateStr, dayOfWeek);
+      // For past days, use max of expected count and completed count so a fully-completed past day stays 100%
       const totalHabits = isToday
-        ? coreHabits.length
-        : Math.max(coreHabits.length, completedHabits);
+        ? expectedTotal
+        : Math.max(expectedTotal, completedHabits);
       const percentage = totalHabits > 0 ? (completedHabits / totalHabits) * 100 : 0;
 
       days.push({
@@ -42,10 +59,11 @@ export default function WeeklyProgress() {
     }
 
     return days;
-  }, [coreHabits, coreHabitIds, habitCompletions]);
+  }, [coreHabits, customTasks, allTrackableIds, habitCompletions]);
 
   const streak = useMemo(() => {
-    if (coreHabits.length === 0) return 0;
+    const totalTrackable = coreHabits.length + customTasks.length;
+    if (totalTrackable === 0) return 0;
 
     let currentStreak = 0;
     const today = startOfDay(new Date());
@@ -53,12 +71,14 @@ export default function WeeklyProgress() {
     for (let i = 0; i <= 365; i++) {
       const date = subDays(today, i);
       const dateStr = format(date, 'yyyy-MM-dd');
+      const dayOfWeek = date.getDay();
 
       const dayCompletions = habitCompletions.filter(
-        (c) => c.date === dateStr && c.completed && coreHabitIds.has(c.habitId)
+        (c) => c.date === dateStr && c.completed && allTrackableIds.has(c.habitId)
       );
 
-      const effectiveTotal = Math.max(coreHabits.length, dayCompletions.length);
+      const expectedTotal = coreHabits.length + getCustomTaskCountForDate(dateStr, dayOfWeek);
+      const effectiveTotal = Math.max(expectedTotal, dayCompletions.length);
       const completionRate = effectiveTotal > 0 ? dayCompletions.length / effectiveTotal : 0;
 
       if (completionRate >= 0.5) {
@@ -70,14 +90,14 @@ export default function WeeklyProgress() {
     }
 
     return currentStreak;
-  }, [coreHabits, habitCompletions]);
+  }, [coreHabits, customTasks, allTrackableIds, habitCompletions]);
 
   const weeklyAverage = useMemo(() => {
     const totalPercentage = weekData.reduce((sum, day) => sum + day.percentage, 0);
     return Math.round(totalPercentage / 7);
   }, [weekData]);
 
-  if (coreHabits.length === 0) {
+  if (coreHabits.length === 0 && customTasks.length === 0) {
     return null;
   }
 
