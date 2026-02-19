@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { getLocalDateStr } from '@/lib/dateUtils';
 
 export type TimeOfDay = 'morning' | 'midday' | 'evening';
 
@@ -296,7 +297,7 @@ export const useUserStore = create<UserStore>()(
         })),
 
       toggleHabitCompletion: (habitId) => {
-        const today = new Date().toISOString().split('T')[0];
+        const today = getLocalDateStr();
         set((state) => {
           const existingCompletion = state.profile.habitCompletions.find(
             (c) => c.habitId === habitId && c.date === today
@@ -328,7 +329,7 @@ export const useUserStore = create<UserStore>()(
       },
 
       isHabitCompletedToday: (habitId) => {
-        const today = new Date().toISOString().split('T')[0];
+        const today = getLocalDateStr();
         const habitCompletions = get().profile.habitCompletions || [];
         const completion = habitCompletions.find(
           (c) => c.habitId === habitId && c.date === today
@@ -460,7 +461,7 @@ export const useUserStore = create<UserStore>()(
         })),
 
       toggleCustomTaskCompletion: (taskId) => {
-        const today = new Date().toISOString().split('T')[0];
+        const today = getLocalDateStr();
         set((state) => {
           const existing = state.profile.habitCompletions.find(
             (c) => c.habitId === taskId && c.date === today
@@ -490,7 +491,7 @@ export const useUserStore = create<UserStore>()(
       },
 
       isCustomTaskCompletedToday: (taskId) => {
-        const today = new Date().toISOString().split('T')[0];
+        const today = getLocalDateStr();
         const completions = get().profile.habitCompletions || [];
         const c = completions.find((c) => c.habitId === taskId && c.date === today);
         return c?.completed ?? false;
@@ -498,7 +499,7 @@ export const useUserStore = create<UserStore>()(
 
       getVisibleCustomTasks: () => {
         const today = new Date();
-        const todayStr = today.toISOString().split('T')[0];
+        const todayStr = getLocalDateStr(today);
         const dayOfWeek = today.getDay();
         return (get().profile.customTasks || []).filter((task) => {
           if (task.recurrence === 'daily') return true;
@@ -509,7 +510,7 @@ export const useUserStore = create<UserStore>()(
       },
 
       markReminderSent: (timeOfDay) => {
-        const today = new Date().toISOString().split('T')[0];
+        const today = getLocalDateStr();
         set((state) => {
           const current = state.profile.reminderSettings ?? initialProfile.reminderSettings;
           return {
