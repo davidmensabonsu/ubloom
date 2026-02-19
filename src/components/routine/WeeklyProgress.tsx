@@ -9,6 +9,8 @@ export default function WeeklyProgress() {
   const coreHabits = profile.coreHabits || [];
   const habitCompletions = profile.habitCompletions || [];
 
+  const coreHabitIds = useMemo(() => new Set(coreHabits.map((h) => h.id)), [coreHabits]);
+
   const weekData = useMemo(() => {
     const today = startOfDay(new Date());
     const days = [];
@@ -20,10 +22,13 @@ export default function WeeklyProgress() {
       const isToday = i === 0;
 
       const completedHabits = habitCompletions.filter(
-        (c) => c.date === dateStr && c.completed
+        (c) => c.date === dateStr && c.completed && coreHabitIds.has(c.habitId)
       ).length;
 
-      const totalHabits = coreHabits.length;
+      // For past days, use max of current count and completed count so a fully-completed past day stays 100%
+      const totalHabits = isToday
+        ? coreHabits.length
+        : Math.max(coreHabits.length, completedHabits);
       const percentage = totalHabits > 0 ? (completedHabits / totalHabits) * 100 : 0;
 
       days.push({
@@ -37,7 +42,7 @@ export default function WeeklyProgress() {
     }
 
     return days;
-  }, [coreHabits, habitCompletions]);
+  }, [coreHabits, coreHabitIds, habitCompletions]);
 
   const streak = useMemo(() => {
     if (coreHabits.length === 0) return 0;
@@ -50,11 +55,11 @@ export default function WeeklyProgress() {
       const dateStr = format(date, 'yyyy-MM-dd');
 
       const dayCompletions = habitCompletions.filter(
-        (c) => c.date === dateStr && c.completed
+        (c) => c.date === dateStr && c.completed && coreHabitIds.has(c.habitId)
       );
 
-      // Consider a day complete if at least 50% of habits are done
-      const completionRate = dayCompletions.length / coreHabits.length;
+      const effectiveTotal = Math.max(coreHabits.length, dayCompletions.length);
+      const completionRate = effectiveTotal > 0 ? dayCompletions.length / effectiveTotal : 0;
 
       if (completionRate >= 0.5) {
         currentStreak++;
