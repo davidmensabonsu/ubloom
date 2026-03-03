@@ -44,7 +44,7 @@ export default function Home() {
           <motion.img
 
             alt="ubloom"
-            className="h-8 w-8 object-contain"
+            className="h-24 w-24 object-contain"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1 }} src="/lovable-uploads/98ee74aa-4350-4922-a6ea-f5e178038d09.png" />
