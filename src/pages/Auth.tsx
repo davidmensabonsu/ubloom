@@ -26,7 +26,7 @@ export default function Auth() {
       } else {
         toast({
           title: 'Check your email ✨',
-          description: 'We sent you a confirmation link to verify your account.',
+          description: 'We sent you a confirmation link to verify your account.'
         });
       }
     } else {
@@ -49,9 +49,9 @@ export default function Auth() {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/30 to-glow flex items-center justify-center mx-auto mb-4">
-            <Sparkles size={28} className="text-primary" />
-          </div>
+          
+
+          
           <h1 className="text-4xl font-display font-light tracking-tight text-foreground">
             ubloom
           </h1>
@@ -66,20 +66,20 @@ export default function Auth() {
           className="glass-card rounded-2xl p-6 space-y-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          {isSignUp && (
-            <div className="relative">
+          transition={{ duration: 0.4 }}>
+          
+          {isSignUp &&
+          <div className="relative">
               <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input
-                type="text"
-                placeholder="Display name"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                className="w-full rounded-xl border border-border bg-background pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
-              />
+              type="text"
+              placeholder="Display name"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              className="w-full rounded-xl border border-border bg-background pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all" />
+            
             </div>
-          )}
+          }
 
           <div className="relative">
             <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -89,8 +89,8 @@ export default function Auth() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full rounded-xl border border-border bg-background pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
-            />
+              className="w-full rounded-xl border border-border bg-background pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all" />
+            
           </div>
 
           <div className="relative">
@@ -102,25 +102,25 @@ export default function Auth() {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full rounded-xl border border-border bg-background pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
-            />
+              className="w-full rounded-xl border border-border bg-background pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all" />
+            
           </div>
 
           <motion.button
             type="submit"
             disabled={loading}
             className="soft-button w-full flex items-center justify-center gap-2"
-            whileTap={{ scale: 0.98 }}
-          >
-            {loading ? (
-              <span className="animate-pulse">...</span>
-            ) : (
-              <>
+            whileTap={{ scale: 0.98 }}>
+            
+            {loading ?
+            <span className="animate-pulse">...</span> :
+
+            <>
                 <Heart size={16} className="fill-current" />
                 <span>{isSignUp ? 'Create account' : 'Sign in'}</span>
                 <ArrowRight size={16} />
               </>
-            )}
+            }
           </motion.button>
         </motion.form>
 
@@ -129,12 +129,12 @@ export default function Auth() {
           {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
           <button
             onClick={() => setIsSignUp(!isSignUp)}
-            className="text-primary font-medium hover:underline"
-          >
+            className="text-primary font-medium hover:underline">
+            
             {isSignUp ? 'Sign in' : 'Sign up'}
           </button>
         </p>
       </div>
-    </div>
-  );
+    </div>);
+
 }
