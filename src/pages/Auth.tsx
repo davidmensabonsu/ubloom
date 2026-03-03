@@ -49,7 +49,7 @@ export default function Auth() {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
-          <img alt="ubloom logo" className="w-[132px] h-[132px] mx-auto mb-2 drop-shadow-lg saturate-150 brightness-105 object-cover" src="/lovable-uploads/8d6fe7f1-8318-4452-a115-400fc2532d87.png" />
+          <img alt="ubloom logo" className="w-[190px] h-[190px] mx-auto mb-2 drop-shadow-lg saturate-150 brightness-105 object-cover" src="/lovable-uploads/8d6fe7f1-8318-4452-a115-400fc2532d87.png" />
           <h1 className="text-4xl font-display font-light tracking-tight text-foreground">
             ubloom
           </h1>
