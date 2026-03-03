@@ -26,7 +26,7 @@ export default function Welcome() {
 
       {/* Logo / Brand */}
       <div className="text-center mb-12">
-        <img alt="ubloom logo" className="w-[264px] h-[264px] object-contain mx-auto mb-2 drop-shadow-lg saturate-150 brightness-105" src="/lovable-uploads/2c6d36d2-be89-4057-b082-e50ce488d2bd.png" />
+        <img alt="ubloom logo" className="w-[264px] h-[264px] object-contain mx-auto mb-2 drop-shadow-lg saturate-150 brightness-105 shadow rounded-lg" src="/lovable-uploads/2c6d36d2-be89-4057-b082-e50ce488d2bd.png" />
         <h1 className="text-5xl font-display font-light tracking-tight text-foreground mb-2">
           ubloom
         </h1>
