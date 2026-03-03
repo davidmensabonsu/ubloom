@@ -32,7 +32,7 @@ export default function Home() {
     <div className="min-h-screen gradient-background pb-24">
       {/* Header */}
       <div className="px-5 pt-12 pb-6">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between my-0 py-0 mb-0 mr-0">
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
