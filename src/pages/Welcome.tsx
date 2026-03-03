@@ -26,7 +26,7 @@ export default function Welcome() {
 
       {/* Logo / Brand */}
       <div className="text-center mb-12">
-        <img src={logo} alt="ubloom logo" className="w-28 h-28 object-contain mx-auto mb-6 drop-shadow-lg saturate-150 brightness-105" />
+        <img alt="ubloom logo" className="w-28 h-28 object-contain mx-auto mb-6 drop-shadow-lg saturate-150 brightness-105" src="/lovable-uploads/2c6d36d2-be89-4057-b082-e50ce488d2bd.png" />
         <h1 className="text-5xl font-display font-light tracking-tight text-foreground mb-2">
           ubloom
         </h1>
@@ -44,11 +44,11 @@ export default function Welcome() {
 
       {/* Features preview */}
       <div className="flex gap-6 mb-12">
-        {['✨ Reflect', '🌸 Align', '💫 Bloom'].map((feature) => (
-          <span key={feature} className="text-sm text-muted-foreground">
+        {['✨ Reflect', '🌸 Align', '💫 Bloom'].map((feature) =>
+        <span key={feature} className="text-sm text-muted-foreground">
             {feature}
           </span>
-        ))}
+        )}
       </div>
 
       {/* CTA Button */}
@@ -56,8 +56,8 @@ export default function Welcome() {
         onClick={handleStart}
         className="soft-button flex items-center gap-2 text-lg px-8 py-4"
         whileTap={{ scale: 0.98 }}
-        whileHover={{ scale: 1.02 }}
-      >
+        whileHover={{ scale: 1.02 }}>
+        
         <Heart size={20} className="fill-current" />
         <span>{profile.onboardingComplete ? 'Enter my space' : 'Begin your journey'}</span>
         <ArrowRight size={18} />
@@ -67,6 +67,6 @@ export default function Welcome() {
       <p className="absolute bottom-8 text-xs text-muted-foreground">
         Made with love for women who dare to bloom
       </p>
-    </div>
-  );
+    </div>);
+
 }
