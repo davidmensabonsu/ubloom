@@ -1,11 +1,13 @@
 import { motion } from 'framer-motion';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { Flame, TrendingUp } from 'lucide-react';
 import { format, subDays, startOfDay } from 'date-fns';
+import DayDetailSheet from './DayDetailSheet';
 
 export default function WeeklyProgress() {
   const { profile } = useUserStore();
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const coreHabits = profile.coreHabits || [];
   const customTasks = profile.customTasks || [];
   const habitCompletions = profile.habitCompletions || [];
@@ -102,6 +104,7 @@ export default function WeeklyProgress() {
   }
 
   return (
+    <>
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -137,8 +140,9 @@ export default function WeeklyProgress() {
             initial={{ opacity: 0, scaleY: 0 }}
             animate={{ opacity: 1, scaleY: 1 }}
             transition={{ delay: index * 0.05, duration: 0.3 }}
-            className="flex-1 flex flex-col items-center gap-2"
+            className="flex-1 flex flex-col items-center gap-2 cursor-pointer"
             style={{ originY: 1 }}
+            onClick={() => setSelectedDate(day.date)}
           >
             {/* Bar */}
             <div className="relative w-full h-20 bg-muted rounded-xl overflow-hidden">
@@ -204,5 +208,8 @@ export default function WeeklyProgress() {
         </motion.p>
       )}
     </motion.div>
+
+    <DayDetailSheet dateStr={selectedDate} onClose={() => setSelectedDate(null)} />
+    </>
   );
 }
