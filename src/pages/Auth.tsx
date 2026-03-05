@@ -142,15 +142,40 @@ export default function Auth() {
           </motion.button>
         </motion.form>
 
+        {/* Forgot password link */}
+        {!isSignUp && !isForgot && (
+          <p className="text-center mt-3">
+            <button
+              onClick={() => setIsForgot(true)}
+              className="text-xs text-muted-foreground hover:text-primary hover:underline transition-colors"
+            >
+              Forgot your password?
+            </button>
+          </p>
+        )}
+
         {/* Toggle */}
-        <p className="text-center mt-6 text-sm text-muted-foreground">
-          {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-          <button
-            onClick={() => setIsSignUp(!isSignUp)}
-            className="text-primary font-medium hover:underline">
-            
-            {isSignUp ? 'Sign in' : 'Sign up'}
-          </button>
+        <p className="text-center mt-4 text-sm text-muted-foreground">
+          {isForgot ? (
+            <>
+              <button
+                onClick={() => setIsForgot(false)}
+                className="text-primary font-medium hover:underline"
+              >
+                Back to sign in
+              </button>
+            </>
+          ) : (
+            <>
+              {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+              <button
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="text-primary font-medium hover:underline"
+              >
+                {isSignUp ? 'Sign in' : 'Sign up'}
+              </button>
+            </>
+          )}
         </p>
       </div>
     </div>);
