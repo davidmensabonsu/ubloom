@@ -68,6 +68,7 @@ function AnimatedRoutes() {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageTransition direction={direction}><Welcome /></PageTransition>} />
         <Route path="/auth" element={<PageTransition direction={direction}><Auth /></PageTransition>} />
+        <Route path="/reset-password" element={<PageTransition direction={direction}><ResetPassword /></PageTransition>} />
         <Route path="/onboarding" element={<ProtectedRoute><PageTransition direction={direction}><Onboarding /></PageTransition></ProtectedRoute>} />
         <Route path="/dream-life" element={<ProtectedRoute><PageTransition direction={direction}><DreamLife /></PageTransition></ProtectedRoute>} />
         <Route path="/choose-aesthetic" element={<ProtectedRoute><PageTransition direction={direction}><ChooseAesthetic /></PageTransition></ProtectedRoute>} />
