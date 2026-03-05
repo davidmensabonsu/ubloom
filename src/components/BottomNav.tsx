@@ -34,7 +34,7 @@ export default function BottomNav() {
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}>
                 
                 {item.isLogo ?
-                <img alt="Home" className="h-[35px] w-[35px] object-contain" src="/lovable-uploads/74df1548-966b-4649-a7f6-0cd4b50572cf.png" /> :
+                <img alt="Home" className="h-[22px] w-[22px] object-contain" src="/lovable-uploads/74df1548-966b-4649-a7f6-0cd4b50572cf.png" /> :
 
                 Icon && <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
                 }
