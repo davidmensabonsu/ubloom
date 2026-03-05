@@ -207,5 +207,8 @@ export default function WeeklyProgress() {
         </motion.p>
       )}
     </motion.div>
+
+    <DayDetailSheet dateStr={selectedDate} onClose={() => setSelectedDate(null)} />
+    </>
   );
 }
