@@ -38,6 +38,7 @@ export default function Routine() {
     const calculateStreak = () => {
       if (coreHabits.length === 0) return 0;
       const habitCompletions = profile.habitCompletions || [];
+      const coreHabitIds = new Set(coreHabits.map((h) => h.id));
       let currentStreak = 0;
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -46,13 +47,14 @@ export default function Routine() {
         const date = new Date(today);
         date.setDate(date.getDate() - i);
         const dateStr = getLocalDateStr(date);
- 
+
        const dayCompletions = habitCompletions.filter(
-         (c) => c.date === dateStr && c.completed
+         (c) => c.date === dateStr && c.completed && coreHabitIds.has(c.habitId)
        );
- 
-       const completionRate = dayCompletions.length / coreHabits.length;
- 
+
+       const effectiveTotal = Math.max(coreHabits.length, dayCompletions.length);
+       const completionRate = effectiveTotal > 0 ? dayCompletions.length / effectiveTotal : 0;
+
        if (completionRate >= 0.5) {
          currentStreak++;
        } else if (i > 0) {
