@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
 import { Mail, Lock, User, ArrowRight, Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isForgot, setIsForgot] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -24,6 +26,19 @@ export default function Auth() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    if (isForgot) {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) {
+        toast({ title: 'Could not send reset email', description: error.message, variant: 'destructive' });
+      } else {
+        toast({ title: 'Check your email ✨', description: 'We sent you a link to reset your password.' });
+      }
+      setLoading(false);
+      return;
+    }
 
     if (isSignUp) {
       const { error } = await signUp(email, password, displayName);
@@ -60,7 +75,7 @@ export default function Auth() {
             ubloom
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            {isSignUp ? 'Create your space' : 'Welcome back, beautiful'}
+            {isForgot ? 'Reset your password' : isSignUp ? 'Create your space' : 'Welcome back, beautiful'}
           </p>
         </div>
 
@@ -72,7 +87,7 @@ export default function Auth() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}>
           
-          {isSignUp &&
+          {isSignUp && !isForgot &&
           <div className="relative">
               <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input
@@ -81,7 +96,6 @@ export default function Auth() {
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               className="w-full rounded-xl border border-border bg-background pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all" />
-            
             </div>
           }
 
@@ -94,21 +108,21 @@ export default function Auth() {
               onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full rounded-xl border border-border bg-background pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all" />
-            
           </div>
 
-          <div className="relative">
-            <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              className="w-full rounded-xl border border-border bg-background pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all" />
-            
-          </div>
+          {!isForgot && (
+            <div className="relative">
+              <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                className="w-full rounded-xl border border-border bg-background pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all" />
+            </div>
+          )}
 
           <motion.button
             type="submit"
@@ -121,22 +135,47 @@ export default function Auth() {
 
             <>
                 <Heart size={16} className="fill-current" />
-                <span>{isSignUp ? 'Create account' : 'Sign in'}</span>
+                <span>{isForgot ? 'Send reset link' : isSignUp ? 'Create account' : 'Sign in'}</span>
                 <ArrowRight size={16} />
               </>
             }
           </motion.button>
         </motion.form>
 
+        {/* Forgot password link */}
+        {!isSignUp && !isForgot && (
+          <p className="text-center mt-3">
+            <button
+              onClick={() => setIsForgot(true)}
+              className="text-xs text-muted-foreground hover:text-primary hover:underline transition-colors"
+            >
+              Forgot your password?
+            </button>
+          </p>
+        )}
+
         {/* Toggle */}
-        <p className="text-center mt-6 text-sm text-muted-foreground">
-          {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-          <button
-            onClick={() => setIsSignUp(!isSignUp)}
-            className="text-primary font-medium hover:underline">
-            
-            {isSignUp ? 'Sign in' : 'Sign up'}
-          </button>
+        <p className="text-center mt-4 text-sm text-muted-foreground">
+          {isForgot ? (
+            <>
+              <button
+                onClick={() => setIsForgot(false)}
+                className="text-primary font-medium hover:underline"
+              >
+                Back to sign in
+              </button>
+            </>
+          ) : (
+            <>
+              {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+              <button
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="text-primary font-medium hover:underline"
+              >
+                {isSignUp ? 'Sign in' : 'Sign up'}
+              </button>
+            </>
+          )}
         </p>
       </div>
     </div>);

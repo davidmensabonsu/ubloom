@@ -14,6 +14,7 @@ import PageTransition from "@/components/PageTransition";
 // Pages
 import Welcome from "./pages/Welcome";
 import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
 import Onboarding from "./pages/Onboarding";
 import DreamLife from "./pages/DreamLife";
 import ChooseAesthetic from "./pages/ChooseAesthetic";
@@ -48,7 +49,7 @@ function CloudSync() {
   return null;
 }
 
-const routeOrder = ['/', '/auth', '/onboarding', '/dream-life', '/choose-aesthetic', '/home', '/alignment', '/routine', '/goals', '/moodboard', '/profile'];
+const routeOrder = ['/', '/auth', '/reset-password', '/onboarding', '/dream-life', '/choose-aesthetic', '/home', '/alignment', '/routine', '/goals', '/moodboard', '/profile'];
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -67,6 +68,7 @@ function AnimatedRoutes() {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageTransition direction={direction}><Welcome /></PageTransition>} />
         <Route path="/auth" element={<PageTransition direction={direction}><Auth /></PageTransition>} />
+        <Route path="/reset-password" element={<PageTransition direction={direction}><ResetPassword /></PageTransition>} />
         <Route path="/onboarding" element={<ProtectedRoute><PageTransition direction={direction}><Onboarding /></PageTransition></ProtectedRoute>} />
         <Route path="/dream-life" element={<ProtectedRoute><PageTransition direction={direction}><DreamLife /></PageTransition></ProtectedRoute>} />
         <Route path="/choose-aesthetic" element={<ProtectedRoute><PageTransition direction={direction}><ChooseAesthetic /></PageTransition></ProtectedRoute>} />
