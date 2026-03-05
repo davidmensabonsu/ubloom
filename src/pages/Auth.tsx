@@ -75,7 +75,7 @@ export default function Auth() {
             ubloom
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            {isSignUp ? 'Create your space' : 'Welcome back, beautiful'}
+            {isForgot ? 'Reset your password' : isSignUp ? 'Create your space' : 'Welcome back, beautiful'}
           </p>
         </div>
 
