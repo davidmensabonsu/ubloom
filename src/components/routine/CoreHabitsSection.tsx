@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import { getLocalDateStr } from '@/lib/dateUtils';
 import { useState, useEffect } from 'react';
 import { useUserStore, TimeOfDay } from '@/stores/userStore';
 import { Check, Sun, Clock, Moon, Plus, X, Sparkles, Pencil, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
@@ -50,7 +51,7 @@ export default function CoreHabitsSection() {
   const [editMode, setEditMode] = useState(false);
 
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = getLocalDateStr();
   
   const getTodayTasks = (time: TimeOfDay) => {
     return (profile.routineTasks || []).filter(

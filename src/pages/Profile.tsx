@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { getLocalDateStr } from '@/lib/dateUtils';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -105,9 +106,9 @@ export default function Profile() {
       }
       const today = new Date();
       for (let i = 0; i < 365; i++) {
-        const d = new Date(today);
+         const d = new Date(today);
         d.setDate(d.getDate() - i);
-        const key = d.toISOString().split('T')[0];
+        const key = getLocalDateStr(d);
         const done = completionsByDate[key] || 0;
         if (done / totalHabits >= 0.5) {
           streak++;

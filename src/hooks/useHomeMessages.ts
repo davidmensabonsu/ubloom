@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getLocalDateStr } from '@/lib/dateUtils';
 import { useUserStore } from '@/stores/userStore';
 import { supabase } from '@/integrations/supabase/client';
 import { getISOWeek, getISOWeekYear } from 'date-fns';
@@ -12,7 +13,7 @@ function getWeekKey(): string {
 }
 
 function getTodayKey(): string {
-  return new Date().toISOString().split('T')[0];
+  return getLocalDateStr();
 }
 
 export function useHomeMessages() {

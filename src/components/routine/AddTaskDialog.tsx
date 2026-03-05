@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { getLocalDateStr } from '@/lib/dateUtils';
 import { useUserStore, TimeOfDay } from '@/stores/userStore';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter, DrawerDescription } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
@@ -27,7 +28,7 @@ function getUpcomingDays(): { label: string; date: string; dayIndex: number }[] 
   for (let i = 0; i < 7; i++) {
     const d = new Date(today);
     d.setDate(d.getDate() + i);
-    const dateStr = d.toISOString().split('T')[0];
+    const dateStr = getLocalDateStr(d);
     const label = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : dayLabels[d.getDay()];
     days.push({ label, date: dateStr, dayIndex: d.getDay() });
   }
