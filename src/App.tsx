@@ -14,6 +14,7 @@ import PageTransition from "@/components/PageTransition";
 // Pages
 import Welcome from "./pages/Welcome";
 import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
 import Onboarding from "./pages/Onboarding";
 import DreamLife from "./pages/DreamLife";
 import ChooseAesthetic from "./pages/ChooseAesthetic";
