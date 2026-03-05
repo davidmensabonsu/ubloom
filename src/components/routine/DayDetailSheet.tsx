@@ -112,7 +112,7 @@ export default function DayDetailSheet({ dateStr, onClose }: DayDetailSheetProps
                             : 'text-muted-foreground line-through'
                         }`}
                       >
-                        {item.name}
+                        {item.title}
                       </span>
                       {item.completed ? (
                         <Check size={16} className="text-primary" />
