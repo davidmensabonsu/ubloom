@@ -7,6 +7,7 @@ import DayDetailSheet from './DayDetailSheet';
 
 export default function WeeklyProgress() {
   const { profile } = useUserStore();
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const coreHabits = profile.coreHabits || [];
   const customTasks = profile.customTasks || [];
   const habitCompletions = profile.habitCompletions || [];
