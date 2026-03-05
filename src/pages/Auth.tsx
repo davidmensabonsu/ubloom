@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { lovable } from '@/integrations/lovable/index';
 import { motion } from 'framer-motion';
 import { Mail, Lock, User, ArrowRight, Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
