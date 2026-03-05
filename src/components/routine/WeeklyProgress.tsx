@@ -139,8 +139,9 @@ export default function WeeklyProgress() {
             initial={{ opacity: 0, scaleY: 0 }}
             animate={{ opacity: 1, scaleY: 1 }}
             transition={{ delay: index * 0.05, duration: 0.3 }}
-            className="flex-1 flex flex-col items-center gap-2"
+            className="flex-1 flex flex-col items-center gap-2 cursor-pointer"
             style={{ originY: 1 }}
+            onClick={() => setSelectedDate(day.date)}
           >
             {/* Bar */}
             <div className="relative w-full h-20 bg-muted rounded-xl overflow-hidden">
