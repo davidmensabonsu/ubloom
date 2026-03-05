@@ -156,7 +156,7 @@ export default function WeeklyProgress() {
                     : 'bg-primary/30'
                 }`}
               />
-              {day.percentage >= 100 && (
+              {day.percentage >= 100 ? (
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
@@ -165,7 +165,16 @@ export default function WeeklyProgress() {
                 >
                   ✨
                 </motion.div>
-              )}
+              ) : day.totalHabits > 0 ? (
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: index * 0.05 + 0.4 }}
+                  className="absolute inset-0 flex items-center justify-center text-[10px] font-medium text-muted-foreground"
+                >
+                  {day.completedHabits}/{day.totalHabits}
+                </motion.span>
+              ) : null}
             </div>
             {/* Day Label */}
             <span
