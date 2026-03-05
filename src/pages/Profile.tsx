@@ -470,15 +470,30 @@ export default function Profile() {
           transition={{ delay: 0.4 }}
           className="space-y-3"
         >
-          <button
-            onClick={handleSignOut}
-            className="w-full glass-card rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98]"
-          >
-            <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-              <LogOut size={18} className="text-muted-foreground" />
-            </div>
-            <span className="font-medium text-foreground">Sign out</span>
-          </button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button className="w-full glass-card rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98]">
+                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                  <LogOut size={18} className="text-muted-foreground" />
+                </div>
+                <span className="font-medium text-foreground">Sign out</span>
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="rounded-3xl">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Sign out?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  You'll need to sign in again to access your space.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleSignOut} className="rounded-xl">
+                  Sign out
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
