@@ -44,7 +44,7 @@ export default function Routine() {
       for (let i = 0; i <= 365; i++) {
         const date = new Date(today);
         date.setDate(date.getDate() - i);
-        const dateStr = date.toISOString().split('T')[0];
+        const dateStr = getLocalDateStr(date);
  
        const dayCompletions = habitCompletions.filter(
          (c) => c.date === dateStr && c.completed

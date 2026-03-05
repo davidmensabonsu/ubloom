@@ -78,7 +78,7 @@ export function useReminders() {
  
      const now = new Date();
      const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-     const today = now.toISOString().split('T')[0];
+     const today = getLocalDateStr(now);
  
      const timesOfDay: TimeOfDay[] = ['morning', 'midday', 'evening'];
  

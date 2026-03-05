@@ -27,7 +27,7 @@ function getUpcomingDays(): { label: string; date: string; dayIndex: number }[] 
   for (let i = 0; i < 7; i++) {
     const d = new Date(today);
     d.setDate(d.getDate() + i);
-    const dateStr = d.toISOString().split('T')[0];
+    const dateStr = getLocalDateStr(d);
     const label = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : dayLabels[d.getDay()];
     days.push({ label, date: dateStr, dayIndex: d.getDay() });
   }

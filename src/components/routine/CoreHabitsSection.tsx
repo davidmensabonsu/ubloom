@@ -50,7 +50,7 @@ export default function CoreHabitsSection() {
   const [editMode, setEditMode] = useState(false);
 
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = getLocalDateStr();
   
   const getTodayTasks = (time: TimeOfDay) => {
     return (profile.routineTasks || []).filter(

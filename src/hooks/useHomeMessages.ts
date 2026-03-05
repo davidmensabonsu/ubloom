@@ -12,7 +12,7 @@ function getWeekKey(): string {
 }
 
 function getTodayKey(): string {
-  return new Date().toISOString().split('T')[0];
+  return getLocalDateStr();
 }
 
 export function useHomeMessages() {
