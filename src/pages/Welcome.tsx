@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
@@ -8,7 +9,13 @@ import logo from '@/assets/logo.png';
 export default function Welcome() {
   const navigate = useNavigate();
   const { profile } = useUserStore();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && user) {
+      navigate(profile.onboardingComplete ? '/home' : '/onboarding', { replace: true });
+    }
+  }, [user, loading, profile.onboardingComplete, navigate]);
 
   const handleStart = () => {
     if (user) {
