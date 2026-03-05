@@ -37,14 +37,14 @@ export default function DayDetailSheet({ dateStr, onClose }: DayDetailSheetProps
   const allItems = [
     ...coreHabits.map((h) => ({
       id: h.id,
-      name: h.name,
-      icon: h.icon,
+      title: h.title,
+      icon: h.icon || h.iconImage || '✨',
       completed: completedIds.has(h.id),
       type: 'habit' as const,
     })),
     ...relevantCustomTasks.map((t) => ({
       id: t.id,
-      name: t.name,
+      title: t.title,
       icon: t.icon || '📋',
       completed: completedIds.has(t.id),
       type: 'task' as const,
