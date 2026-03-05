@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isForgot, setIsForgot] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
