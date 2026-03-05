@@ -27,6 +27,19 @@ export default function Auth() {
     e.preventDefault();
     setLoading(true);
 
+    if (isForgot) {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) {
+        toast({ title: 'Could not send reset email', description: error.message, variant: 'destructive' });
+      } else {
+        toast({ title: 'Check your email ✨', description: 'We sent you a link to reset your password.' });
+      }
+      setLoading(false);
+      return;
+    }
+
     if (isSignUp) {
       const { error } = await signUp(email, password, displayName);
       if (error) {
