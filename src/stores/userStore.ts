@@ -530,6 +530,31 @@ export const useUserStore = create<UserStore>()(
     }),
     {
       name: 'ubloom-user-storage',
+      storage: {
+        getItem: (name) => {
+          const str = localStorage.getItem(name);
+          return str ? JSON.parse(str) : null;
+        },
+        setItem: (name, value) => {
+          try {
+            // Prune data before persisting to prevent quota issues
+            const state = value?.state as UserStore | undefined;
+            if (state?.profile) {
+              const now = new Date();
+              const cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 90);
+              const cutoffStr = getLocalDateStr(cutoff);
+              state.profile.habitCompletions = (state.profile.habitCompletions || [])
+                .filter((c) => c.date >= cutoffStr);
+              state.profile.journalEntries = (state.profile.journalEntries || []).slice(0, 200);
+              state.profile.moodHistory = (state.profile.moodHistory || []).slice(0, 200);
+            }
+            localStorage.setItem(name, JSON.stringify(value));
+          } catch (e) {
+            console.warn('Failed to persist store (storage quota likely exceeded):', e);
+          }
+        },
+        removeItem: (name) => localStorage.removeItem(name),
+      },
       merge: (persistedState, currentState) => {
         const persisted = (persistedState as Partial<UserStore>) ?? {};
         const persistedProfile = (persisted.profile as Partial<UserProfile>) ?? {};
