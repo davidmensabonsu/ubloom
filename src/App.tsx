@@ -49,7 +49,7 @@ function CloudSync() {
   return null;
 }
 
-const routeOrder = ['/', '/auth', '/onboarding', '/dream-life', '/choose-aesthetic', '/home', '/alignment', '/routine', '/goals', '/moodboard', '/profile'];
+const routeOrder = ['/', '/auth', '/reset-password', '/onboarding', '/dream-life', '/choose-aesthetic', '/home', '/alignment', '/routine', '/goals', '/moodboard', '/profile'];
 
 function AnimatedRoutes() {
   const location = useLocation();
