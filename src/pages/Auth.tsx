@@ -135,7 +135,7 @@ export default function Auth() {
 
             <>
                 <Heart size={16} className="fill-current" />
-                <span>{isSignUp ? 'Create account' : 'Sign in'}</span>
+                <span>{isForgot ? 'Send reset link' : isSignUp ? 'Create account' : 'Sign in'}</span>
                 <ArrowRight size={16} />
               </>
             }
