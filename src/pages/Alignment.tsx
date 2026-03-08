@@ -15,7 +15,15 @@ const feelingOptions = [
 { value: 'peaceful', label: 'Peaceful', emoji: '🕊️' },
 { value: 'confident', label: 'Confident', emoji: '👑' },
 { value: 'grounded', label: 'Grounded', emoji: '🌱' },
-{ value: 'joyful', label: 'Joyful', emoji: '✨' }];
+{ value: 'joyful', label: 'Joyful', emoji: '✨' },
+{ value: 'anxious', label: 'Anxious', emoji: '😰' },
+{ value: 'sad', label: 'Sad', emoji: '💧' },
+{ value: 'overwhelmed', label: 'Overwhelmed', emoji: '🌊' },
+{ value: 'frustrated', label: 'Frustrated', emoji: '😤' },
+{ value: 'tired', label: 'Tired', emoji: '😴' },
+{ value: 'lonely', label: 'Lonely', emoji: '🥀' },
+{ value: 'numb', label: 'Numb', emoji: '🫥' },
+{ value: 'hopeful', label: 'Hopeful', emoji: '🌅' }];
 
 
 export default function Alignment() {
