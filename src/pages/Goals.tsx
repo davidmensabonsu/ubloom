@@ -221,9 +221,9 @@ export default function Goals() {
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full bg-background rounded-t-3xl p-6 shadow-elevated"
+              className="w-full bg-background rounded-t-3xl shadow-elevated max-h-[80vh] flex flex-col"
             >
-              <div className="flex items-center justify-between mb-6">
+              <div className="p-6 pb-0 flex items-center justify-between mb-4">
                 <h2 className="section-title">Add New Goal</h2>
                 <button
                   onClick={() => setShowAddModal(false)}
@@ -233,41 +233,45 @@ export default function Goals() {
                 </button>
               </div>
 
-              <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
-                {(Object.keys(categoryConfig) as Array<keyof typeof categoryConfig>).map(
-                  (cat) => (
-                    <button
-                      key={cat}
-                      onClick={() => setNewGoalCategory(cat)}
-                      className={`mood-pill whitespace-nowrap ${
-                        newGoalCategory === cat ? 'selected' : ''
-                      }`}
-                    >
-                      {categoryConfig[cat].emoji}
-                      <span>{categoryConfig[cat].title}</span>
-                    </button>
-                  )
-                )}
+              <div className="px-6 overflow-y-auto flex-1">
+                <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+                  {(Object.keys(categoryConfig) as Array<keyof typeof categoryConfig>).map(
+                    (cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => setNewGoalCategory(cat)}
+                        className={`mood-pill whitespace-nowrap ${
+                          newGoalCategory === cat ? 'selected' : ''
+                        }`}
+                      >
+                        {categoryConfig[cat].emoji}
+                        <span>{categoryConfig[cat].title}</span>
+                      </button>
+                    )
+                  )}
+                </div>
+
+                <input
+                  type="text"
+                  value={newGoalTitle}
+                  onChange={(e) => setNewGoalTitle(e.target.value)}
+                  placeholder="What are you working towards?"
+                  className="w-full p-4 rounded-2xl bg-muted border-0 mb-4 focus:ring-2 focus:ring-primary/30 focus:outline-none"
+                />
               </div>
 
-              <input
-                type="text"
-                value={newGoalTitle}
-                onChange={(e) => setNewGoalTitle(e.target.value)}
-                placeholder="What are you working towards?"
-                className="w-full p-4 rounded-2xl bg-muted border-0 mb-6 focus:ring-2 focus:ring-primary/30 focus:outline-none"
-              />
-
-              <button
-                onClick={handleAddGoal}
-                disabled={!newGoalTitle.trim()}
-                className={`soft-button w-full flex items-center justify-center gap-2 ${
-                  !newGoalTitle.trim() ? 'opacity-50' : ''
-                }`}
-              >
-                <Target size={18} />
-                <span>Add Goal</span>
-              </button>
+              <div className="p-6 pt-2 pb-[calc(1.5rem+env(safe-area-inset-bottom))]">
+                <button
+                  onClick={handleAddGoal}
+                  disabled={!newGoalTitle.trim()}
+                  className={`soft-button w-full flex items-center justify-center gap-2 ${
+                    !newGoalTitle.trim() ? 'opacity-50' : ''
+                  }`}
+                >
+                  <Target size={18} />
+                  <span>Add Goal</span>
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
