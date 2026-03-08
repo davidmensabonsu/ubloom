@@ -212,16 +212,16 @@ export default function Goals() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-foreground/20 backdrop-blur-sm flex items-end"
+            className="fixed inset-0 z-50 bg-foreground/20 backdrop-blur-sm flex items-center justify-center p-4"
             onClick={() => setShowAddModal(false)}
           >
             <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
               transition={{ type: 'spring', damping: 25 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full bg-background rounded-t-3xl shadow-elevated max-h-[80vh] flex flex-col"
+              className="w-full max-w-md bg-background rounded-3xl shadow-elevated max-h-[70dvh] flex flex-col"
             >
               <div className="p-6 pb-0 flex items-center justify-between mb-4">
                 <h2 className="section-title">Add New Goal</h2>
@@ -253,6 +253,7 @@ export default function Goals() {
 
                 <input
                   type="text"
+                  autoFocus
                   value={newGoalTitle}
                   onChange={(e) => setNewGoalTitle(e.target.value)}
                   placeholder="What are you working towards?"
@@ -260,7 +261,7 @@ export default function Goals() {
                 />
               </div>
 
-              <div className="p-6 pt-2 pb-[calc(1.5rem+env(safe-area-inset-bottom))]">
+              <div className="sticky bottom-0 p-6 pt-2 bg-background rounded-b-3xl">
                 <button
                   onClick={handleAddGoal}
                   disabled={!newGoalTitle.trim()}

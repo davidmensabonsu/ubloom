@@ -1,17 +1,52 @@
 
 
-## Problem
+## Fix Weekly Progress Bar Accuracy
 
-When typing in the goal input on mobile, the on-screen keyboard pushes the "Add Goal" button out of view. The modal is positioned at the bottom (`flex items-end`) with `max-h-[80vh]`, but the keyboard shrinks the visible viewport, hiding the fixed footer button.
+### Problem
 
-## Plan
+Two bugs cause past days' progress bars to show incorrectly:
 
-**File: `src/pages/Goals.tsx`** — Restructure the modal to stay visible above the keyboard:
+1. **Timezone mismatch**: Habit completions are saved using UTC dates (`toISOString()`), but the weekly chart looks up dates using local time (`date-fns format()`). For anyone west of UTC, an evening completion on Tuesday gets stored as Wednesday, so Tuesday's bar stays empty.
 
-1. Change the modal overlay from `flex items-end` to `flex items-center justify-center` (or use a fixed/sticky approach) so the modal stays centered in the remaining viewport.
-2. Reduce `max-h-[80vh]` to something smaller like `max-h-[70vh]` or use `max-h-[min(80vh,400px)]` to ensure the modal doesn't exceed the keyboard-reduced viewport.
-3. Move the "Add Goal" button out of the scrollable area and make it sticky at the bottom using `sticky bottom-0` with a background, ensuring it's always visible regardless of scroll position or keyboard state.
-4. Add `autoFocus` to the input so the keyboard opens immediately, and use CSS `dvh` (dynamic viewport height) units instead of `vh` to account for mobile keyboard: `max-h-[70dvh]`.
+2. **Shifting denominator**: The chart always divides by the *current* number of core habits. If you had 3 habits on Tuesday (all completed) but later added a 4th, Tuesday shows as 75% instead of 100%.
 
-These changes ensure the save button remains visible when the mobile keyboard is active.
+### Solution
+
+**1. Standardize all date handling to local time**
+
+Create a shared helper function `getLocalDateStr()` that formats dates using local timezone consistently. Replace every `new Date().toISOString().split('T')[0]` call in the store with this helper.
+
+| Location | Change |
+|----------|--------|
+| `src/lib/dateUtils.ts` | New file with `getLocalDateStr(date?: Date)` helper |
+| `src/stores/userStore.ts` | Replace all 6 occurrences of `toISOString().split('T')[0]` with `getLocalDateStr()` |
+
+**2. Fix the weekly progress calculation**
+
+For each past day, instead of using `coreHabits.length` as the denominator, count only completions that match current core habit IDs (excluding custom task completions). For the denominator, use the greater of: the current core habit count or the number of distinct core habit completions for that day. This way, if all habits that existed on a past day were completed, the bar shows 100%.
+
+| Location | Change |
+|----------|--------|
+| `src/components/routine/WeeklyProgress.tsx` | Filter completions to only core habit IDs. For past days, set `totalHabits = max(coreHabits.length, completedCoreHabits)` so a fully-completed past day always shows 100%. Apply the same logic in the streak calculation. |
+
+### Technical Details
+
+**New helper** (`src/lib/dateUtils.ts`):
+```
+export function getLocalDateStr(date?: Date): string {
+  const d = date || new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+```
+
+**WeeklyProgress fix** -- key logic change in the `weekData` loop:
+- Get set of current core habit IDs
+- For each day, count only completions whose `habitId` is in that set
+- For past days: `totalHabits = Math.max(coreHabits.length, completedCoreHabits)`
+- For today: `totalHabits = coreHabits.length` (standard)
+
+**Store fix** -- straightforward find-and-replace of the date pattern across 6 call sites in `userStore.ts`.
 
