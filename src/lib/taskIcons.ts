@@ -14,6 +14,13 @@ import {
   Pill,
   Sparkles,
   Brain,
+  Coffee,
+  Leaf,
+  Camera,
+  Bike,
+  Baby,
+  Palette,
+  Plane,
   type LucideIcon,
 } from 'lucide-react';
 
