@@ -189,7 +189,16 @@ export default function Goals() {
 
                         {/* Goals list */}
                         {goals.length > 0 ? (
-                          goals.map((goal) => (
+                          (() => {
+                            const incomplete = goals.filter(g => !g.completed);
+                            const completed = goals.filter(g => g.completed);
+                            return (
+                              <>
+                                {incomplete.map((goal) => (
+                                  <div
+                                    key={goal.id}
+                                    className="flex items-start gap-3 p-3 rounded-xl bg-muted/50 group"
+                                  >
                             <div
                               key={goal.id}
                               className="flex items-start gap-3 p-3 rounded-xl bg-muted/50 group"
