@@ -6,9 +6,9 @@ import { Check, Sun, Clock, Moon, Plus, X, Sparkles, Pencil, Trash2, ChevronUp, 
 import { useHabitIcons } from '@/hooks/useHabitIcons';
 
 const timeOfDayConfig = {
-  morning: { label: 'Morning', icon: Sun, color: 'text-amber-500' },
-  midday: { label: 'Midday', icon: Clock, color: 'text-sky-500' },
-  evening: { label: 'Evening', icon: Moon, color: 'text-indigo-500' },
+  morning: { label: 'Morning', icon: Sun, color: 'text-primary' },
+  midday: { label: 'Midday', icon: Clock, color: 'text-primary' },
+  evening: { label: 'Evening', icon: Moon, color: 'text-primary' },
 };
 
 

@@ -4,9 +4,9 @@ import { useUserStore, TimeOfDay } from '@/stores/userStore';
 import { Check, Sun, Clock, Moon, Pencil, Trash2, Repeat, CalendarDays, RotateCcw } from 'lucide-react';
 
 const timeOfDayConfig = {
-  morning: { label: 'Morning', icon: Sun, color: 'text-amber-500' },
-  midday: { label: 'Midday', icon: Clock, color: 'text-sky-500' },
-  evening: { label: 'Evening', icon: Moon, color: 'text-indigo-500' },
+  morning: { label: 'Morning', icon: Sun, color: 'text-primary' },
+  midday: { label: 'Midday', icon: Clock, color: 'text-primary' },
+  evening: { label: 'Evening', icon: Moon, color: 'text-primary' },
 };
 
 const recurrenceLabels: Record<string, { label: string; icon: typeof Repeat }> = {
