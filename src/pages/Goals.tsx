@@ -192,130 +192,95 @@ export default function Goals() {
                           (() => {
                             const incomplete = goals.filter(g => !g.completed);
                             const completed = goals.filter(g => g.completed);
+
+                            const renderGoal = (goal: typeof goals[0]) => (
+                              <div key={goal.id} className="flex items-start gap-3 p-3 rounded-xl bg-muted/50 group">
+                                <button
+                                  onClick={() => toggleGoalComplete(goal.id)}
+                                  className={`check-circle shrink-0 mt-0.5 ${goal.completed ? 'checked' : ''}`}
+                                >
+                                  {goal.completed && <Check size={14} />}
+                                </button>
+
+                                {editingGoalId === goal.id ? (
+                                  <div className="flex-1 space-y-2">
+                                    <div className="flex items-center gap-2">
+                                      <input
+                                        autoFocus
+                                        value={editingTitle}
+                                        onChange={(e) => setEditingTitle(e.target.value)}
+                                        onKeyDown={(e) => {
+                                          if (e.key === 'Enter') handleSaveEdit();
+                                          if (e.key === 'Escape') handleCancelEdit();
+                                        }}
+                                        className="flex-1 text-sm bg-background rounded-lg px-2 py-1 focus:ring-2 focus:ring-primary/30 focus:outline-none"
+                                      />
+                                      <button onClick={handleSaveEdit} className="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+                                        <Check size={14} />
+                                      </button>
+                                      <button onClick={handleCancelEdit} className="p-1.5 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition-colors">
+                                        <X size={14} />
+                                      </button>
+                                    </div>
+                                    <Popover>
+                                      <PopoverTrigger asChild>
+                                        <button className={cn("flex items-center gap-1.5 text-xs px-2 py-1 rounded-lg border border-border hover:bg-muted transition-colors", !editingDeadline && "text-muted-foreground")}>
+                                          <CalendarIcon size={12} />
+                                          {editingDeadline ? format(editingDeadline, 'MMM d, yyyy') : 'Set timeframe'}
+                                        </button>
+                                      </PopoverTrigger>
+                                      <PopoverContent className="w-auto p-0" align="start">
+                                        <Calendar mode="single" selected={editingDeadline} onSelect={setEditingDeadline} disabled={(date) => date < new Date()} initialFocus className={cn("p-3 pointer-events-auto")} />
+                                      </PopoverContent>
+                                    </Popover>
+                                  </div>
+                                ) : (
+                                  <>
+                                    <div className="flex-1 min-w-0">
+                                      <span className={`text-sm block ${goal.completed ? 'line-through text-muted-foreground' : ''}`}>
+                                        {goal.title}
+                                      </span>
+                                      {goal.deadline && (() => {
+                                        const deadlineDate = startOfDay(parseISO(goal.deadline));
+                                        const today = startOfDay(new Date());
+                                        const daysLeft = differenceInDays(deadlineDate, today);
+                                        const isOverdue = !goal.completed && isPast(deadlineDate) && daysLeft < 0;
+                                        const isApproaching = !goal.completed && !isOverdue && daysLeft <= 7;
+                                        return (
+                                          <span className={cn("text-xs flex items-center gap-1 mt-0.5", isOverdue ? "text-destructive font-medium" : isApproaching ? "text-amber-500 font-medium" : "text-muted-foreground")}>
+                                            <CalendarIcon size={10} />
+                                            {isOverdue ? `Overdue · ${format(deadlineDate, 'MMM d, yyyy')}` : isApproaching ? `${daysLeft === 0 ? 'Due today' : `${daysLeft}d left`} · ${format(deadlineDate, 'MMM d, yyyy')}` : `By ${format(deadlineDate, 'MMM d, yyyy')}`}
+                                          </span>
+                                        );
+                                      })()}
+                                    </div>
+                                    <div className="flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity shrink-0">
+                                      <button onClick={() => handleStartEdit(goal)} className="p-1.5 rounded-lg hover:bg-background/80 text-muted-foreground hover:text-foreground transition-colors">
+                                        <Pencil size={14} />
+                                      </button>
+                                      <button onClick={() => removeGoal(goal.id)} className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
+                                        <Trash2 size={14} />
+                                      </button>
+                                    </div>
+                                  </>
+                                )}
+                              </div>
+                            );
+
                             return (
                               <>
-                                {incomplete.map((goal) => (
-                                  <div
-                                    key={goal.id}
-                                    className="flex items-start gap-3 p-3 rounded-xl bg-muted/50 group"
-                                  >
-                            <div
-                              key={goal.id}
-                              className="flex items-start gap-3 p-3 rounded-xl bg-muted/50 group"
-                            >
-                              <button
-                                onClick={() => toggleGoalComplete(goal.id)}
-                                className={`check-circle shrink-0 mt-0.5 ${
-                                  goal.completed ? 'checked' : ''
-                                }`}
-                              >
-                                {goal.completed && <Check size={14} />}
-                              </button>
-
-                              {editingGoalId === goal.id ? (
-                                <div className="flex-1 space-y-2">
-                                  <div className="flex items-center gap-2">
-                                    <input
-                                      autoFocus
-                                      value={editingTitle}
-                                      onChange={(e) => setEditingTitle(e.target.value)}
-                                      onKeyDown={(e) => {
-                                        if (e.key === 'Enter') handleSaveEdit();
-                                        if (e.key === 'Escape') handleCancelEdit();
-                                      }}
-                                      className="flex-1 text-sm bg-background rounded-lg px-2 py-1 focus:ring-2 focus:ring-primary/30 focus:outline-none"
-                                    />
-                                    <button
-                                      onClick={handleSaveEdit}
-                                      className="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
-                                    >
-                                      <Check size={14} />
-                                    </button>
-                                    <button
-                                      onClick={handleCancelEdit}
-                                      className="p-1.5 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition-colors"
-                                    >
-                                      <X size={14} />
-                                    </button>
+                                {incomplete.map(renderGoal)}
+                                {incomplete.length > 0 && completed.length > 0 && (
+                                  <div className="flex items-center gap-3 py-1">
+                                    <div className="flex-1 h-px bg-border" />
+                                    <span className="text-xs text-muted-foreground">Completed</span>
+                                    <div className="flex-1 h-px bg-border" />
                                   </div>
-                                  <Popover>
-                                    <PopoverTrigger asChild>
-                                      <button
-                                        className={cn(
-                                          "flex items-center gap-1.5 text-xs px-2 py-1 rounded-lg border border-border hover:bg-muted transition-colors",
-                                          !editingDeadline && "text-muted-foreground"
-                                        )}
-                                      >
-                                        <CalendarIcon size={12} />
-                                        {editingDeadline ? format(editingDeadline, 'MMM d, yyyy') : 'Set timeframe'}
-                                      </button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0" align="start">
-                                      <Calendar
-                                        mode="single"
-                                        selected={editingDeadline}
-                                        onSelect={setEditingDeadline}
-                                        disabled={(date) => date < new Date()}
-                                        initialFocus
-                                        className={cn("p-3 pointer-events-auto")}
-                                      />
-                                    </PopoverContent>
-                                  </Popover>
-                                </div>
-                              ) : (
-                                <>
-                                  <div className="flex-1 min-w-0">
-                                    <span
-                                      className={`text-sm block ${
-                                        goal.completed
-                                          ? 'line-through text-muted-foreground'
-                                          : ''
-                                      }`}
-                                    >
-                                      {goal.title}
-                                    </span>
-                                    {goal.deadline && (() => {
-                                      const deadlineDate = startOfDay(parseISO(goal.deadline));
-                                      const today = startOfDay(new Date());
-                                      const daysLeft = differenceInDays(deadlineDate, today);
-                                      const isOverdue = !goal.completed && isPast(deadlineDate) && daysLeft < 0;
-                                      const isApproaching = !goal.completed && !isOverdue && daysLeft <= 7;
-
-                                      return (
-                                        <span className={cn(
-                                          "text-xs flex items-center gap-1 mt-0.5",
-                                          isOverdue ? "text-destructive font-medium" :
-                                          isApproaching ? "text-amber-500 font-medium" :
-                                          "text-muted-foreground"
-                                        )}>
-                                          <CalendarIcon size={10} />
-                                          {isOverdue
-                                            ? `Overdue · ${format(deadlineDate, 'MMM d, yyyy')}`
-                                            : isApproaching
-                                              ? `${daysLeft === 0 ? 'Due today' : `${daysLeft}d left`} · ${format(deadlineDate, 'MMM d, yyyy')}`
-                                              : `By ${format(deadlineDate, 'MMM d, yyyy')}`}
-                                        </span>
-                                      );
-                                    })()}
-                                  </div>
-                                  <div className="flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity shrink-0">
-                                    <button
-                                      onClick={() => handleStartEdit(goal)}
-                                      className="p-1.5 rounded-lg hover:bg-background/80 text-muted-foreground hover:text-foreground transition-colors"
-                                    >
-                                      <Pencil size={14} />
-                                    </button>
-                                    <button
-                                      onClick={() => removeGoal(goal.id)}
-                                      className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
-                                    >
-                                      <Trash2 size={14} />
-                                    </button>
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          ))
+                                )}
+                                {completed.map(renderGoal)}
+                              </>
+                            );
+                          })()
                         ) : (
                           <p className="text-sm text-muted-foreground text-center py-4">
                             No goals yet. Tap + to add one.
