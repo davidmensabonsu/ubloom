@@ -9,7 +9,7 @@ export interface CoreHabit {
   title: string;
   timeOfDay: TimeOfDay;
   icon?: string;
-  iconImage?: string;
+  
 }
 
 export interface HabitCompletion {
