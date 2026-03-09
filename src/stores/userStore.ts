@@ -147,6 +147,7 @@ interface UserStore {
   updateProfile: (updates: Partial<UserProfile>) => void;
   setAesthetic: (theme: string) => void;
   addJournalEntry: (entry: Omit<JournalEntry, 'id'>) => void;
+  removeJournalEntry: (id: string) => void;
   addMoodEntry: (moods: string[]) => void;
   addRoutineTask: (task: Omit<RoutineTask, 'id'>) => void;
   toggleTask: (id: string) => void;
