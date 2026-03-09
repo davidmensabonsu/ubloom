@@ -73,12 +73,6 @@
     --theme-sat: 45%;
   }
 
-  /* Theme: Soft Cream */
-  .theme-cream {
-    --theme-hue: 45;
-    --theme-sat: 35%;
-  }
-
   /* Theme: Sage Green */
   .theme-sage {
     --theme-hue: 140;
@@ -91,12 +85,6 @@
     --theme-sat: 50%;
   }
 
-  /* Theme: Champagne */
-  .theme-champagne {
-    --theme-hue: 40;
-    --theme-sat: 55%;
-  }
-
   /* Theme: Mocha */
   .theme-mocha {
     --theme-hue: 25;
@@ -107,6 +95,42 @@
   .theme-grey {
     --theme-hue: 220;
     --theme-sat: 15%;
+  }
+
+  /* Theme: Sky Blue */
+  .theme-sky {
+    --theme-hue: 200;
+    --theme-sat: 55%;
+  }
+
+  /* Theme: Coral */
+  .theme-coral {
+    --theme-hue: 15;
+    --theme-sat: 65%;
+  }
+
+  /* Theme: Teal */
+  .theme-teal {
+    --theme-hue: 175;
+    --theme-sat: 40%;
+  }
+
+  /* Theme: Midnight */
+  .theme-midnight {
+    --theme-hue: 240;
+    --theme-sat: 45%;
+  }
+
+  /* Theme: Peach */
+  .theme-peach {
+    --theme-hue: 20;
+    --theme-sat: 75%;
+  }
+
+  /* Theme: Mauve */
+  .theme-mauve {
+    --theme-hue: 310;
+    --theme-sat: 35%;
   }
 
   * {
