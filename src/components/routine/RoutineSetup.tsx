@@ -28,9 +28,9 @@ const presetHabits: { title: string; icon: string; timeOfDay: TimeOfDay }[] = [
 ];
 
 const timeOfDayConfig = {
-  morning: { label: 'Morning', icon: Sun, color: 'text-amber-500' },
-  midday: { label: 'Midday', icon: Clock, color: 'text-sky-500' },
-  evening: { label: 'Evening', icon: Moon, color: 'text-indigo-500' },
+  morning: { label: 'Morning', icon: Sun, color: 'text-primary' },
+  midday: { label: 'Midday', icon: Clock, color: 'text-primary' },
+  evening: { label: 'Evening', icon: Moon, color: 'text-primary' },
 };
 
 interface RoutineSetupProps {
