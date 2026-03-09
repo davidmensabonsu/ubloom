@@ -4,6 +4,7 @@ import { useUserStore } from '@/stores/userStore';
 import { Sparkles, Heart, Feather, BookOpen, ChevronDown, Search, X, Calendar } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import MoodTrendsChart from '@/components/alignment/MoodTrendsChart';
+import MoodStreak from '@/components/alignment/MoodStreak';
 import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Input } from '@/components/ui/input';
@@ -178,14 +179,16 @@ export default function Alignment() {
           
           Daily Alignment
         </motion.h1>
-        <motion.p
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="subtle-text mt-1">
-          
-          A quiet moment before your day unfolds
-        </motion.p>
+          className="flex items-center justify-between">
+          <p className="subtle-text">
+            A quiet moment before your day unfolds
+          </p>
+          <MoodStreak moodHistory={profile.moodHistory} />
+        </motion.div>
       </div>
 
       {/* Content */}
