@@ -48,7 +48,7 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
   const [recurrence, setRecurrence] = useState<'daily' | 'weekly' | 'oneoff'>('daily');
   const [weeklyDays, setWeeklyDays] = useState<number[]>([]);
   const [scheduledDate, setScheduledDate] = useState('');
-  const [icon, setIcon] = useState('✨');
+  const [icon, setIcon] = useState(taskIconOptions[0].id);
 
   const upcomingDays = getUpcomingDays();
 
