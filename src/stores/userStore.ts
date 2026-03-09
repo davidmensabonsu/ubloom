@@ -243,6 +243,14 @@ export const useUserStore = create<UserStore>()(
           },
         })),
       
+      removeJournalEntry: (id) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            journalEntries: state.profile.journalEntries.filter((e) => e.id !== id),
+          },
+        })),
+      
       addMoodEntry: (moods) =>
         set((state) => ({
           profile: {
