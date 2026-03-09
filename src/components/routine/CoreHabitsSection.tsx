@@ -334,6 +334,22 @@ export default function CoreHabitsSection() {
           </motion.div>
         );
       })}
+
+      {/* Customize Habits button in edit mode */}
+      {editMode && (
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          onClick={() => {
+            setEditMode(false);
+            window.dispatchEvent(new CustomEvent('open-habit-setup'));
+          }}
+          className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl border-2 border-dashed border-muted-foreground/30 text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+        >
+          <Sparkles size={18} strokeWidth={2.5} />
+          <span className="text-sm font-medium">Customize Habits</span>
+        </motion.button>
+      )}
     </div>
   );
 }

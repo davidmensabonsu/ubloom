@@ -39,12 +39,25 @@ interface RoutineSetupProps {
 }
 
 export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) {
-  const { setCoreHabits, completeRoutineSetup } = useUserStore();
-  const [selectedHabits, setSelectedHabits] = useState<Set<string>>(new Set());
+  const { profile, setCoreHabits, completeRoutineSetup } = useUserStore();
+  
+  // Pre-select existing habits when re-opening setup
+  const existingHabits = profile.coreHabits || [];
+  const existingPresetTitles = new Set(
+    existingHabits
+      .filter((h) => presetHabits.some((p) => p.title === h.title))
+      .map((h) => h.title)
+  );
+  const existingCustomHabits = existingHabits
+    .filter((h) => !presetHabits.some((p) => p.title === h.title))
+    .map((h) => ({ title: h.title, timeOfDay: h.timeOfDay }));
+  const allExistingTitles = new Set(existingHabits.map((h) => h.title));
+
+  const [selectedHabits, setSelectedHabits] = useState<Set<string>>(allExistingTitles);
   const [customHabit, setCustomHabit] = useState('');
   const [customTimeOfDay, setCustomTimeOfDay] = useState<TimeOfDay>('morning');
   const [showCustomInput, setShowCustomInput] = useState(false);
-  const [customHabits, setCustomHabits] = useState<{ title: string; timeOfDay: TimeOfDay }[]>([]);
+  const [customHabits, setCustomHabits] = useState<{ title: string; timeOfDay: TimeOfDay }[]>(existingCustomHabits);
 
   const toggleHabit = (habitTitle: string) => {
     const newSelected = new Set(selectedHabits);
