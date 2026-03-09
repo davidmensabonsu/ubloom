@@ -452,23 +452,6 @@ export const useUserStore = create<UserStore>()(
           profile: { ...state.profile, moodboardItems: items },
         })),
 
-      updateHabitIcon: (habitId, iconImage) =>
-        set((state) => ({
-          profile: {
-            ...state.profile,
-            coreHabits: state.profile.coreHabits.map((h) =>
-              h.id === habitId ? { ...h, iconImage } : h
-            ),
-          },
-        })),
-
-      clearAllHabitIcons: () =>
-        set((state) => ({
-          profile: {
-            ...state.profile,
-            coreHabits: state.profile.coreHabits.map(({ iconImage, ...rest }) => rest),
-          },
-        })),
 
       // Custom tasks
       addCustomTask: (task) =>

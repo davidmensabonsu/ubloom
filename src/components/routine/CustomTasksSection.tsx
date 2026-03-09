@@ -115,7 +115,11 @@ export default function CustomTasksSection() {
                     <span className={`text-sm font-medium flex items-center gap-2 ${isCompleted ? 'line-through text-muted-foreground' : ''}`}>
                       {(() => {
                         const iconOpt = getTaskIcon(task.icon);
-                        return iconOpt ? <iconOpt.icon size={18} strokeWidth={2} className="text-primary" /> : <span className="text-base">{task.icon}</span>;
+                        if (iconOpt) {
+                          const IC = iconOpt.icon;
+                          return <div className="icon-3d-sm"><IC size={14} strokeWidth={2.5} /></div>;
+                        }
+                        return <span className="text-base">{task.icon}</span>;
                       })()}
                       {task.title}
                     </span>

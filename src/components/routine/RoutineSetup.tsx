@@ -2,29 +2,30 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useUserStore, CoreHabit, TimeOfDay } from '@/stores/userStore';
 import { Check, Sun, Clock, Moon, Plus, X, Sparkles } from 'lucide-react';
+import { taskIconOptions, getTaskIcon } from '@/lib/taskIcons';
 
 const presetHabits: { title: string; icon: string; timeOfDay: TimeOfDay }[] = [
   // Morning
-  { title: 'Drink a glass of water', icon: '💧', timeOfDay: 'morning' },
-  { title: 'Morning skincare', icon: '🌸', timeOfDay: 'morning' },
-  { title: 'Stretch or yoga', icon: '🧘‍♀️', timeOfDay: 'morning' },
-  { title: 'Healthy breakfast', icon: '🥣', timeOfDay: 'morning' },
-  { title: 'Set daily intentions', icon: '✨', timeOfDay: 'morning' },
-  { title: 'Meditate', icon: '🧠', timeOfDay: 'morning' },
+  { title: 'Drink a glass of water', icon: 'glass-water', timeOfDay: 'morning' },
+  { title: 'Morning skincare', icon: 'sparkles', timeOfDay: 'morning' },
+  { title: 'Stretch or yoga', icon: 'dumbbell', timeOfDay: 'morning' },
+  { title: 'Healthy breakfast', icon: 'utensils', timeOfDay: 'morning' },
+  { title: 'Set daily intentions', icon: 'pencil', timeOfDay: 'morning' },
+  { title: 'Meditate', icon: 'brain', timeOfDay: 'morning' },
   // Midday
-  { title: 'Take a walk', icon: '🚶‍♀️', timeOfDay: 'midday' },
-  { title: 'Drink water', icon: '💧', timeOfDay: 'midday' },
-  { title: 'Healthy lunch', icon: '🥗', timeOfDay: 'midday' },
-  { title: 'Take vitamins', icon: '💊', timeOfDay: 'midday' },
-  { title: 'Screen break', icon: '👀', timeOfDay: 'midday' },
-  { title: 'Connect with a friend', icon: '💬', timeOfDay: 'midday' },
+  { title: 'Take a walk', icon: 'heart', timeOfDay: 'midday' },
+  { title: 'Drink water', icon: 'glass-water', timeOfDay: 'midday' },
+  { title: 'Healthy lunch', icon: 'utensils', timeOfDay: 'midday' },
+  { title: 'Take vitamins', icon: 'pill', timeOfDay: 'midday' },
+  { title: 'Screen break', icon: 'phone', timeOfDay: 'midday' },
+  { title: 'Connect with a friend', icon: 'heart', timeOfDay: 'midday' },
   // Evening
-  { title: 'Evening skincare', icon: '🌙', timeOfDay: 'evening' },
-  { title: 'Read for 15 minutes', icon: '📚', timeOfDay: 'evening' },
-  { title: 'Journal or reflect', icon: '📝', timeOfDay: 'evening' },
-  { title: 'Prepare for tomorrow', icon: '📋', timeOfDay: 'evening' },
-  { title: 'Unplug from screens', icon: '📵', timeOfDay: 'evening' },
-  { title: 'Gratitude practice', icon: '🙏', timeOfDay: 'evening' },
+  { title: 'Evening skincare', icon: 'sparkles', timeOfDay: 'evening' },
+  { title: 'Read for 15 minutes', icon: 'book', timeOfDay: 'evening' },
+  { title: 'Journal or reflect', icon: 'pencil', timeOfDay: 'evening' },
+  { title: 'Prepare for tomorrow', icon: 'pencil', timeOfDay: 'evening' },
+  { title: 'Unplug from screens', icon: 'phone', timeOfDay: 'evening' },
+  { title: 'Gratitude practice', icon: 'heart', timeOfDay: 'evening' },
 ];
 
 const timeOfDayConfig = {
@@ -32,6 +33,13 @@ const timeOfDayConfig = {
   midday: { label: 'Midday', icon: Clock, color: 'text-primary' },
   evening: { label: 'Evening', icon: Moon, color: 'text-primary' },
 };
+
+function PresetIcon({ iconId }: { iconId: string }) {
+  const opt = getTaskIcon(iconId);
+  if (!opt) return <div className="icon-3d-sm"><Sparkles size={14} strokeWidth={2.5} /></div>;
+  const IconComp = opt.icon;
+  return <div className="icon-3d-sm"><IconComp size={14} strokeWidth={2.5} /></div>;
+}
 
 interface RoutineSetupProps {
   onComplete: () => void;
@@ -41,7 +49,6 @@ interface RoutineSetupProps {
 export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) {
   const { profile, setCoreHabits, completeRoutineSetup } = useUserStore();
   
-  // Pre-select existing habits when re-opening setup
   const existingHabits = profile.coreHabits || [];
   const existingPresetTitles = new Set(
     existingHabits
@@ -50,14 +57,15 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
   );
   const existingCustomHabits = existingHabits
     .filter((h) => !presetHabits.some((p) => p.title === h.title))
-    .map((h) => ({ title: h.title, timeOfDay: h.timeOfDay }));
+    .map((h) => ({ title: h.title, timeOfDay: h.timeOfDay, icon: h.icon || 'sparkles' }));
   const allExistingTitles = new Set(existingHabits.map((h) => h.title));
 
   const [selectedHabits, setSelectedHabits] = useState<Set<string>>(allExistingTitles);
   const [customHabit, setCustomHabit] = useState('');
   const [customTimeOfDay, setCustomTimeOfDay] = useState<TimeOfDay>('morning');
+  const [customIcon, setCustomIcon] = useState(taskIconOptions[0].id);
   const [showCustomInput, setShowCustomInput] = useState(false);
-  const [customHabits, setCustomHabits] = useState<{ title: string; timeOfDay: TimeOfDay }[]>(existingCustomHabits);
+  const [customHabits, setCustomHabits] = useState<{ title: string; timeOfDay: TimeOfDay; icon: string }[]>(existingCustomHabits);
 
   const toggleHabit = (habitTitle: string) => {
     const newSelected = new Set(selectedHabits);
@@ -71,10 +79,11 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
 
   const addCustomHabit = () => {
     if (customHabit.trim()) {
-      const newCustom = { title: customHabit.trim(), timeOfDay: customTimeOfDay };
+      const newCustom = { title: customHabit.trim(), timeOfDay: customTimeOfDay, icon: customIcon };
       setCustomHabits([...customHabits, newCustom]);
       setSelectedHabits(new Set([...selectedHabits, customHabit.trim()]));
       setCustomHabit('');
+      setCustomIcon(taskIconOptions[0].id);
       setShowCustomInput(false);
     }
   };
@@ -89,7 +98,6 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
   const handleComplete = () => {
     const habits: CoreHabit[] = [];
     
-    // Add selected preset habits
     presetHabits.forEach((habit) => {
       if (selectedHabits.has(habit.title)) {
         habits.push({
@@ -101,14 +109,13 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
       }
     });
 
-    // Add custom habits
     customHabits.forEach((habit) => {
       if (selectedHabits.has(habit.title)) {
         habits.push({
           id: `habit-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           title: habit.title,
           timeOfDay: habit.timeOfDay,
-          icon: '⭐',
+          icon: habit.icon,
         });
       }
     });
@@ -121,7 +128,7 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
   const getHabitsByTime = (time: TimeOfDay) => {
     const preset = presetHabits.filter((h) => h.timeOfDay === time);
     const custom = customHabits.filter((h) => h.timeOfDay === time);
-    return [...preset, ...custom.map((c) => ({ ...c, icon: '⭐' }))];
+    return [...preset, ...custom];
   };
 
   return (
@@ -182,8 +189,9 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
                       <div className={`check-circle ${isSelected ? 'checked' : ''}`}>
                         {isSelected && <Check size={14} strokeWidth={2.5} />}
                       </div>
-                      <span className="text-sm font-medium flex-1 text-left">
-                        {habit.icon} {habit.title}
+                      <span className="text-sm font-medium flex-1 text-left flex items-center gap-2">
+                        <PresetIcon iconId={habit.icon} />
+                        {habit.title}
                       </span>
                       {isCustom && (
                         <button
@@ -228,6 +236,31 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
                   className="w-full p-3 rounded-2xl bg-muted border-0 focus:ring-2 focus:ring-primary/30 focus:outline-none text-sm"
                   autoFocus
                 />
+
+                {/* Icon picker */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Choose an icon</label>
+                  <div className="flex flex-wrap gap-1.5">
+                    {taskIconOptions.map((opt) => {
+                      const IconComp = opt.icon;
+                      return (
+                        <button
+                          key={opt.id}
+                          onClick={() => setCustomIcon(opt.id)}
+                          className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
+                            customIcon === opt.id
+                              ? 'bg-primary/20 ring-2 ring-primary text-primary'
+                              : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                          }`}
+                          title={opt.label}
+                        >
+                          <IconComp size={18} strokeWidth={2} />
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 <div className="flex gap-2">
                   {(['morning', 'midday', 'evening'] as TimeOfDay[]).map((time) => (
                     <button
