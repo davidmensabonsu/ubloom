@@ -1,9 +1,9 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { getLocalDateStr } from '@/lib/dateUtils';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useUserStore, TimeOfDay } from '@/stores/userStore';
 import { Check, Sun, Clock, Moon, Plus, X, Sparkles, Pencil, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
-import { useHabitIcons } from '@/hooks/useHabitIcons';
+import { getTaskIcon } from '@/lib/taskIcons';
 
 const timeOfDayConfig = {
   morning: { label: 'Morning', icon: Sun, color: 'text-primary' },
@@ -11,45 +11,31 @@ const timeOfDayConfig = {
   evening: { label: 'Evening', icon: Moon, color: 'text-primary' },
 };
 
-
-
-
-function HabitIcon({ habit, isLoading }: { habit: { icon?: string; iconImage?: string }; isLoading?: boolean }) {
-  if (habit.iconImage) {
+function HabitIcon({ iconId }: { iconId?: string }) {
+  const opt = iconId ? getTaskIcon(iconId) : undefined;
+  if (opt) {
+    const IconComp = opt.icon;
     return (
-      <img
-        src={habit.iconImage}
-        alt=""
-        className="w-8 h-8 object-contain"
-        onError={(e) => {
-          // On load failure, hide the broken image so emoji fallback shows
-          (e.currentTarget as HTMLImageElement).style.display = 'none';
-          const fallback = e.currentTarget.nextElementSibling;
-          if (fallback) (fallback as HTMLElement).style.display = 'inline';
-        }}
-      />
+      <div className="icon-3d-sm">
+        <IconComp size={16} strokeWidth={2.5} />
+      </div>
     );
   }
-  if (isLoading) {
-    return (
-      <span className="relative inline-flex items-center justify-center w-8 h-8">
-        <span className="text-base">{habit.icon || '⏳'}</span>
-        <span className="absolute inset-0 rounded-full animate-pulse bg-primary/10" />
-      </span>
-    );
-  }
-  return <span className="text-base">{habit.icon || '✨'}</span>;
+  // Fallback for old emoji-based icons
+  return (
+    <div className="icon-3d-sm">
+      <Sparkles size={16} strokeWidth={2.5} />
+    </div>
+  );
 }
 
 export default function CoreHabitsSection() {
   const { profile, toggleHabitCompletion, isHabitCompletedToday, addRoutineTask, toggleTask, removeHabit, reorderHabit } = useUserStore();
-  const { isGenerating } = useHabitIcons();
   const { coreHabits } = profile;
   
   const [addingToSection, setAddingToSection] = useState<TimeOfDay | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [editMode, setEditMode] = useState(false);
-
 
   const today = getLocalDateStr();
   
@@ -202,7 +188,7 @@ export default function CoreHabitsSection() {
                       layout
                     >
                       <span className="text-sm font-medium flex items-center gap-2 flex-1">
-                        <HabitIcon habit={habit} isLoading={isGenerating(habit.id)} />
+                        <HabitIcon iconId={habit.icon} />
                         {habit.title}
                       </span>
                       <div className="flex items-center gap-1 ml-auto">
@@ -246,7 +232,7 @@ export default function CoreHabitsSection() {
                         isCompleted ? 'line-through text-muted-foreground' : ''
                       }`}
                     >
-                      <HabitIcon habit={habit} isLoading={isGenerating(habit.id)} />
+                      <HabitIcon iconId={habit.icon} />
                       {habit.title}
                     </span>
                   </motion.button>

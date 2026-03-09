@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, X, Calendar } from 'lucide-react';
+import { Check, X, Calendar, Sparkles } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import { format, parse } from 'date-fns';
+import { getTaskIcon } from '@/lib/taskIcons';
 
 interface DayDetailSheetProps {
   dateStr: string | null;
@@ -38,7 +39,7 @@ export default function DayDetailSheet({ dateStr, onClose }: DayDetailSheetProps
     ...coreHabits.map((h) => ({
       id: h.id,
       title: h.title,
-      icon: h.icon || h.iconImage || '✨',
+      icon: h.icon || 'sparkles',
       completed: completedIds.has(h.id),
       type: 'habit' as const,
     })),
@@ -104,7 +105,14 @@ export default function DayDetailSheet({ dateStr, onClose }: DayDetailSheetProps
                         item.completed ? 'bg-primary/10' : 'bg-muted/60'
                       }`}
                     >
-                      <span className="text-base">{item.icon}</span>
+                      {(() => {
+                        const iconOpt = getTaskIcon(item.icon);
+                        if (iconOpt) {
+                          const IC = iconOpt.icon;
+                          return <div className="icon-3d-sm"><IC size={14} strokeWidth={2.5} /></div>;
+                        }
+                        return <span className="text-base">{item.icon}</span>;
+                      })()}
                       <span
                         className={`flex-1 text-sm ${
                           item.completed

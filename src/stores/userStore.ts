@@ -9,7 +9,7 @@ export interface CoreHabit {
   title: string;
   timeOfDay: TimeOfDay;
   icon?: string;
-  iconImage?: string;
+  
 }
 
 export interface HabitCompletion {
@@ -169,8 +169,6 @@ interface UserStore {
   addMoodboardItem: (item: Omit<MoodboardItem, 'id' | 'createdAt'>) => void;
   removeMoodboardItem: (id: string) => void;
   reorderMoodboardItems: (items: MoodboardItem[]) => void;
-  updateHabitIcon: (habitId: string, iconImage: string) => void;
-  clearAllHabitIcons: () => void;
   // Custom tasks
   addCustomTask: (task: Omit<CustomTask, 'id' | 'createdAt'>) => void;
   removeCustomTask: (id: string) => void;
@@ -377,12 +375,12 @@ export const useUserStore = create<UserStore>()(
       skipRoutineSetup: () =>
         set((state) => {
           const defaultHabits: CoreHabit[] = [
-            { id: 'default-water-morning', title: 'Drink a glass of water', timeOfDay: 'morning', icon: '💧' },
-            { id: 'default-skincare', title: 'Morning skincare', timeOfDay: 'morning', icon: '✨' },
-            { id: 'default-walk', title: 'Take a walk', timeOfDay: 'midday', icon: '🚶' },
-            { id: 'default-water-midday', title: 'Drink water', timeOfDay: 'midday', icon: '💧' },
-            { id: 'default-journal', title: 'Journal or reflect', timeOfDay: 'evening', icon: '📝' },
-            { id: 'default-unplug', title: 'Unplug from screens', timeOfDay: 'evening', icon: '📴' },
+            { id: 'default-water-morning', title: 'Drink a glass of water', timeOfDay: 'morning', icon: 'glass-water' },
+            { id: 'default-skincare', title: 'Morning skincare', timeOfDay: 'morning', icon: 'sparkles' },
+            { id: 'default-walk', title: 'Take a walk', timeOfDay: 'midday', icon: 'heart' },
+            { id: 'default-water-midday', title: 'Drink water', timeOfDay: 'midday', icon: 'glass-water' },
+            { id: 'default-journal', title: 'Journal or reflect', timeOfDay: 'evening', icon: 'pencil' },
+            { id: 'default-unplug', title: 'Unplug from screens', timeOfDay: 'evening', icon: 'phone' },
           ];
           return {
             profile: {
@@ -454,23 +452,6 @@ export const useUserStore = create<UserStore>()(
           profile: { ...state.profile, moodboardItems: items },
         })),
 
-      updateHabitIcon: (habitId, iconImage) =>
-        set((state) => ({
-          profile: {
-            ...state.profile,
-            coreHabits: state.profile.coreHabits.map((h) =>
-              h.id === habitId ? { ...h, iconImage } : h
-            ),
-          },
-        })),
-
-      clearAllHabitIcons: () =>
-        set((state) => ({
-          profile: {
-            ...state.profile,
-            coreHabits: state.profile.coreHabits.map(({ iconImage, ...rest }) => rest),
-          },
-        })),
 
       // Custom tasks
       addCustomTask: (task) =>

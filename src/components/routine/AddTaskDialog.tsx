@@ -116,14 +116,16 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
                   <button
                     key={opt.id}
                     onClick={() => setIcon(opt.id)}
-                    className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                    className={`transition-all ${
                       icon === opt.id
-                        ? 'bg-primary/20 ring-2 ring-primary text-primary'
-                        : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                        ? 'ring-2 ring-primary ring-offset-2'
+                        : 'opacity-60 hover:opacity-100'
                     }`}
                     title={opt.label}
                   >
-                    <IconComp size={20} strokeWidth={2} />
+                    <div className="icon-3d">
+                      <IconComp size={20} strokeWidth={2.5} />
+                    </div>
                   </button>
                 );
               })}
