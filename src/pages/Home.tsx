@@ -200,7 +200,7 @@ function QuickAction({
   href,
   index
 }: {
-  icon: React.ComponentType<{ size?: number; strokeWidth?: number }>;
+  icon: React.ElementType;
   title: string;
   subtitle: string;
   href: string;
