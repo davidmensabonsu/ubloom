@@ -113,8 +113,8 @@ Generate the two messages now.`;
     } catch {
       console.error("Failed to parse AI response:", raw);
       parsed = {
-        futureSelfMessage: "You are exactly where you need to be. Every step you take is bringing you closer to becoming the woman you've always known you could be.",
-        mindsetMessage: "You are not behind. You are not late. You are exactly where you need to be on your journey.",
+        futureSelfMessage: "Okay, I don't need to have everything figured out right now. I'm getting there.",
+        mindsetMessage: "I'm not behind. I'm on my own timeline.",
       };
     }
 

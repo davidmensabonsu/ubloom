@@ -4,8 +4,8 @@ import { useUserStore } from '@/stores/userStore';
 import { supabase } from '@/integrations/supabase/client';
 import { getISOWeek, getISOWeekYear } from 'date-fns';
 
-const DEFAULT_FUTURE_SELF = "You're exactly where you need to be. Every step you take is bringing you closer to becoming the woman you've always known you could be.";
-const DEFAULT_MINDSET = "You are not behind. You are not late. You are exactly where you need to be on your journey.";
+const DEFAULT_FUTURE_SELF = "Okay, I don't need to have everything figured out right now. I'm getting there.";
+const DEFAULT_MINDSET = "I'm not behind. I'm on my own timeline.";
 
 function getWeekKey(): string {
   const now = new Date();
