@@ -285,6 +285,34 @@ export const useUserStore = create<UserStore>()(
             ],
           },
         })),
+
+      updateGoal: (id, updates) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            goals: state.profile.goals.map((g) =>
+              g.id === id ? { ...g, ...updates } : g
+            ),
+          },
+        })),
+
+      removeGoal: (id) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            goals: state.profile.goals.filter((g) => g.id !== id),
+          },
+        })),
+
+      toggleGoalComplete: (id) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            goals: state.profile.goals.map((g) =>
+              g.id === id ? { ...g, completed: !g.completed } : g
+            ),
+          },
+        })),
       
       completeOnboarding: () =>
         set((state) => ({
