@@ -29,6 +29,7 @@ const feelingOptions = [
 export default function Alignment() {
   const { profile, addJournalEntry, addMoodEntry } = useUserStore();
   const [selectedFeelings, setSelectedFeelings] = useState<string[]>([]);
+  const [feelingsExpanded, setFeelingsExpanded] = useState(false);
   const [journalText, setJournalText] = useState('');
   const [saved, setSaved] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
