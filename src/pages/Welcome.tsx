@@ -25,6 +25,19 @@ export default function Welcome() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen gradient-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 rounded-full bg-primary/20 animate-pulse mx-auto mb-3" />
+          <p className="text-muted-foreground text-sm">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (user) return null;
+
   return (
     <div className="min-h-screen gradient-background flex flex-col items-center justify-center px-8 relative overflow-hidden">
       {/* Decorative elements */}
