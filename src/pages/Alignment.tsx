@@ -3,6 +3,7 @@ import { useState, useMemo } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { Sparkles, Heart, Feather, BookOpen, ChevronDown, Search, X, Calendar } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
+import MoodTrendsChart from '@/components/alignment/MoodTrendsChart';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Input } from '@/components/ui/input';
 import { format, isSameMonth, isSameDay } from 'date-fns';
@@ -259,6 +260,9 @@ export default function Alignment() {
             capable than you know."
           </p>
         </motion.div>
+
+        {/* Mood Trends Chart */}
+        <MoodTrendsChart moodHistory={profile.moodHistory} />
 
         {/* Journal */}
         <motion.div
