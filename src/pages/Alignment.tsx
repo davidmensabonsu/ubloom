@@ -134,7 +134,8 @@ export default function Alignment() {
     setSaved(true);
     setTimeout(() => {
       setSaved(false);
-      setSelectedFeelings([]); // Reset feelings after save
+      setSelectedFeelings([]);
+      setFeelingsConfirmed(false);
     }, 2000);
   };
 
