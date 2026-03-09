@@ -257,9 +257,11 @@ export default function Alignment() {
             <h2 className="section-title">From your future self</h2>
           </div>
           <p className="font-display text-lg leading-relaxed text-foreground/90 italic">
-            "Today, let go of the need to have everything figured out. Trust that
-            clarity comes through action, not endless planning. You are more
-            capable than you know."
+            {messageLoading ? (
+              <span className="animate-pulse text-muted-foreground">Listening to your future self...</span>
+            ) : (
+              `"${futureSelfMessage}"`
+            )}
           </p>
         </motion.div>
 
