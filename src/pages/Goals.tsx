@@ -254,12 +254,29 @@ export default function Goals() {
                                     >
                                       {goal.title}
                                     </span>
-                                    {goal.deadline && (
-                                      <span className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                                        <CalendarIcon size={10} />
-                                        By {format(parseISO(goal.deadline), 'MMM d, yyyy')}
-                                      </span>
-                                    )}
+                                    {goal.deadline && (() => {
+                                      const deadlineDate = startOfDay(parseISO(goal.deadline));
+                                      const today = startOfDay(new Date());
+                                      const daysLeft = differenceInDays(deadlineDate, today);
+                                      const isOverdue = !goal.completed && isPast(deadlineDate) && daysLeft < 0;
+                                      const isApproaching = !goal.completed && !isOverdue && daysLeft <= 7;
+
+                                      return (
+                                        <span className={cn(
+                                          "text-xs flex items-center gap-1 mt-0.5",
+                                          isOverdue ? "text-destructive font-medium" :
+                                          isApproaching ? "text-amber-500 font-medium" :
+                                          "text-muted-foreground"
+                                        )}>
+                                          <CalendarIcon size={10} />
+                                          {isOverdue
+                                            ? `Overdue · ${format(deadlineDate, 'MMM d, yyyy')}`
+                                            : isApproaching
+                                              ? `${daysLeft === 0 ? 'Due today' : `${daysLeft}d left`} · ${format(deadlineDate, 'MMM d, yyyy')}`
+                                              : `By ${format(deadlineDate, 'MMM d, yyyy')}`}
+                                        </span>
+                                      );
+                                    })()}
                                   </div>
                                   <div className="flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity shrink-0">
                                     <button
