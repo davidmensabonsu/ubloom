@@ -4,6 +4,7 @@ import { useUserStore } from '@/stores/userStore';
 import { Sparkles, Heart, Feather, BookOpen, ChevronDown, Search, X, Calendar } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import MoodTrendsChart from '@/components/alignment/MoodTrendsChart';
+import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Input } from '@/components/ui/input';
 import { format, isSameMonth, isSameDay } from 'date-fns';
@@ -29,6 +30,7 @@ const feelingOptions = [
 
 export default function Alignment() {
   const { profile, addJournalEntry, addMoodEntry } = useUserStore();
+  const { futureSelfMessage, loading: messageLoading } = useHomeMessages();
   const [selectedFeelings, setSelectedFeelings] = useState<string[]>([]);
   const [feelingsExpanded, setFeelingsExpanded] = useState(false);
   const [journalText, setJournalText] = useState('');
@@ -255,9 +257,11 @@ export default function Alignment() {
             <h2 className="section-title">From your future self</h2>
           </div>
           <p className="font-display text-lg leading-relaxed text-foreground/90 italic">
-            "Today, let go of the need to have everything figured out. Trust that
-            clarity comes through action, not endless planning. You are more
-            capable than you know."
+            {messageLoading ? (
+              <span className="animate-pulse text-muted-foreground">Listening to your future self...</span>
+            ) : (
+              `"${futureSelfMessage}"`
+            )}
           </p>
         </motion.div>
 
