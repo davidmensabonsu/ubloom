@@ -117,25 +117,25 @@ function hashSeed(seed: string): number {
 }
 
 const staticFutureSelfMessages = [
-  "Okay, I don't need to have everything figured out right now. I'm getting there.",
-  "Some days are just harder. That doesn't erase all the progress I've made.",
-  "I need to stop rushing. I'm allowed to take my time with this.",
-  "I've been through worse and came out the other side. I can handle today.",
-  "I keep forgetting — I'm actually doing really well. Like, genuinely.",
-  "Not everything needs to be perfect for me to feel good about where I am.",
-  "I'm choosing myself today, even if it feels uncomfortable.",
-  "The version of me I'm working toward? She'd be proud of me right now.",
+  "Okay, you don't need to have everything figured out right now. You're getting there.",
+  "Some days are just harder. That doesn't erase all the progress you've made.",
+  "Stop rushing. You're allowed to take your time with this.",
+  "You've been through worse and came out the other side. You can handle today.",
+  "You keep forgetting — you're actually doing really well. Like, genuinely.",
+  "Not everything needs to be perfect for you to feel good about where you are.",
+  "You're choosing yourself today, even if it feels uncomfortable.",
+  "The version of you you're working toward? She'd be proud of you right now.",
 ];
 
 const staticMindsetMessages = [
-  "I'm not behind. I'm on my own timeline.",
+  "You're not behind. You're on your own timeline.",
   "Done is better than perfect today.",
-  "I don't have to earn rest.",
-  "I'm allowed to change my mind about who I want to be.",
+  "You don't have to earn rest.",
+  "You're allowed to change your mind about who you want to be.",
   "Not everything that feels urgent actually is.",
-  "I can do hard things, but I can also choose easy today.",
-  "My feelings are information, not instructions.",
-  "I don't owe anyone an explanation for taking care of myself.",
+  "You can do hard things, but you can also choose easy today.",
+  "Your feelings are information, not instructions.",
+  "You don't owe anyone an explanation for taking care of yourself.",
 ];
 
 function getStaticFutureSelf(weekKey: string): string {
