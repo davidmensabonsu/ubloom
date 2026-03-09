@@ -96,6 +96,7 @@ export interface Goal {
   category: 'lifestyle' | 'career' | 'wellness' | 'travel';
   vision?: string;
   completed: boolean;
+  deadline?: string; // yyyy-MM-dd format
 }
 
 export interface CachedFutureSelfMessage {

@@ -1,22 +1,52 @@
 
 
-## Plan: Add Timeframe to Goals
+## Fix Weekly Progress Bar Accuracy
 
-### Changes
+### Problem
 
-**1. `src/stores/userStore.ts`** — Add `deadline` field to the `Goal` interface:
-- Add optional `deadline?: string` (yyyy-MM-dd format) to the `Goal` type.
+Two bugs cause past days' progress bars to show incorrectly:
 
-**2. `src/pages/Goals.tsx`** — Add date picker to the Add Goal modal and display deadlines:
+1. **Timezone mismatch**: Habit completions are saved using UTC dates (`toISOString()`), but the weekly chart looks up dates using local time (`date-fns format()`). For anyone west of UTC, an evening completion on Tuesday gets stored as Wednesday, so Tuesday's bar stays empty.
 
-- **Add Goal Modal**: Add a date picker button below the title input using a Popover + Calendar component. The user taps a button showing "Set a timeframe" or the selected date, and a calendar appears to pick a deadline. Pass the deadline when calling `addGoal`.
-- **Goal list items**: Below each goal title, show the deadline as a subtle label (e.g., "By Mar 30, 2026") when set. Use `format` from `date-fns` for display.
-- **Edit mode**: When editing a goal, allow changing the deadline via `updateGoal`.
+2. **Shifting denominator**: The chart always divides by the *current* number of core habits. If you had 3 habits on Tuesday (all completed) but later added a 4th, Tuesday shows as 75% instead of 100%.
+
+### Solution
+
+**1. Standardize all date handling to local time**
+
+Create a shared helper function `getLocalDateStr()` that formats dates using local timezone consistently. Replace every `new Date().toISOString().split('T')[0]` call in the store with this helper.
+
+| Location | Change |
+|----------|--------|
+| `src/lib/dateUtils.ts` | New file with `getLocalDateStr(date?: Date)` helper |
+| `src/stores/userStore.ts` | Replace all 6 occurrences of `toISOString().split('T')[0]` with `getLocalDateStr()` |
+
+**2. Fix the weekly progress calculation**
+
+For each past day, instead of using `coreHabits.length` as the denominator, count only completions that match current core habit IDs (excluding custom task completions). For the denominator, use the greater of: the current core habit count or the number of distinct core habit completions for that day. This way, if all habits that existed on a past day were completed, the bar shows 100%.
+
+| Location | Change |
+|----------|--------|
+| `src/components/routine/WeeklyProgress.tsx` | Filter completions to only core habit IDs. For past days, set `totalHabits = max(coreHabits.length, completedCoreHabits)` so a fully-completed past day always shows 100%. Apply the same logic in the streak calculation. |
 
 ### Technical Details
 
-- Import `Calendar` from `@/components/ui/calendar`, `Popover`/`PopoverContent`/`PopoverTrigger` from `@/components/ui/popover`, `format` from `date-fns`, and `CalendarIcon` from `lucide-react`.
-- Add `pointer-events-auto` class to the Calendar as required by the shadcn datepicker pattern.
-- New state: `newGoalDeadline` (Date | undefined) for the add modal.
-- The deadline is optional — users can add goals without one.
+**New helper** (`src/lib/dateUtils.ts`):
+```
+export function getLocalDateStr(date?: Date): string {
+  const d = date || new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+```
+
+**WeeklyProgress fix** -- key logic change in the `weekData` loop:
+- Get set of current core habit IDs
+- For each day, count only completions whose `habitId` is in that set
+- For past days: `totalHabits = Math.max(coreHabits.length, completedCoreHabits)`
+- For today: `totalHabits = coreHabits.length` (standard)
+
+**Store fix** -- straightforward find-and-replace of the date pattern across 6 call sites in `userStore.ts`.
 
