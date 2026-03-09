@@ -4,6 +4,7 @@ import { Sparkles, Heart, Sun, Moon, Cloud } from 'lucide-react';
 import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/BottomNav';
+import WeeklyMoodSummary from '@/components/home/WeeklyMoodSummary';
 import logo from '@/assets/logo.png';
 
 const timeGreetings = () => {
@@ -62,6 +63,9 @@ export default function Home() {
 
       {/* Main content */}
       <div className="px-5 space-y-5">
+        {/* Weekly Mood Summary */}
+        <WeeklyMoodSummary />
+
         {/* Future Self Message */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
