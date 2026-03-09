@@ -472,9 +472,34 @@ export default function Alignment() {
                             <span className="text-xs font-medium text-primary">
                               {formatEntryDate(entry.date)}
                             </span>
-                            <span className="text-xs text-muted-foreground">
-                              {formatEntryTime(entry.date)}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs text-muted-foreground">
+                                {formatEntryTime(entry.date)}
+                              </span>
+                              {entryToDelete === entry.id ? (
+                                <div className="flex items-center gap-1">
+                                  <button
+                                    onClick={() => {
+                                      removeJournalEntry(entry.id);
+                                      setEntryToDelete(null);
+                                    }}
+                                    className="text-xs px-2 py-0.5 rounded-full bg-destructive text-destructive-foreground">
+                                    Delete
+                                  </button>
+                                  <button
+                                    onClick={() => setEntryToDelete(null)}
+                                    className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                                    Cancel
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() => setEntryToDelete(entry.id)}
+                                  className="text-muted-foreground/50 hover:text-destructive transition-colors">
+                                  <Trash2 size={14} />
+                                </button>
+                              )}
+                            </div>
                           </div>
                           <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">
                             {entry.content}
