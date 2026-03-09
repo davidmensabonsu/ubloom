@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useUserStore } from '@/stores/userStore';
-import { Plus, Target, Briefcase, Heart, Plane, Sparkles, X, Check } from 'lucide-react';
+import { Plus, Target, Briefcase, Heart, Plane, Sparkles, X, Check, Pencil, Trash2 } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 
 const categoryConfig = {
@@ -36,11 +36,15 @@ const categoryConfig = {
 };
 
 export default function Goals() {
-  const { profile, addGoal } = useUserStore();
+  const { profile, addGoal, updateGoal, removeGoal, toggleGoalComplete } = useUserStore();
   const [showAddModal, setShowAddModal] = useState(false);
   const [newGoalTitle, setNewGoalTitle] = useState('');
   const [newGoalCategory, setNewGoalCategory] = useState<keyof typeof categoryConfig>('lifestyle');
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+
+  // Edit state
+  const [editingGoalId, setEditingGoalId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState('');
 
   const handleAddGoal = () => {
     if (newGoalTitle.trim()) {
@@ -53,6 +57,24 @@ export default function Goals() {
       setNewGoalTitle('');
       setShowAddModal(false);
     }
+  };
+
+  const handleStartEdit = (goal: { id: string; title: string }) => {
+    setEditingGoalId(goal.id);
+    setEditingTitle(goal.title);
+  };
+
+  const handleSaveEdit = () => {
+    if (editingGoalId && editingTitle.trim()) {
+      updateGoal(editingGoalId, { title: editingTitle.trim() });
+    }
+    setEditingGoalId(null);
+    setEditingTitle('');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingGoalId(null);
+    setEditingTitle('');
   };
 
   const groupedGoals = profile.goals.reduce((acc, goal) => {
@@ -89,7 +111,6 @@ export default function Goals() {
         {(Object.keys(categoryConfig) as Array<keyof typeof categoryConfig>).map(
           (category, index) => {
             const config = categoryConfig[category];
-            const Icon = config.icon;
             const goals = groupedGoals[category] || [];
             const isExpanded = expandedCategory === category;
 
@@ -146,24 +167,69 @@ export default function Goals() {
                           goals.map((goal) => (
                             <div
                               key={goal.id}
-                              className="flex items-center gap-3 p-3 rounded-xl bg-muted/50"
+                              className="flex items-center gap-3 p-3 rounded-xl bg-muted/50 group"
                             >
-                              <div
-                                className={`check-circle ${
+                              <button
+                                onClick={() => toggleGoalComplete(goal.id)}
+                                className={`check-circle shrink-0 ${
                                   goal.completed ? 'checked' : ''
                                 }`}
                               >
                                 {goal.completed && <Check size={14} />}
-                              </div>
-                              <span
-                                className={`text-sm ${
-                                  goal.completed
-                                    ? 'line-through text-muted-foreground'
-                                    : ''
-                                }`}
-                              >
-                                {goal.title}
-                              </span>
+                              </button>
+
+                              {editingGoalId === goal.id ? (
+                                <div className="flex-1 flex items-center gap-2">
+                                  <input
+                                    autoFocus
+                                    value={editingTitle}
+                                    onChange={(e) => setEditingTitle(e.target.value)}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') handleSaveEdit();
+                                      if (e.key === 'Escape') handleCancelEdit();
+                                    }}
+                                    className="flex-1 text-sm bg-background rounded-lg px-2 py-1 focus:ring-2 focus:ring-primary/30 focus:outline-none"
+                                  />
+                                  <button
+                                    onClick={handleSaveEdit}
+                                    className="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                                  >
+                                    <Check size={14} />
+                                  </button>
+                                  <button
+                                    onClick={handleCancelEdit}
+                                    className="p-1.5 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition-colors"
+                                  >
+                                    <X size={14} />
+                                  </button>
+                                </div>
+                              ) : (
+                                <>
+                                  <span
+                                    className={`flex-1 text-sm ${
+                                      goal.completed
+                                        ? 'line-through text-muted-foreground'
+                                        : ''
+                                    }`}
+                                  >
+                                    {goal.title}
+                                  </span>
+                                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button
+                                      onClick={() => handleStartEdit(goal)}
+                                      className="p-1.5 rounded-lg hover:bg-background/80 text-muted-foreground hover:text-foreground transition-colors"
+                                    >
+                                      <Pencil size={14} />
+                                    </button>
+                                    <button
+                                      onClick={() => removeGoal(goal.id)}
+                                      className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                                    >
+                                      <Trash2 size={14} />
+                                    </button>
+                                  </div>
+                                </>
+                              )}
                             </div>
                           ))
                         ) : (
