@@ -185,7 +185,7 @@ export default function MoodTrendsChart({ moodHistory }: Props) {
                 dataKey={mood}
                 stackId="1"
                 stroke={feelingCategories[mood]?.color || `hsl(var(--chart-${i + 1}))`}
-                fill={feelingCategories[mood]?.color || `hsl(var(--chart-${i + 1}))`}
+                fill="hsl(var(--primary))"
                 fillOpacity={0.3}
                 strokeWidth={2}
               />
