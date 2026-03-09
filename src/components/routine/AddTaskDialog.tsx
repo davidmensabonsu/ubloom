@@ -62,7 +62,7 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
     setRecurrence('daily');
     setWeeklyDays([]);
     setScheduledDate('');
-    setIcon('✨');
+    setIcon(taskIconOptions[0].id);
   };
 
   const handleSubmit = () => {
