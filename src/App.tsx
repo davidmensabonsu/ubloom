@@ -33,7 +33,7 @@ function ThemeManager() {
   const { profile } = useUserStore();
   
   useEffect(() => {
-    const themeClasses = ['theme-beige', 'theme-cream', 'theme-sage', 'theme-lilac', 'theme-champagne', 'theme-mocha', 'theme-grey'];
+    const themeClasses = ['theme-beige', 'theme-sage', 'theme-lilac', 'theme-sky', 'theme-coral', 'theme-teal', 'theme-mocha', 'theme-midnight', 'theme-peach', 'theme-mauve', 'theme-grey'];
     themeClasses.forEach(cls => document.documentElement.classList.remove(cls));
     
     if (profile.aesthetic && profile.aesthetic !== 'blush') {

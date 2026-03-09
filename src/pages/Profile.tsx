@@ -31,11 +31,15 @@ import BottomNav from '@/components/BottomNav';
 const aesthetics = [
   { id: 'blush', name: 'Blush Pink', preview: 'bg-gradient-to-br from-rose-100 to-pink-200', accent: 'bg-rose-300' },
   { id: 'beige', name: 'Warm Beige', preview: 'bg-gradient-to-br from-amber-50 to-orange-100', accent: 'bg-amber-300' },
-  { id: 'cream', name: 'Soft Cream', preview: 'bg-gradient-to-br from-yellow-50 to-amber-100', accent: 'bg-yellow-200' },
   { id: 'sage', name: 'Sage Green', preview: 'bg-gradient-to-br from-green-50 to-emerald-100', accent: 'bg-emerald-300' },
   { id: 'lilac', name: 'Lilac', preview: 'bg-gradient-to-br from-purple-50 to-violet-100', accent: 'bg-violet-300' },
-  { id: 'champagne', name: 'Champagne', preview: 'bg-gradient-to-br from-orange-50 to-amber-100', accent: 'bg-amber-400' },
+  { id: 'sky', name: 'Sky Blue', preview: 'bg-gradient-to-br from-sky-50 to-blue-100', accent: 'bg-sky-400' },
+  { id: 'coral', name: 'Coral', preview: 'bg-gradient-to-br from-orange-50 to-red-100', accent: 'bg-orange-400' },
+  { id: 'teal', name: 'Teal', preview: 'bg-gradient-to-br from-teal-50 to-cyan-100', accent: 'bg-teal-400' },
   { id: 'mocha', name: 'Mocha', preview: 'bg-gradient-to-br from-stone-100 to-amber-100', accent: 'bg-amber-600' },
+  { id: 'midnight', name: 'Midnight', preview: 'bg-gradient-to-br from-indigo-50 to-blue-100', accent: 'bg-indigo-400' },
+  { id: 'peach', name: 'Peach', preview: 'bg-gradient-to-br from-orange-50 to-rose-100', accent: 'bg-orange-300' },
+  { id: 'mauve', name: 'Mauve', preview: 'bg-gradient-to-br from-pink-50 to-fuchsia-100', accent: 'bg-fuchsia-300' },
   { id: 'grey', name: 'Soft Grey', preview: 'bg-gradient-to-br from-slate-50 to-gray-100', accent: 'bg-slate-400' },
 ];
 
