@@ -113,8 +113,8 @@ Generate the two messages now.`;
     } catch {
       console.error("Failed to parse AI response:", raw);
       parsed = {
-        futureSelfMessage: "Okay, I don't need to have everything figured out right now. I'm getting there.",
-        mindsetMessage: "I'm not behind. I'm on my own timeline.",
+        futureSelfMessage: "Okay, you don't need to have everything figured out right now. You're getting there.",
+        mindsetMessage: "You're not behind. You're on your own timeline.",
       };
     }
 
