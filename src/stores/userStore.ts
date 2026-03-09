@@ -150,6 +150,9 @@ interface UserStore {
   addRoutineTask: (task: Omit<RoutineTask, 'id'>) => void;
   toggleTask: (id: string) => void;
   addGoal: (goal: Omit<Goal, 'id'>) => void;
+  updateGoal: (id: string, updates: Partial<Omit<Goal, 'id'>>) => void;
+  removeGoal: (id: string) => void;
+  toggleGoalComplete: (id: string) => void;
   completeOnboarding: () => void;
   resetProfile: () => void;
   // Core habits
