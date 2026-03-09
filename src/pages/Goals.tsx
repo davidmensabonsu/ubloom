@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { Plus, Target, Briefcase, Heart, Plane, Sparkles, X, Check, Pencil, Trash2, CalendarIcon } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, isPast, differenceInDays, startOfDay } from 'date-fns';
 import BottomNav from '@/components/BottomNav';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
