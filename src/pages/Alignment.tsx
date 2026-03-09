@@ -30,6 +30,7 @@ const feelingOptions = [
 
 export default function Alignment() {
   const { profile, addJournalEntry, addMoodEntry } = useUserStore();
+  const { futureSelfMessage, loading: messageLoading } = useHomeMessages();
   const [selectedFeelings, setSelectedFeelings] = useState<string[]>([]);
   const [feelingsExpanded, setFeelingsExpanded] = useState(false);
   const [journalText, setJournalText] = useState('');
