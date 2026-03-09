@@ -1,52 +1,39 @@
 
 
-## Fix Weekly Progress Bar Accuracy
+## Make Messages Sound More Natural and Self-Talk-Like
 
-### Problem
+The current messages read like inspirational quotes or poetry. The goal is to rewrite them to sound like honest, casual self-talk — things you'd actually think or say to yourself.
 
-Two bugs cause past days' progress bars to show incorrectly:
+### Changes
 
-1. **Timezone mismatch**: Habit completions are saved using UTC dates (`toISOString()`), but the weekly chart looks up dates using local time (`date-fns format()`). For anyone west of UTC, an evening completion on Tuesday gets stored as Wednesday, so Tuesday's bar stays empty.
+**1. Static fallback messages (`src/hooks/useHomeMessages.ts`)**
 
-2. **Shifting denominator**: The chart always divides by the *current* number of core habits. If you had 3 habits on Tuesday (all completed) but later added a 4th, Tuesday shows as 75% instead of 100%.
+Rewrite both arrays to sound like natural inner dialogue:
 
-### Solution
+**Future Self messages** — casual, warm, first-person-feeling self-talk:
+- "Okay, I don't need to have everything figured out right now. I'm getting there."
+- "Some days are just harder. That doesn't erase all the progress I've made."
+- "I need to stop rushing. I'm allowed to take my time with this."
+- "I've been through worse and came out the other side. I can handle today."
+- "I keep forgetting — I'm actually doing really well. Like, genuinely."
+- "Not everything needs to be perfect for me to feel good about where I am."
+- "I'm choosing myself today, even if it feels uncomfortable."
+- "The version of me I'm working toward? She'd be proud of me right now."
 
-**1. Standardize all date handling to local time**
+**Mindset messages** — short, grounded reminders:
+- "I'm not behind. I'm on my own timeline."
+- "Done is better than perfect today."
+- "I don't have to earn rest."
+- "I'm allowed to change my mind about who I want to be."
+- "Not everything that feels urgent actually is."
+- "I can do hard things, but I can also choose easy today."
+- "My feelings are information, not instructions."
+- "I don't owe anyone an explanation for taking care of myself."
 
-Create a shared helper function `getLocalDateStr()` that formats dates using local timezone consistently. Replace every `new Date().toISOString().split('T')[0]` call in the store with this helper.
+**2. AI prompt (`supabase/functions/generate-home-messages/index.ts`)**
 
-| Location | Change |
-|----------|--------|
-| `src/lib/dateUtils.ts` | New file with `getLocalDateStr(date?: Date)` helper |
-| `src/stores/userStore.ts` | Replace all 6 occurrences of `toISOString().split('T')[0]` with `getLocalDateStr()` |
-
-**2. Fix the weekly progress calculation**
-
-For each past day, instead of using `coreHabits.length` as the denominator, count only completions that match current core habit IDs (excluding custom task completions). For the denominator, use the greater of: the current core habit count or the number of distinct core habit completions for that day. This way, if all habits that existed on a past day were completed, the bar shows 100%.
-
-| Location | Change |
-|----------|--------|
-| `src/components/routine/WeeklyProgress.tsx` | Filter completions to only core habit IDs. For past days, set `totalHabits = max(coreHabits.length, completedCoreHabits)` so a fully-completed past day always shows 100%. Apply the same logic in the streak calculation. |
-
-### Technical Details
-
-**New helper** (`src/lib/dateUtils.ts`):
-```
-export function getLocalDateStr(date?: Date): string {
-  const d = date || new Date();
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-```
-
-**WeeklyProgress fix** -- key logic change in the `weekData` loop:
-- Get set of current core habit IDs
-- For each day, count only completions whose `habitId` is in that set
-- For past days: `totalHabits = Math.max(coreHabits.length, completedCoreHabits)`
-- For today: `totalHabits = coreHabits.length` (standard)
-
-**Store fix** -- straightforward find-and-replace of the date pattern across 6 call sites in `userStore.ts`.
+Update the system prompt tone instructions to request natural self-talk instead of poetic/inspirational language. Key changes:
+- "Sound like something she'd actually think to herself — not a quote on a poster"
+- "Use casual, honest language. Contractions, incomplete thoughts, real talk."
+- "Avoid flowery metaphors or affirmation-speak"
 
