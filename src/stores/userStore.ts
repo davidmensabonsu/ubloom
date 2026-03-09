@@ -150,6 +150,9 @@ interface UserStore {
   addRoutineTask: (task: Omit<RoutineTask, 'id'>) => void;
   toggleTask: (id: string) => void;
   addGoal: (goal: Omit<Goal, 'id'>) => void;
+  updateGoal: (id: string, updates: Partial<Omit<Goal, 'id'>>) => void;
+  removeGoal: (id: string) => void;
+  toggleGoalComplete: (id: string) => void;
   completeOnboarding: () => void;
   resetProfile: () => void;
   // Core habits
@@ -280,6 +283,34 @@ export const useUserStore = create<UserStore>()(
               { ...goal, id: Date.now().toString() },
               ...state.profile.goals,
             ],
+          },
+        })),
+
+      updateGoal: (id, updates) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            goals: state.profile.goals.map((g) =>
+              g.id === id ? { ...g, ...updates } : g
+            ),
+          },
+        })),
+
+      removeGoal: (id) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            goals: state.profile.goals.filter((g) => g.id !== id),
+          },
+        })),
+
+      toggleGoalComplete: (id) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            goals: state.profile.goals.map((g) =>
+              g.id === id ? { ...g, completed: !g.completed } : g
+            ),
           },
         })),
       
