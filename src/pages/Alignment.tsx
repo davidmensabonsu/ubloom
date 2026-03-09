@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useMemo } from 'react';
 import { useUserStore } from '@/stores/userStore';
-import { Sparkles, Heart, Feather, BookOpen, ChevronDown, Search, X, Calendar } from 'lucide-react';
+import { Sparkles, Heart, Feather, BookOpen, ChevronDown, Search, X, Calendar, Trash2 } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import MoodTrendsChart from '@/components/alignment/MoodTrendsChart';
 import MoodStreak from '@/components/alignment/MoodStreak';
@@ -30,8 +30,9 @@ const feelingOptions = [
 
 
 export default function Alignment() {
-  const { profile, addJournalEntry, addMoodEntry } = useUserStore();
+  const { profile, addJournalEntry, addMoodEntry, removeJournalEntry } = useUserStore();
   const { futureSelfMessage, loading: messageLoading } = useHomeMessages();
+  const [entryToDelete, setEntryToDelete] = useState<string | null>(null);
   const [selectedFeelings, setSelectedFeelings] = useState<string[]>([]);
   const [feelingsConfirmed, setFeelingsConfirmed] = useState(false);
   const [feelingsExpanded, setFeelingsExpanded] = useState(false);
@@ -471,9 +472,34 @@ export default function Alignment() {
                             <span className="text-xs font-medium text-primary">
                               {formatEntryDate(entry.date)}
                             </span>
-                            <span className="text-xs text-muted-foreground">
-                              {formatEntryTime(entry.date)}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs text-muted-foreground">
+                                {formatEntryTime(entry.date)}
+                              </span>
+                              {entryToDelete === entry.id ? (
+                                <div className="flex items-center gap-1">
+                                  <button
+                                    onClick={() => {
+                                      removeJournalEntry(entry.id);
+                                      setEntryToDelete(null);
+                                    }}
+                                    className="text-xs px-2 py-0.5 rounded-full bg-destructive text-destructive-foreground">
+                                    Delete
+                                  </button>
+                                  <button
+                                    onClick={() => setEntryToDelete(null)}
+                                    className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                                    Cancel
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() => setEntryToDelete(entry.id)}
+                                  className="text-muted-foreground/50 hover:text-destructive transition-colors">
+                                  <Trash2 size={14} />
+                                </button>
+                              )}
+                            </div>
                           </div>
                           <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">
                             {entry.content}

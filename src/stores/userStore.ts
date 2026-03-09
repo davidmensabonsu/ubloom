@@ -147,6 +147,7 @@ interface UserStore {
   updateProfile: (updates: Partial<UserProfile>) => void;
   setAesthetic: (theme: string) => void;
   addJournalEntry: (entry: Omit<JournalEntry, 'id'>) => void;
+  removeJournalEntry: (id: string) => void;
   addMoodEntry: (moods: string[]) => void;
   addRoutineTask: (task: Omit<RoutineTask, 'id'>) => void;
   toggleTask: (id: string) => void;
@@ -239,6 +240,14 @@ export const useUserStore = create<UserStore>()(
               { ...entry, id: Date.now().toString() },
               ...state.profile.journalEntries,
             ],
+          },
+        })),
+      
+      removeJournalEntry: (id) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            journalEntries: state.profile.journalEntries.filter((e) => e.id !== id),
           },
         })),
       
