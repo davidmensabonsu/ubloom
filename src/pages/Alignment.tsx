@@ -261,6 +261,9 @@ export default function Alignment() {
           </p>
         </motion.div>
 
+        {/* Mood Trends Chart */}
+        <MoodTrendsChart moodHistory={profile.moodHistory} />
+
         {/* Journal */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
