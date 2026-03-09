@@ -1,52 +1,51 @@
 
 
-## Fix Weekly Progress Bar Accuracy
+## Plan: Replace Emoji Picker with Curated Icon Set for Custom Tasks
 
-### Problem
+### What changes
 
-Two bugs cause past days' progress bars to show incorrectly:
+Replace the current 12-emoji grid in the Add Task dialog with a set of ~15 curated, visually consistent icons that represent common daily tasks. These will be Lucide icons (already installed) rendered as styled components, not emojis.
 
-1. **Timezone mismatch**: Habit completions are saved using UTC dates (`toISOString()`), but the weekly chart looks up dates using local time (`date-fns format()`). For anyone west of UTC, an evening completion on Tuesday gets stored as Wednesday, so Tuesday's bar stays empty.
+### Icon Set (~15 icons)
 
-2. **Shifting denominator**: The chart always divides by the *current* number of core habits. If you had 3 habits on Tuesday (all completed) but later added a 4th, Tuesday shows as 75% instead of 100%.
+A curated set stored as a constant array, each with an `id`, `label`, Lucide icon component, and a color. Examples:
+- **Dumbbell** — gym/exercise
+- **GlassWater** — hydration
+- **UtensilsCrossed** — meals/cooking
+- **BookOpen** — reading
+- **Pencil** — journaling/writing
+- **Heart** — self-care
+- **Bed** — sleep/rest
+- **Shirt** — outfit/laundry
+- **ShoppingCart** — groceries/errands
+- **Phone** — calls/screen time
+- **Music** — music/podcast
+- **Dog** — pets/walk
+- **Pill** — medication/vitamins
+- **Sparkles** — skincare/beauty
+- **Brain** — meditation/mindfulness
 
-### Solution
+### Files to change
 
-**1. Standardize all date handling to local time**
+**`src/components/routine/AddTaskDialog.tsx`**
+- Replace `emojiOptions` array with a `taskIconOptions` array of `{ id: string, label: string, icon: LucideIcon }`.
+- Replace the emoji grid UI with a grid of Lucide icon buttons (same layout, but rendering `<Icon size={20} />` instead of emoji text).
+- Store the selected icon `id` string (e.g. `"dumbbell"`) instead of an emoji character.
 
-Create a shared helper function `getLocalDateStr()` that formats dates using local timezone consistently. Replace every `new Date().toISOString().split('T')[0]` call in the store with this helper.
+**`src/stores/userStore.ts`**
+- No schema change needed — the `icon` field on `CustomTask` is already a `string`. It will now store an icon ID like `"glass-water"` instead of `"💧"`.
 
-| Location | Change |
-|----------|--------|
-| `src/lib/dateUtils.ts` | New file with `getLocalDateStr(date?: Date)` helper |
-| `src/stores/userStore.ts` | Replace all 6 occurrences of `toISOString().split('T')[0]` with `getLocalDateStr()` |
+**`src/components/routine/CustomTasksSection.tsx`**
+- Where `task.icon` is currently rendered as text (`<span>{task.icon}</span>`), look up the icon ID in the shared `taskIconOptions` map and render the corresponding Lucide component instead.
+- Fall back to showing the raw string (emoji) for any old tasks that still have emoji icons.
 
-**2. Fix the weekly progress calculation**
+**New shared file: `src/lib/taskIcons.ts`**
+- Export the `taskIconOptions` array and a `getTaskIcon(id: string)` lookup helper, so both AddTaskDialog and CustomTasksSection can reference the same set.
 
-For each past day, instead of using `coreHabits.length` as the denominator, count only completions that match current core habit IDs (excluding custom task completions). For the denominator, use the greater of: the current core habit count or the number of distinct core habit completions for that day. This way, if all habits that existed on a past day were completed, the bar shows 100%.
-
-| Location | Change |
-|----------|--------|
-| `src/components/routine/WeeklyProgress.tsx` | Filter completions to only core habit IDs. For past days, set `totalHabits = max(coreHabits.length, completedCoreHabits)` so a fully-completed past day always shows 100%. Apply the same logic in the streak calculation. |
-
-### Technical Details
-
-**New helper** (`src/lib/dateUtils.ts`):
-```
-export function getLocalDateStr(date?: Date): string {
-  const d = date || new Date();
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-```
-
-**WeeklyProgress fix** -- key logic change in the `weekData` loop:
-- Get set of current core habit IDs
-- For each day, count only completions whose `habitId` is in that set
-- For past days: `totalHabits = Math.max(coreHabits.length, completedCoreHabits)`
-- For today: `totalHabits = coreHabits.length` (standard)
-
-**Store fix** -- straightforward find-and-replace of the date pattern across 6 call sites in `userStore.ts`.
+### Behavior
+1. User taps FAB → Add Task drawer opens.
+2. "Icon" section shows a grid of ~15 styled Lucide icons instead of emojis.
+3. User picks one (e.g. dumbbell for "Go to the gym").
+4. In the task list, the selected Lucide icon renders next to the task name.
+5. Old tasks with emoji icons still display correctly via fallback.
 
