@@ -21,7 +21,7 @@ const recurrenceOptions = [
 
 const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-const emojiOptions = ['✨', '💪', '📖', '🧘', '🎯', '💧', '🏃', '🎨', '📝', '🌿', '☕', '🛁'];
+
 
 function getUpcomingDays(): { label: string; date: string; dayIndex: number }[] {
   const days: { label: string; date: string; dayIndex: number }[] = [];
