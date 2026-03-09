@@ -1,7 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Compass, Calendar, Target, Image, User } from 'lucide-react';
-import { motion } from 'framer-motion';
-import logo from '@/assets/logo.png';
+import { Home, Compass, Calendar, Target, Image, User } from 'lucide-react';
 
 const navItems = [
 { path: '/home', icon: null, label: 'Home', isLogo: true },
