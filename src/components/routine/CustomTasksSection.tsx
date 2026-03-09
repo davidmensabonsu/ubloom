@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useUserStore, TimeOfDay } from '@/stores/userStore';
 import { Check, Sun, Clock, Moon, Pencil, Trash2, Repeat, CalendarDays, RotateCcw } from 'lucide-react';
+import { getTaskIcon } from '@/lib/taskIcons';
 
 const timeOfDayConfig = {
   morning: { label: 'Morning', icon: Sun, color: 'text-primary' },
@@ -82,7 +83,10 @@ export default function CustomTasksSection() {
                 if (editMode) {
                   return (
                     <motion.div key={task.id} className="check-item w-full" layout>
-                      <span className="text-base">{task.icon}</span>
+                      {(() => {
+                        const iconOpt = getTaskIcon(task.icon);
+                        return iconOpt ? <iconOpt.icon size={18} strokeWidth={2} className="text-primary" /> : <span className="text-base">{task.icon}</span>;
+                      })()}
                       <span className="text-sm font-medium flex-1">{task.title}</span>
                       <button
                         onClick={() => removeCustomTask(task.id)}
@@ -105,7 +109,10 @@ export default function CustomTasksSection() {
                       {isCompleted && <Check size={14} strokeWidth={2.5} />}
                     </div>
                     <span className={`text-sm font-medium flex items-center gap-2 ${isCompleted ? 'line-through text-muted-foreground' : ''}`}>
-                      <span className="text-base">{task.icon}</span>
+                      {(() => {
+                        const iconOpt = getTaskIcon(task.icon);
+                        return iconOpt ? <iconOpt.icon size={18} strokeWidth={2} className="text-primary" /> : <span className="text-base">{task.icon}</span>;
+                      })()}
                       {task.title}
                     </span>
                     <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground/50">
