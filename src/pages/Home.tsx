@@ -63,6 +63,9 @@ export default function Home() {
 
       {/* Main content */}
       <div className="px-5 space-y-5">
+        {/* Weekly Mood Summary */}
+        <WeeklyMoodSummary />
+
         {/* Future Self Message */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
