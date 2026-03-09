@@ -111,6 +111,7 @@ export default function Alignment() {
   const hasActiveFilters = searchQuery.trim() !== '' || selectedMonth !== null;
 
   const toggleFeeling = (value: string) => {
+    if (feelingsConfirmed) return;
     if (selectedFeelings.includes(value)) {
       setSelectedFeelings(selectedFeelings.filter((f) => f !== value));
     } else if (selectedFeelings.length < 3) {
