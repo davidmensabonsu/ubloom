@@ -110,19 +110,23 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
           <div className="space-y-2">
             <label className="text-sm font-medium">Icon</label>
             <div className="flex flex-wrap gap-2">
-              {emojiOptions.map((emoji) => (
-                <button
-                  key={emoji}
-                  onClick={() => setIcon(emoji)}
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg transition-all ${
-                    icon === emoji
-                      ? 'bg-primary/20 ring-2 ring-primary'
-                      : 'bg-muted hover:bg-muted/80'
-                  }`}
-                >
-                  {emoji}
-                </button>
-              ))}
+              {taskIconOptions.map((opt) => {
+                const IconComp = opt.icon;
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={() => setIcon(opt.id)}
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                      icon === opt.id
+                        ? 'bg-primary/20 ring-2 ring-primary text-primary'
+                        : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                    }`}
+                    title={opt.label}
+                  >
+                    <IconComp size={20} strokeWidth={2} />
+                  </button>
+                );
+              })}
             </div>
           </div>
 

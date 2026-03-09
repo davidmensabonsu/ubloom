@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useUserStore, TimeOfDay } from '@/stores/userStore';
 import { Check, Sun, Clock, Moon, Pencil, Trash2, Repeat, CalendarDays, RotateCcw } from 'lucide-react';
+import { getTaskIcon } from '@/lib/taskIcons';
 
 const timeOfDayConfig = {
   morning: { label: 'Morning', icon: Sun, color: 'text-primary' },
