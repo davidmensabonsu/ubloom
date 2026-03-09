@@ -33,6 +33,7 @@ export default function Alignment() {
   const { profile, addJournalEntry, addMoodEntry } = useUserStore();
   const { futureSelfMessage, loading: messageLoading } = useHomeMessages();
   const [selectedFeelings, setSelectedFeelings] = useState<string[]>([]);
+  const [feelingsConfirmed, setFeelingsConfirmed] = useState(false);
   const [feelingsExpanded, setFeelingsExpanded] = useState(false);
   const [journalText, setJournalText] = useState('');
   const [saved, setSaved] = useState(false);
@@ -110,6 +111,7 @@ export default function Alignment() {
   const hasActiveFilters = searchQuery.trim() !== '' || selectedMonth !== null;
 
   const toggleFeeling = (value: string) => {
+    if (feelingsConfirmed) return;
     if (selectedFeelings.includes(value)) {
       setSelectedFeelings(selectedFeelings.filter((f) => f !== value));
     } else if (selectedFeelings.length < 3) {
@@ -132,7 +134,8 @@ export default function Alignment() {
     setSaved(true);
     setTimeout(() => {
       setSaved(false);
-      setSelectedFeelings([]); // Reset feelings after save
+      setSelectedFeelings([]);
+      setFeelingsConfirmed(false);
     }, 2000);
   };
 
@@ -238,14 +241,35 @@ export default function Alignment() {
               }
             </AnimatePresence>
           </div>
-          <button
-            onClick={() => setFeelingsExpanded(!feelingsExpanded)}
-            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors mt-2">
-            <motion.div animate={{ rotate: feelingsExpanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
-              <ChevronDown size={14} />
-            </motion.div>
-            {feelingsExpanded ? 'Show less' : 'Show more'}
-          </button>
+          <div className="flex items-center justify-between mt-3">
+            <button
+              onClick={() => setFeelingsExpanded(!feelingsExpanded)}
+              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+              <motion.div animate={{ rotate: feelingsExpanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                <ChevronDown size={14} />
+              </motion.div>
+              {feelingsExpanded ? 'Show less' : 'Show more'}
+            </button>
+            {selectedFeelings.length > 0 && !feelingsConfirmed && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                onClick={() => setFeelingsConfirmed(true)}
+                className="px-4 py-1.5 rounded-full text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                whileTap={{ scale: 0.95 }}>
+                Confirm ({selectedFeelings.length}/3)
+              </motion.button>
+            )}
+            {feelingsConfirmed && (
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                onClick={() => setFeelingsConfirmed(false)}
+                className="px-3 py-1.5 rounded-full text-xs text-muted-foreground hover:text-foreground transition-colors border border-primary/20">
+                Change feelings
+              </motion.button>
+            )}
+          </div>
         </motion.div>
 
         {/* Future Self Message */}
