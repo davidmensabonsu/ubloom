@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, X, Calendar } from 'lucide-react';
+import { Check, X, Calendar, Sparkles } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import { format, parse } from 'date-fns';
+import { getTaskIcon } from '@/lib/taskIcons';
 
 interface DayDetailSheetProps {
   dateStr: string | null;
