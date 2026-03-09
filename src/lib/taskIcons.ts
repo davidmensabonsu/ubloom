@@ -46,6 +46,13 @@ export const taskIconOptions: TaskIconOption[] = [
   { id: 'pill', label: 'Vitamins', icon: Pill },
   { id: 'sparkles', label: 'Beauty', icon: Sparkles },
   { id: 'brain', label: 'Mindfulness', icon: Brain },
+  { id: 'coffee', label: 'Coffee', icon: Coffee },
+  { id: 'leaf', label: 'Nature', icon: Leaf },
+  { id: 'camera', label: 'Photos', icon: Camera },
+  { id: 'bike', label: 'Cycling', icon: Bike },
+  { id: 'baby', label: 'Kids', icon: Baby },
+  { id: 'palette', label: 'Art', icon: Palette },
+  { id: 'plane', label: 'Travel', icon: Plane },
 ];
 
 const iconMap = new Map(taskIconOptions.map((o) => [o.id, o]));
