@@ -169,8 +169,6 @@ interface UserStore {
   addMoodboardItem: (item: Omit<MoodboardItem, 'id' | 'createdAt'>) => void;
   removeMoodboardItem: (id: string) => void;
   reorderMoodboardItems: (items: MoodboardItem[]) => void;
-  updateHabitIcon: (habitId: string, iconImage: string) => void;
-  clearAllHabitIcons: () => void;
   // Custom tasks
   addCustomTask: (task: Omit<CustomTask, 'id' | 'createdAt'>) => void;
   removeCustomTask: (id: string) => void;
