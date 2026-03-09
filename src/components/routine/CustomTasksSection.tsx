@@ -83,7 +83,10 @@ export default function CustomTasksSection() {
                 if (editMode) {
                   return (
                     <motion.div key={task.id} className="check-item w-full" layout>
-                      <span className="text-base">{task.icon}</span>
+                      {(() => {
+                        const iconOpt = getTaskIcon(task.icon);
+                        return iconOpt ? <iconOpt.icon size={18} strokeWidth={2} className="text-primary" /> : <span className="text-base">{task.icon}</span>;
+                      })()}
                       <span className="text-sm font-medium flex-1">{task.title}</span>
                       <button
                         onClick={() => removeCustomTask(task.id)}
