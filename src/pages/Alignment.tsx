@@ -179,14 +179,16 @@ export default function Alignment() {
           
           Daily Alignment
         </motion.h1>
-        <motion.p
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="subtle-text mt-1">
-          
-          A quiet moment before your day unfolds
-        </motion.p>
+          className="flex items-center justify-between">
+          <p className="subtle-text">
+            A quiet moment before your day unfolds
+          </p>
+          <MoodStreak moodHistory={profile.moodHistory} />
+        </motion.div>
       </div>
 
       {/* Content */}
