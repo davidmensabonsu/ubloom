@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useMemo } from 'react';
 import { useUserStore } from '@/stores/userStore';
-import { Sparkles, Heart, Feather, BookOpen, ChevronDown, Search, X, Calendar } from 'lucide-react';
+import { Sparkles, Heart, Feather, BookOpen, ChevronDown, Search, X, Calendar, Trash2 } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import MoodTrendsChart from '@/components/alignment/MoodTrendsChart';
 import MoodStreak from '@/components/alignment/MoodStreak';
