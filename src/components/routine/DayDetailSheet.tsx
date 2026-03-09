@@ -104,7 +104,14 @@ export default function DayDetailSheet({ dateStr, onClose }: DayDetailSheetProps
                         item.completed ? 'bg-primary/10' : 'bg-muted/60'
                       }`}
                     >
-                      <span className="text-base">{item.icon}</span>
+                      {(() => {
+                        const iconOpt = getTaskIcon(item.icon);
+                        if (iconOpt) {
+                          const IC = iconOpt.icon;
+                          return <div className="icon-3d-sm"><IC size={14} strokeWidth={2.5} /></div>;
+                        }
+                        return <span className="text-base">{item.icon}</span>;
+                      })()}
                       <span
                         className={`flex-1 text-sm ${
                           item.completed
