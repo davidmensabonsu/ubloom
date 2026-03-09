@@ -99,6 +99,17 @@ export default function Goals() {
     return acc;
   }, {} as Record<string, typeof profile.goals>);
 
+  // Sort each category: incomplete first (by deadline asc, no-deadline last), then completed
+  Object.keys(groupedGoals).forEach((cat) => {
+    groupedGoals[cat].sort((a, b) => {
+      if (a.completed !== b.completed) return a.completed ? 1 : -1;
+      if (!a.deadline && !b.deadline) return 0;
+      if (!a.deadline) return 1;
+      if (!b.deadline) return -1;
+      return a.deadline.localeCompare(b.deadline);
+    });
+  });
+
   return (
     <div className="min-h-screen gradient-background pb-24">
       {/* Header */}
