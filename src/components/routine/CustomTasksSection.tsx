@@ -109,7 +109,10 @@ export default function CustomTasksSection() {
                       {isCompleted && <Check size={14} strokeWidth={2.5} />}
                     </div>
                     <span className={`text-sm font-medium flex items-center gap-2 ${isCompleted ? 'line-through text-muted-foreground' : ''}`}>
-                      <span className="text-base">{task.icon}</span>
+                      {(() => {
+                        const iconOpt = getTaskIcon(task.icon);
+                        return iconOpt ? <iconOpt.icon size={18} strokeWidth={2} className="text-primary" /> : <span className="text-base">{task.icon}</span>;
+                      })()}
                       {task.title}
                     </span>
                     <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground/50">
