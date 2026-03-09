@@ -38,7 +38,7 @@ export default function DayDetailSheet({ dateStr, onClose }: DayDetailSheetProps
     ...coreHabits.map((h) => ({
       id: h.id,
       title: h.title,
-      icon: h.icon || h.iconImage || '✨',
+      icon: h.icon || 'sparkles',
       completed: completedIds.has(h.id),
       type: 'habit' as const,
     })),
