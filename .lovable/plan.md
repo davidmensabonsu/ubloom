@@ -1,52 +1,66 @@
 
 
-## Fix Weekly Progress Bar Accuracy
+## Plan: Unify Daily Habits into a Single Icon-Based Task System
 
-### Problem
+### Overview
 
-Two bugs cause past days' progress bars to show incorrectly:
+Merge the two separate sections ("Daily Habits" with AI-generated icons and "My Tasks" with Lucide icons) into **one unified section** that uses the curated Lucide icon set. The setup flow is preserved. Icons get a 3D styled appearance that automatically matches the chosen theme color.
 
-1. **Timezone mismatch**: Habit completions are saved using UTC dates (`toISOString()`), but the weekly chart looks up dates using local time (`date-fns format()`). For anyone west of UTC, an evening completion on Tuesday gets stored as Wednesday, so Tuesday's bar stays empty.
+### 3D Icon Styling
 
-2. **Shifting denominator**: The chart always divides by the *current* number of core habits. If you had 3 habits on Tuesday (all completed) but later added a 4th, Tuesday shows as 75% instead of 100%.
+Create a CSS-based 3D effect for the Lucide icons: a rounded container with a gradient background derived from `--primary`, layered box-shadows for depth, and a subtle inner highlight. Because the color is built from the CSS custom property `--theme-hue`, switching themes (green → blue) automatically recolors every icon.
 
-### Solution
-
-**1. Standardize all date handling to local time**
-
-Create a shared helper function `getLocalDateStr()` that formats dates using local timezone consistently. Replace every `new Date().toISOString().split('T')[0]` call in the store with this helper.
-
-| Location | Change |
-|----------|--------|
-| `src/lib/dateUtils.ts` | New file with `getLocalDateStr(date?: Date)` helper |
-| `src/stores/userStore.ts` | Replace all 6 occurrences of `toISOString().split('T')[0]` with `getLocalDateStr()` |
-
-**2. Fix the weekly progress calculation**
-
-For each past day, instead of using `coreHabits.length` as the denominator, count only completions that match current core habit IDs (excluding custom task completions). For the denominator, use the greater of: the current core habit count or the number of distinct core habit completions for that day. This way, if all habits that existed on a past day were completed, the bar shows 100%.
-
-| Location | Change |
-|----------|--------|
-| `src/components/routine/WeeklyProgress.tsx` | Filter completions to only core habit IDs. For past days, set `totalHabits = max(coreHabits.length, completedCoreHabits)` so a fully-completed past day always shows 100%. Apply the same logic in the streak calculation. |
-
-### Technical Details
-
-**New helper** (`src/lib/dateUtils.ts`):
-```
-export function getLocalDateStr(date?: Date): string {
-  const d = date || new Date();
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
+```text
+┌─────────────────────┐
+│  Gradient bg from    │
+│  hsl(--primary)      │
+│  ┌───────────┐       │
+│  │  Lucide   │  ← white icon on themed 3D pill
+│  │  icon     │
+│  └───────────┘       │
+│  Box-shadow for depth│
+└─────────────────────┘
 ```
 
-**WeeklyProgress fix** -- key logic change in the `weekData` loop:
-- Get set of current core habit IDs
-- For each day, count only completions whose `habitId` is in that set
-- For past days: `totalHabits = Math.max(coreHabits.length, completedCoreHabits)`
-- For today: `totalHabits = coreHabits.length` (standard)
+### Files to Change
 
-**Store fix** -- straightforward find-and-replace of the date pattern across 6 call sites in `userStore.ts`.
+**`src/index.css`** — Add a `.icon-3d` utility class:
+- Rounded square with primary-color gradient background
+- Layered box-shadows for 3D depth
+- White icon color for contrast
+- Uses CSS variables so it auto-updates with theme changes
+
+**`src/lib/taskIcons.ts`** — Already done; no changes needed.
+
+**`src/components/routine/RoutineSetup.tsx`** — Major update:
+- Replace emoji-based `presetHabits` with entries that reference `taskIconOptions` IDs (e.g. `icon: 'glass-water'` instead of `icon: '💧'`)
+- Render each preset habit with the 3D-styled Lucide icon instead of emoji text
+- When saving, store the icon ID string on `CoreHabit.icon`
+- Add icon picker to the custom habit input so users can choose an icon for custom habits too
+
+**`src/components/routine/CoreHabitsSection.tsx`** — Major update:
+- Remove the `HabitIcon` component (no more AI-generated images)
+- Remove `useHabitIcons` hook usage
+- Import `getTaskIcon` from `taskIcons.ts`
+- Render each habit's icon as a 3D-styled Lucide component using `getTaskIcon(habit.icon)`
+- Fallback to a default icon (Sparkles) for old habits without a valid icon ID
+
+**`src/components/routine/CustomTasksSection.tsx`** — Update icon rendering:
+- Apply the same `.icon-3d` styling to custom task icons for visual consistency
+
+**`src/stores/userStore.ts`** — Minor updates:
+- Update `skipRoutineSetup` default habits to use icon IDs (`'glass-water'`, `'sparkles'`, etc.) instead of emojis
+- Remove `iconImage` references from `CoreHabit` interface (no longer needed)
+- Remove `updateHabitIcon` and `clearAllHabitIcons` store methods
+
+**`src/hooks/useHabitIcons.ts`** — Delete this file (AI icon generation no longer used for habits)
+
+**`src/components/routine/AddTaskDialog.tsx`** — Apply `.icon-3d` styling to the icon picker grid for consistency
+
+### Result
+
+- One unified look: all habits and tasks use the same curated Lucide icons with 3D styling
+- Theme-reactive: switching from green to blue recolors all icons automatically via CSS variables
+- Setup flow preserved with the same preset habits, now showing 3D icons instead of emojis
+- No more AI-generated icon calls for habits (simpler, faster, no API dependency)
 
