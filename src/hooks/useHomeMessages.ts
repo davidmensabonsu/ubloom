@@ -117,25 +117,25 @@ function hashSeed(seed: string): number {
 }
 
 const staticFutureSelfMessages = [
-  "You're exactly where you need to be. Every step you take is bringing you closer to becoming the woman you've always known you could be.",
-  "Remember, healing isn't linear. Some days will feel harder than others, but you're doing the work, and that's what matters.",
-  "The peace you're seeking is already within you. Today, let yourself rest in that truth.",
-  "You are worthy of all the beautiful things you desire. Keep believing in yourself, love.",
-  "The woman you're becoming would be so proud of the courage you're showing right now.",
-  "Trust the timing of your life. What's meant for you is making its way to you.",
-  "You don't have to have it all figured out. You just have to keep showing up for yourself.",
-  "Every boundary you set, every truth you speak, is you choosing yourself. And that is everything.",
+  "Okay, I don't need to have everything figured out right now. I'm getting there.",
+  "Some days are just harder. That doesn't erase all the progress I've made.",
+  "I need to stop rushing. I'm allowed to take my time with this.",
+  "I've been through worse and came out the other side. I can handle today.",
+  "I keep forgetting — I'm actually doing really well. Like, genuinely.",
+  "Not everything needs to be perfect for me to feel good about where I am.",
+  "I'm choosing myself today, even if it feels uncomfortable.",
+  "The version of me I'm working toward? She'd be proud of me right now.",
 ];
 
 const staticMindsetMessages = [
-  "You are not behind. You are not late. You are exactly where you need to be on your journey.",
-  "Today, you choose peace over perfection.",
-  "Your worth is not measured by your productivity.",
-  "Softness is not weakness — it is your superpower.",
-  "You are allowed to take up space and shine brightly.",
-  "Today, you release what no longer serves your highest self.",
-  "You are the author of your story, and this chapter is beautiful.",
-  "Let today be a gentle unfolding, not a race to the finish.",
+  "I'm not behind. I'm on my own timeline.",
+  "Done is better than perfect today.",
+  "I don't have to earn rest.",
+  "I'm allowed to change my mind about who I want to be.",
+  "Not everything that feels urgent actually is.",
+  "I can do hard things, but I can also choose easy today.",
+  "My feelings are information, not instructions.",
+  "I don't owe anyone an explanation for taking care of myself.",
 ];
 
 function getStaticFutureSelf(weekKey: string): string {
