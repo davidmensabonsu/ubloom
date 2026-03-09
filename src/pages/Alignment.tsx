@@ -29,6 +29,7 @@ const feelingOptions = [
 export default function Alignment() {
   const { profile, addJournalEntry, addMoodEntry } = useUserStore();
   const [selectedFeelings, setSelectedFeelings] = useState<string[]>([]);
+  const [feelingsExpanded, setFeelingsExpanded] = useState(false);
   const [journalText, setJournalText] = useState('');
   const [saved, setSaved] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -199,7 +200,7 @@ export default function Alignment() {
           </div>
           <p className="text-sm text-muted-foreground mb-4">Choose up to 3</p>
           <div className="flex flex-wrap gap-2">
-            {feelingOptions.map((feeling) =>
+            {feelingOptions.slice(0, 8).map((feeling) =>
             <motion.button
               key={feeling.value}
               onClick={() => toggleFeeling(feeling.value)}
@@ -207,12 +208,38 @@ export default function Alignment() {
               selectedFeelings.includes(feeling.value) ? 'selected' : ''}`
               }
               whileTap={{ scale: 0.95 }}>
-              
                 <span>{feeling.emoji}</span>
                 <span>{feeling.label}</span>
               </motion.button>
             )}
+            <AnimatePresence>
+              {(feelingsExpanded || selectedFeelings.some(f => feelingOptions.slice(8).map(o => o.value).includes(f))) &&
+                feelingOptions.slice(8).map((feeling) =>
+                <motion.button
+                  key={feeling.value}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  onClick={() => toggleFeeling(feeling.value)}
+                  className={`mood-pill ${
+                  selectedFeelings.includes(feeling.value) ? 'selected' : ''}`
+                  }
+                  whileTap={{ scale: 0.95 }}>
+                    <span>{feeling.emoji}</span>
+                    <span>{feeling.label}</span>
+                  </motion.button>
+                )
+              }
+            </AnimatePresence>
           </div>
+          <button
+            onClick={() => setFeelingsExpanded(!feelingsExpanded)}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors mt-2">
+            <motion.div animate={{ rotate: feelingsExpanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
+              <ChevronDown size={14} />
+            </motion.div>
+            {feelingsExpanded ? 'Show less' : 'Show more'}
+          </button>
         </motion.div>
 
         {/* Future Self Message */}
