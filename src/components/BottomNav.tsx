@@ -2,7 +2,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { Home, Compass, Calendar, Target, Image, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 const navItems = [
-{ path: '/home', icon: null, label: 'Home', isLogo: true },
+{ path: '/home', icon: Home, label: 'Home', isLogo: false },
 { path: '/alignment', icon: Compass, label: 'Align', isLogo: false },
 { path: '/routine', icon: Calendar, label: 'Routine', isLogo: false },
 { path: '/goals', icon: Target, label: 'Goals', isLogo: false },
