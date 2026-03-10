@@ -37,7 +37,7 @@ const timeOfDayConfig = {
 
 function PresetIcon({ iconId }: { iconId: string }) {
   const opt = getTaskIcon(iconId);
-  if (!opt) return <div className="icon-3d-sm"><Sparkles size={14} strokeWidth={2.5} /></div>;
+  if (!opt) return <div className="icon-3d-sm"><img src={ubloomFlower} alt="" className="w-4 h-4" /></div>;
   const IconComp = opt.icon;
   return <div className="icon-3d-sm"><IconComp size={14} strokeWidth={2.5} /></div>;
 }

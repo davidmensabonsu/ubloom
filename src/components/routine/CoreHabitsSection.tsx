@@ -333,7 +333,7 @@ export default function CoreHabitsSection() {
           }}
           className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl border-2 border-dashed border-muted-foreground/30 text-muted-foreground hover:border-primary hover:text-primary transition-colors"
         >
-          <Sparkles size={18} strokeWidth={2.5} />
+          <img src={ubloomFlower} alt="" className="w-5 h-5" />
           <span className="text-sm font-medium">Customize Habits</span>
         </motion.button>
       )}
