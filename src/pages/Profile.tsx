@@ -7,7 +7,8 @@ import { useUserStore } from '@/stores/userStore';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { Check, Camera, LogOut, Trash2, Pencil, Flame, BookOpen, Target, Lock, KeyRound, Sparkles, Eye, EyeOff } from 'lucide-react';
+import { Check, Camera, LogOut, Trash2, Pencil, Flame, BookOpen, Target, Lock, KeyRound, Eye, EyeOff } from 'lucide-react';
+import ubloomFlower from '@/assets/ubloom-flower.png';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
@@ -306,7 +307,7 @@ export default function Profile() {
             className="glass-card rounded-3xl p-5"
           >
             <div className="flex items-center gap-2 mb-3">
-              <Sparkles size={16} className="text-primary" />
+              <img src={ubloomFlower} alt="" className="w-5 h-5" />
               <h2 className="section-title">Your Identity</h2>
             </div>
             {profile.identityStatement && (

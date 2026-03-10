@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useUserStore } from '@/stores/userStore';
-import { Sparkles, Heart, Sun, Moon, Cloud } from 'lucide-react';
+import { Heart, Sun, Moon, Cloud } from 'lucide-react';
+import ubloomFlower from '@/assets/ubloom-flower.png';
 import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/BottomNav';
@@ -75,7 +76,7 @@ export default function Home() {
           
           <div className="flex items-center gap-2 mb-3">
             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-              <Sparkles size={16} className="text-primary" />
+              <img src={ubloomFlower} alt="" className="w-5 h-5" />
             </div>
             <span className="text-sm font-medium text-muted-foreground">
               From your future self
