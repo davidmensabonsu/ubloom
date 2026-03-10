@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useUserStore, CoreHabit, TimeOfDay } from '@/stores/userStore';
 import { Check, Sun, Clock, Moon, Plus, X, Sparkles } from 'lucide-react';
-import { taskIconOptions, getTaskIcon } from '@/lib/taskIcons';
+import { taskIconOptions, getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
 
 const presetHabits: { title: string; icon: string; timeOfDay: TimeOfDay }[] = [
   // Morning
@@ -37,8 +37,7 @@ const timeOfDayConfig = {
 function PresetIcon({ iconId }: { iconId: string }) {
   const opt = getTaskIcon(iconId);
   if (!opt) return <div className="icon-3d-sm"><Sparkles size={14} strokeWidth={2.5} /></div>;
-  const IconComp = opt.icon;
-  return <div className="icon-3d-sm"><IconComp size={14} strokeWidth={2.5} /></div>;
+  return <div className="icon-3d-sm">{renderTaskIcon(opt, 14)}</div>;
 }
 
 interface RoutineSetupProps {
@@ -241,23 +240,20 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
                 <div className="space-y-1.5">
                   <label className="text-xs font-medium text-muted-foreground">Choose an icon</label>
                   <div className="flex flex-wrap gap-1.5">
-                    {taskIconOptions.map((opt) => {
-                      const IconComp = opt.icon;
-                      return (
-                        <button
-                          key={opt.id}
-                          onClick={() => setCustomIcon(opt.id)}
-                          className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
-                            customIcon === opt.id
-                              ? 'bg-primary/20 ring-2 ring-primary text-primary'
-                              : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                          }`}
-                          title={opt.label}
-                        >
-                          <IconComp size={18} strokeWidth={2} />
-                        </button>
-                      );
-                    })}
+                    {taskIconOptions.map((opt) => (
+                      <button
+                        key={opt.id}
+                        onClick={() => setCustomIcon(opt.id)}
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
+                          customIcon === opt.id
+                            ? 'bg-primary/20 ring-2 ring-primary text-primary'
+                            : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                        }`}
+                        title={opt.label}
+                      >
+                        {renderTaskIcon(opt, 18)}
+                      </button>
+                    ))}
                   </div>
                 </div>
 

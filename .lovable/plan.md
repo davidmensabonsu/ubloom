@@ -1,62 +1,52 @@
 
 
-## Generate 15 3D Pastel Clay-Style Habit Icons
+## Fix Weekly Progress Bar Accuracy
 
-### What
-Replace the current Lucide vector icons with pre-generated 3D pastel clay-style images for the 15 most common habits. Icons will be generated at build time via the existing `generate-habit-icon` edge function (with an updated prompt matching the clay aesthetic), then saved as static assets.
+### Problem
 
-### Icons to Generate (15)
+Two bugs cause past days' progress bars to show incorrectly:
 
-| ID | Subject | Prompt object |
-|---|---|---|
-| dumbbell | Exercise | a dumbbell |
-| glass-water | Hydration | a glass of water |
-| utensils | Meals | a fork and knife |
-| book | Reading | a closed book |
-| pencil | Writing | a pencil |
-| heart | Self-care | a heart |
-| bed | Sleep | a bed |
-| pill | Vitamins | a pill capsule |
-| brain | Mindfulness | a brain |
-| coffee | Coffee | a coffee cup |
-| sparkles | Beauty | a mirror with sparkles |
-| leaf | Nature | a leaf |
-| dog | Pets | a dog face |
-| music | Music | a music note |
-| bike | Cycling | a bicycle |
+1. **Timezone mismatch**: Habit completions are saved using UTC dates (`toISOString()`), but the weekly chart looks up dates using local time (`date-fns format()`). For anyone west of UTC, an evening completion on Tuesday gets stored as Wednesday, so Tuesday's bar stays empty.
 
-### Style Prompt Template
-Each icon uses the same style suffix:
-> "Create a soft pastel 3D clay-style icon. Cute rounded clay style, soft pastel colors (pink, cream, lavender), minimal details, smooth plastic texture, subtle shadows, centered object, white background, iOS app icon aesthetic, consistent lighting. No text. The subject is: {object}"
+2. **Shifting denominator**: The chart always divides by the *current* number of core habits. If you had 3 habits on Tuesday (all completed) but later added a 4th, Tuesday shows as 75% instead of 100%.
 
-### Implementation Steps
+### Solution
 
-1. **Update the edge function prompt** in `generate-habit-icon` to use the clay style prompt instead of the current "bold vibrant" prompt. Switch model to `google/gemini-3-pro-image-preview` for higher quality.
+**1. Standardize all date handling to local time**
 
-2. **Create a new one-time edge function** `generate-all-clay-icons` that loops through the 15 habits, calls the AI gateway for each, uploads the resulting base64 images to the storage bucket, and returns their public URLs.
+Create a shared helper function `getLocalDateStr()` that formats dates using local timezone consistently. Replace every `new Date().toISOString().split('T')[0]` call in the store with this helper.
 
-3. **Save generated images** as static assets in `src/assets/icons/` (e.g., `dumbbell.png`, `book.png`, etc.) -- these will be committed as static files so no runtime generation is needed.
+| Location | Change |
+|----------|--------|
+| `src/lib/dateUtils.ts` | New file with `getLocalDateStr(date?: Date)` helper |
+| `src/stores/userStore.ts` | Replace all 6 occurrences of `toISOString().split('T')[0]` with `getLocalDateStr()` |
 
-4. **Update `src/lib/taskIcons.ts`**:
-   - Add an `imageSrc` optional field to `TaskIconOption`
-   - Import the 15 image assets
-   - Set `imageSrc` on each of the 15 entries, keep `icon` as fallback
+**2. Fix the weekly progress calculation**
 
-5. **Update icon rendering** in these components to prefer `imageSrc` over Lucide icon:
-   - `CoreHabitsSection.tsx` — `HabitIcon` component
-   - `RoutineSetup.tsx` — `PresetIcon` component and the icon picker grid
-   - `AddTaskDialog.tsx` — icon picker grid
-   - `CustomTasksSection.tsx` — task icon display
-   - `DayDetailSheet.tsx` — task icon display
+For each past day, instead of using `coreHabits.length` as the denominator, count only completions that match current core habit IDs (excluding custom task completions). For the denominator, use the greater of: the current core habit count or the number of distinct core habit completions for that day. This way, if all habits that existed on a past day were completed, the bar shows 100%.
 
-   The pattern in each: if `opt.imageSrc` exists, render `<img src={opt.imageSrc} className="w-4 h-4" />`, otherwise render the Lucide `<Icon>` as before.
+| Location | Change |
+|----------|--------|
+| `src/components/routine/WeeklyProgress.tsx` | Filter completions to only core habit IDs. For past days, set `totalHabits = max(coreHabits.length, completedCoreHabits)` so a fully-completed past day always shows 100%. Apply the same logic in the streak calculation. |
 
-### Practical Approach
-Since we can't run the edge function in a loop during planning, the implementation will:
-1. First update the edge function with the clay prompt
-2. Create a simple page/button that generates all 15 icons one by one and downloads them
-3. Save each as a static asset
-4. Wire up the icon system
+### Technical Details
 
-This ensures consistent style across all icons while keeping the app fast (no runtime AI calls for icons).
+**New helper** (`src/lib/dateUtils.ts`):
+```
+export function getLocalDateStr(date?: Date): string {
+  const d = date || new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+```
+
+**WeeklyProgress fix** -- key logic change in the `weekData` loop:
+- Get set of current core habit IDs
+- For each day, count only completions whose `habitId` is in that set
+- For past days: `totalHabits = Math.max(coreHabits.length, completedCoreHabits)`
+- For today: `totalHabits = coreHabits.length` (standard)
+
+**Store fix** -- straightforward find-and-replace of the date pattern across 6 call sites in `userStore.ts`.
 

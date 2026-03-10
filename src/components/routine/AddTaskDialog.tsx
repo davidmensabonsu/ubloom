@@ -5,7 +5,7 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter, DrawerD
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sun, Clock, Moon, CalendarDays, Repeat, RotateCcw } from 'lucide-react';
-import { taskIconOptions } from '@/lib/taskIcons';
+import { taskIconOptions, renderTaskIcon } from '@/lib/taskIcons';
 
 const timeOptions: { value: TimeOfDay; label: string; icon: typeof Sun }[] = [
   { value: 'morning', label: 'Morning', icon: Sun },
@@ -20,8 +20,6 @@ const recurrenceOptions = [
 ];
 
 const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-
 
 function getUpcomingDays(): { label: string; date: string; dayIndex: number }[] {
   const days: { label: string; date: string; dayIndex: number }[] = [];
@@ -110,25 +108,22 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
           <div className="space-y-2">
             <label className="text-sm font-medium">Icon</label>
             <div className="flex flex-wrap gap-2">
-              {taskIconOptions.map((opt) => {
-                const IconComp = opt.icon;
-                return (
-                  <button
-                    key={opt.id}
-                    onClick={() => setIcon(opt.id)}
-                    className={`transition-all ${
-                      icon === opt.id
-                        ? 'ring-2 ring-primary ring-offset-2'
-                        : 'opacity-60 hover:opacity-100'
-                    }`}
-                    title={opt.label}
-                  >
-                    <div className="icon-3d">
-                      <IconComp size={20} strokeWidth={2.5} />
-                    </div>
-                  </button>
-                );
-              })}
+              {taskIconOptions.map((opt) => (
+                <button
+                  key={opt.id}
+                  onClick={() => setIcon(opt.id)}
+                  className={`transition-all ${
+                    icon === opt.id
+                      ? 'ring-2 ring-primary ring-offset-2'
+                      : 'opacity-60 hover:opacity-100'
+                  }`}
+                  title={opt.label}
+                >
+                  <div className="icon-3d">
+                    {renderTaskIcon(opt, 20)}
+                  </div>
+                </button>
+              ))}
             </div>
           </div>
 

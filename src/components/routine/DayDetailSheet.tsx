@@ -1,8 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, X, Calendar, Sparkles } from 'lucide-react';
+import { Check, X, Calendar } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import { format, parse } from 'date-fns';
-import { getTaskIcon } from '@/lib/taskIcons';
+import { getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
 
 interface DayDetailSheetProps {
   dateStr: string | null;
@@ -21,13 +21,11 @@ export default function DayDetailSheet({ dateStr, onClose }: DayDetailSheetProps
   const dayOfWeek = date.getDay();
   const formattedDate = format(date, 'EEEE, MMM d');
 
-  // Get completions for this day
   const dayCompletions = habitCompletions.filter(
     (c) => c.date === dateStr && c.completed
   );
   const completedIds = new Set(dayCompletions.map((c) => c.habitId));
 
-  // Get relevant custom tasks for this day
   const relevantCustomTasks = customTasks.filter((task) => {
     if (task.recurrence === 'daily') return true;
     if (task.recurrence === 'weekly') return task.weeklyDays?.includes(dayOfWeek) ?? false;
@@ -54,11 +52,18 @@ export default function DayDetailSheet({ dateStr, onClose }: DayDetailSheetProps
 
   const completedCount = allItems.filter((i) => i.completed).length;
 
+  function ItemIcon({ iconId }: { iconId: string }) {
+    const opt = getTaskIcon(iconId);
+    if (opt) {
+      return <div className="icon-3d-sm">{renderTaskIcon(opt, 14)}</div>;
+    }
+    return <span className="text-base">{iconId}</span>;
+  }
+
   return (
     <AnimatePresence>
       {dateStr && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -66,7 +71,6 @@ export default function DayDetailSheet({ dateStr, onClose }: DayDetailSheetProps
             className="fixed inset-0 bg-black/20 z-40"
             onClick={onClose}
           />
-          {/* Sheet */}
           <motion.div
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
@@ -74,13 +78,11 @@ export default function DayDetailSheet({ dateStr, onClose }: DayDetailSheetProps
             transition={{ type: 'spring', damping: 28, stiffness: 300 }}
             className="fixed bottom-0 left-0 right-0 z-50 bg-card rounded-t-3xl shadow-xl max-h-[60vh] overflow-y-auto"
           >
-            {/* Handle */}
             <div className="flex justify-center pt-3 pb-1">
               <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
             </div>
 
             <div className="px-5 pb-6">
-              {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Calendar size={16} className="text-muted-foreground" />
@@ -91,7 +93,6 @@ export default function DayDetailSheet({ dateStr, onClose }: DayDetailSheetProps
                 </span>
               </div>
 
-              {/* Items */}
               {allItems.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-4">
                   No habits tracked this day
@@ -105,14 +106,7 @@ export default function DayDetailSheet({ dateStr, onClose }: DayDetailSheetProps
                         item.completed ? 'bg-primary/10' : 'bg-muted/60'
                       }`}
                     >
-                      {(() => {
-                        const iconOpt = getTaskIcon(item.icon);
-                        if (iconOpt) {
-                          const IC = iconOpt.icon;
-                          return <div className="icon-3d-sm"><IC size={14} strokeWidth={2.5} /></div>;
-                        }
-                        return <span className="text-base">{item.icon}</span>;
-                      })()}
+                      <ItemIcon iconId={item.icon} />
                       <span
                         className={`flex-1 text-sm ${
                           item.completed

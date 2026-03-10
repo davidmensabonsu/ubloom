@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useUserStore, TimeOfDay } from '@/stores/userStore';
 import { Check, Sun, Clock, Moon, Pencil, Trash2, Repeat, CalendarDays, RotateCcw } from 'lucide-react';
-import { getTaskIcon } from '@/lib/taskIcons';
+import { getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
 
 const timeOfDayConfig = {
   morning: { label: 'Morning', icon: Sun, color: 'text-primary' },
@@ -15,6 +15,14 @@ const recurrenceLabels: Record<string, { label: string; icon: typeof Repeat }> =
   weekly: { label: 'weekly', icon: CalendarDays },
   oneoff: { label: 'one-off', icon: RotateCcw },
 };
+
+function TaskIcon({ iconId }: { iconId: string }) {
+  const opt = getTaskIcon(iconId);
+  if (opt) {
+    return <div className="icon-3d-sm">{renderTaskIcon(opt, 14)}</div>;
+  }
+  return <span className="text-base">{iconId}</span>;
+}
 
 export default function CustomTasksSection() {
   const { getVisibleCustomTasks, toggleCustomTaskCompletion, isCustomTaskCompletedToday, removeCustomTask } = useUserStore();
@@ -83,14 +91,7 @@ export default function CustomTasksSection() {
                 if (editMode) {
                   return (
                     <motion.div key={task.id} className="check-item w-full" layout>
-                    {(() => {
-                        const iconOpt = getTaskIcon(task.icon);
-                        if (iconOpt) {
-                          const IC = iconOpt.icon;
-                          return <div className="icon-3d-sm"><IC size={14} strokeWidth={2.5} /></div>;
-                        }
-                        return <span className="text-base">{task.icon}</span>;
-                      })()}
+                      <TaskIcon iconId={task.icon} />
                       <span className="text-sm font-medium flex-1">{task.title}</span>
                       <button
                         onClick={() => removeCustomTask(task.id)}
@@ -113,14 +114,7 @@ export default function CustomTasksSection() {
                       {isCompleted && <Check size={14} strokeWidth={2.5} />}
                     </div>
                     <span className={`text-sm font-medium flex items-center gap-2 ${isCompleted ? 'line-through text-muted-foreground' : ''}`}>
-                      {(() => {
-                        const iconOpt = getTaskIcon(task.icon);
-                        if (iconOpt) {
-                          const IC = iconOpt.icon;
-                          return <div className="icon-3d-sm"><IC size={14} strokeWidth={2.5} /></div>;
-                        }
-                        return <span className="text-base">{task.icon}</span>;
-                      })()}
+                      <TaskIcon iconId={task.icon} />
                       {task.title}
                     </span>
                     <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground/50">
