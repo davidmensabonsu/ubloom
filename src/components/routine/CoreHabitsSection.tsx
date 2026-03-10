@@ -13,12 +13,12 @@ const timeOfDayConfig = {
 
 function HabitIcon({ iconId }: { iconId?: string }) {
   const opt = iconId ? getTaskIcon(iconId) : undefined;
-  if (opt) {
-    return <div className="icon-3d-sm">{renderTaskIcon(opt, 16)}</div>;
+  if (opt?.imageSrc) {
+    return <img src={opt.imageSrc} alt={opt.label} className="object-contain w-7 h-7 flex-shrink-0" />;
   }
   return (
     <div className="icon-3d-sm">
-      <Sparkles size={16} strokeWidth={2.5} />
+      {opt ? renderTaskIcon(opt, 16) : <Sparkles size={16} strokeWidth={2.5} />}
     </div>
   );
 }
