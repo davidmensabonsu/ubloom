@@ -41,6 +41,13 @@ import dogImg from '@/assets/icons/dog.png';
 import musicImg from '@/assets/icons/music.png';
 import bikeImg from '@/assets/icons/bike.png';
 import runningImg from '@/assets/icons/running.png';
+import shirtImg from '@/assets/icons/shirt.png';
+import cartImg from '@/assets/icons/cart.png';
+import phoneImg from '@/assets/icons/phone.png';
+import cameraImg from '@/assets/icons/camera.png';
+import babyImg from '@/assets/icons/baby.png';
+import paletteImg from '@/assets/icons/palette.png';
+import planeImg from '@/assets/icons/plane.png';
 
 export interface TaskIconOption {
   id: string;
