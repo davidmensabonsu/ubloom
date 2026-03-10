@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useUserStore, CoreHabit, TimeOfDay } from '@/stores/userStore';
-import { Check, Sun, Clock, Moon, Plus, X, Sparkles } from 'lucide-react';
+import { Check, Sun, Clock, Moon, Plus, X } from 'lucide-react';
+import ubloomFlower from '@/assets/ubloom-flower.png';
 import { taskIconOptions, getTaskIcon } from '@/lib/taskIcons';
 
 const presetHabits: { title: string; icon: string; timeOfDay: TimeOfDay }[] = [
