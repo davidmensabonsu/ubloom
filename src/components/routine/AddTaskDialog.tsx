@@ -123,7 +123,7 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
                   >
                     <img src={opt.image} alt={opt.label} className="w-7 h-7 object-contain" />
                   </button>
-              })}
+              ))}
             </div>
           </div>
 
