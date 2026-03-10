@@ -322,7 +322,7 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
             onClick={handleComplete}
             className="flex-1 soft-button flex items-center justify-center gap-2"
           >
-            <Sparkles size={18} strokeWidth={2.5} />
+            <img src={ubloomFlower} alt="" className="w-5 h-5" />
             <span>Save Habits</span>
             {selectedHabits.size > 0 && (
               <span className="bg-background/30 px-2 py-0.5 rounded-full text-xs">
