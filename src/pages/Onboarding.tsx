@@ -229,7 +229,7 @@ export default function Onboarding() {
                       animate={{ scale: 1 }}
                       className="ml-auto"
                     >
-                      <Sparkles size={18} className="text-primary" />
+                      <img src={ubloomFlower} alt="" className="w-5 h-5" />
                     </motion.div>
                   )}
                 </motion.button>
