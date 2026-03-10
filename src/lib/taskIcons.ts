@@ -24,21 +24,17 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 
-import readingIcon from '@/assets/habit-icons/reading.png';
-import runningIcon from '@/assets/habit-icons/running.png';
-
 export interface TaskIconOption {
   id: string;
   label: string;
   icon: LucideIcon;
-  image?: string; // Optional clay-style image override
 }
 
 export const taskIconOptions: TaskIconOption[] = [
   { id: 'dumbbell', label: 'Exercise', icon: Dumbbell },
   { id: 'glass-water', label: 'Hydration', icon: GlassWater },
   { id: 'utensils', label: 'Meals', icon: UtensilsCrossed },
-  { id: 'book', label: 'Reading', icon: BookOpen, image: readingIcon },
+  { id: 'book', label: 'Reading', icon: BookOpen },
   { id: 'pencil', label: 'Writing', icon: Pencil },
   { id: 'heart', label: 'Self-care', icon: Heart },
   { id: 'bed', label: 'Sleep', icon: Bed },
@@ -53,7 +49,7 @@ export const taskIconOptions: TaskIconOption[] = [
   { id: 'coffee', label: 'Coffee', icon: Coffee },
   { id: 'leaf', label: 'Nature', icon: Leaf },
   { id: 'camera', label: 'Photos', icon: Camera },
-  { id: 'bike', label: 'Cycling', icon: Bike, image: runningIcon },
+  { id: 'bike', label: 'Cycling', icon: Bike },
   { id: 'baby', label: 'Kids', icon: Baby },
   { id: 'palette', label: 'Art', icon: Palette },
   { id: 'plane', label: 'Travel', icon: Plane },
