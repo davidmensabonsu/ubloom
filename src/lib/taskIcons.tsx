@@ -21,6 +21,7 @@ import {
   Baby,
   Palette,
   Plane,
+  Footprints,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -39,6 +40,7 @@ import leafImg from '@/assets/icons/leaf.png';
 import dogImg from '@/assets/icons/dog.png';
 import musicImg from '@/assets/icons/music.png';
 import bikeImg from '@/assets/icons/bike.png';
+import runningImg from '@/assets/icons/running.png';
 
 export interface TaskIconOption {
   id: string;
@@ -70,6 +72,7 @@ export const taskIconOptions: TaskIconOption[] = [
   { id: 'baby', label: 'Kids', icon: Baby },
   { id: 'palette', label: 'Art', icon: Palette },
   { id: 'plane', label: 'Travel', icon: Plane },
+  { id: 'running', label: 'Running', icon: Footprints, imageSrc: runningImg },
 ];
 
 const iconMap = new Map(taskIconOptions.map((o) => [o.id, o]));
