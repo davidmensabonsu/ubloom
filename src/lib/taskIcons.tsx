@@ -72,6 +72,7 @@ export const taskIconOptions: TaskIconOption[] = [
   { id: 'baby', label: 'Kids', icon: Baby },
   { id: 'palette', label: 'Art', icon: Palette },
   { id: 'plane', label: 'Travel', icon: Plane },
+  { id: 'running', label: 'Running', icon: Footprints, imageSrc: runningImg },
 ];
 
 const iconMap = new Map(taskIconOptions.map((o) => [o.id, o]));
