@@ -25,7 +25,7 @@ function HabitIcon({ iconId }: { iconId?: string }) {
   // Fallback for old emoji-based icons
   return (
     <div className="icon-3d-sm">
-      <Sparkles size={16} strokeWidth={2.5} />
+      <img src={ubloomFlower} alt="" className="w-4 h-4" />
     </div>
   );
 }
