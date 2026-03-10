@@ -140,7 +140,7 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-2 mb-2"
         >
-          <Sparkles size={24} strokeWidth={2.5} className="text-primary" />
+          <img src={ubloomFlower} alt="" className="w-6 h-6" />
           <h1 className="page-title">Set Your Core Daily Habits</h1>
         </motion.div>
         <motion.p
