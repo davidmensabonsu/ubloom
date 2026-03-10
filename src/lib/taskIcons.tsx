@@ -21,6 +21,7 @@ import {
   Baby,
   Palette,
   Plane,
+  Footprints,
   type LucideIcon,
 } from 'lucide-react';
 
