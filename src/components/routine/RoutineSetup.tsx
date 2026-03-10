@@ -37,8 +37,7 @@ const timeOfDayConfig = {
 function PresetIcon({ iconId }: { iconId: string }) {
   const opt = getTaskIcon(iconId);
   if (!opt) return <div className="icon-3d-sm"><Sparkles size={14} strokeWidth={2.5} /></div>;
-  const IconComp = opt.icon;
-  return <div className="icon-3d-sm"><IconComp size={14} strokeWidth={2.5} /></div>;
+  return <img src={opt.image} alt={opt.label} className="w-7 h-7 object-contain" />;
 }
 
 interface RoutineSetupProps {
