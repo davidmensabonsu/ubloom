@@ -14,14 +14,12 @@ const timeOfDayConfig = {
 function HabitIcon({ iconId }: { iconId?: string }) {
   const opt = iconId ? getTaskIcon(iconId) : undefined;
   if (opt) {
-    const IconComp = opt.icon;
     return (
-      <div className="icon-3d-sm">
-        <IconComp size={16} strokeWidth={2.5} />
+      <div className="w-8 h-8 flex items-center justify-center">
+        <img src={opt.image} alt={opt.label} className="w-7 h-7 object-contain" />
       </div>
     );
   }
-  // Fallback for old emoji-based icons
   return (
     <div className="icon-3d-sm">
       <Sparkles size={16} strokeWidth={2.5} />

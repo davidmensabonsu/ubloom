@@ -86,8 +86,7 @@ export default function CustomTasksSection() {
                     {(() => {
                         const iconOpt = getTaskIcon(task.icon);
                         if (iconOpt) {
-                          const IC = iconOpt.icon;
-                          return <div className="icon-3d-sm"><IC size={14} strokeWidth={2.5} /></div>;
+                          return <img src={iconOpt.image} alt={iconOpt.label} className="w-6 h-6 object-contain" />;
                         }
                         return <span className="text-base">{task.icon}</span>;
                       })()}
@@ -116,8 +115,7 @@ export default function CustomTasksSection() {
                       {(() => {
                         const iconOpt = getTaskIcon(task.icon);
                         if (iconOpt) {
-                          const IC = iconOpt.icon;
-                          return <div className="icon-3d-sm"><IC size={14} strokeWidth={2.5} /></div>;
+                          return <img src={iconOpt.image} alt={iconOpt.label} className="w-6 h-6 object-contain" />;
                         }
                         return <span className="text-base">{task.icon}</span>;
                       })()}

@@ -110,25 +110,20 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
           <div className="space-y-2">
             <label className="text-sm font-medium">Icon</label>
             <div className="flex flex-wrap gap-2">
-              {taskIconOptions.map((opt) => {
-                const IconComp = opt.icon;
-                return (
+              {taskIconOptions.map((opt) => (
                   <button
                     key={opt.id}
                     onClick={() => setIcon(opt.id)}
-                    className={`transition-all ${
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
                       icon === opt.id
-                        ? 'ring-2 ring-primary ring-offset-2'
-                        : 'opacity-60 hover:opacity-100'
+                        ? 'ring-2 ring-primary ring-offset-2 bg-primary/10'
+                        : 'opacity-60 hover:opacity-100 bg-muted'
                     }`}
                     title={opt.label}
                   >
-                    <div className="icon-3d">
-                      <IconComp size={20} strokeWidth={2.5} />
-                    </div>
+                    <img src={opt.image} alt={opt.label} className="w-7 h-7 object-contain" />
                   </button>
-                );
-              })}
+              ))}
             </div>
           </div>
 
