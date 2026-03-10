@@ -336,7 +336,8 @@
   }
 
   .icon-3d img,
-  .icon-3d-sm img {
+  .icon-3d-sm img,
+  img.clay-icon {
     filter: hue-rotate(calc((var(--theme-hue) - var(--icon-hue-base)) * 1deg));
   }
 }
