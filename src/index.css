@@ -11,6 +11,7 @@
     /* Default theme: Blush Pink */
     --theme-hue: 350;
     --theme-sat: 60%;
+    --icon-hue-base: 350; /* base hue of the clay icons (pink) */
     
     --background: 30 30% 98%;
     --foreground: 30 15% 20%;
