@@ -307,7 +307,7 @@ export default function Profile() {
             className="glass-card rounded-3xl p-5"
           >
             <div className="flex items-center gap-2 mb-3">
-              <Sparkles size={16} className="text-primary" />
+              <img src={ubloomFlower} alt="" className="w-5 h-5" />
               <h2 className="section-title">Your Identity</h2>
             </div>
             {profile.identityStatement && (

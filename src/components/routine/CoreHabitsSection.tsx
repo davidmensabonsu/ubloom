@@ -102,7 +102,7 @@ export default function CoreHabitsSection() {
           animate={{ scale: 1 }}
           transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
         >
-          <Sparkles size={40} strokeWidth={2} className="text-primary mx-auto" />
+          <img src={ubloomFlower} alt="" className="w-10 h-10 mx-auto" />
         </motion.div>
         <h2 className="text-lg font-bold">Set Up Your Daily Habits</h2>
         <p className="text-sm text-muted-foreground leading-relaxed">

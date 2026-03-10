@@ -179,7 +179,7 @@ export default function ChooseAesthetic() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
       >
-        <Sparkles size={18} />
+        <img src={ubloomFlower} alt="" className="w-5 h-5" />
         <span>Enter my space</span>
       </motion.button>
     </div>
