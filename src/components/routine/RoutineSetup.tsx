@@ -37,6 +37,7 @@ const timeOfDayConfig = {
 function PresetIcon({ iconId }: { iconId: string }) {
   const opt = getTaskIcon(iconId);
   if (!opt) return <div className="icon-3d-sm"><Sparkles size={14} strokeWidth={2.5} /></div>;
+  if (opt.image) return <img src={opt.image} alt={opt.label} className="w-5 h-5 object-contain" />;
   const IconComp = opt.icon;
   return <div className="icon-3d-sm"><IconComp size={14} strokeWidth={2.5} /></div>;
 }
