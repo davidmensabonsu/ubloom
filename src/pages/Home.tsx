@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useUserStore } from '@/stores/userStore';
-import { Sparkles, Heart, Sun, Moon, Cloud } from 'lucide-react';
+import { Heart, Sun, Moon, Cloud } from 'lucide-react';
+import ubloomFlower from '@/assets/ubloom-flower.png';
 import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/BottomNav';
