@@ -3,7 +3,7 @@ import { getLocalDateStr } from '@/lib/dateUtils';
 import { useState } from 'react';
 import { useUserStore, TimeOfDay } from '@/stores/userStore';
 import { Check, Sun, Clock, Moon, Plus, X, Sparkles, Pencil, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
-import { getTaskIcon } from '@/lib/taskIcons';
+import { getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
 
 const timeOfDayConfig = {
   morning: { label: 'Morning', icon: Sun, color: 'text-primary' },
@@ -14,14 +14,8 @@ const timeOfDayConfig = {
 function HabitIcon({ iconId }: { iconId?: string }) {
   const opt = iconId ? getTaskIcon(iconId) : undefined;
   if (opt) {
-    const IconComp = opt.icon;
-    return (
-      <div className="icon-3d-sm">
-        <IconComp size={16} strokeWidth={2.5} />
-      </div>
-    );
+    return <div className="icon-3d-sm">{renderTaskIcon(opt, 16)}</div>;
   }
-  // Fallback for old emoji-based icons
   return (
     <div className="icon-3d-sm">
       <Sparkles size={16} strokeWidth={2.5} />
