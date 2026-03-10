@@ -41,6 +41,13 @@ import dogImg from '@/assets/icons/dog.png';
 import musicImg from '@/assets/icons/music.png';
 import bikeImg from '@/assets/icons/bike.png';
 import runningImg from '@/assets/icons/running.png';
+import shirtImg from '@/assets/icons/shirt.png';
+import cartImg from '@/assets/icons/cart.png';
+import phoneImg from '@/assets/icons/phone.png';
+import cameraImg from '@/assets/icons/camera.png';
+import babyImg from '@/assets/icons/baby.png';
+import paletteImg from '@/assets/icons/palette.png';
+import planeImg from '@/assets/icons/plane.png';
 
 export interface TaskIconOption {
   id: string;
@@ -57,9 +64,9 @@ export const taskIconOptions: TaskIconOption[] = [
   { id: 'pencil', label: 'Writing', icon: Pencil, imageSrc: pencilImg },
   { id: 'heart', label: 'Self-care', icon: Heart, imageSrc: heartImg },
   { id: 'bed', label: 'Sleep', icon: Bed, imageSrc: bedImg },
-  { id: 'shirt', label: 'Laundry', icon: Shirt },
-  { id: 'cart', label: 'Errands', icon: ShoppingCart },
-  { id: 'phone', label: 'Calls', icon: Phone },
+  { id: 'shirt', label: 'Laundry', icon: Shirt, imageSrc: shirtImg },
+  { id: 'cart', label: 'Errands', icon: ShoppingCart, imageSrc: cartImg },
+  { id: 'phone', label: 'Calls', icon: Phone, imageSrc: phoneImg },
   { id: 'music', label: 'Music', icon: Music, imageSrc: musicImg },
   { id: 'dog', label: 'Pets', icon: Dog, imageSrc: dogImg },
   { id: 'pill', label: 'Vitamins', icon: Pill, imageSrc: pillImg },
@@ -67,11 +74,11 @@ export const taskIconOptions: TaskIconOption[] = [
   { id: 'brain', label: 'Mindfulness', icon: Brain, imageSrc: brainImg },
   { id: 'coffee', label: 'Coffee', icon: Coffee, imageSrc: coffeeImg },
   { id: 'leaf', label: 'Nature', icon: Leaf, imageSrc: leafImg },
-  { id: 'camera', label: 'Photos', icon: Camera },
+  { id: 'camera', label: 'Photos', icon: Camera, imageSrc: cameraImg },
   { id: 'bike', label: 'Cycling', icon: Bike, imageSrc: bikeImg },
-  { id: 'baby', label: 'Kids', icon: Baby },
-  { id: 'palette', label: 'Art', icon: Palette },
-  { id: 'plane', label: 'Travel', icon: Plane },
+  { id: 'baby', label: 'Kids', icon: Baby, imageSrc: babyImg },
+  { id: 'palette', label: 'Art', icon: Palette, imageSrc: paletteImg },
+  { id: 'plane', label: 'Travel', icon: Plane, imageSrc: planeImg },
   { id: 'running', label: 'Running', icon: Footprints, imageSrc: runningImg },
 ];
 
