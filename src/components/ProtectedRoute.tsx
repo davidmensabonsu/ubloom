@@ -1,8 +1,13 @@
 import { useAuth } from '@/hooks/useAuth';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useUserStore } from '@/stores/userStore';
+
+const ONBOARDING_ROUTES = ['/onboarding', '/dream-life', '/choose-aesthetic'];
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
+  const { pathname } = useLocation();
+  const onboardingComplete = useUserStore((s) => s.profile.onboardingComplete);
 
   if (loading) {
     return (
@@ -17,6 +22,10 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
 
   if (!user) {
     return <Navigate to="/auth" replace />;
+  }
+
+  if (!onboardingComplete && !ONBOARDING_ROUTES.includes(pathname)) {
+    return <Navigate to="/onboarding" replace />;
   }
 
   return <>{children}</>;
