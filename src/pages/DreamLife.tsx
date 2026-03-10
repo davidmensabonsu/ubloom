@@ -4,8 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { Check, ImagePlus, X, Loader2 } from 'lucide-react';
-import ubloomFlower from '@/assets/ubloom-flower.png';
+import { Check, Sparkles, ImagePlus, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const dreamCategories = [
@@ -323,7 +322,7 @@ export default function DreamLife() {
                 ? 'Choose my aesthetic'
                 : 'Next'}
             </span>
-            <img src={ubloomFlower} alt="" className="w-5 h-5" />
+            <Sparkles size={18} />
           </motion.button>
         </motion.div>
       </AnimatePresence>

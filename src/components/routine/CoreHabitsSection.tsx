@@ -2,8 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import { useState } from 'react';
 import { useUserStore, TimeOfDay } from '@/stores/userStore';
-import { Check, Sun, Clock, Moon, Plus, X, Pencil, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
-import ubloomFlower from '@/assets/ubloom-flower.png';
+import { Check, Sun, Clock, Moon, Plus, X, Sparkles, Pencil, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
 import { getTaskIcon } from '@/lib/taskIcons';
 
 const timeOfDayConfig = {
@@ -25,7 +24,7 @@ function HabitIcon({ iconId }: { iconId?: string }) {
   // Fallback for old emoji-based icons
   return (
     <div className="icon-3d-sm">
-      <img src={ubloomFlower} alt="" className="w-4 h-4" />
+      <Sparkles size={16} strokeWidth={2.5} />
     </div>
   );
 }
@@ -102,7 +101,7 @@ export default function CoreHabitsSection() {
           animate={{ scale: 1 }}
           transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
         >
-          <img src={ubloomFlower} alt="" className="w-10 h-10 mx-auto" />
+          <Sparkles size={40} strokeWidth={2} className="text-primary mx-auto" />
         </motion.div>
         <h2 className="text-lg font-bold">Set Up Your Daily Habits</h2>
         <p className="text-sm text-muted-foreground leading-relaxed">
@@ -333,7 +332,7 @@ export default function CoreHabitsSection() {
           }}
           className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl border-2 border-dashed border-muted-foreground/30 text-muted-foreground hover:border-primary hover:text-primary transition-colors"
         >
-          <img src={ubloomFlower} alt="" className="w-5 h-5" />
+          <Sparkles size={18} strokeWidth={2.5} />
           <span className="text-sm font-medium">Customize Habits</span>
         </motion.button>
       )}

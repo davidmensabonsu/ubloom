@@ -1,8 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useUserStore, CoreHabit, TimeOfDay } from '@/stores/userStore';
-import { Check, Sun, Clock, Moon, Plus, X } from 'lucide-react';
-import ubloomFlower from '@/assets/ubloom-flower.png';
+import { Check, Sun, Clock, Moon, Plus, X, Sparkles } from 'lucide-react';
 import { taskIconOptions, getTaskIcon } from '@/lib/taskIcons';
 
 const presetHabits: { title: string; icon: string; timeOfDay: TimeOfDay }[] = [
@@ -37,7 +36,7 @@ const timeOfDayConfig = {
 
 function PresetIcon({ iconId }: { iconId: string }) {
   const opt = getTaskIcon(iconId);
-  if (!opt) return <div className="icon-3d-sm"><img src={ubloomFlower} alt="" className="w-4 h-4" /></div>;
+  if (!opt) return <div className="icon-3d-sm"><Sparkles size={14} strokeWidth={2.5} /></div>;
   const IconComp = opt.icon;
   return <div className="icon-3d-sm"><IconComp size={14} strokeWidth={2.5} /></div>;
 }
@@ -140,7 +139,7 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-2 mb-2"
         >
-          <img src={ubloomFlower} alt="" className="w-6 h-6" />
+          <Sparkles size={24} strokeWidth={2.5} className="text-primary" />
           <h1 className="page-title">Set Your Core Daily Habits</h1>
         </motion.div>
         <motion.p
@@ -322,7 +321,7 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
             onClick={handleComplete}
             className="flex-1 soft-button flex items-center justify-center gap-2"
           >
-            <img src={ubloomFlower} alt="" className="w-5 h-5" />
+            <Sparkles size={18} strokeWidth={2.5} />
             <span>Save Habits</span>
             {selectedHabits.size > 0 && (
               <span className="bg-background/30 px-2 py-0.5 rounded-full text-xs">

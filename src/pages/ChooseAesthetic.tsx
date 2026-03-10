@@ -1,8 +1,7 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
-import { Check } from 'lucide-react';
-import ubloomFlower from '@/assets/ubloom-flower.png';
+import { Check, Sparkles } from 'lucide-react';
 import { useEffect } from 'react';
 
 const aesthetics = [
@@ -179,7 +178,7 @@ export default function ChooseAesthetic() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
       >
-        <img src={ubloomFlower} alt="" className="w-5 h-5" />
+        <Sparkles size={18} />
         <span>Enter my space</span>
       </motion.button>
     </div>
