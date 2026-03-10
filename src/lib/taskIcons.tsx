@@ -39,6 +39,7 @@ import leafImg from '@/assets/icons/leaf.png';
 import dogImg from '@/assets/icons/dog.png';
 import musicImg from '@/assets/icons/music.png';
 import bikeImg from '@/assets/icons/bike.png';
+import runningImg from '@/assets/icons/running.png';
 
 export interface TaskIconOption {
   id: string;
