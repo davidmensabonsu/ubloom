@@ -2,8 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import ubloomFlower from '@/assets/ubloom-flower.png';
+import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 
 const onboardingSteps = [
   {
@@ -229,7 +228,7 @@ export default function Onboarding() {
                       animate={{ scale: 1 }}
                       className="ml-auto"
                     >
-                      <img src={ubloomFlower} alt="" className="w-5 h-5" />
+                      <Sparkles size={18} className="text-primary" />
                     </motion.div>
                   )}
                 </motion.button>
