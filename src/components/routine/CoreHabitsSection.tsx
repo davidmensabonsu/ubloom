@@ -2,7 +2,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import { useState } from 'react';
 import { useUserStore, TimeOfDay } from '@/stores/userStore';
-import { Check, Sun, Clock, Moon, Plus, X, Sparkles, Pencil, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
+import { Check, Sun, Clock, Moon, Plus, X, Pencil, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
+import ubloomFlower from '@/assets/ubloom-flower.png';
 import { getTaskIcon } from '@/lib/taskIcons';
 
 const timeOfDayConfig = {
