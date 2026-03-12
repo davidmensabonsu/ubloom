@@ -145,6 +145,9 @@ export default function Home() {
           
         </motion.div>
 
+        {/* Beauty Affirmations */}
+        <BeautyAffirmations />
+
         {/* Recent Journal */}
         {profile.journalEntries.length > 0 &&
         <motion.div
