@@ -5,6 +5,7 @@ import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/BottomNav';
 import WeeklyMoodSummary from '@/components/home/WeeklyMoodSummary';
+import BeautyAffirmations from '@/components/home/BeautyAffirmations';
 import logo from '@/assets/logo.png';
 
 const timeGreetings = () => {
