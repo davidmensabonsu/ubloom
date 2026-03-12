@@ -22,6 +22,14 @@ import {
   Palette,
   Plane,
   Footprints,
+  Laptop,
+  MessageCircleHeart,
+  Sun,
+  PiggyBank,
+  Bath,
+  Flower2,
+  GraduationCap,
+  Brush,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -48,6 +56,15 @@ import cameraImg from '@/assets/icons/camera.png';
 import babyImg from '@/assets/icons/baby.png';
 import paletteImg from '@/assets/icons/palette.png';
 import planeImg from '@/assets/icons/plane.png';
+import yogaImg from '@/assets/icons/yoga.png';
+import cleaningImg from '@/assets/icons/cleaning.png';
+import bathImg from '@/assets/icons/bath.png';
+import plantImg from '@/assets/icons/plant.png';
+import savingsImg from '@/assets/icons/savings.png';
+import sunImg from '@/assets/icons/sun.png';
+import studyImg from '@/assets/icons/study.png';
+import laptopImg from '@/assets/icons/laptop.png';
+import chatImg from '@/assets/icons/chat.png';
 
 export interface TaskIconOption {
   id: string;
@@ -80,6 +97,15 @@ export const taskIconOptions: TaskIconOption[] = [
   { id: 'palette', label: 'Art', icon: Palette, imageSrc: paletteImg },
   { id: 'plane', label: 'Travel', icon: Plane, imageSrc: planeImg },
   { id: 'running', label: 'Running', icon: Footprints, imageSrc: runningImg },
+  { id: 'yoga', label: 'Yoga', icon: Flower2, imageSrc: yogaImg },
+  { id: 'cleaning', label: 'Cleaning', icon: Brush, imageSrc: cleaningImg },
+  { id: 'bath', label: 'Bath', icon: Bath, imageSrc: bathImg },
+  { id: 'plant', label: 'Gardening', icon: Flower2, imageSrc: plantImg },
+  { id: 'savings', label: 'Savings', icon: PiggyBank, imageSrc: savingsImg },
+  { id: 'sun', label: 'Outdoors', icon: Sun, imageSrc: sunImg },
+  { id: 'study', label: 'Studying', icon: GraduationCap, imageSrc: studyImg },
+  { id: 'laptop', label: 'Work', icon: Laptop, imageSrc: laptopImg },
+  { id: 'chat', label: 'Social', icon: MessageCircleHeart, imageSrc: chatImg },
 ];
 
 const iconMap = new Map(taskIconOptions.map((o) => [o.id, o]));
