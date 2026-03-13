@@ -105,6 +105,7 @@ import headphonesImg from '@/assets/icons/headphones.png';
 import danceImg from '@/assets/icons/dance.png';
 import puzzleImg from '@/assets/icons/puzzle.png';
 import trophyImg from '@/assets/icons/trophy.png';
+import ubloomImg from '@/assets/ubloom-flower.png';
 
 export interface TaskIconOption {
   id: string;
