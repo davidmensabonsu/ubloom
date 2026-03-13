@@ -168,6 +168,38 @@ export const taskIconOptions: TaskIconOption[] = [
   { id: 'trophy', label: 'Goals', icon: Trophy, imageSrc: trophyImg },
 ];
 
+export interface IconCategory {
+  label: string;
+  iconIds: string[];
+}
+
+export const iconCategories: IconCategory[] = [
+  {
+    label: 'Health & Fitness',
+    iconIds: ['dumbbell', 'running', 'bike', 'yoga', 'swimming', 'hiking', 'dance', 'glass-water', 'pill', 'dental', 'fruit'],
+  },
+  {
+    label: 'Wellness & Self-care',
+    iconIds: ['heart', 'brain', 'sparkles', 'bath', 'candle', 'bed', 'prayer', 'coffee'],
+  },
+  {
+    label: 'Work & Learning',
+    iconIds: ['laptop', 'study', 'book', 'pencil', 'globe', 'puzzle', 'trophy', 'savings'],
+  },
+  {
+    label: 'Home & Daily',
+    iconIds: ['home', 'cooking', 'utensils', 'cleaning', 'shirt', 'cart', 'car', 'plant'],
+  },
+  {
+    label: 'Social & Entertainment',
+    iconIds: ['chat', 'phone', 'mail', 'music', 'headphones', 'movie', 'gaming', 'singing', 'camera'],
+  },
+  {
+    label: 'Outdoors & Adventure',
+    iconIds: ['sun', 'leaf', 'plane', 'camping', 'dog', 'baby', 'palette', 'gift'],
+  },
+];
+
 const iconMap = new Map(taskIconOptions.map((o) => [o.id, o]));
 
 export function getTaskIcon(id: string): TaskIconOption | undefined {
