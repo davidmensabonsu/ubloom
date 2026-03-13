@@ -105,26 +105,35 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
           </div>
 
           {/* Icon */}
-          <div className="space-y-2">
+          <div className="space-y-3">
             <label className="text-sm font-medium">Icon</label>
-            <div className="flex flex-wrap gap-2">
-              {taskIconOptions.map((opt) => (
-                <button
-                  key={opt.id}
-                  onClick={() => setIcon(opt.id)}
-                  className={`transition-all ${
-                    icon === opt.id
-                      ? 'ring-2 ring-primary ring-offset-2'
-                      : 'opacity-60 hover:opacity-100'
-                  }`}
-                  title={opt.label}
-                >
-                  <div className="icon-3d">
-                    {renderTaskIcon(opt, 20)}
-                  </div>
-                </button>
-              ))}
-            </div>
+            {iconCategories.map((category) => (
+              <div key={category.label} className="space-y-1.5">
+                <span className="text-xs text-muted-foreground font-medium">{category.label}</span>
+                <div className="flex flex-wrap gap-2">
+                  {category.iconIds.map((id) => {
+                    const opt = getTaskIcon(id);
+                    if (!opt) return null;
+                    return (
+                      <button
+                        key={opt.id}
+                        onClick={() => setIcon(opt.id)}
+                        className={`transition-all ${
+                          icon === opt.id
+                            ? 'ring-2 ring-primary ring-offset-2'
+                            : 'opacity-60 hover:opacity-100'
+                        }`}
+                        title={opt.label}
+                      >
+                        <div className="icon-3d">
+                          {renderTaskIcon(opt, 20)}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* Time of day */}
