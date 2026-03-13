@@ -177,6 +177,10 @@ export interface IconCategory {
 
 export const iconCategories: IconCategory[] = [
   {
+    label: 'ubloom',
+    iconIds: ['ubloom'],
+  },
+  {
     label: 'Health & Fitness',
     iconIds: ['dumbbell', 'running', 'bike', 'yoga', 'swimming', 'hiking', 'dance', 'glass-water', 'pill', 'dental', 'fruit'],
   },
