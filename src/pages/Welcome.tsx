@@ -63,12 +63,17 @@ export default function Welcome() {
       </div>
 
       {/* Features preview */}
-      <div className="flex gap-6 mb-12">
-        {['✨ Reflect', '🌸 Align', '💫 Bloom'].map((feature) =>
-        <span key={feature} className="text-sm text-muted-foreground">
-            {feature}
+      <div className="flex gap-8 mb-12">
+        {[
+          { icon: Sparkles, label: 'Reflect' },
+          { icon: Infinity, label: 'Align' },
+          { icon: Flower2, label: 'Bloom' },
+        ].map(({ icon: Icon, label }) => (
+          <span key={label} className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <Icon size={16} className="text-primary" />
+            {label}
           </span>
-        )}
+        ))}
       </div>
 
       {/* CTA Button */}
