@@ -30,6 +30,26 @@ import {
   Flower2,
   GraduationCap,
   Brush,
+  CookingPot,
+  HandHeart,
+  Smile,
+  Gift,
+  Car,
+  Clapperboard,
+  Gamepad2,
+  Mail,
+  Home,
+  Mountain,
+  Waves,
+  Mic,
+  Tent,
+  Globe,
+  Flame,
+  Apple,
+  Headphones,
+  Drama,
+  Puzzle,
+  Trophy,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -65,6 +85,26 @@ import sunImg from '@/assets/icons/sun.png';
 import studyImg from '@/assets/icons/study.png';
 import laptopImg from '@/assets/icons/laptop.png';
 import chatImg from '@/assets/icons/chat.png';
+import cookingImg from '@/assets/icons/cooking.png';
+import prayerImg from '@/assets/icons/prayer.png';
+import dentalImg from '@/assets/icons/dental.png';
+import giftImg from '@/assets/icons/gift.png';
+import carImg from '@/assets/icons/car.png';
+import movieImg from '@/assets/icons/movie.png';
+import gamingImg from '@/assets/icons/gaming.png';
+import mailImg from '@/assets/icons/mail.png';
+import homeImg from '@/assets/icons/home.png';
+import hikingImg from '@/assets/icons/hiking.png';
+import swimmingImg from '@/assets/icons/swimming.png';
+import singingImg from '@/assets/icons/singing.png';
+import campingImg from '@/assets/icons/camping.png';
+import globeImg from '@/assets/icons/globe.png';
+import candleImg from '@/assets/icons/candle.png';
+import fruitImg from '@/assets/icons/fruit.png';
+import headphonesImg from '@/assets/icons/headphones.png';
+import danceImg from '@/assets/icons/dance.png';
+import puzzleImg from '@/assets/icons/puzzle.png';
+import trophyImg from '@/assets/icons/trophy.png';
 
 export interface TaskIconOption {
   id: string;
@@ -106,6 +146,26 @@ export const taskIconOptions: TaskIconOption[] = [
   { id: 'study', label: 'Studying', icon: GraduationCap, imageSrc: studyImg },
   { id: 'laptop', label: 'Work', icon: Laptop, imageSrc: laptopImg },
   { id: 'chat', label: 'Social', icon: MessageCircleHeart, imageSrc: chatImg },
+  { id: 'cooking', label: 'Cooking', icon: CookingPot, imageSrc: cookingImg },
+  { id: 'prayer', label: 'Prayer', icon: HandHeart, imageSrc: prayerImg },
+  { id: 'dental', label: 'Dental', icon: Smile, imageSrc: dentalImg },
+  { id: 'gift', label: 'Gifts', icon: Gift, imageSrc: giftImg },
+  { id: 'car', label: 'Driving', icon: Car, imageSrc: carImg },
+  { id: 'movie', label: 'Movies', icon: Clapperboard, imageSrc: movieImg },
+  { id: 'gaming', label: 'Gaming', icon: Gamepad2, imageSrc: gamingImg },
+  { id: 'mail', label: 'Mail', icon: Mail, imageSrc: mailImg },
+  { id: 'home', label: 'Home', icon: Home, imageSrc: homeImg },
+  { id: 'hiking', label: 'Hiking', icon: Mountain, imageSrc: hikingImg },
+  { id: 'swimming', label: 'Swimming', icon: Waves, imageSrc: swimmingImg },
+  { id: 'singing', label: 'Singing', icon: Mic, imageSrc: singingImg },
+  { id: 'camping', label: 'Camping', icon: Tent, imageSrc: campingImg },
+  { id: 'globe', label: 'Languages', icon: Globe, imageSrc: globeImg },
+  { id: 'candle', label: 'Relaxation', icon: Flame, imageSrc: candleImg },
+  { id: 'fruit', label: 'Nutrition', icon: Apple, imageSrc: fruitImg },
+  { id: 'headphones', label: 'Podcasts', icon: Headphones, imageSrc: headphonesImg },
+  { id: 'dance', label: 'Dance', icon: Drama, imageSrc: danceImg },
+  { id: 'puzzle', label: 'Puzzles', icon: Puzzle, imageSrc: puzzleImg },
+  { id: 'trophy', label: 'Goals', icon: Trophy, imageSrc: trophyImg },
 ];
 
 const iconMap = new Map(taskIconOptions.map((o) => [o.id, o]));
