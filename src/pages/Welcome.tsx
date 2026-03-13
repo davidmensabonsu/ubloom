@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 import { useAuth } from '@/hooks/useAuth';
-import { Heart, ArrowRight } from 'lucide-react';
+import { Heart, ArrowRight, Sparkles, Infinity, Flower2 } from 'lucide-react';
 import logo from '@/assets/logo.png';
 
 export default function Welcome() {
