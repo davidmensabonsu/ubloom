@@ -105,6 +105,7 @@ import headphonesImg from '@/assets/icons/headphones.png';
 import danceImg from '@/assets/icons/dance.png';
 import puzzleImg from '@/assets/icons/puzzle.png';
 import trophyImg from '@/assets/icons/trophy.png';
+import ubloomImg from '@/assets/ubloom-flower.png';
 
 export interface TaskIconOption {
   id: string;
@@ -166,6 +167,7 @@ export const taskIconOptions: TaskIconOption[] = [
   { id: 'dance', label: 'Dance', icon: Drama, imageSrc: danceImg },
   { id: 'puzzle', label: 'Puzzles', icon: Puzzle, imageSrc: puzzleImg },
   { id: 'trophy', label: 'Goals', icon: Trophy, imageSrc: trophyImg },
+  { id: 'ubloom', label: 'ubloom', icon: Sparkles, imageSrc: ubloomImg },
 ];
 
 export interface IconCategory {
@@ -174,6 +176,10 @@ export interface IconCategory {
 }
 
 export const iconCategories: IconCategory[] = [
+  {
+    label: 'ubloom',
+    iconIds: ['ubloom'],
+  },
   {
     label: 'Health & Fitness',
     iconIds: ['dumbbell', 'running', 'bike', 'yoga', 'swimming', 'hiking', 'dance', 'glass-water', 'pill', 'dental', 'fruit'],
