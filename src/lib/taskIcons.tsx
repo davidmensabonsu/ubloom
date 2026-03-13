@@ -167,6 +167,7 @@ export const taskIconOptions: TaskIconOption[] = [
   { id: 'dance', label: 'Dance', icon: Drama, imageSrc: danceImg },
   { id: 'puzzle', label: 'Puzzles', icon: Puzzle, imageSrc: puzzleImg },
   { id: 'trophy', label: 'Goals', icon: Trophy, imageSrc: trophyImg },
+  { id: 'ubloom', label: 'ubloom', icon: Sparkles, imageSrc: ubloomImg },
 ];
 
 export interface IconCategory {
