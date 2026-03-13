@@ -177,10 +177,10 @@ export default function Auth() {
 
         {/* Forgot password link */}
         {!isSignUp && !isForgot && (
-          <p className="text-center mt-3">
+          <p className="text-center mt-4">
             <button
               onClick={() => setIsForgot(true)}
-              className="text-xs text-muted-foreground hover:text-primary hover:underline transition-colors"
+              className="text-sm text-primary font-medium hover:underline transition-colors"
             >
               Forgot your password?
             </button>
