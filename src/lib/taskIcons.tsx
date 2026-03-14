@@ -219,7 +219,7 @@ export function getTaskIcon(id: string): TaskIconOption | undefined {
 /** Render helper: returns an <img> if clay icon exists, else renders LucideIcon */
 export function renderTaskIcon(opt: TaskIconOption, size: number = 14) {
   if (opt.imageSrc) {
-    return <img src={opt.imageSrc} alt={opt.label} className="object-contain" style={{ width: size + 4, height: size + 4 }} />;
+    return <img src={opt.imageSrc} alt={opt.label} className="object-contain" style={{ width: size + 10, height: size + 10 }} />;
   }
   const IconComp = opt.icon;
   return <IconComp size={size} strokeWidth={2.5} />;
