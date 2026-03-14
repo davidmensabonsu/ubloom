@@ -21,6 +21,7 @@ const timeGreetings = () => {
 export default function Home() {
   const { futureSelfMessage, mindsetMessage, loading } = useHomeMessages();
   const { profile } = useUserStore();
+  const navigate = useNavigate();
   const greeting = timeGreetings();
   const GreetingIcon = greeting.icon;
 
