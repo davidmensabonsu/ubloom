@@ -5,6 +5,7 @@ import { TrendingUp } from 'lucide-react';
 import flameImg from '@/assets/icons/flame.png';
 import { format, subDays, startOfDay } from 'date-fns';
 import DayDetailSheet from './DayDetailSheet';
+import ubloomLogo from '@/assets/ubloom-flower.png';
 
 export default function WeeklyProgress() {
   const { profile } = useUserStore();
@@ -166,9 +167,9 @@ export default function WeeklyProgress() {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: index * 0.05 + 0.5 }}
-                  className="absolute top-1 left-1/2 -translate-x-1/2 text-xs"
+                  className="absolute top-1 left-1/2 -translate-x-1/2"
                 >
-                  ✨
+                  <img src={ubloomLogo} alt="Complete" className="w-5 h-5 object-contain" style={{ filter: 'none' }} />
                 </motion.div>
               ) : day.totalHabits > 0 ? (
                 <motion.span
