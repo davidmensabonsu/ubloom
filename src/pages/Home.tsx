@@ -46,15 +46,7 @@ export default function Home() {
             <span className="text-sm">{todayFormatted}</span>
           </motion.div>
           <div className="flex items-center gap-2">
-            <motion.button
-              onClick={() => navigate('/profile')}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.1 }}
-              className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors"
-            >
-              <User size={18} className="text-primary" />
-            </motion.button>
+            <ProfileButton />
             <motion.img
               alt="ubloom"
               className="h-24 w-24 object-contain"
