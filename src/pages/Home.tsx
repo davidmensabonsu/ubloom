@@ -9,7 +9,6 @@ import BeautyAffirmations from '@/components/home/BeautyAffirmations';
 import logo from '@/assets/logo.png';
 import { quickActionIcons } from '@/lib/moodIcons';
 import ProfileButton from '@/components/ProfileButton';
-import ProfileButton from '@/components/ProfileButton';
 
 const timeGreetings = () => {
   const hour = new Date().getHours();
