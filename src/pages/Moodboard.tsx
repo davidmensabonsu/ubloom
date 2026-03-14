@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Image, Quote, Loader2 } from 'lucide-react';
+import ProfileButton from '@/components/ProfileButton';
 import { toast } from 'sonner';
 import BottomNav from '@/components/BottomNav';
 import AddQuoteDialog from '@/components/moodboard/AddQuoteDialog';
