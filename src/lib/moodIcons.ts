@@ -76,10 +76,10 @@ export const onboardingIcons: Record<string, string> = {
 
 // Goal category icons
 export const goalCategoryIcons: Record<string, string> = {
-  lifestyle: sparklesIcon,
-  career: briefcaseIcon,
-  wellness: leafIcon,
-  travel: planeIcon,
+  lifestyle: sparklesGoldIcon,
+  career: briefcaseBrownIcon,
+  wellness: leafGreenIcon,
+  travel: planeBluIcon,
 };
 
 // Home quick action icons
