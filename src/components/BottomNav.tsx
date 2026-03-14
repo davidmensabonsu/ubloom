@@ -6,8 +6,7 @@ const navItems = [
 { path: '/alignment', icon: Compass, label: 'Align', isLogo: false },
 { path: '/routine', icon: Calendar, label: 'Routine', isLogo: false },
 { path: '/goals', icon: Target, label: 'Goals', isLogo: false },
-{ path: '/moodboard', icon: Image, label: 'Dream', isLogo: false },
-{ path: '/profile', icon: User, label: 'Profile', isLogo: false }];
+{ path: '/moodboard', icon: Image, label: 'Dream', isLogo: false }];
 
 
 export default function BottomNav() {
