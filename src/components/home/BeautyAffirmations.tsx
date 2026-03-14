@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Flower2 } from 'lucide-react';
+import blossomIcon from '@/assets/icons/blossom.png';
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
