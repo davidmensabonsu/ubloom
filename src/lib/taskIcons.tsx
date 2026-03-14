@@ -106,6 +106,8 @@ import danceImg from '@/assets/icons/dance.png';
 import puzzleImg from '@/assets/icons/puzzle.png';
 import trophyImg from '@/assets/icons/trophy.png';
 import ubloomImg from '@/assets/ubloom-flower.png';
+import saladImg from '@/assets/icons/salad.png';
+import cookingPanImg from '@/assets/icons/cooking-pan.png';
 
 export interface TaskIconOption {
   id: string;
