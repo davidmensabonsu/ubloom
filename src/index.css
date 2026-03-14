@@ -271,7 +271,7 @@
   }
 
   .check-item {
-    @apply flex items-center gap-3 p-3 rounded-xl transition-all duration-200;
+    @apply flex items-center gap-3 px-3 py-1.5 rounded-xl transition-all duration-200;
     background: hsl(var(--card));
   }
 
