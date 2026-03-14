@@ -80,7 +80,7 @@ export default function MoodStreak({ moodHistory }: Props) {
             <MilestoneIcon size={18} className="text-accent" />
           </motion.div>
         ) : (
-          <Flame size={18} className="text-primary" />
+          <img src={flameImg} alt="Streak" className="w-5 h-5 object-contain" style={{ filter: 'none' }} />
         )}
         <span className="text-sm font-medium text-foreground/90">
           {streak} day{streak !== 1 ? 's' : ''}
