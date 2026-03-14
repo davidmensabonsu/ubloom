@@ -3,24 +3,25 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { TrendingUp, X } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import { startOfWeek, subWeeks, isAfter, isBefore, format } from 'date-fns';
+import { feelingIcons } from '@/lib/moodIcons';
 
-const feelingMeta: Record<string, { label: string; emoji: string }> = {
-  calm: { label: 'Calm', emoji: '🌿' },
-  energized: { label: 'Energized', emoji: '⚡' },
-  grateful: { label: 'Grateful', emoji: '💕' },
-  creative: { label: 'Creative', emoji: '🎨' },
-  peaceful: { label: 'Peaceful', emoji: '🕊️' },
-  confident: { label: 'Confident', emoji: '👑' },
-  grounded: { label: 'Grounded', emoji: '🌱' },
-  joyful: { label: 'Joyful', emoji: '✨' },
-  anxious: { label: 'Anxious', emoji: '😰' },
-  sad: { label: 'Sad', emoji: '💧' },
-  overwhelmed: { label: 'Overwhelmed', emoji: '🌊' },
-  frustrated: { label: 'Frustrated', emoji: '😤' },
-  tired: { label: 'Tired', emoji: '😴' },
-  lonely: { label: 'Lonely', emoji: '🥀' },
-  numb: { label: 'Numb', emoji: '🫥' },
-  hopeful: { label: 'Hopeful', emoji: '🌅' },
+const feelingMeta: Record<string, { label: string; icon: string }> = {
+  calm: { label: 'Calm', icon: feelingIcons.calm },
+  energized: { label: 'Energized', icon: feelingIcons.energized },
+  grateful: { label: 'Grateful', icon: feelingIcons.grateful },
+  creative: { label: 'Creative', icon: feelingIcons.creative },
+  peaceful: { label: 'Peaceful', icon: feelingIcons.peaceful },
+  confident: { label: 'Confident', icon: feelingIcons.confident },
+  grounded: { label: 'Grounded', icon: feelingIcons.grounded },
+  joyful: { label: 'Joyful', icon: feelingIcons.joyful },
+  anxious: { label: 'Anxious', icon: feelingIcons.anxious },
+  sad: { label: 'Sad', icon: feelingIcons.sad },
+  overwhelmed: { label: 'Overwhelmed', icon: feelingIcons.overwhelmed },
+  frustrated: { label: 'Frustrated', icon: feelingIcons.frustrated },
+  tired: { label: 'Tired', icon: feelingIcons.tired },
+  lonely: { label: 'Lonely', icon: feelingIcons.lonely },
+  numb: { label: 'Numb', icon: feelingIcons.numb },
+  hopeful: { label: 'Hopeful', icon: feelingIcons.hopeful },
 };
 
 const DISMISSED_KEY = 'weekly-mood-summary-dismissed';
@@ -28,7 +29,6 @@ const DISMISSED_KEY = 'weekly-mood-summary-dismissed';
 export default function WeeklyMoodSummary() {
   const { profile } = useUserStore();
 
-  // Check if already dismissed this week
   const thisWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
   const weekKey = format(thisWeekStart, 'yyyy-MM-dd');
   const [dismissed, setDismissed] = useState(() => {
@@ -39,7 +39,6 @@ export default function WeeklyMoodSummary() {
     }
   });
 
-  // Compute last week's mood summary
   const summary = useMemo(() => {
     const lastWeekStart = subWeeks(thisWeekStart, 1);
     const lastWeekEnd = thisWeekStart;
@@ -87,7 +86,6 @@ export default function WeeklyMoodSummary() {
         transition={{ type: 'spring', damping: 20 }}
         className="glass-card rounded-3xl p-5 relative overflow-hidden"
       >
-        {/* Dismiss button */}
         <button
           onClick={handleDismiss}
           className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-background/50 transition-colors text-muted-foreground hover:text-foreground"
@@ -99,20 +97,19 @@ export default function WeeklyMoodSummary() {
           <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
             <TrendingUp size={16} className="text-primary" />
           </div>
-          <span className="text-sm font-medium text-muted-foreground">
-            Last week's mood recap
-          </span>
+          <span className="text-sm font-medium text-muted-foreground">Last week's mood recap</span>
         </div>
 
         {/* Hero mood */}
         <div className="flex items-center gap-3 mb-3">
-          <span className="text-3xl">{topMeta?.emoji || '✨'}</span>
+          <img src={topMeta?.icon || feelingIcons.joyful} alt="" className="w-8 h-8 object-contain" style={{ filter: 'none' }} />
           <div>
             <p className="text-foreground font-medium">
               You felt <span className="text-primary">{topMeta?.label || topMoodKey}</span> the most
             </p>
             <p className="text-xs text-muted-foreground">
-              {topMoodCount} time{topMoodCount > 1 ? 's' : ''} across {summary.totalEntries} check-in{summary.totalEntries > 1 ? 's' : ''}
+              {topMoodCount} time{topMoodCount > 1 ? 's' : ''} across {summary.totalEntries} check-in
+              {summary.totalEntries > 1 ? 's' : ''}
             </p>
           </div>
         </div>
@@ -127,7 +124,7 @@ export default function WeeklyMoodSummary() {
                   key={key}
                   className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-background/50 text-xs"
                 >
-                  <span>{meta?.emoji}</span>
+                  <img src={meta?.icon} alt="" className="w-4 h-4 object-contain" style={{ filter: 'none' }} />
                   <span className="text-foreground/80">{meta?.label || key}</span>
                   <span className="text-muted-foreground">×{count}</span>
                 </div>

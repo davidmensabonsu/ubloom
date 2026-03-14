@@ -4,24 +4,25 @@ import { BarChart3 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { format, subDays, startOfDay } from 'date-fns';
 import type { MoodEntry } from '@/stores/userStore';
+import { feelingIcons } from '@/lib/moodIcons';
 
-const feelingCategories: Record<string, { label: string; emoji: string; color: string }> = {
-  calm: { label: 'Calm', emoji: '🌿', color: 'hsl(var(--chart-3))' },
-  energized: { label: 'Energized', emoji: '⚡', color: 'hsl(var(--chart-4))' },
-  grateful: { label: 'Grateful', emoji: '💕', color: 'hsl(var(--chart-1))' },
-  creative: { label: 'Creative', emoji: '🎨', color: 'hsl(var(--chart-5))' },
-  peaceful: { label: 'Peaceful', emoji: '🕊️', color: 'hsl(var(--chart-2))' },
-  confident: { label: 'Confident', emoji: '👑', color: 'hsl(var(--chart-4))' },
-  grounded: { label: 'Grounded', emoji: '🌱', color: 'hsl(var(--chart-3))' },
-  joyful: { label: 'Joyful', emoji: '✨', color: 'hsl(var(--chart-1))' },
-  anxious: { label: 'Anxious', emoji: '😰', color: 'hsl(var(--chart-5))' },
-  sad: { label: 'Sad', emoji: '💧', color: 'hsl(var(--chart-2))' },
-  overwhelmed: { label: 'Overwhelmed', emoji: '🌊', color: 'hsl(var(--chart-4))' },
-  frustrated: { label: 'Frustrated', emoji: '😤', color: 'hsl(var(--chart-5))' },
-  tired: { label: 'Tired', emoji: '😴', color: 'hsl(var(--chart-2))' },
-  lonely: { label: 'Lonely', emoji: '🥀', color: 'hsl(var(--chart-3))' },
-  numb: { label: 'Numb', emoji: '🫥', color: 'hsl(var(--chart-2))' },
-  hopeful: { label: 'Hopeful', emoji: '🌅', color: 'hsl(var(--chart-1))' },
+const feelingCategories: Record<string, { label: string; icon: string; color: string }> = {
+  calm: { label: 'Calm', icon: feelingIcons.calm, color: 'hsl(var(--chart-3))' },
+  energized: { label: 'Energized', icon: feelingIcons.energized, color: 'hsl(var(--chart-4))' },
+  grateful: { label: 'Grateful', icon: feelingIcons.grateful, color: 'hsl(var(--chart-1))' },
+  creative: { label: 'Creative', icon: feelingIcons.creative, color: 'hsl(var(--chart-5))' },
+  peaceful: { label: 'Peaceful', icon: feelingIcons.peaceful, color: 'hsl(var(--chart-2))' },
+  confident: { label: 'Confident', icon: feelingIcons.confident, color: 'hsl(var(--chart-4))' },
+  grounded: { label: 'Grounded', icon: feelingIcons.grounded, color: 'hsl(var(--chart-3))' },
+  joyful: { label: 'Joyful', icon: feelingIcons.joyful, color: 'hsl(var(--chart-1))' },
+  anxious: { label: 'Anxious', icon: feelingIcons.anxious, color: 'hsl(var(--chart-5))' },
+  sad: { label: 'Sad', icon: feelingIcons.sad, color: 'hsl(var(--chart-2))' },
+  overwhelmed: { label: 'Overwhelmed', icon: feelingIcons.overwhelmed, color: 'hsl(var(--chart-4))' },
+  frustrated: { label: 'Frustrated', icon: feelingIcons.frustrated, color: 'hsl(var(--chart-5))' },
+  tired: { label: 'Tired', icon: feelingIcons.tired, color: 'hsl(var(--chart-2))' },
+  lonely: { label: 'Lonely', icon: feelingIcons.lonely, color: 'hsl(var(--chart-3))' },
+  numb: { label: 'Numb', icon: feelingIcons.numb, color: 'hsl(var(--chart-2))' },
+  hopeful: { label: 'Hopeful', icon: feelingIcons.hopeful, color: 'hsl(var(--chart-1))' },
 };
 
 type Range = '7d' | '14d' | '30d';
@@ -62,7 +63,6 @@ export default function MoodTrendsChart({ moodHistory }: Props) {
         label: format(day, 'MMM d'),
       };
 
-      // Count each top mood for this day
       topMoods.forEach((mood) => {
         row[mood] = 0;
       });
@@ -175,7 +175,7 @@ export default function MoodTrendsChart({ moodHistory }: Props) {
               }}
               formatter={(value: number, name: string) => [
                 value,
-                `${feelingCategories[name]?.emoji || ''} ${feelingCategories[name]?.label || name}`,
+                `${feelingCategories[name]?.label || name}`,
               ]}
             />
             {topMoods.map((mood, i) => (
@@ -204,7 +204,7 @@ export default function MoodTrendsChart({ moodHistory }: Props) {
                 key={mood}
                 className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-background/50 text-xs"
               >
-                <span>{feelingCategories[mood]?.emoji}</span>
+                <img src={feelingCategories[mood]?.icon} alt="" className="w-4 h-4 object-contain" style={{ filter: 'none' }} />
                 <span className="text-foreground/80">{feelingCategories[mood]?.label}</span>
                 <span className="text-muted-foreground">×{count}</span>
               </div>
