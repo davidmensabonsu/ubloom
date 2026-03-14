@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useMemo } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { Sparkles, Heart, Feather, BookOpen, ChevronDown, Search, X, Calendar, Trash2 } from 'lucide-react';
+import ProfileButton from '@/components/ProfileButton';
 import BottomNav from '@/components/BottomNav';
 import MoodTrendsChart from '@/components/alignment/MoodTrendsChart';
 import MoodStreak from '@/components/alignment/MoodStreak';
@@ -171,9 +172,12 @@ export default function Alignment() {
     <div className="min-h-screen gradient-background pb-24">
       {/* Header */}
       <div className="px-5 pt-12 pb-6">
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-muted-foreground mb-1">
-          {todayFormatted}
-        </motion.p>
+        <div className="flex items-center justify-between mb-1">
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-muted-foreground">
+            {todayFormatted}
+          </motion.p>
+          <ProfileButton />
+        </div>
         <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="page-title">
           Daily Alignment
         </motion.h1>

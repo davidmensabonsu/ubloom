@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { Plus, Target, Briefcase, Heart, Plane, Sparkles, X, Check, Pencil, Trash2, CalendarIcon } from 'lucide-react';
+import ProfileButton from '@/components/ProfileButton';
 import { format, parseISO, isPast, differenceInDays, startOfDay } from 'date-fns';
 import BottomNav from '@/components/BottomNav';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -115,13 +116,16 @@ export default function Goals() {
     <div className="min-h-screen gradient-background pb-24">
       {/* Header */}
       <div className="px-5 pt-12 pb-6">
-        <motion.h1
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="page-title"
-        >
-          Your Vision
-        </motion.h1>
+        <div className="flex items-center justify-between">
+          <motion.h1
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="page-title"
+          >
+            Your Vision
+          </motion.h1>
+          <ProfileButton />
+        </div>
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
