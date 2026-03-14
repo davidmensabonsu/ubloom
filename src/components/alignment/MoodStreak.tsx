@@ -1,7 +1,8 @@
 import { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Flame, Trophy, Star, Crown } from 'lucide-react';
+import { Trophy, Star, Crown } from 'lucide-react';
 import { subDays, format } from 'date-fns';
+import flameImg from '@/assets/icons/flame.png';
 import type { MoodEntry } from '@/stores/userStore';
 
 const milestones = [
