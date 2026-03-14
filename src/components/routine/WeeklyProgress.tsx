@@ -115,7 +115,7 @@ export default function WeeklyProgress() {
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 bg-primary/10 px-3 py-2 rounded-2xl">
-            <img src={flameImg} alt="Streak" className="w-6 h-6 object-contain" style={{ filter: 'none' }} />
+            <img src={flameImg} alt="Streak" className="w-8 h-8 object-contain" style={{ filter: 'none' }} />
             <div>
               <p className="text-xs text-muted-foreground font-medium">Streak</p>
               <p className="font-semibold text-lg leading-none">
