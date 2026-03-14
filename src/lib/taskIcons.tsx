@@ -198,7 +198,7 @@ export const iconCategories: IconCategory[] = [
   },
   {
     label: 'Home & Daily',
-    iconIds: ['home', 'cooking', 'utensils', 'cleaning', 'shirt', 'cart', 'car', 'plant'],
+    iconIds: ['home', 'cooking', 'cooking-pan', 'utensils', 'salad', 'cleaning', 'shirt', 'cart', 'car', 'plant'],
   },
   {
     label: 'Social & Entertainment',
