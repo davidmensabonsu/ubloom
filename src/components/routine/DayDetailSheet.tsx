@@ -55,7 +55,7 @@ export default function DayDetailSheet({ dateStr, onClose }: DayDetailSheetProps
   function ItemIcon({ iconId }: { iconId: string }) {
     const opt = getTaskIcon(iconId);
     if (opt) {
-      return <div className="icon-3d-sm">{renderTaskIcon(opt, 14)}</div>;
+      return <div className="icon-3d-sm">{renderTaskIcon(opt, 20)}</div>;
     }
     return <span className="text-base">{iconId}</span>;
   }
