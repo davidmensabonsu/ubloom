@@ -109,13 +109,16 @@ export default function Moodboard() {
 
       {/* Header */}
       <div className="px-5 pt-12 pb-4">
-        <motion.h1
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="page-title"
-        >
-          Your Moodboard
-        </motion.h1>
+        <div className="flex items-center justify-between">
+          <motion.h1
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="page-title"
+          >
+            Your Moodboard
+          </motion.h1>
+          <ProfileButton />
+        </div>
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
