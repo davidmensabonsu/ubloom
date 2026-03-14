@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ubloomFlower from '@/assets/ubloom-flower.png';
+import { onboardingIcons } from '@/lib/moodIcons';
 
 const onboardingSteps = [
   {
@@ -12,11 +13,11 @@ const onboardingSteps = [
     subtitle: "Be honest with yourself, there is no wrong answer here.",
     type: 'single',
     options: [
-      { value: 'thriving', label: "I feel like I am thriving", emoji: '✨' },
-      { value: 'content', label: "Content, but I know there is more", emoji: '🌸' },
-      { value: 'stuck', label: "A little stuck or disconnected", emoji: '🌙' },
-      { value: 'overwhelmed', label: "Overwhelmed and unsure", emoji: '💭' },
-      { value: 'rebuilding', label: "Rebuilding from something hard", emoji: '🦋' },
+      { value: 'thriving', label: "I feel like I am thriving" },
+      { value: 'content', label: "Content, but I know there is more" },
+      { value: 'stuck', label: "A little stuck or disconnected" },
+      { value: 'overwhelmed', label: "Overwhelmed and unsure" },
+      { value: 'rebuilding', label: "Rebuilding from something hard" },
     ],
   },
   {
@@ -41,11 +42,11 @@ const onboardingSteps = [
     subtitle: "Understanding your patterns helps us support you better.",
     type: 'single',
     options: [
-      { value: 'adapt', label: "I adapt and find a new way", emoji: '🌿' },
-      { value: 'shutdown', label: "I tend to shut down", emoji: '🌑' },
-      { value: 'overthink', label: "I spiral and overthink", emoji: '🌀' },
-      { value: 'push', label: "I push through no matter what", emoji: '🔥' },
-      { value: 'avoid', label: "I avoid and distract myself", emoji: '☁️' },
+      { value: 'adapt', label: "I adapt and find a new way" },
+      { value: 'shutdown', label: "I tend to shut down" },
+      { value: 'overthink', label: "I spiral and overthink" },
+      { value: 'push', label: "I push through no matter what" },
+      { value: 'avoid', label: "I avoid and distract myself" },
     ],
   },
   {
@@ -87,11 +88,11 @@ const onboardingSteps = [
     subtitle: "Choose the one that resonates most deeply.",
     type: 'single',
     options: [
-      { value: 'healer', label: "I am healing from my past and becoming whole", emoji: '🌱' },
-      { value: 'dreamer', label: "I am chasing big dreams and building something beautiful", emoji: '⭐' },
-      { value: 'nurturer', label: "I am learning to pour into myself the way I pour into others", emoji: '💝' },
-      { value: 'transformer', label: "I am in a season of complete transformation", emoji: '🦋' },
-      { value: 'seeker', label: "I am searching for meaning and my true path", emoji: '🔮' },
+      { value: 'healer', label: "I am healing from my past and becoming whole" },
+      { value: 'dreamer', label: "I am chasing big dreams and building something beautiful" },
+      { value: 'nurturer', label: "I am learning to pour into myself the way I pour into others" },
+      { value: 'transformer', label: "I am in a season of complete transformation" },
+      { value: 'seeker', label: "I am searching for meaning and my true path" },
     ],
   },
   {
@@ -151,7 +152,6 @@ export default function Onboarding() {
     if (currentStep < onboardingSteps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Save all answers to profile
       updateProfile({
         currentFeeling: answers.feeling as string,
         struggles: answers.struggles as string[],
@@ -210,30 +210,33 @@ export default function Onboarding() {
           {/* Options */}
           {step.type !== 'text' ? (
             <div className="space-y-3 flex-1">
-              {step.options?.map((option) => (
-                <motion.button
-                  key={option.value}
-                  onClick={() => handleSelect(option.value)}
-                  className={`option-card w-full text-left flex items-center gap-3 ${
-                    isSelected(option.value) ? 'selected' : ''
-                  }`}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  {(option as any).emoji && (
-                    <span className="text-xl">{(option as any).emoji}</span>
-                  )}
-                  <span className="font-medium">{option.label}</span>
-                  {isSelected(option.value) && (
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className="ml-auto"
-                    >
-                      <img src={ubloomFlower} alt="" className="w-5 h-5" />
-                    </motion.div>
-                  )}
-                </motion.button>
-              ))}
+              {step.options?.map((option) => {
+                const iconSrc = onboardingIcons[option.value];
+                return (
+                  <motion.button
+                    key={option.value}
+                    onClick={() => handleSelect(option.value)}
+                    className={`option-card w-full text-left flex items-center gap-3 ${
+                      isSelected(option.value) ? 'selected' : ''
+                    }`}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    {iconSrc && (
+                      <img src={iconSrc} alt="" className="w-6 h-6 object-contain" style={{ filter: 'none' }} />
+                    )}
+                    <span className="font-medium">{option.label}</span>
+                    {isSelected(option.value) && (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="ml-auto"
+                      >
+                        <img src={ubloomFlower} alt="" className="w-5 h-5" />
+                      </motion.div>
+                    )}
+                  </motion.button>
+                );
+              })}
             </div>
           ) : (
             <div className="flex-1">

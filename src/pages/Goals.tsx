@@ -7,32 +7,33 @@ import BottomNav from '@/components/BottomNav';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
+import { goalCategoryIcons } from '@/lib/moodIcons';
 
 const categoryConfig = {
   lifestyle: {
     icon: Sparkles,
-    emoji: '✨',
+    iconImg: goalCategoryIcons.lifestyle,
     title: 'Lifestyle',
     color: 'text-amber-500',
     vision: 'A soft, beautiful life filled with intention and joy',
   },
   career: {
     icon: Briefcase,
-    emoji: '💼',
+    iconImg: goalCategoryIcons.career,
     title: 'Career & Business',
     color: 'text-emerald-500',
     vision: 'Work that lights me up and creates abundance',
   },
   wellness: {
     icon: Heart,
-    emoji: '🌿',
+    iconImg: goalCategoryIcons.wellness,
     title: 'Health & Wellness',
     color: 'text-rose-500',
     vision: 'A body that feels strong, nourished, and at peace',
   },
   travel: {
     icon: Plane,
-    emoji: '✈️',
+    iconImg: goalCategoryIcons.travel,
     title: 'Travel & Experiences',
     color: 'text-sky-500',
     vision: 'Adventures that expand my world and fill my soul',
@@ -148,13 +149,11 @@ export default function Goals() {
                 className="glass-card rounded-3xl overflow-hidden"
               >
                 <button
-                  onClick={() =>
-                    setExpandedCategory(isExpanded ? null : category)
-                  }
+                  onClick={() => setExpandedCategory(isExpanded ? null : category)}
                   className="w-full p-5 flex items-center gap-4"
                 >
                   <div className="w-12 h-12 rounded-2xl bg-glow flex items-center justify-center">
-                    <span className="text-2xl">{config.emoji}</span>
+                    <img src={config.iconImg} alt="" className="w-8 h-8 object-contain" style={{ filter: 'none' }} />
                   </div>
                   <div className="flex-1 text-left">
                     <h3 className="font-display text-lg font-medium text-foreground">
@@ -182,16 +181,14 @@ export default function Goals() {
                       className="overflow-hidden"
                     >
                       <div className="px-5 pb-5 space-y-3">
-                        {/* Vision statement */}
                         <p className="text-sm italic text-muted-foreground border-l-2 border-primary/30 pl-3">
                           "{config.vision}"
                         </p>
 
-                        {/* Goals list */}
                         {goals.length > 0 ? (
                           (() => {
-                            const incomplete = goals.filter(g => !g.completed);
-                            const completed = goals.filter(g => g.completed);
+                            const incomplete = goals.filter((g) => !g.completed);
+                            const completed = goals.filter((g) => g.completed);
 
                             const renderGoal = (goal: typeof goals[0]) => (
                               <div key={goal.id} className="flex items-start gap-3 p-3 rounded-xl bg-muted/50 group">
@@ -287,7 +284,6 @@ export default function Goals() {
                           </p>
                         )}
 
-                        {/* Add goal button */}
                         <button
                           onClick={() => {
                             setNewGoalCategory(category);
@@ -365,7 +361,7 @@ export default function Goals() {
                           newGoalCategory === cat ? 'selected' : ''
                         }`}
                       >
-                        {categoryConfig[cat].emoji}
+                        <img src={categoryConfig[cat].iconImg} alt="" className="w-5 h-5 object-contain" style={{ filter: 'none' }} />
                         <span>{categoryConfig[cat].title}</span>
                       </button>
                     )
@@ -391,7 +387,7 @@ export default function Goals() {
                       )}
                     >
                       <CalendarIcon size={16} />
-                      {newGoalDeadline ? format(newGoalDeadline, 'MMM d, yyyy') : 'Set a timeframe (optional)'}
+                      {newGoalDeadline ? format(newGoalDeadline, 'MMMM d, yyyy') : 'Set a timeframe (optional)'}
                     </button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -407,17 +403,15 @@ export default function Goals() {
                 </Popover>
               </div>
 
-              <div className="sticky bottom-0 p-6 pt-2 bg-background rounded-b-3xl">
-                <button
+              <div className="p-6 pt-2">
+                <motion.button
                   onClick={handleAddGoal}
                   disabled={!newGoalTitle.trim()}
-                  className={`soft-button w-full flex items-center justify-center gap-2 ${
-                    !newGoalTitle.trim() ? 'opacity-50' : ''
-                  }`}
+                  className={`soft-button w-full ${!newGoalTitle.trim() ? 'opacity-50' : ''}`}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <Target size={18} />
-                  <span>Add Goal</span>
-                </button>
+                  Add to my vision
+                </motion.button>
               </div>
             </motion.div>
           </motion.div>
