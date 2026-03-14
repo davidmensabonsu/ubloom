@@ -58,7 +58,7 @@ export default function BeautyAffirmations() {
                 transition={{ delay: i * 0.04 }}
                 className="flex items-start gap-3"
               >
-                <span className="text-primary mt-0.5 text-xs">✿</span>
+                <img src={blossomIcon} alt="" className="w-4 h-4 object-contain mt-0.5 shrink-0" style={{ filter: 'none' }} />
                 <p className="text-sm text-foreground/80 leading-relaxed">{text}</p>
               </motion.div>
             ))}
