@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useUserStore } from '@/stores/userStore';
-import { Sparkles, Heart, Sun, Moon, Cloud, User } from 'lucide-react';
+import { Sparkles, Heart, Sun, Moon, Cloud } from 'lucide-react';
 import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/BottomNav';
