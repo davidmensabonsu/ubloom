@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import { useUserStore } from '@/stores/userStore';
-import { Flame, TrendingUp } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
+import flameImg from '@/assets/icons/flame.png';
 import { format, subDays, startOfDay } from 'date-fns';
 import DayDetailSheet from './DayDetailSheet';
 
@@ -114,7 +115,7 @@ export default function WeeklyProgress() {
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 bg-primary/10 px-3 py-2 rounded-2xl">
-            <Flame size={18} strokeWidth={2.5} className="text-primary" />
+            <img src={flameImg} alt="Streak" className="w-6 h-6 object-contain" style={{ filter: 'none' }} />
             <div>
               <p className="text-xs text-muted-foreground font-medium">Streak</p>
               <p className="font-semibold text-lg leading-none">

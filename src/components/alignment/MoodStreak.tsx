@@ -1,7 +1,8 @@
 import { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Flame, Trophy, Star, Crown } from 'lucide-react';
+import { Trophy, Star, Crown } from 'lucide-react';
 import { subDays, format } from 'date-fns';
+import flameImg from '@/assets/icons/flame.png';
 import type { MoodEntry } from '@/stores/userStore';
 
 const milestones = [
@@ -60,7 +61,7 @@ export default function MoodStreak({ moodHistory }: Props) {
   if (streak === 0) return null;
 
   const isMilestone = milestones.some((m) => m.days === streak);
-  const MilestoneIcon = activeMilestone?.icon || Flame;
+  const MilestoneIcon = activeMilestone?.icon || Star;
 
   return (
     <>
@@ -79,7 +80,7 @@ export default function MoodStreak({ moodHistory }: Props) {
             <MilestoneIcon size={18} className="text-accent" />
           </motion.div>
         ) : (
-          <Flame size={18} className="text-primary" />
+          <img src={flameImg} alt="Streak" className="w-5 h-5 object-contain" style={{ filter: 'none' }} />
         )}
         <span className="text-sm font-medium text-foreground/90">
           {streak} day{streak !== 1 ? 's' : ''}
