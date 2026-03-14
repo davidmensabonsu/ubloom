@@ -3,6 +3,7 @@ import { getLocalDateStr } from '@/lib/dateUtils';
 import { useState, useEffect, useRef } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { Plus } from 'lucide-react';
+import ProfileButton from '@/components/ProfileButton';
 import BottomNav from '@/components/BottomNav';
 import RoutineSetup from '@/components/routine/RoutineSetup';
 import CoreHabitsSection from '@/components/routine/CoreHabitsSection';
