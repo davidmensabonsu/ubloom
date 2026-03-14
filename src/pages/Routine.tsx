@@ -138,13 +138,16 @@ export default function Routine() {
  
       {/* Header */}
       <div className="px-5 pt-12 pb-6">
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-sm text-muted-foreground mb-1"
-        >
-          {todayFormatted}
-        </motion.p>
+        <div className="flex items-center justify-between mb-1">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-sm text-muted-foreground"
+          >
+            {todayFormatted}
+          </motion.p>
+          <ProfileButton />
+        </div>
         <motion.h1
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
