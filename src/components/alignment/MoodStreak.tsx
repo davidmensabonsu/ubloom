@@ -61,7 +61,7 @@ export default function MoodStreak({ moodHistory }: Props) {
   if (streak === 0) return null;
 
   const isMilestone = milestones.some((m) => m.days === streak);
-  const MilestoneIcon = activeMilestone?.icon || Flame;
+  const MilestoneIcon = activeMilestone?.icon || Star;
 
   return (
     <>
