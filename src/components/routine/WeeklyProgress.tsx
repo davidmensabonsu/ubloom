@@ -5,6 +5,7 @@ import { TrendingUp } from 'lucide-react';
 import flameImg from '@/assets/icons/flame.png';
 import { format, subDays, startOfDay } from 'date-fns';
 import DayDetailSheet from './DayDetailSheet';
+import ubloomLogo from '@/assets/ubloom-flower.png';
 
 export default function WeeklyProgress() {
   const { profile } = useUserStore();
