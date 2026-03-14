@@ -8,7 +8,7 @@ import WeeklyMoodSummary from '@/components/home/WeeklyMoodSummary';
 import BeautyAffirmations from '@/components/home/BeautyAffirmations';
 import logo from '@/assets/logo.png';
 import { quickActionIcons } from '@/lib/moodIcons';
-import { useNavigate } from 'react-router-dom';
+import ProfileButton from '@/components/ProfileButton';
 import ProfileButton from '@/components/ProfileButton';
 
 const timeGreetings = () => {
