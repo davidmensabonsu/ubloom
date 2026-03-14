@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import { useUserStore } from '@/stores/userStore';
-import { Flame, TrendingUp } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
+import flameImg from '@/assets/icons/flame.png';
 import { format, subDays, startOfDay } from 'date-fns';
 import DayDetailSheet from './DayDetailSheet';
 
