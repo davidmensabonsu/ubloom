@@ -156,8 +156,8 @@ export default function Goals() {
                   onClick={() => setExpandedCategory(isExpanded ? null : category)}
                   className="w-full p-5 flex items-center gap-4"
                 >
-                  <div className="w-12 h-12 rounded-2xl bg-glow flex items-center justify-center">
-                    <img src={config.iconImg} alt="" className="w-8 h-8 object-contain" style={{ filter: 'none' }} />
+                  <div className="w-12 h-12 flex items-center justify-center">
+                    <img src={config.iconImg} alt="" className="w-10 h-10 object-contain" style={{ filter: 'none' }} />
                   </div>
                   <div className="flex-1 text-left">
                     <h3 className="font-display text-lg font-medium text-foreground">
