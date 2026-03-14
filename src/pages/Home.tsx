@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useUserStore } from '@/stores/userStore';
-import { Sparkles, Heart, Sun, Moon, Cloud } from 'lucide-react';
+import { Sparkles, Heart, Sun, Moon, Cloud, User } from 'lucide-react';
 import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/BottomNav';
@@ -8,6 +8,7 @@ import WeeklyMoodSummary from '@/components/home/WeeklyMoodSummary';
 import BeautyAffirmations from '@/components/home/BeautyAffirmations';
 import logo from '@/assets/logo.png';
 import { quickActionIcons } from '@/lib/moodIcons';
+import { useNavigate } from 'react-router-dom';
 
 const timeGreetings = () => {
   const hour = new Date().getHours();
@@ -20,6 +21,7 @@ const timeGreetings = () => {
 export default function Home() {
   const { futureSelfMessage, mindsetMessage, loading } = useHomeMessages();
   const { profile } = useUserStore();
+  const navigate = useNavigate();
   const greeting = timeGreetings();
   const GreetingIcon = greeting.icon;
 
@@ -42,14 +44,25 @@ export default function Home() {
             <GreetingIcon size={18} />
             <span className="text-sm">{todayFormatted}</span>
           </motion.div>
-          <motion.img
-            alt="ubloom"
-            className="h-24 w-24 object-contain"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1 }}
-            src="/lovable-uploads/98ee74aa-4350-4922-a6ea-f5e178038d09.png"
-          />
+          <div className="flex items-center gap-2">
+            <motion.button
+              onClick={() => navigate('/profile')}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.1 }}
+              className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors"
+            >
+              <User size={18} className="text-primary" />
+            </motion.button>
+            <motion.img
+              alt="ubloom"
+              className="h-24 w-24 object-contain"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.15 }}
+              src="/lovable-uploads/98ee74aa-4350-4922-a6ea-f5e178038d09.png"
+            />
+          </div>
         </div>
         <motion.h1
           initial={{ opacity: 0, y: 10 }}
