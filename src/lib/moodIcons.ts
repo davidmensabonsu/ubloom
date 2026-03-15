@@ -29,12 +29,6 @@ import cameraIcon from '@/assets/icons/camera.png';
 import briefcaseIcon from '@/assets/icons/briefcase.png';
 import planeIcon from '@/assets/icons/plane.png';
 
-// Natural-color goal category icons
-import sparklesGoldIcon from '@/assets/icons/sparkles-gold.png';
-import briefcaseBrownIcon from '@/assets/icons/briefcase-brown.png';
-import leafGreenIcon from '@/assets/icons/leaf-green.png';
-import planeBluIcon from '@/assets/icons/plane-blue.png';
-
 // Mood/feeling icons used across alignment, mood charts, and summaries
 export const feelingIcons: Record<string, string> = {
   calm: leafIcon,
@@ -76,10 +70,10 @@ export const onboardingIcons: Record<string, string> = {
 
 // Goal category icons
 export const goalCategoryIcons: Record<string, string> = {
-  lifestyle: sparklesGoldIcon,
-  career: briefcaseBrownIcon,
-  wellness: leafGreenIcon,
-  travel: planeBluIcon,
+  lifestyle: sparklesIcon,
+  career: briefcaseIcon,
+  wellness: leafIcon,
+  travel: planeIcon,
 };
 
 // Home quick action icons
