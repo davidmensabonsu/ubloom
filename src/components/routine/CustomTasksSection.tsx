@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useUserStore, TimeOfDay } from '@/stores/userStore';
 import { Check, Sun, Clock, Moon, Pencil, Trash2, Repeat, CalendarDays, RotateCcw } from 'lucide-react';
 import { getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
-import ubloomLogo from '@/assets/ubloom-flower.png';
 
 const timeOfDayConfig = {
   morning: { label: 'Morning', icon: Sun, color: 'text-primary' },
@@ -111,11 +110,9 @@ export default function CustomTasksSection() {
                     className="check-item w-full"
                     whileTap={{ scale: 0.98 }}
                   >
-                    {isCompleted ? (
-                      <img src={ubloomLogo} alt="Done" className="w-6 h-6 object-contain flex-shrink-0" style={{ filter: 'none' }} />
-                    ) : (
-                      <div className="check-circle" />
-                    )}
+                    <div className={`check-circle ${isCompleted ? 'checked' : ''}`}>
+                      {isCompleted && <Check size={14} strokeWidth={2.5} />}
+                    </div>
                     <span className={`text-sm font-medium flex items-center gap-2 ${isCompleted ? 'line-through text-muted-foreground' : ''}`}>
                       <TaskIcon iconId={task.icon} />
                       {task.title}

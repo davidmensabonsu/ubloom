@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useUserStore, TimeOfDay } from '@/stores/userStore';
 import { Check, Sun, Clock, Moon, Plus, X, Sparkles, Pencil, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
 import { getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
-import ubloomLogo from '@/assets/ubloom-flower.png';
 
 const timeOfDayConfig = {
   morning: { label: 'Morning', icon: Sun, color: 'text-primary' },
@@ -219,11 +218,9 @@ export default function CoreHabitsSection() {
                     className="check-item w-full"
                     whileTap={{ scale: 0.98 }}
                   >
-                    {isCompleted ? (
-                      <img src={ubloomLogo} alt="Done" className="w-6 h-6 object-contain flex-shrink-0" style={{ filter: 'none' }} />
-                    ) : (
-                      <div className="check-circle" />
-                    )}
+                    <div className={`check-circle ${isCompleted ? 'checked' : ''}`}>
+                      {isCompleted && <Check size={14} strokeWidth={2.5} />}
+                    </div>
                     <span
                       className={`text-sm font-medium flex items-center gap-2 ${
                         isCompleted ? 'line-through text-muted-foreground' : ''
@@ -246,11 +243,9 @@ export default function CoreHabitsSection() {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                 >
-                  {task.completed ? (
-                    <img src={ubloomLogo} alt="Done" className="w-6 h-6 object-contain flex-shrink-0" style={{ filter: 'none' }} />
-                  ) : (
-                    <div className="check-circle" />
-                  )}
+                  <div className={`check-circle ${task.completed ? 'checked' : ''}`}>
+                    {task.completed && <Check size={14} strokeWidth={2.5} />}
+                  </div>
                   <span
                     className={`text-sm font-medium ${
                       task.completed ? 'line-through text-muted-foreground' : ''
