@@ -246,9 +246,11 @@ export default function CoreHabitsSection() {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                 >
-                  <div className={`check-circle ${task.completed ? 'checked' : ''}`}>
-                    {task.completed && <Check size={14} strokeWidth={2.5} />}
-                  </div>
+                  {task.completed ? (
+                    <img src={ubloomLogo} alt="Done" className="w-6 h-6 object-contain flex-shrink-0" style={{ filter: 'none' }} />
+                  ) : (
+                    <div className="check-circle" />
+                  )}
                   <span
                     className={`text-sm font-medium ${
                       task.completed ? 'line-through text-muted-foreground' : ''
