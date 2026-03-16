@@ -157,7 +157,7 @@ export default function Goals() {
                   className="w-full p-5 flex items-center gap-4"
                 >
                   <div className="w-12 h-12 flex items-center justify-center">
-                    <img src={config.iconImg} alt="" className="w-10 h-10 object-contain" style={{ filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.15)) saturate(1.4) brightness(0.9)' }} />
+                    <img src={config.iconImg} alt="" className="w-10 h-10 object-contain" style={{ filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.15))' }} />
                   </div>
                   <div className="flex-1 text-left">
                     <h3 className="font-display text-lg font-medium text-foreground">
