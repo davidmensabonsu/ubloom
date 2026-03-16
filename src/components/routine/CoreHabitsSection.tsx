@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useUserStore, TimeOfDay } from '@/stores/userStore';
 import { Check, Sun, Clock, Moon, Plus, X, Sparkles, Pencil, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
 import { getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
+import ubloomLogo from '@/assets/ubloom-flower.png';
 
 const timeOfDayConfig = {
   morning: { label: 'Morning', icon: Sun, color: 'text-primary' },
