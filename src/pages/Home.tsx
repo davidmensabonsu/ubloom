@@ -79,7 +79,7 @@ export default function Home() {
           
           <div className="flex items-center gap-2 mb-3">
             <div className="w-8 h-8 rounded-full flex items-center justify-center bg-transparent">
-              <Heart size={16} className="text-primary h-[20px] w-[20px]" />
+              <Heart size={16} className="text-primary w-[18px] h-[18px]" />
             </div>
             <span className="text-muted-foreground text-lg font-bold">From your future self</span>
           </div>
