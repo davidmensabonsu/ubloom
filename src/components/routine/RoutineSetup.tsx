@@ -8,18 +8,12 @@ const presetHabits: { title: string; icon: string; timeOfDay: TimeOfDay }[] = [
   // Morning
   { title: 'Drink a glass of water', icon: 'glass-water', timeOfDay: 'morning' },
   { title: 'Morning skincare', icon: 'sparkles', timeOfDay: 'morning' },
-  { title: 'Stretch or yoga', icon: 'dumbbell', timeOfDay: 'morning' },
-  { title: 'Meditate', icon: 'brain', timeOfDay: 'morning' },
   // Midday
   { title: 'Take a walk', icon: 'heart', timeOfDay: 'midday' },
-  { title: 'Drink water', icon: 'glass-water', timeOfDay: 'midday' },
-  { title: 'Take vitamins', icon: 'pill', timeOfDay: 'midday' },
   { title: 'Screen break', icon: 'phone', timeOfDay: 'midday' },
   // Evening
   { title: 'Evening skincare', icon: 'sparkles', timeOfDay: 'evening' },
-  { title: 'Read for 15 minutes', icon: 'book', timeOfDay: 'evening' },
   { title: 'Journal or reflect', icon: 'pencil', timeOfDay: 'evening' },
-  { title: 'Unplug from screens', icon: 'phone', timeOfDay: 'evening' },
 ];
 
 const timeOfDayConfig = {
