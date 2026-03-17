@@ -32,8 +32,8 @@ export default function Welcome() {
           <div className="w-12 h-12 rounded-full bg-primary/20 animate-pulse mx-auto mb-3" />
           <p className="text-muted-foreground text-sm">Loading...</p>
         </div>
-      </div>
-    );
+      </div>);
+
   }
 
   if (user) return null;
@@ -47,7 +47,7 @@ export default function Welcome() {
       {/* Logo / Brand */}
       <div className="text-center mb-12">
         <img alt="ubloom logo" className="w-[264px] h-[264px] mx-auto mb-2 drop-shadow-lg saturate-150 brightness-105 rounded-none shadow-none object-cover" src="/lovable-uploads/8d6fe7f1-8318-4452-a115-400fc2532d87.png" />
-        <h1 className="text-5xl font-display font-light tracking-tight text-foreground mb-2">
+        <h1 className="text-5xl font-display tracking-tight text-foreground mb-2 font-extrabold">
           ubloom
         </h1>
         <p className="text-muted-foreground text-lg font-light">
@@ -65,15 +65,15 @@ export default function Welcome() {
       {/* Features preview */}
       <div className="flex gap-8 mb-12">
         {[
-          { icon: Sparkles, label: 'Reflect' },
-          { icon: Infinity, label: 'Align' },
-          { icon: Flower2, label: 'Bloom' },
-        ].map(({ icon: Icon, label }) => (
-          <span key={label} className="flex items-center gap-1.5 text-sm text-muted-foreground">
+        { icon: Sparkles, label: 'Reflect' },
+        { icon: Infinity, label: 'Align' },
+        { icon: Flower2, label: 'Bloom' }].
+        map(({ icon: Icon, label }) =>
+        <span key={label} className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <Icon size={16} className="text-primary" />
             {label}
           </span>
-        ))}
+        )}
       </div>
 
       {/* CTA Button */}
