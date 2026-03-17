@@ -59,7 +59,7 @@ const dreamCategories = [
   {
     id: 'lifestyle',
     title: 'Lifestyle & Experiences',
-    icon: sparklesIcon,
+    
     statements: [
       'I live a soft, beautiful life',
       'Travel and adventure are part of my story',
