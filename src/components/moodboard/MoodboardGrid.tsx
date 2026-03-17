@@ -76,10 +76,12 @@ export default function MoodboardGrid({ items, onRemove, onReorder }: MoodboardG
       axis="y"
       values={items}
       onReorder={onReorder}
-      className="grid grid-cols-2 gap-3"
+      className="columns-2 gap-2 [column-fill:_balance]"
     >
       {items.map((item) => (
-        <MoodboardCard key={item.id} item={item} onRemove={onRemove} />
+        <div key={item.id} className="break-inside-avoid mb-2">
+          <MoodboardCard item={item} onRemove={onRemove} />
+        </div>
       ))}
     </Reorder.Group>
   );
