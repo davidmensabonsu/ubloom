@@ -4,6 +4,16 @@ import { useState } from 'react';
 import { useUserStore, TimeOfDay } from '@/stores/userStore';
 import { Check, Sun, Clock, Moon, Plus, X, Sparkles, Pencil, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
 import { getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const timeOfDayConfig = {
   morning: { label: 'Morning', icon: Sun, color: 'text-primary' },
@@ -30,6 +40,7 @@ export default function CoreHabitsSection() {
   const [addingToSection, setAddingToSection] = useState<TimeOfDay | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [editMode, setEditMode] = useState(false);
+  const [habitToDelete, setHabitToDelete] = useState<{ id: string; title: string } | null>(null);
 
   const today = getLocalDateStr();
   
@@ -201,7 +212,7 @@ export default function CoreHabitsSection() {
                           <ChevronDown size={14} strokeWidth={2.5} />
                         </button>
                         <button
-                          onClick={() => removeHabit(habit.id)}
+                          onClick={() => setHabitToDelete({ id: habit.id, title: habit.title })}
                           className="p-1.5 rounded-full hover:bg-destructive/10 text-destructive transition-colors"
                         >
                           <Trash2 size={14} strokeWidth={2.5} />
@@ -330,6 +341,29 @@ export default function CoreHabitsSection() {
           <span className="text-sm font-medium">Customize Habits</span>
         </motion.button>
       )}
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!habitToDelete} onOpenChange={(open) => !open && setHabitToDelete(null)}>
+        <AlertDialogContent className="rounded-3xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove habit?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently remove <span className="font-semibold">"{habitToDelete?.title}"</span> from your daily routine. This can't be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-2xl">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="rounded-2xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (habitToDelete) removeHabit(habitToDelete.id);
+                setHabitToDelete(null);
+              }}
+            >
+              Remove
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
