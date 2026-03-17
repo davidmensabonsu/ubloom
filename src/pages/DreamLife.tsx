@@ -11,7 +11,7 @@ const dreamCategories = [
   {
     id: 'career',
     title: 'Career & Money',
-    icon: briefcaseIcon,
+    
     statements: [
       'I earn abundantly doing work I love',
       'I am recognized for my talents and contribution',
