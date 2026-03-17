@@ -18,6 +18,7 @@ export function useCloudSync() {
     if (!user) {
       hasLoadedFromCloud.current = false;
       lastSavedJson.current = '';
+      setCloudSyncLoaded(false);
       return;
     }
 
