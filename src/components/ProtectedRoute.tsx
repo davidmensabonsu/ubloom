@@ -11,7 +11,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   const onboardingComplete = useUserStore((s) => s.profile.onboardingComplete);
   const cloudSyncLoaded = useCloudSyncStatus();
 
-  if (loading) {
+  if (loading || (user && !cloudSyncLoaded)) {
     return (
       <div className="min-h-screen gradient-background flex items-center justify-center">
         <div className="text-center">
