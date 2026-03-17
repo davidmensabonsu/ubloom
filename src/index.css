@@ -246,13 +246,14 @@
 
   .mood-pill {
     @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-all duration-200;
-    background: hsl(var(--glow));
+    background: hsl(var(--glow) / 0.45);
     color: hsl(var(--foreground));
   }
 
   .mood-pill.selected {
-    background: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
+    background: hsl(var(--primary) / 0.25);
+    color: hsl(var(--foreground));
+    @apply ring-1 ring-primary/50;
   }
 
   .floating-action {
