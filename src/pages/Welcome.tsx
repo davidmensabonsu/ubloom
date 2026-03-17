@@ -89,7 +89,7 @@ export default function Welcome() {
       </motion.button>
 
       {/* Footer note */}
-      <p className="absolute bottom-8 text-xs text-muted-foreground">
+      <p className="mt-8 text-xs text-muted-foreground">
         Made with love for women who dare to bloom
       </p>
     </div>);
