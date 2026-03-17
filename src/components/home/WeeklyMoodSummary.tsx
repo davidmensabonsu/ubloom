@@ -102,7 +102,7 @@ export default function WeeklyMoodSummary() {
 
         {/* Hero mood */}
         <div className="flex items-center gap-3 mb-3">
-          <img src={topMeta?.icon || feelingIcons.joyful} alt="" className="w-8 h-8 object-contain" style={{ filter: 'none' }} />
+          <img src={topMeta?.icon || feelingIcons.joyful} alt="" className="w-8 h-8 object-contain clay-icon" />
           <div>
             <p className="text-foreground font-medium">
               You felt <span className="text-primary">{topMeta?.label || topMoodKey}</span> the most
