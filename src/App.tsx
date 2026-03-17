@@ -44,10 +44,7 @@ function ThemeManager() {
   return null;
 }
 
-function CloudSync() {
-  useCloudSync();
-  return null;
-}
+// CloudSync is now handled by CloudSyncProvider
 
 const routeOrder = ['/', '/auth', '/reset-password', '/onboarding', '/dream-life', '/choose-aesthetic', '/home', '/alignment', '/routine', '/goals', '/moodboard', '/profile'];
 

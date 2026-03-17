@@ -9,6 +9,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   const { user, loading } = useAuth();
   const { pathname } = useLocation();
   const onboardingComplete = useUserStore((s) => s.profile.onboardingComplete);
+  const cloudSyncLoaded = useCloudSyncStatus();
 
   if (loading) {
     return (
