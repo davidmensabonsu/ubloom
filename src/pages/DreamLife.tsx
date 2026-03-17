@@ -229,7 +229,7 @@ export default function DreamLife() {
         >
           {/* Category header */}
           <div className="glass-card rounded-2xl p-4 mb-4 flex items-center gap-3">
-            <span className="text-2xl">{category.icon}</span>
+            <img src={category.icon} alt="" className="w-7 h-7 object-contain" />
             <div>
               <h2 className="font-display text-lg font-medium text-foreground">
                 {category.title}
