@@ -71,7 +71,7 @@ const dreamCategories = [
   {
     id: 'love',
     title: 'Love & Relationships',
-    icon: twoHeartsIcon,
+    
     statements: [
       'I give and receive love freely',
       'My relationships are healthy and nourishing',
