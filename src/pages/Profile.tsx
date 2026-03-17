@@ -342,7 +342,6 @@ export default function Profile() {
               { label: 'Days on app', value: stats.daysOnApp || '—', icon: Target, color: 'text-primary' },
               { label: 'Journal entries', value: stats.journalCount, icon: BookOpen, color: 'text-primary' },
               { label: 'Habits done', value: stats.habitsCompleted, icon: Check, color: 'text-primary' },
-              { label: 'Current streak', value: stats.streak ? `${stats.streak}` : '—', icon: Flame, color: 'text-primary' },
             ].map(({ label, value, icon: Icon, color }) => (
               <div key={label} className="bg-muted/50 rounded-2xl p-4 text-center">
                 <Icon size={18} className={`${color} mx-auto mb-1`} />
@@ -350,6 +349,11 @@ export default function Profile() {
                 <p className="text-xs text-muted-foreground">{label}</p>
               </div>
             ))}
+            <div className="bg-muted/50 rounded-2xl p-4 text-center">
+              <img src={flameIcon} alt="" className="w-5 h-5 object-contain mx-auto mb-1" style={{ filter: 'none' }} />
+              <p className="text-lg font-semibold text-foreground">{stats.streak || '—'}</p>
+              <p className="text-xs text-muted-foreground">Current streak</p>
+            </div>
           </div>
         </motion.div>
 
