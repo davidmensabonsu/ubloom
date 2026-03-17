@@ -88,9 +88,10 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <ThemeManager />
-          <CloudSync />
-          <AnimatedRoutes />
+          <CloudSyncProvider>
+            <ThemeManager />
+            <AnimatedRoutes />
+          </CloudSyncProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
