@@ -38,7 +38,7 @@ function MoodboardCard({
           />
         </div>
       ) : (
-        <div className="rounded-2xl bg-muted/50 border border-primary/10 p-4 flex flex-col gap-2">
+        <div className="rounded-2xl bg-muted/50 border border-primary/10 p-4 pb-8 flex flex-col gap-2">
           <Quote size={14} className="text-primary/40" />
           <p className="text-sm italic text-foreground/80 leading-relaxed">
             {item.content}
