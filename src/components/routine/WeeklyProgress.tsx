@@ -1,15 +1,16 @@
 import { motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import { useUserStore } from '@/stores/userStore';
-import { TrendingUp } from 'lucide-react';
+import { TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import flameImg from '@/assets/icons/flame.png';
-import { format, subDays, startOfDay } from 'date-fns';
+import { format, subDays, startOfDay, addDays } from 'date-fns';
 import DayDetailSheet from './DayDetailSheet';
 import ubloomLogo from '@/assets/ubloom-flower.png';
 
 export default function WeeklyProgress() {
   const { profile } = useUserStore();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [weekOffset, setWeekOffset] = useState(0); // 0 = current week, -1 = last week, etc.
   const coreHabits = profile.coreHabits || [];
   const customTasks = profile.customTasks || [];
   const habitCompletions = profile.habitCompletions || [];
@@ -20,7 +21,6 @@ export default function WeeklyProgress() {
     return new Set([...coreIds, ...customIds]);
   }, [coreHabits, customTasks]);
 
-  // For each past day, figure out which custom tasks were visible
   const getCustomTaskCountForDate = (dateStr: string, dayOfWeek: number) => {
     return customTasks.filter((task) => {
       if (task.recurrence === 'daily') return true;
@@ -32,13 +32,14 @@ export default function WeeklyProgress() {
 
   const weekData = useMemo(() => {
     const today = startOfDay(new Date());
+    const weekEnd = addDays(today, weekOffset * 7);
     const days = [];
 
     for (let i = 6; i >= 0; i--) {
-      const date = subDays(today, i);
+      const date = subDays(weekEnd, i);
       const dateStr = format(date, 'yyyy-MM-dd');
       const dayName = format(date, 'EEE');
-      const isToday = i === 0;
+      const isToday = dateStr === format(today, 'yyyy-MM-dd');
 
       const completedHabits = habitCompletions.filter(
         (c) => c.date === dateStr && c.completed && allTrackableIds.has(c.habitId)
@@ -46,7 +47,6 @@ export default function WeeklyProgress() {
 
       const dayOfWeek = date.getDay();
       const expectedTotal = coreHabits.length + getCustomTaskCountForDate(dateStr, dayOfWeek);
-      // For past days, use max of expected count and completed count so a fully-completed past day stays 100%
       const totalHabits = isToday
         ? expectedTotal
         : Math.max(expectedTotal, completedHabits);
@@ -63,7 +63,16 @@ export default function WeeklyProgress() {
     }
 
     return days;
-  }, [coreHabits, customTasks, allTrackableIds, habitCompletions]);
+  }, [coreHabits, customTasks, allTrackableIds, habitCompletions, weekOffset]);
+
+  const weekLabel = useMemo(() => {
+    if (weekOffset === 0) return 'This week';
+    if (weekOffset === -1) return 'Last week';
+    const today = startOfDay(new Date());
+    const weekEnd = addDays(today, weekOffset * 7);
+    const weekStart = subDays(weekEnd, 6);
+    return `${format(weekStart, 'MMM d')} – ${format(weekEnd, 'MMM d')}`;
+  }, [weekOffset]);
 
   const streak = useMemo(() => {
     const totalTrackable = coreHabits.length + customTasks.length;
@@ -88,7 +97,6 @@ export default function WeeklyProgress() {
       if (completionRate >= 0.5) {
         currentStreak++;
       } else if (i > 0) {
-        // Don't break streak on today if not yet complete
         break;
       }
     }
@@ -132,6 +140,24 @@ export default function WeeklyProgress() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Week Navigation */}
+      <div className="flex items-center justify-between mb-3">
+        <button
+          onClick={() => setWeekOffset((o) => o - 1)}
+          className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors"
+        >
+          <ChevronLeft size={18} className="text-muted-foreground" />
+        </button>
+        <span className="text-xs font-medium text-muted-foreground">{weekLabel}</span>
+        <button
+          onClick={() => setWeekOffset((o) => Math.min(o + 1, 0))}
+          disabled={weekOffset === 0}
+          className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-30"
+        >
+          <ChevronRight size={18} className="text-muted-foreground" />
+        </button>
       </div>
 
       {/* Weekly Chart */}
@@ -195,7 +221,7 @@ export default function WeeklyProgress() {
       </div>
 
       {/* Motivation Message */}
-      {streak >= 3 && (
+      {weekOffset === 0 && streak >= 3 && (
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
