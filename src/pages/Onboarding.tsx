@@ -204,7 +204,7 @@ export default function Onboarding() {
           className="flex-1 flex flex-col"
         >
           {/* Question */}
-          <h1 className="font-display text-2xl font-medium tracking-tight text-foreground mb-2">{step.question}</h1>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-foreground mb-2">{step.question}</h1>
           <p className="subtle-text mb-8">{step.subtitle}</p>
 
           {/* Options */}
