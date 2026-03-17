@@ -149,6 +149,15 @@ export default function WeeklyProgress() {
               <p className="font-semibold text-lg leading-none">{weeklyAverage}%</p>
             </div>
           </div>
+          <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-2xl">
+            <img src={flameImg} alt="Best" className="w-6 h-6 object-contain opacity-50" style={{ filter: 'none' }} />
+            <div>
+              <p className="text-xs text-muted-foreground font-medium">Best</p>
+              <p className="font-semibold text-lg leading-none">
+                {longestStreak}d
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
