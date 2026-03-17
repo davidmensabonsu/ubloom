@@ -7,7 +7,7 @@ import { useUserStore } from "@/stores/userStore";
 import { useEffect, useRef } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { useCloudSync } from "@/hooks/useCloudSync";
+import { CloudSyncProvider } from "@/hooks/useCloudSync";
 import { AnimatePresence } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
 

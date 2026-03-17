@@ -1,6 +1,7 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
+import { useCloudSyncStatus } from '@/hooks/useCloudSync';
 
 const ONBOARDING_ROUTES = ['/onboarding', '/dream-life', '/choose-aesthetic'];
 
