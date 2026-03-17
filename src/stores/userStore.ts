@@ -409,7 +409,16 @@ export const useUserStore = create<UserStore>()(
           },
         })),
 
-      reorderHabit: (habitId, direction) =>
+      updateHabit: (habitId, updates) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            coreHabits: state.profile.coreHabits.map((h) =>
+              h.id === habitId ? { ...h, ...updates } : h
+            ),
+          },
+        })),
+
         set((state) => {
           const habits = [...state.profile.coreHabits];
           const idx = habits.findIndex((h) => h.id === habitId);
