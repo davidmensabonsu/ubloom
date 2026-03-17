@@ -47,7 +47,7 @@ const dreamCategories = [
   {
     id: 'peace',
     title: 'Peace & Emotional Life',
-    icon: doveIcon,
+    
     statements: [
       'I am calm even when life is chaotic',
       'I process my emotions with grace',
