@@ -23,7 +23,7 @@ const dreamCategories = [
   {
     id: 'selfWorth',
     title: 'Self-Worth & Confidence',
-    icon: crownIcon,
+    
     statements: [
       'I know my worth and never settle for less',
       'I speak up and take up space unapologetically',
