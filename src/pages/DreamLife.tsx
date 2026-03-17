@@ -5,6 +5,12 @@ import { useUserStore } from '@/stores/userStore';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Check, Sparkles, ImagePlus, X, Loader2 } from 'lucide-react';
+import briefcaseIcon from '@/assets/icons/briefcase.png';
+import crownIcon from '@/assets/icons/crown.png';
+import leafIcon from '@/assets/icons/leaf.png';
+import doveIcon from '@/assets/icons/dove.png';
+import sparklesIcon from '@/assets/icons/sparkles.png';
+import twoHeartsIcon from '@/assets/icons/two-hearts.png';
 import { toast } from 'sonner';
 
 const dreamCategories = [
