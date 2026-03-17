@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ubloomFlower from '@/assets/ubloom-flower.png';
-import { onboardingIcons } from '@/lib/moodIcons';
+
 
 const onboardingSteps = [
 {
