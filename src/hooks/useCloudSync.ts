@@ -12,7 +12,7 @@ export function useCloudSync() {
   const isSyncingFromCloud = useRef(false);
   const hasLoadedFromCloud = useRef(false);
   const lastSavedJson = useRef<string>('');
-
+  const [cloudSyncLoaded, setCloudSyncLoaded] = useState(false);
   // Load from cloud on login
   useEffect(() => {
     if (!user) {
