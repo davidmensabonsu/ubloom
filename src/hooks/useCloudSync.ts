@@ -97,3 +97,19 @@ export function useCloudSync() {
 
   return { cloudSyncLoaded };
 }
+
+// Context to share cloudSyncLoaded state
+const CloudSyncContext = createContext<boolean>(false);
+
+export function CloudSyncProvider({ children }: { children: ReactNode }) {
+  const { cloudSyncLoaded } = useCloudSync();
+  return (
+    <CloudSyncContext.Provider value={cloudSyncLoaded}>
+      {children}
+    </CloudSyncContext.Provider>
+  );
+}
+
+export function useCloudSyncStatus() {
+  return useContext(CloudSyncContext);
+}
