@@ -74,13 +74,16 @@ export default function WeeklyProgress() {
     return `${format(weekStart, 'MMM d')} – ${format(weekEnd, 'MMM d')}`;
   }, [weekOffset]);
 
-  const streak = useMemo(() => {
+  const { streak, longestStreak } = useMemo(() => {
     const totalTrackable = coreHabits.length + customTasks.length;
-    if (totalTrackable === 0) return 0;
+    if (totalTrackable === 0) return { streak: 0, longestStreak: 0 };
 
-    let currentStreak = 0;
     const today = startOfDay(new Date());
+    let currentStreak = 0;
+    let maxStreak = 0;
+    let tempStreak = 0;
 
+    // Scan up to a year to find longest streak
     for (let i = 0; i <= 365; i++) {
       const date = subDays(today, i);
       const dateStr = format(date, 'yyyy-MM-dd');
@@ -95,13 +98,20 @@ export default function WeeklyProgress() {
       const completionRate = effectiveTotal > 0 ? dayCompletions.length / effectiveTotal : 0;
 
       if (completionRate >= 0.5) {
-        currentStreak++;
-      } else if (i > 0) {
-        break;
+        tempStreak++;
+        if (currentStreak === tempStreak - 1) currentStreak = tempStreak;
+      } else {
+        if (i === 0) {
+          // Don't break current streak tracking on incomplete today
+          currentStreak = 0;
+        }
+        maxStreak = Math.max(maxStreak, tempStreak);
+        tempStreak = 0;
       }
     }
+    maxStreak = Math.max(maxStreak, tempStreak);
 
-    return currentStreak;
+    return { streak: currentStreak, longestStreak: maxStreak };
   }, [coreHabits, customTasks, allTrackableIds, habitCompletions]);
 
   const weeklyAverage = useMemo(() => {
