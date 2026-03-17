@@ -212,7 +212,7 @@ export default function CoreHabitsSection() {
                           <ChevronDown size={14} strokeWidth={2.5} />
                         </button>
                         <button
-                          onClick={() => removeHabit(habit.id)}
+                          onClick={() => setHabitToDelete({ id: habit.id, title: habit.title })}
                           className="p-1.5 rounded-full hover:bg-destructive/10 text-destructive transition-colors"
                         >
                           <Trash2 size={14} strokeWidth={2.5} />
