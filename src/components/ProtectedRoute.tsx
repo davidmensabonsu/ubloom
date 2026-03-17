@@ -1,6 +1,7 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
+import { useCloudSyncStatus } from '@/hooks/useCloudSync';
 
 const ONBOARDING_ROUTES = ['/onboarding', '/dream-life', '/choose-aesthetic'];
 
@@ -8,8 +9,9 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   const { user, loading } = useAuth();
   const { pathname } = useLocation();
   const onboardingComplete = useUserStore((s) => s.profile.onboardingComplete);
+  const cloudSyncLoaded = useCloudSyncStatus();
 
-  if (loading) {
+  if (loading || (user && !cloudSyncLoaded)) {
     return (
       <div className="min-h-screen gradient-background flex items-center justify-center">
         <div className="text-center">

@@ -7,7 +7,7 @@ import { useUserStore } from "@/stores/userStore";
 import { useEffect, useRef } from "react";
 import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { useCloudSync } from "@/hooks/useCloudSync";
+import { CloudSyncProvider } from "@/hooks/useCloudSync";
 import { AnimatePresence } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
 
@@ -44,10 +44,7 @@ function ThemeManager() {
   return null;
 }
 
-function CloudSync() {
-  useCloudSync();
-  return null;
-}
+// CloudSync is now handled by CloudSyncProvider
 
 const routeOrder = ['/', '/auth', '/reset-password', '/onboarding', '/dream-life', '/choose-aesthetic', '/home', '/alignment', '/routine', '/goals', '/moodboard', '/profile'];
 
@@ -91,9 +88,10 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <ThemeManager />
-          <CloudSync />
-          <AnimatedRoutes />
+          <CloudSyncProvider>
+            <ThemeManager />
+            <AnimatedRoutes />
+          </CloudSyncProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

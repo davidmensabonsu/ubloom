@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState, createContext, useContext, ReactNode } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserStore, UserProfile } from '@/stores/userStore';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,12 +12,13 @@ export function useCloudSync() {
   const isSyncingFromCloud = useRef(false);
   const hasLoadedFromCloud = useRef(false);
   const lastSavedJson = useRef<string>('');
-
+  const [cloudSyncLoaded, setCloudSyncLoaded] = useState(false);
   // Load from cloud on login
   useEffect(() => {
     if (!user) {
       hasLoadedFromCloud.current = false;
       lastSavedJson.current = '';
+      setCloudSyncLoaded(false);
       return;
     }
 
@@ -45,8 +46,11 @@ export function useCloudSync() {
         }
 
         hasLoadedFromCloud.current = true;
+        setCloudSyncLoaded(true);
       } catch (err) {
         console.error('Cloud sync load failed:', err);
+        hasLoadedFromCloud.current = true;
+        setCloudSyncLoaded(true);
       }
     };
 
@@ -90,4 +94,22 @@ export function useCloudSync() {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
   }, [profile, user, saveToCloud]);
+
+  return { cloudSyncLoaded };
+}
+
+// Context to share cloudSyncLoaded state
+const CloudSyncContext = createContext<boolean>(false);
+
+export function CloudSyncProvider({ children }: { children: ReactNode }) {
+  const { cloudSyncLoaded } = useCloudSync();
+  return (
+    <CloudSyncContext.Provider value={cloudSyncLoaded}>
+      {children}
+    </CloudSyncContext.Provider>
+  );
+}
+
+export function useCloudSyncStatus() {
+  return useContext(CloudSyncContext);
 }
