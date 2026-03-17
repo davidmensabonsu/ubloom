@@ -341,6 +341,29 @@ export default function CoreHabitsSection() {
           <span className="text-sm font-medium">Customize Habits</span>
         </motion.button>
       )}
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!habitToDelete} onOpenChange={(open) => !open && setHabitToDelete(null)}>
+        <AlertDialogContent className="rounded-3xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove habit?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently remove <span className="font-semibold">"{habitToDelete?.title}"</span> from your daily routine. This can't be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-2xl">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="rounded-2xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (habitToDelete) removeHabit(habitToDelete.id);
+                setHabitToDelete(null);
+              }}
+            >
+              Remove
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
