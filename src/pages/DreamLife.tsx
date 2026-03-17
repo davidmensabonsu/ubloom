@@ -5,13 +5,19 @@ import { useUserStore } from '@/stores/userStore';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Check, Sparkles, ImagePlus, X, Loader2 } from 'lucide-react';
+import briefcaseIcon from '@/assets/icons/briefcase.png';
+import crownIcon from '@/assets/icons/crown.png';
+import leafIcon from '@/assets/icons/leaf.png';
+import doveIcon from '@/assets/icons/dove.png';
+import sparklesIcon from '@/assets/icons/sparkles.png';
+import twoHeartsIcon from '@/assets/icons/two-hearts.png';
 import { toast } from 'sonner';
 
 const dreamCategories = [
   {
     id: 'career',
     title: 'Career & Money',
-    icon: '💼',
+    icon: briefcaseIcon,
     statements: [
       'I earn abundantly doing work I love',
       'I am recognized for my talents and contribution',
@@ -23,7 +29,7 @@ const dreamCategories = [
   {
     id: 'selfWorth',
     title: 'Self-Worth & Confidence',
-    icon: '👑',
+    icon: crownIcon,
     statements: [
       'I know my worth and never settle for less',
       'I speak up and take up space unapologetically',
@@ -35,7 +41,7 @@ const dreamCategories = [
   {
     id: 'wellness',
     title: 'Wellness & Body',
-    icon: '🌿',
+    icon: leafIcon,
     statements: [
       'I nourish my body with love and care',
       'Movement is a joy, not a punishment',
@@ -47,7 +53,7 @@ const dreamCategories = [
   {
     id: 'peace',
     title: 'Peace & Emotional Life',
-    icon: '🕊️',
+    icon: doveIcon,
     statements: [
       'I am calm even when life is chaotic',
       'I process my emotions with grace',
@@ -59,7 +65,7 @@ const dreamCategories = [
   {
     id: 'lifestyle',
     title: 'Lifestyle & Experiences',
-    icon: '✨',
+    icon: sparklesIcon,
     statements: [
       'I live a soft, beautiful life',
       'Travel and adventure are part of my story',
@@ -71,7 +77,7 @@ const dreamCategories = [
   {
     id: 'love',
     title: 'Love & Relationships',
-    icon: '💕',
+    icon: twoHeartsIcon,
     statements: [
       'I give and receive love freely',
       'My relationships are healthy and nourishing',
@@ -223,7 +229,7 @@ export default function DreamLife() {
         >
           {/* Category header */}
           <div className="glass-card rounded-2xl p-4 mb-4 flex items-center gap-3">
-            <span className="text-2xl">{category.icon}</span>
+            <img src={category.icon} alt="" className="w-7 h-7 object-contain" />
             <div>
               <h2 className="font-display text-lg font-medium text-foreground">
                 {category.title}
