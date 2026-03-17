@@ -124,7 +124,7 @@ export default function WeeklyMoodSummary() {
                   key={key}
                   className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-background/50 text-xs"
                 >
-                  <img src={meta?.icon} alt="" className="w-4 h-4 object-contain" style={{ filter: 'none' }} />
+                  <img src={meta?.icon} alt="" className="w-4 h-4 object-contain clay-icon" />
                   <span className="text-foreground/80">{meta?.label || key}</span>
                   <span className="text-muted-foreground">×{count}</span>
                 </div>
