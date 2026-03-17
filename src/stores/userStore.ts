@@ -164,6 +164,7 @@ interface UserStore {
   completeRoutineSetup: () => void;
   skipRoutineSetup: () => void;
   removeHabit: (habitId: string) => void;
+  updateHabit: (habitId: string, updates: Partial<Omit<CoreHabit, 'id'>>) => void;
   reorderHabit: (habitId: string, direction: 'up' | 'down') => void;
    updateReminderSettings: (settings: Partial<ReminderSettings>) => void;
     markReminderSent: (timeOfDay: TimeOfDay) => void;
@@ -405,6 +406,16 @@ export const useUserStore = create<UserStore>()(
           profile: {
             ...state.profile,
             coreHabits: state.profile.coreHabits.filter((h) => h.id !== habitId),
+          },
+        })),
+
+      updateHabit: (habitId, updates) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            coreHabits: state.profile.coreHabits.map((h) =>
+              h.id === habitId ? { ...h, ...updates } : h
+            ),
           },
         })),
 

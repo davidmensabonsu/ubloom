@@ -1,9 +1,10 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import { useState } from 'react';
-import { useUserStore, TimeOfDay } from '@/stores/userStore';
-import { Check, Sun, Clock, Moon, Plus, X, Sparkles, Pencil, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
+import { useUserStore, TimeOfDay, CoreHabit } from '@/stores/userStore';
+import { Check, Sun, Clock, Moon, Plus, X, Sparkles, Pencil, Trash2, ChevronUp, ChevronDown, Settings2 } from 'lucide-react';
 import { getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
+import EditHabitDialog from '@/components/routine/EditHabitDialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,13 +35,14 @@ function HabitIcon({ iconId }: { iconId?: string }) {
 }
 
 export default function CoreHabitsSection() {
-  const { profile, toggleHabitCompletion, isHabitCompletedToday, addRoutineTask, toggleTask, removeHabit, reorderHabit } = useUserStore();
+  const { profile, toggleHabitCompletion, isHabitCompletedToday, addRoutineTask, toggleTask, removeHabit, updateHabit, reorderHabit } = useUserStore();
   const { coreHabits } = profile;
   
   const [addingToSection, setAddingToSection] = useState<TimeOfDay | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [editMode, setEditMode] = useState(false);
   const [habitToDelete, setHabitToDelete] = useState<{ id: string; title: string } | null>(null);
+  const [habitToEdit, setHabitToEdit] = useState<CoreHabit | null>(null);
 
   const today = getLocalDateStr();
   
@@ -212,6 +214,12 @@ export default function CoreHabitsSection() {
                           <ChevronDown size={14} strokeWidth={2.5} />
                         </button>
                         <button
+                          onClick={() => setHabitToEdit(habit)}
+                          className="p-1.5 rounded-full hover:bg-primary/10 text-primary transition-colors"
+                        >
+                          <Settings2 size={14} strokeWidth={2.5} />
+                        </button>
+                        <button
                           onClick={() => setHabitToDelete({ id: habit.id, title: habit.title })}
                           className="p-1.5 rounded-full hover:bg-destructive/10 text-destructive transition-colors"
                         >
@@ -364,6 +372,14 @@ export default function CoreHabitsSection() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Edit Habit Dialog */}
+      <EditHabitDialog
+        habit={habitToEdit}
+        open={!!habitToEdit}
+        onOpenChange={(open) => !open && setHabitToEdit(null)}
+        onSave={updateHabit}
+      />
     </div>
   );
 }
