@@ -35,7 +35,7 @@ const dreamCategories = [
   {
     id: 'wellness',
     title: 'Wellness & Body',
-    icon: leafIcon,
+    
     statements: [
       'I nourish my body with love and care',
       'Movement is a joy, not a punishment',
