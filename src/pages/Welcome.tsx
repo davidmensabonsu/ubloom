@@ -57,7 +57,7 @@ export default function Welcome() {
 
       {/* Tagline */}
       <div className="text-center mb-12 max-w-sm">
-        <p className="font-display text-xl leading-relaxed text-foreground/80">
+        <p className="font-display leading-relaxed text-foreground/80 font-extrabold text-2xl">
           A gentle space for reflection, alignment, and becoming your most radiant self
         </p>
       </div>
