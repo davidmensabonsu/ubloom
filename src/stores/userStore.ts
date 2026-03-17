@@ -164,6 +164,7 @@ interface UserStore {
   completeRoutineSetup: () => void;
   skipRoutineSetup: () => void;
   removeHabit: (habitId: string) => void;
+  updateHabit: (habitId: string, updates: Partial<Omit<CoreHabit, 'id'>>) => void;
   reorderHabit: (habitId: string, direction: 'up' | 'down') => void;
    updateReminderSettings: (settings: Partial<ReminderSettings>) => void;
     markReminderSent: (timeOfDay: TimeOfDay) => void;
