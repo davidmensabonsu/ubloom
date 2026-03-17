@@ -7,7 +7,8 @@ import { useUserStore } from '@/stores/userStore';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { Check, Camera, LogOut, Trash2, Pencil, Flame, BookOpen, Target, Lock, KeyRound, Sparkles, Eye, EyeOff } from 'lucide-react';
+import { Check, Camera, LogOut, Trash2, Pencil, BookOpen, Target, Lock, KeyRound, Sparkles, Eye, EyeOff } from 'lucide-react';
+import flameIcon from '@/assets/icons/flame.png';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
