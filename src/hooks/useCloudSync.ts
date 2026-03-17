@@ -94,4 +94,6 @@ export function useCloudSync() {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
   }, [profile, user, saveToCloud]);
+
+  return { cloudSyncLoaded };
 }
