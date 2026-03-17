@@ -211,7 +211,6 @@ export default function Onboarding() {
           {step.type !== 'text' ?
           <div className="space-y-3 flex-1">
               {step.options?.map((option) => {
-              const iconSrc = onboardingIcons[option.value];
               return (
                 <motion.button
                   key={option.value}
@@ -221,9 +220,6 @@ export default function Onboarding() {
                   }
                   whileTap={{ scale: 0.98 }}>
                   
-                    {iconSrc &&
-                  <img src={iconSrc} alt="" className="w-6 h-6 object-contain" style={{ filter: 'none' }} />
-                  }
                     <span className="font-medium">{option.label}</span>
                     {isSelected(option.value) &&
                   <motion.div
