@@ -35,13 +35,14 @@ function HabitIcon({ iconId }: { iconId?: string }) {
 }
 
 export default function CoreHabitsSection() {
-  const { profile, toggleHabitCompletion, isHabitCompletedToday, addRoutineTask, toggleTask, removeHabit, reorderHabit } = useUserStore();
+  const { profile, toggleHabitCompletion, isHabitCompletedToday, addRoutineTask, toggleTask, removeHabit, updateHabit, reorderHabit } = useUserStore();
   const { coreHabits } = profile;
   
   const [addingToSection, setAddingToSection] = useState<TimeOfDay | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [editMode, setEditMode] = useState(false);
   const [habitToDelete, setHabitToDelete] = useState<{ id: string; title: string } | null>(null);
+  const [habitToEdit, setHabitToEdit] = useState<CoreHabit | null>(null);
 
   const today = getLocalDateStr();
   
