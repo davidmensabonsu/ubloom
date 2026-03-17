@@ -40,6 +40,7 @@ export default function CoreHabitsSection() {
   const [addingToSection, setAddingToSection] = useState<TimeOfDay | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [editMode, setEditMode] = useState(false);
+  const [habitToDelete, setHabitToDelete] = useState<{ id: string; title: string } | null>(null);
 
   const today = getLocalDateStr();
   
