@@ -372,6 +372,14 @@ export default function CoreHabitsSection() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Edit Habit Dialog */}
+      <EditHabitDialog
+        habit={habitToEdit}
+        open={!!habitToEdit}
+        onOpenChange={(open) => !open && setHabitToEdit(null)}
+        onSave={updateHabit}
+      />
     </div>
   );
 }
