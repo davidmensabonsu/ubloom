@@ -205,7 +205,7 @@ export default function Onboarding() {
           
           {/* Question */}
           <h1 className="font-display text-2xl font-extrabold tracking-tight text-foreground mb-2">{step.question}</h1>
-          <p className="subtle-text mb-8 text-sm">{step.subtitle}</p>
+          <p className="subtle-text mb-8 text-xs">{step.subtitle}</p>
 
           {/* Options */}
           {step.type !== 'text' ?
