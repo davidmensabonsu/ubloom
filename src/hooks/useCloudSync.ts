@@ -46,8 +46,11 @@ export function useCloudSync() {
         }
 
         hasLoadedFromCloud.current = true;
+        setCloudSyncLoaded(true);
       } catch (err) {
         console.error('Cloud sync load failed:', err);
+        hasLoadedFromCloud.current = true;
+        setCloudSyncLoaded(true);
       }
     };
 
