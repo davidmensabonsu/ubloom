@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useUserStore } from '@/stores/userStore';
-import { Sparkles, Heart, Sun, Moon, Cloud } from 'lucide-react';
+import { Heart, Sun, Moon, Cloud } from 'lucide-react';
 import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/BottomNav';
@@ -78,8 +78,8 @@ export default function Home() {
           className="glass-card rounded-3xl p-5">
           
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-              <Sparkles size={16} className="text-primary" />
+            <div className="w-8 h-8 rounded-full flex items-center justify-center bg-transparent">
+              <Heart size={16} className="text-primary h-[20px] w-[20px]" />
             </div>
             <span className="text-muted-foreground text-lg font-bold">From your future self</span>
           </div>
