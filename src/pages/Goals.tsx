@@ -156,8 +156,9 @@ export default function Goals() {
                   onClick={() => setExpandedCategory(isExpanded ? null : category)}
                   className="w-full p-5 flex items-center gap-4"
                 >
-                  <div className="w-12 h-12 flex items-center justify-center">
-                    <img src={config.iconImg} alt="" className="w-10 h-10 object-contain" style={{ filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.15)) saturate(2.4) contrast(1.15) brightness(0.95)' }} />
+                  <div className="w-12 h-12 flex items-center justify-center relative">
+                    <div className="absolute inset-0 rounded-full bg-primary/8 blur-md" />
+                    <img src={config.iconImg} alt="" className="w-10 h-10 object-contain relative z-10" style={{ filter: 'drop-shadow(0 2px 6px rgba(180,80,120,0.25)) drop-shadow(0 0 8px rgba(200,100,140,0.15)) saturate(2.6) contrast(1.2) brightness(0.93)' }} />
                   </div>
                   <div className="flex-1 text-left">
                     <h3 className="font-display text-lg font-medium text-foreground">
@@ -365,7 +366,7 @@ export default function Goals() {
                           newGoalCategory === cat ? 'selected' : ''
                         }`}
                       >
-                        <img src={categoryConfig[cat].iconImg} alt="" className="w-5 h-5 object-contain" style={{ filter: 'none' }} />
+                        <img src={categoryConfig[cat].iconImg} alt="" className="w-5 h-5 object-contain" style={{ filter: 'drop-shadow(0 1px 3px rgba(180,80,120,0.2)) saturate(2.6) contrast(1.2) brightness(0.93)' }} />
                         <span>{categoryConfig[cat].title}</span>
                       </button>
                     )
