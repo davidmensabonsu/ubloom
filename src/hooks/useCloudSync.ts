@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserStore, UserProfile } from '@/stores/userStore';
 import { supabase } from '@/integrations/supabase/client';
