@@ -15,7 +15,7 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const { journalEntries, identityStatement, dreamSelf, moodHistory } = await req.json();
+    const { journalEntries, identityStatement, dreamSelf, moodHistory, currentFeeling, struggles, reactionStyle, wantsMoreOf, dreamSelfFeels, futureNote } = await req.json();
 
     // Build context from user data
     const journalContext = (journalEntries || [])
@@ -35,13 +35,23 @@ serve(async (req) => {
       .map((m: { moods: string[] }) => m.moods.join(", "))
       .join("; ");
 
+    // Build onboarding context
+    const onboardingParts: string[] = [];
+    if (currentFeeling) onboardingParts.push(`She described her current life feeling as: "${currentFeeling}"`);
+    if (struggles && struggles.length > 0) onboardingParts.push(`She struggles with: ${struggles.join(", ")}`);
+    if (reactionStyle) onboardingParts.push(`When things don't go to plan, she tends to: ${reactionStyle}`);
+    if (wantsMoreOf && wantsMoreOf.length > 0) onboardingParts.push(`She wants more of: ${wantsMoreOf.join(", ")}`);
+    if (dreamSelfFeels && dreamSelfFeels.length > 0) onboardingParts.push(`Her dream self feels: ${dreamSelfFeels.join(", ")}`);
+    if (futureNote) onboardingParts.push(`A note she wrote to her future self: "${futureNote}"`);
+    const onboardingContext = onboardingParts.join("\n");
+
     const systemPrompt = `You are the user's inner voice — the version of herself who's a little further along and looking back with honesty and warmth. You sound like a real person talking to her, not a motivational poster.
 
 You will generate TWO messages:
 
-1. **WEEKLY FUTURE SELF MESSAGE**: 2-3 sentences that sound like something a close friend or future self would say to her — honest, casual, grounded. If journal themes are provided, let them subtly inform the emotional direction WITHOUT quoting or summarizing entries. Use contractions, incomplete thoughts, real talk. Think "note a friend would text her at 2am" not "inspirational quote."
+1. **WEEKLY FUTURE SELF MESSAGE**: 2-3 sentences that sound like something a close friend or future self would say to her — honest, casual, grounded. Use what you know about her struggles, emotional patterns, and what she wants for herself to make the message feel deeply personal. If journal themes are provided, let them subtly inform the emotional direction WITHOUT quoting or summarizing entries. Use contractions, incomplete thoughts, real talk. Think "note a friend would text her at 2am" not "inspirational quote."
 
-2. **DAILY MINDSET MESSAGE**: A single short sentence — today's anchor. Should sound like an honest reminder, not an affirmation. Something a caring friend would say to her.
+2. **DAILY MINDSET MESSAGE**: A single short sentence — today's anchor. Should sound like an honest reminder tailored to what she's going through and what she needs to hear, not a generic affirmation.
 
 Rules:
 - Sound like a real person, not a life coach or poet
@@ -50,10 +60,13 @@ Rules:
 - Avoid flowery metaphors, affirmation-speak, or anything that sounds like a poster quote
 - Never quote or directly reference journal entries
 - Speak in second person ("you") — this is her future self talking to her
-- If no journal data is provided, draw from the identity statement and dream self vision instead
+- The messages MUST feel tailored to this specific person — reference her emotional patterns, struggles, or aspirations indirectly
+- If she struggles with overthinking, speak to that. If she wants confidence, speak to that. Make it personal.
 - Output ONLY valid JSON with keys "futureSelfMessage" and "mindsetMessage"`;
 
     const userPrompt = `Here is context about the user:
+
+${onboardingContext ? `Personal Profile:\n${onboardingContext}` : ""}
 
 ${identityStatement ? `Identity Statement: "${identityStatement}"` : ""}
 
