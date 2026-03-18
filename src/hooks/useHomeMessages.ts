@@ -43,6 +43,8 @@ export function useHomeMessages() {
     // Check if user has any profile data at all
     const hasProfileData =
       profile.identityStatement ||
+      profile.currentFeeling ||
+      profile.struggles.length > 0 ||
       Object.values(profile.dreamSelf).some((v) => v.length > 0) ||
       profile.journalEntries.length > 0;
 
@@ -65,6 +67,12 @@ export function useHomeMessages() {
             identityStatement: profile.identityStatement,
             dreamSelf: profile.dreamSelf,
             moodHistory: profile.moodHistory.slice(0, 5),
+            currentFeeling: profile.currentFeeling,
+            struggles: profile.struggles,
+            reactionStyle: profile.reactionStyle,
+            wantsMoreOf: profile.wantsMoreOf,
+            dreamSelfFeels: profile.dreamSelfFeels,
+            futureNote: profile.futureNote,
           },
         });
 
