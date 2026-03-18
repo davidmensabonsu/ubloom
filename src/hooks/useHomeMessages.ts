@@ -65,6 +65,12 @@ export function useHomeMessages() {
             identityStatement: profile.identityStatement,
             dreamSelf: profile.dreamSelf,
             moodHistory: profile.moodHistory.slice(0, 5),
+            currentFeeling: profile.currentFeeling,
+            struggles: profile.struggles,
+            reactionStyle: profile.reactionStyle,
+            wantsMoreOf: profile.wantsMoreOf,
+            dreamSelfFeels: profile.dreamSelfFeels,
+            futureNote: profile.futureNote,
           },
         });
 
