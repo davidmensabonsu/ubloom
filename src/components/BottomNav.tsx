@@ -1,6 +1,7 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { Home, Compass, Calendar, Target, Image, User } from 'lucide-react';
 import { motion } from 'framer-motion';
+import ubloomLogo from '@/assets/ubloom-flower.png';
 const navItems = [
 { path: '/home', icon: Home, label: 'Home', isLogo: false },
 { path: '/alignment', icon: Compass, label: 'Align', isLogo: false },
