@@ -1,6 +1,7 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { Home, Compass, Calendar, Target, Image, User } from 'lucide-react';
 import { motion } from 'framer-motion';
+import ubloomLogo from '@/assets/ubloom-flower.png';
 const navItems = [
 { path: '/home', icon: Home, label: 'Home', isLogo: false },
 { path: '/alignment', icon: Compass, label: 'Align', isLogo: false },
@@ -31,7 +32,7 @@ export default function BottomNav() {
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}>
                 
                 {item.isLogo ?
-                <img alt="Home" className="h-[35px] w-[35px] object-contain" src="/lovable-uploads/74df1548-966b-4649-a7f6-0cd4b50572cf.png" /> :
+                <img alt="Home" className="h-[35px] w-[35px] object-contain" src={ubloomLogo} /> :
 
                 Icon && <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
                 }

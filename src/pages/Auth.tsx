@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import ubloomLogo from '@/assets/ubloom-flower.png';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -71,7 +72,7 @@ export default function Auth() {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
-          <img alt="ubloom logo" className="w-[190px] h-[190px] mx-auto mb-0 drop-shadow-lg saturate-150 brightness-105 object-cover" src="/lovable-uploads/8d6fe7f1-8318-4452-a115-400fc2532d87.png" />
+          <img alt="ubloom logo" className="w-[190px] h-[190px] mx-auto mb-0 drop-shadow-lg saturate-150 brightness-105 object-contain" src={ubloomLogo} />
           <h1 className="text-4xl font-display tracking-tight text-foreground font-extrabold">
             ubloom
           </h1>

@@ -51,7 +51,7 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.15 }}
-              src="/lovable-uploads/98ee74aa-4350-4922-a6ea-f5e178038d09.png" />
+              src={logo} />
             
           </div>
         </div>
