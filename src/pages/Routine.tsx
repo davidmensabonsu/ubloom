@@ -5,7 +5,6 @@ import { useUserStore } from '@/stores/userStore';
 import { Plus } from 'lucide-react';
 import ProfileButton from '@/components/ProfileButton';
 import BottomNav from '@/components/BottomNav';
-import RoutineSetup from '@/components/routine/RoutineSetup';
 import CoreHabitsSection from '@/components/routine/CoreHabitsSection';
 import CustomTasksSection from '@/components/routine/CustomTasksSection';
 import AddTaskDialog from '@/components/routine/AddTaskDialog';
@@ -14,10 +13,10 @@ import WeeklyProgress from '@/components/routine/WeeklyProgress';
 import CelebrationOverlay from '@/components/routine/CelebrationOverlay';
 import ReminderSettings from '@/components/routine/ReminderSettings';
 import { useReminders } from '@/hooks/useReminders';
+import { generateHabitsFromProfile } from '@/lib/generateHabits';
 
 export default function Routine() {
-   const { profile, skipRoutineSetup, isHabitCompletedToday } = useUserStore();
-  const [showSetup, setShowSetup] = useState(!profile.routineSetupComplete);
+   const { profile, setCoreHabits, completeRoutineSetup, isHabitCompletedToday } = useUserStore();
   const [showAddTask, setShowAddTask] = useState(false);
   
    const [celebration, setCelebration] = useState<{
@@ -29,6 +28,15 @@ export default function Routine() {
    // Track previous completion state to detect transitions
    const prevAllCompletedRef = useRef(false);
    const celebratedStreaksRef = useRef<Set<number>>(new Set());
+
+   // Auto-generate habits from onboarding/dream life if none exist
+   useEffect(() => {
+     if (profile.onboardingComplete && profile.coreHabits.length === 0) {
+       const habits = generateHabitsFromProfile(profile);
+       setCoreHabits(habits);
+       completeRoutineSetup();
+     }
+   }, [profile.onboardingComplete]);
  
    // Calculate completion status
    const coreHabits = profile.coreHabits || [];
@@ -96,12 +104,6 @@ export default function Routine() {
  
    // Initialize reminders hook
     useReminders();
-    // Listen for open-habit-setup event from CoreHabitsSection empty state
-    useEffect(() => {
-      const handler = () => setShowSetup(true);
-      window.addEventListener('open-habit-setup', handler);
-      return () => window.removeEventListener('open-habit-setup', handler);
-    }, []);
 
   const todayFormatted = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -110,21 +112,6 @@ export default function Routine() {
   });
 
   const currentMood = profile.moodHistory[0]?.moods[0] || 'peaceful';
-
-  // Show setup flow for first-time users or when editing habits
-  if (showSetup) {
-    return (
-      <RoutineSetup
-        onComplete={() => {
-          setShowSetup(false);
-        }}
-        onSkip={() => {
-          skipRoutineSetup();
-          setShowSetup(false);
-        }}
-      />
-    );
-  }
 
   return (
     <div className="min-h-screen gradient-background pb-24">

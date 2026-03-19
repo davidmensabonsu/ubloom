@@ -97,31 +97,7 @@ export default function CoreHabitsSection() {
   );
 
   if (coreHabits.length === 0 && !hasAnyContent) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="glass-card rounded-3xl p-8 text-center space-y-4"
-      >
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-        >
-          <Sparkles size={40} strokeWidth={2} className="text-primary mx-auto" />
-        </motion.div>
-        <h2 className="text-lg font-bold">Set Up Your Daily Habits</h2>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          Choose the habits that matter most to you. They'll appear here every day.
-        </p>
-        <button
-          onClick={() => window.dispatchEvent(new CustomEvent('open-habit-setup'))}
-          className="soft-button text-sm px-6 py-3 font-semibold bg-primary text-primary-foreground rounded-2xl"
-        >
-          Choose My Habits
-        </button>
-      </motion.div>
-    );
+    return null;
   }
 
   return (
@@ -334,20 +310,11 @@ export default function CoreHabitsSection() {
         );
       })}
 
-      {/* Customize Habits button in edit mode */}
+      {/* Add habit hint in edit mode */}
       {editMode && (
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          onClick={() => {
-            setEditMode(false);
-            window.dispatchEvent(new CustomEvent('open-habit-setup'));
-          }}
-          className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl border-2 border-dashed border-muted-foreground/30 text-muted-foreground hover:border-primary hover:text-primary transition-colors"
-        >
-          <Sparkles size={18} strokeWidth={2.5} />
-          <span className="text-sm font-medium">Customize Habits</span>
-        </motion.button>
+        <p className="text-center text-xs text-muted-foreground pt-1">
+          Use the + button to add new habits
+        </p>
       )}
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!habitToDelete} onOpenChange={(open) => !open && setHabitToDelete(null)}>
