@@ -105,6 +105,14 @@ export default function Routine() {
    // Initialize reminders hook
     useReminders();
 
+  const todayFormatted = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  const currentMood = profile.moodHistory[0]?.moods[0] || 'peaceful';
+
   return (
     <div className="min-h-screen gradient-background pb-24">
        {/* Celebration Overlay */}
