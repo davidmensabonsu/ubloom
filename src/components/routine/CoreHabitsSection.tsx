@@ -97,31 +97,7 @@ export default function CoreHabitsSection() {
   );
 
   if (coreHabits.length === 0 && !hasAnyContent) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="glass-card rounded-3xl p-8 text-center space-y-4"
-      >
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-        >
-          <Sparkles size={40} strokeWidth={2} className="text-primary mx-auto" />
-        </motion.div>
-        <h2 className="text-lg font-bold">Set Up Your Daily Habits</h2>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          Choose the habits that matter most to you. They'll appear here every day.
-        </p>
-        <button
-          onClick={() => window.dispatchEvent(new CustomEvent('open-habit-setup'))}
-          className="soft-button text-sm px-6 py-3 font-semibold bg-primary text-primary-foreground rounded-2xl"
-        >
-          Choose My Habits
-        </button>
-      </motion.div>
-    );
+    return null;
   }
 
   return (
