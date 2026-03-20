@@ -161,10 +161,8 @@ export default function Routine() {
         {/* Core Daily Habits */}
         <CoreHabitsSection />
 
-        {/* Custom Tasks */}
-        <CustomTasksSection />
 
- 
+
          {/* Reminder Settings */}
          <div className="pt-2">
            <h2 className="section-title mb-3">Settings</h2>

@@ -123,86 +123,15 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
             </div>
           </div>
 
-          {/* Recurrence */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Frequency</label>
-            <div className="flex gap-2">
-              {recurrenceOptions.map((opt) => {
-                const Icon = opt.icon;
-                return (
-                  <button
-                    key={opt.value}
-                    onClick={() => setRecurrence(opt.value)}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                      recurrence === opt.value
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                    }`}
-                  >
-                    <Icon size={16} strokeWidth={2.5} />
-                    {opt.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Weekly day picker */}
-          {recurrence === 'weekly' && (
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Which days?</label>
-              <div className="flex gap-1.5">
-                {dayLabels.map((label, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => toggleWeeklyDay(idx)}
-                    className={`flex-1 py-2 rounded-xl text-xs font-semibold transition-all ${
-                      weeklyDays.includes(idx)
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* One-off date picker */}
-          {recurrence === 'oneoff' && (
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Which day?</label>
-              <div className="flex flex-wrap gap-2">
-                {upcomingDays.map((day) => (
-                  <button
-                    key={day.date}
-                    onClick={() => setScheduledDate(day.date)}
-                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                      scheduledDate === day.date
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                    }`}
-                  >
-                    {day.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
         <DrawerFooter>
           <Button
             onClick={handleSubmit}
-            disabled={
-              !title.trim() ||
-              (recurrence === 'weekly' && weeklyDays.length === 0) ||
-              (recurrence === 'oneoff' && !scheduledDate)
-            }
+            disabled={!title.trim()}
             className="w-full rounded-2xl py-6 text-base font-semibold"
           >
-            Add Task
+            Add Habit
           </Button>
         </DrawerFooter>
       </DrawerContent>
