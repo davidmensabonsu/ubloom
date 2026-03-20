@@ -220,7 +220,7 @@ export default function WeeklyProgress() {
                   transition={{ delay: index * 0.05 + 0.5 }}
                   className="absolute top-1 inset-x-0 flex justify-center"
                 >
-                  <img src={ubloomLogo} alt="Complete" className="w-10 h-10 object-contain" style={{ filter: 'none' }} />
+                  <img src={ubloomLogo} alt="Complete" className="w-10 h-10 object-contain clay-icon" />
                 </motion.div>
               ) : day.totalHabits > 0 ? (
                 <motion.span

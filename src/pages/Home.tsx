@@ -47,7 +47,7 @@ export default function Home() {
             <ProfileButton />
             <motion.img
               alt="ubloom"
-              className="h-12 w-12 object-contain"
+              className="h-12 w-12 object-contain clay-icon"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.15 }}
