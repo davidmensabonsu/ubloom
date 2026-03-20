@@ -365,7 +365,7 @@ export default function Goals() {
                           newGoalCategory === cat ? 'selected' : ''
                         }`}
                       >
-                        <img src={categoryConfig[cat].iconImg} alt="" className="w-5 h-5 object-contain" style={{ filter: 'none' }} />
+                        <img src={categoryConfig[cat].iconImg} alt="" className="w-5 h-5 object-contain clay-icon" />
                         <span>{categoryConfig[cat].title}</span>
                       </button>
                     )
