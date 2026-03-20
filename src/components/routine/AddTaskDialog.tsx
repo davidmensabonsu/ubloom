@@ -48,9 +48,9 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="max-h-[85vh]">
         <DrawerHeader>
-          <DrawerTitle className="text-xl">Add Task</DrawerTitle>
+          <DrawerTitle className="text-xl">Add Habit</DrawerTitle>
           <DrawerDescription className="text-muted-foreground text-sm">
-            Create a new task for your routine
+            Add a new habit to your daily routine
           </DrawerDescription>
         </DrawerHeader>
 
