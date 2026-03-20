@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { getLocalDateStr } from '@/lib/dateUtils';
 import { useUserStore, TimeOfDay } from '@/stores/userStore';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter, DrawerDescription } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sun, Clock, Moon, CalendarDays, Repeat, RotateCcw } from 'lucide-react';
+import { Sun, Clock, Moon } from 'lucide-react';
 import { taskIconOptions, iconCategories, renderTaskIcon, getTaskIcon } from '@/lib/taskIcons';
 
 const timeOptions: { value: TimeOfDay; label: string; icon: typeof Sun }[] = [
@@ -13,70 +12,34 @@ const timeOptions: { value: TimeOfDay; label: string; icon: typeof Sun }[] = [
   { value: 'evening', label: 'Evening', icon: Moon },
 ];
 
-const recurrenceOptions = [
-  { value: 'daily' as const, label: 'Every day', icon: Repeat },
-  { value: 'weekly' as const, label: 'Weekly', icon: CalendarDays },
-  { value: 'oneoff' as const, label: 'One-off', icon: RotateCcw },
-];
-
-const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-function getUpcomingDays(): { label: string; date: string; dayIndex: number }[] {
-  const days: { label: string; date: string; dayIndex: number }[] = [];
-  const today = new Date();
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(today);
-    d.setDate(d.getDate() + i);
-    const dateStr = getLocalDateStr(d);
-    const label = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : dayLabels[d.getDay()];
-    days.push({ label, date: dateStr, dayIndex: d.getDay() });
-  }
-  return days;
-}
-
 interface AddTaskDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps) {
-  const { addCustomTask } = useUserStore();
+  const { profile, setCoreHabits } = useUserStore();
   const [title, setTitle] = useState('');
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>('morning');
-  const [recurrence, setRecurrence] = useState<'daily' | 'weekly' | 'oneoff'>('daily');
-  const [weeklyDays, setWeeklyDays] = useState<number[]>([]);
-  const [scheduledDate, setScheduledDate] = useState('');
   const [icon, setIcon] = useState(taskIconOptions[0].id);
-
-  const upcomingDays = getUpcomingDays();
-
-  const toggleWeeklyDay = (day: number) => {
-    setWeeklyDays((prev) => (prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]));
-  };
 
   const reset = () => {
     setTitle('');
     setTimeOfDay('morning');
-    setRecurrence('daily');
-    setWeeklyDays([]);
-    setScheduledDate('');
     setIcon(taskIconOptions[0].id);
   };
 
   const handleSubmit = () => {
     if (!title.trim()) return;
-    if (recurrence === 'weekly' && weeklyDays.length === 0) return;
-    if (recurrence === 'oneoff' && !scheduledDate) return;
 
-    addCustomTask({
+    const newHabit = {
+      id: `habit-${Date.now()}`,
       title: title.trim(),
       timeOfDay,
       icon,
-      recurrence,
-      ...(recurrence === 'weekly' ? { weeklyDays } : {}),
-      ...(recurrence === 'oneoff' ? { scheduledDate } : {}),
-    });
+    };
 
+    setCoreHabits([...profile.coreHabits, newHabit]);
     reset();
     onOpenChange(false);
   };
