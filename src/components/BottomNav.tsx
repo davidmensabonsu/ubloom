@@ -32,7 +32,7 @@ export default function BottomNav() {
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}>
                 
                 {item.isLogo ?
-                <img alt="Home" className="h-[35px] w-[35px] object-contain" src={ubloomLogo} /> :
+                <img alt="Home" className="h-[35px] w-[35px] object-contain clay-icon" src={ubloomLogo} /> :
 
                 Icon && <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
                 }
