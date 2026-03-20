@@ -214,7 +214,7 @@ export default function Alignment() {
               className={`mood-pill ${selectedFeelings.includes(feeling.value) ? 'selected' : ''}`}
               whileTap={{ scale: 0.95 }}>
               
-                <img src={feelingIcons[feeling.value]} alt="" className="w-5 h-5 object-contain" style={{ filter: 'none' }} />
+                <img src={feelingIcons[feeling.value]} alt="" className="w-5 h-5 object-contain" style={{ filter: 'saturate(1.6) contrast(1.1)' }} />
                 <span>{feeling.label}</span>
               </motion.button>
             )}
