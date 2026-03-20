@@ -6,7 +6,7 @@ import { Plus } from 'lucide-react';
 import ProfileButton from '@/components/ProfileButton';
 import BottomNav from '@/components/BottomNav';
 import CoreHabitsSection from '@/components/routine/CoreHabitsSection';
-import CustomTasksSection from '@/components/routine/CustomTasksSection';
+import AddTaskDialog from '@/components/routine/AddTaskDialog';
 import AddTaskDialog from '@/components/routine/AddTaskDialog';
 import { useCallback } from 'react';
 import WeeklyProgress from '@/components/routine/WeeklyProgress';
