@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ubloomLogo from '@/assets/ubloom-flower.png';
+import logo from '@/assets/logo.png';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
