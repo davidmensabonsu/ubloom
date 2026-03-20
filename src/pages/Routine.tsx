@@ -6,7 +6,6 @@ import { Plus } from 'lucide-react';
 import ProfileButton from '@/components/ProfileButton';
 import BottomNav from '@/components/BottomNav';
 import CoreHabitsSection from '@/components/routine/CoreHabitsSection';
-import CustomTasksSection from '@/components/routine/CustomTasksSection';
 import AddTaskDialog from '@/components/routine/AddTaskDialog';
 import { useCallback } from 'react';
 import WeeklyProgress from '@/components/routine/WeeklyProgress';
@@ -161,10 +160,8 @@ export default function Routine() {
         {/* Core Daily Habits */}
         <CoreHabitsSection />
 
-        {/* Custom Tasks */}
-        <CustomTasksSection />
 
- 
+
          {/* Reminder Settings */}
          <div className="pt-2">
            <h2 className="section-title mb-3">Settings</h2>
