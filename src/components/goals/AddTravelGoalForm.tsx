@@ -6,6 +6,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/stores/userStore';
 import { motion } from 'framer-motion';
+import BudgetPicker from './BudgetPicker';
 
 const vibeOptions = [
   { value: 'romantic', emoji: '🌹', label: 'Romantic' },
