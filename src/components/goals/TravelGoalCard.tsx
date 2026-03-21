@@ -33,10 +33,7 @@ export default function TravelGoalCard({ goal, onTap }: TravelGoalCardProps) {
             </p>
           )}
         </div>
-        {trip?.vibe && (
-          <span className="text-lg shrink-0">{vibeEmojis[trip.vibe] || '✈️'}</span>
-        )}
-        {!trip?.vibe && <Plane size={16} className="text-muted-foreground shrink-0" />}
+        <Plane size={16} className="text-muted-foreground shrink-0" />
       </div>
 
       {(trip?.departureDate || checklistTotal > 0) && (
