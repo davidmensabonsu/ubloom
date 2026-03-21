@@ -58,7 +58,7 @@ export default function AddTravelGoalForm({ onClose }: AddTravelGoalFormProps) {
           autoFocus
           value={tripName}
           onChange={(e) => setTripName(e.target.value)}
-          placeholder="Name your trip ✈️"
+          placeholder="Name your trip"
           className="w-full p-4 rounded-2xl bg-muted border-0 focus:ring-2 focus:ring-primary/30 focus:outline-none"
         />
 

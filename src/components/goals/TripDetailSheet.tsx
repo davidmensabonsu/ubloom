@@ -227,7 +227,6 @@ export default function TripDetailSheet({ goal, open, onOpenChange }: TripDetail
                         trip.vibe === v.value && "selected"
                       )}
                     >
-                      <span>{v.emoji}</span>
                       <span>{v.label}</span>
                     </button>
                   ))}
