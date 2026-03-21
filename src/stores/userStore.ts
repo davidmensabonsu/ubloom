@@ -355,6 +355,79 @@ export const useUserStore = create<UserStore>()(
             ),
           },
         })),
+
+      // Trip planning actions
+      updateTripDetails: (goalId, details) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            goals: state.profile.goals.map((g) =>
+              g.id === goalId
+                ? { ...g, tripDetails: { ...(g.tripDetails ?? { itinerary: [], checklist: [] }), ...details } }
+                : g
+            ),
+          },
+        })),
+
+      addItineraryItem: (goalId, item) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            goals: state.profile.goals.map((g) =>
+              g.id === goalId && g.tripDetails
+                ? { ...g, tripDetails: { ...g.tripDetails, itinerary: [...g.tripDetails.itinerary, { ...item, id: `itin-${Date.now()}` }] } }
+                : g
+            ),
+          },
+        })),
+
+      removeItineraryItem: (goalId, itemId) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            goals: state.profile.goals.map((g) =>
+              g.id === goalId && g.tripDetails
+                ? { ...g, tripDetails: { ...g.tripDetails, itinerary: g.tripDetails.itinerary.filter((i) => i.id !== itemId) } }
+                : g
+            ),
+          },
+        })),
+
+      addChecklistItem: (goalId, title) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            goals: state.profile.goals.map((g) =>
+              g.id === goalId && g.tripDetails
+                ? { ...g, tripDetails: { ...g.tripDetails, checklist: [...g.tripDetails.checklist, { id: `chk-${Date.now()}`, title, completed: false }] } }
+                : g
+            ),
+          },
+        })),
+
+      toggleChecklistItem: (goalId, itemId) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            goals: state.profile.goals.map((g) =>
+              g.id === goalId && g.tripDetails
+                ? { ...g, tripDetails: { ...g.tripDetails, checklist: g.tripDetails.checklist.map((c) => c.id === itemId ? { ...c, completed: !c.completed } : c) } }
+                : g
+            ),
+          },
+        })),
+
+      removeChecklistItem: (goalId, itemId) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            goals: state.profile.goals.map((g) =>
+              g.id === goalId && g.tripDetails
+                ? { ...g, tripDetails: { ...g.tripDetails, checklist: g.tripDetails.checklist.filter((c) => c.id !== itemId) } }
+                : g
+            ),
+          },
+        })),
       
       completeOnboarding: () =>
         set((state) => ({
