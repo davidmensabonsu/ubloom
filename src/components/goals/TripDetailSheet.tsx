@@ -7,18 +7,10 @@ import { format, parseISO, differenceInDays } from 'date-fns';
 import TripItinerary from './TripItinerary';
 import TripChecklist from './TripChecklist';
 import BudgetPicker from './BudgetPicker';
+import { vibeOptions } from '@/lib/vibeOptions';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarPicker } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
-
-const vibeOptions = [
-  { value: 'romantic', emoji: '🌹', label: 'Romantic' },
-  { value: 'adventure', emoji: '🏔️', label: 'Adventure' },
-  { value: 'cultural', emoji: '🏛️', label: 'Cultural' },
-  { value: 'relaxation', emoji: '🌊', label: 'Relaxation' },
-  { value: 'girls-trip', emoji: '👯', label: 'Girls Trip' },
-  { value: 'solo', emoji: '🧘', label: 'Solo' },
-];
 
 interface TripDetailSheetProps {
   goal: Goal | null;
