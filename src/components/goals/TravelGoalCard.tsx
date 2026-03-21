@@ -2,7 +2,15 @@ import { motion } from 'framer-motion';
 import { MapPin, Calendar, CheckCircle2, Plane } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import type { Goal } from '@/stores/userStore';
-import { vibeIconMap } from '@/lib/vibeOptions';
+
+const vibeEmojis: Record<string, string> = {
+  romantic: '🌹',
+  adventure: '🏔️',
+  cultural: '🏛️',
+  relaxation: '🌊',
+  'girls-trip': '👯',
+  solo: '🧘',
+};
 
 interface TravelGoalCardProps {
   goal: Goal;
@@ -33,11 +41,10 @@ export default function TravelGoalCard({ goal, onTap }: TravelGoalCardProps) {
             </p>
           )}
         </div>
-        {trip?.vibe && vibeIconMap[trip.vibe] ? (
-          <img src={vibeIconMap[trip.vibe]} alt={trip.vibe} className="w-7 h-7 object-contain shrink-0" />
-        ) : (
-          <Plane size={16} className="text-muted-foreground shrink-0" />
+        {trip?.vibe && (
+          <span className="text-lg shrink-0">{vibeEmojis[trip.vibe] || '✈️'}</span>
         )}
+        {!trip?.vibe && <Plane size={16} className="text-muted-foreground shrink-0" />}
       </div>
 
       {(trip?.departureDate || checklistTotal > 0) && (
