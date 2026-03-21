@@ -6,6 +6,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/stores/userStore';
 import { motion } from 'framer-motion';
+import BudgetPicker from './BudgetPicker';
 
 const vibeOptions = [
   { value: 'romantic', emoji: '🌹', label: 'Romantic' },
@@ -27,6 +28,7 @@ export default function AddTravelGoalForm({ onClose }: AddTravelGoalFormProps) {
   const [departureDate, setDepartureDate] = useState<Date | undefined>();
   const [returnDate, setReturnDate] = useState<Date | undefined>();
   const [vibe, setVibe] = useState<string | undefined>();
+  const [currency, setCurrency] = useState<string>('£');
   const [budget, setBudget] = useState('');
 
   const handleSubmit = () => {
@@ -42,6 +44,7 @@ export default function AddTravelGoalForm({ onClose }: AddTravelGoalFormProps) {
         departureDate: departureDate ? format(departureDate, 'yyyy-MM-dd') : undefined,
         returnDate: returnDate ? format(returnDate, 'yyyy-MM-dd') : undefined,
         vibe,
+        currency: currency || undefined,
         budget: budget || undefined,
         itinerary: [],
         checklist: [],
@@ -115,11 +118,11 @@ export default function AddTravelGoalForm({ onClose }: AddTravelGoalFormProps) {
         </div>
 
         {/* Budget */}
-        <input
-          value={budget}
-          onChange={(e) => setBudget(e.target.value)}
-          placeholder="Budget (optional) e.g. £2,000"
-          className="w-full p-3 rounded-2xl bg-muted/50 text-sm focus:ring-2 focus:ring-primary/30 focus:outline-none"
+        <BudgetPicker
+          currency={currency}
+          budget={budget}
+          onCurrencyChange={setCurrency}
+          onBudgetChange={setBudget}
         />
       </div>
 
