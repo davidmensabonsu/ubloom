@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
-import { useUserStore } from '@/stores/userStore';
+import { useUserStore, type Goal } from '@/stores/userStore';
 import { Plus, Target, Briefcase, Heart, Plane, Sparkles, X, Check, Pencil, Trash2, CalendarIcon } from 'lucide-react';
 import ProfileButton from '@/components/ProfileButton';
 import { format, parseISO, isPast, differenceInDays, startOfDay } from 'date-fns';
@@ -9,6 +9,9 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { goalCategoryIcons } from '@/lib/moodIcons';
+import TravelGoalCard from '@/components/goals/TravelGoalCard';
+import TripDetailSheet from '@/components/goals/TripDetailSheet';
+import AddTravelGoalForm from '@/components/goals/AddTravelGoalForm';
 
 const categoryConfig = {
   lifestyle: {
@@ -54,6 +57,10 @@ export default function Goals() {
   const [editingTitle, setEditingTitle] = useState('');
   const [editingDeadline, setEditingDeadline] = useState<Date | undefined>();
 
+  // Trip detail sheet state
+  const [selectedTripGoal, setSelectedTripGoal] = useState<Goal | null>(null);
+  const [tripSheetOpen, setTripSheetOpen] = useState(false);
+
   const handleAddGoal = () => {
     if (newGoalTitle.trim()) {
       addGoal({
@@ -93,6 +100,11 @@ export default function Goals() {
     setEditingDeadline(undefined);
   };
 
+  const handleOpenTrip = (goal: Goal) => {
+    setSelectedTripGoal(goal);
+    setTripSheetOpen(true);
+  };
+
   const groupedGoals = profile.goals.reduce((acc, goal) => {
     if (!acc[goal.category]) {
       acc[goal.category] = [];
@@ -111,6 +123,9 @@ export default function Goals() {
       return a.deadline.localeCompare(b.deadline);
     });
   });
+
+  // Check if we're adding a travel goal specifically
+  const isAddingTravel = showAddModal && newGoalCategory === 'travel';
 
   return (
     <div className="min-h-screen gradient-background pb-24">
@@ -143,6 +158,7 @@ export default function Goals() {
             const config = categoryConfig[category];
             const goals = groupedGoals[category] || [];
             const isExpanded = expandedCategory === category;
+            const isTravel = category === 'travel';
 
             return (
               <motion.div
@@ -194,79 +210,92 @@ export default function Goals() {
                             const incomplete = goals.filter((g) => !g.completed);
                             const completed = goals.filter((g) => g.completed);
 
-                            const renderGoal = (goal: typeof goals[0]) => (
-                              <div key={goal.id} className="flex items-start gap-3 p-3 rounded-xl bg-muted/50 group">
-                                <button
-                                  onClick={() => toggleGoalComplete(goal.id)}
-                                  className={`check-circle shrink-0 mt-0.5 ${goal.completed ? 'checked' : ''}`}
-                                >
-                                  {goal.completed && <Check size={14} />}
-                                </button>
+                            const renderGoal = (goal: typeof goals[0]) => {
+                              // Travel goals get a rich card
+                              if (isTravel) {
+                                return (
+                                  <TravelGoalCard
+                                    key={goal.id}
+                                    goal={goal}
+                                    onTap={() => handleOpenTrip(goal)}
+                                  />
+                                );
+                              }
 
-                                {editingGoalId === goal.id ? (
-                                  <div className="flex-1 space-y-2">
-                                    <div className="flex items-center gap-2">
-                                      <input
-                                        autoFocus
-                                        value={editingTitle}
-                                        onChange={(e) => setEditingTitle(e.target.value)}
-                                        onKeyDown={(e) => {
-                                          if (e.key === 'Enter') handleSaveEdit();
-                                          if (e.key === 'Escape') handleCancelEdit();
-                                        }}
-                                        className="flex-1 text-sm bg-background rounded-lg px-2 py-1 focus:ring-2 focus:ring-primary/30 focus:outline-none"
-                                      />
-                                      <button onClick={handleSaveEdit} className="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
-                                        <Check size={14} />
-                                      </button>
-                                      <button onClick={handleCancelEdit} className="p-1.5 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition-colors">
-                                        <X size={14} />
-                                      </button>
-                                    </div>
-                                    <Popover>
-                                      <PopoverTrigger asChild>
-                                        <button className={cn("flex items-center gap-1.5 text-xs px-2 py-1 rounded-lg border border-border hover:bg-muted transition-colors", !editingDeadline && "text-muted-foreground")}>
-                                          <CalendarIcon size={12} />
-                                          {editingDeadline ? format(editingDeadline, 'MMM d, yyyy') : 'Set timeframe'}
+                              return (
+                                <div key={goal.id} className="flex items-start gap-3 p-3 rounded-xl bg-muted/50 group">
+                                  <button
+                                    onClick={() => toggleGoalComplete(goal.id)}
+                                    className={`check-circle shrink-0 mt-0.5 ${goal.completed ? 'checked' : ''}`}
+                                  >
+                                    {goal.completed && <Check size={14} />}
+                                  </button>
+
+                                  {editingGoalId === goal.id ? (
+                                    <div className="flex-1 space-y-2">
+                                      <div className="flex items-center gap-2">
+                                        <input
+                                          autoFocus
+                                          value={editingTitle}
+                                          onChange={(e) => setEditingTitle(e.target.value)}
+                                          onKeyDown={(e) => {
+                                            if (e.key === 'Enter') handleSaveEdit();
+                                            if (e.key === 'Escape') handleCancelEdit();
+                                          }}
+                                          className="flex-1 text-sm bg-background rounded-lg px-2 py-1 focus:ring-2 focus:ring-primary/30 focus:outline-none"
+                                        />
+                                        <button onClick={handleSaveEdit} className="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+                                          <Check size={14} />
                                         </button>
-                                      </PopoverTrigger>
-                                      <PopoverContent className="w-auto p-0" align="start">
-                                        <Calendar mode="single" selected={editingDeadline} onSelect={setEditingDeadline} disabled={(date) => date < new Date()} initialFocus className={cn("p-3 pointer-events-auto")} />
-                                      </PopoverContent>
-                                    </Popover>
-                                  </div>
-                                ) : (
-                                  <>
-                                    <div className="flex-1 min-w-0">
-                                      <span className={`text-sm block ${goal.completed ? 'line-through text-muted-foreground' : ''}`}>
-                                        {goal.title}
-                                      </span>
-                                      {goal.deadline && (() => {
-                                        const deadlineDate = startOfDay(parseISO(goal.deadline));
-                                        const today = startOfDay(new Date());
-                                        const daysLeft = differenceInDays(deadlineDate, today);
-                                        const isOverdue = !goal.completed && isPast(deadlineDate) && daysLeft < 0;
-                                        const isApproaching = !goal.completed && !isOverdue && daysLeft <= 7;
-                                        return (
-                                          <span className={cn("text-xs flex items-center gap-1 mt-0.5", isOverdue ? "text-destructive font-medium" : isApproaching ? "text-amber-500 font-medium" : "text-muted-foreground")}>
-                                            <CalendarIcon size={10} />
-                                            {isOverdue ? `Overdue · ${format(deadlineDate, 'MMM d, yyyy')}` : isApproaching ? `${daysLeft === 0 ? 'Due today' : `${daysLeft}d left`} · ${format(deadlineDate, 'MMM d, yyyy')}` : `By ${format(deadlineDate, 'MMM d, yyyy')}`}
-                                          </span>
-                                        );
-                                      })()}
+                                        <button onClick={handleCancelEdit} className="p-1.5 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80 transition-colors">
+                                          <X size={14} />
+                                        </button>
+                                      </div>
+                                      <Popover>
+                                        <PopoverTrigger asChild>
+                                          <button className={cn("flex items-center gap-1.5 text-xs px-2 py-1 rounded-lg border border-border hover:bg-muted transition-colors", !editingDeadline && "text-muted-foreground")}>
+                                            <CalendarIcon size={12} />
+                                            {editingDeadline ? format(editingDeadline, 'MMM d, yyyy') : 'Set timeframe'}
+                                          </button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0" align="start">
+                                          <Calendar mode="single" selected={editingDeadline} onSelect={setEditingDeadline} disabled={(date) => date < new Date()} initialFocus className={cn("p-3 pointer-events-auto")} />
+                                        </PopoverContent>
+                                      </Popover>
                                     </div>
-                                    <div className="flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity shrink-0">
-                                      <button onClick={() => handleStartEdit(goal)} className="p-1.5 rounded-lg hover:bg-background/80 text-muted-foreground hover:text-foreground transition-colors">
-                                        <Pencil size={14} />
-                                      </button>
-                                      <button onClick={() => removeGoal(goal.id)} className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
-                                        <Trash2 size={14} />
-                                      </button>
-                                    </div>
-                                  </>
-                                )}
-                              </div>
-                            );
+                                  ) : (
+                                    <>
+                                      <div className="flex-1 min-w-0">
+                                        <span className={`text-sm block ${goal.completed ? 'line-through text-muted-foreground' : ''}`}>
+                                          {goal.title}
+                                        </span>
+                                        {goal.deadline && (() => {
+                                          const deadlineDate = startOfDay(parseISO(goal.deadline));
+                                          const today = startOfDay(new Date());
+                                          const daysLeft = differenceInDays(deadlineDate, today);
+                                          const isOverdue = !goal.completed && isPast(deadlineDate) && daysLeft < 0;
+                                          const isApproaching = !goal.completed && !isOverdue && daysLeft <= 7;
+                                          return (
+                                            <span className={cn("text-xs flex items-center gap-1 mt-0.5", isOverdue ? "text-destructive font-medium" : isApproaching ? "text-amber-500 font-medium" : "text-muted-foreground")}>
+                                              <CalendarIcon size={10} />
+                                              {isOverdue ? `Overdue · ${format(deadlineDate, 'MMM d, yyyy')}` : isApproaching ? `${daysLeft === 0 ? 'Due today' : `${daysLeft}d left`} · ${format(deadlineDate, 'MMM d, yyyy')}` : `By ${format(deadlineDate, 'MMM d, yyyy')}`}
+                                            </span>
+                                          );
+                                        })()}
+                                      </div>
+                                      <div className="flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity shrink-0">
+                                        <button onClick={() => handleStartEdit(goal)} className="p-1.5 rounded-lg hover:bg-background/80 text-muted-foreground hover:text-foreground transition-colors">
+                                          <Pencil size={14} />
+                                        </button>
+                                        <button onClick={() => removeGoal(goal.id)} className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
+                                          <Trash2 size={14} />
+                                        </button>
+                                      </div>
+                                    </>
+                                  )}
+                                </div>
+                              );
+                            };
 
                             return (
                               <>
@@ -296,7 +325,7 @@ export default function Goals() {
                           className="w-full p-3 rounded-xl border border-dashed border-primary/30 text-primary text-sm flex items-center justify-center gap-2 hover:bg-glow transition-colors"
                         >
                           <Plus size={16} />
-                          Add a goal
+                          {isTravel ? 'Plan a trip' : 'Add a goal'}
                         </button>
                       </div>
                     </motion.div>
@@ -339,10 +368,10 @@ export default function Goals() {
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ type: 'spring', damping: 25 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-md bg-background rounded-3xl shadow-elevated max-h-[70dvh] flex flex-col"
+              className="w-full max-w-md bg-background rounded-3xl shadow-elevated max-h-[80dvh] flex flex-col"
             >
               <div className="p-6 pb-0 flex items-center justify-between mb-4">
-                <h2 className="section-title">Add New Goal</h2>
+                <h2 className="section-title">{isAddingTravel ? 'Plan a Trip' : 'Add New Goal'}</h2>
                 <button
                   onClick={() => {
                     setShowAddModal(false);
@@ -354,8 +383,9 @@ export default function Goals() {
                 </button>
               </div>
 
-              <div className="px-6 overflow-y-auto flex-1">
-                <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+              {/* Category selector - always visible */}
+              <div className="px-6 pb-2">
+                <div className="flex gap-2 overflow-x-auto pb-2">
                   {(Object.keys(categoryConfig) as Array<keyof typeof categoryConfig>).map(
                     (cat) => (
                       <button
@@ -371,56 +401,72 @@ export default function Goals() {
                     )
                   )}
                 </div>
+              </div>
 
-                <input
-                  type="text"
-                  autoFocus
-                  value={newGoalTitle}
-                  onChange={(e) => setNewGoalTitle(e.target.value)}
-                  placeholder="What are you working towards?"
-                  className="w-full p-4 rounded-2xl bg-muted border-0 mb-4 focus:ring-2 focus:ring-primary/30 focus:outline-none"
-                />
-
-                {/* Deadline picker */}
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <button
-                      className={cn(
-                        "w-full p-3 rounded-2xl border border-border flex items-center gap-2 text-sm mb-4 hover:bg-muted transition-colors",
-                        !newGoalDeadline && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon size={16} />
-                      {newGoalDeadline ? format(newGoalDeadline, 'MMMM d, yyyy') : 'Set a timeframe (optional)'}
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={newGoalDeadline}
-                      onSelect={setNewGoalDeadline}
-                      disabled={(date) => date < new Date()}
-                      initialFocus
-                      className={cn("p-3 pointer-events-auto")}
+              {/* Conditional form based on category */}
+              {isAddingTravel ? (
+                <AddTravelGoalForm onClose={() => { setShowAddModal(false); setNewGoalDeadline(undefined); }} />
+              ) : (
+                <>
+                  <div className="px-6 overflow-y-auto flex-1">
+                    <input
+                      type="text"
+                      autoFocus
+                      value={newGoalTitle}
+                      onChange={(e) => setNewGoalTitle(e.target.value)}
+                      placeholder="What are you working towards?"
+                      className="w-full p-4 rounded-2xl bg-muted border-0 mb-4 focus:ring-2 focus:ring-primary/30 focus:outline-none"
                     />
-                  </PopoverContent>
-                </Popover>
-              </div>
 
-              <div className="p-6 pt-2">
-                <motion.button
-                  onClick={handleAddGoal}
-                  disabled={!newGoalTitle.trim()}
-                  className={`soft-button w-full ${!newGoalTitle.trim() ? 'opacity-50' : ''}`}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  Add to my vision
-                </motion.button>
-              </div>
+                    {/* Deadline picker */}
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button
+                          className={cn(
+                            "w-full p-3 rounded-2xl border border-border flex items-center gap-2 text-sm mb-4 hover:bg-muted transition-colors",
+                            !newGoalDeadline && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon size={16} />
+                          {newGoalDeadline ? format(newGoalDeadline, 'MMMM d, yyyy') : 'Set a timeframe (optional)'}
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={newGoalDeadline}
+                          onSelect={setNewGoalDeadline}
+                          disabled={(date) => date < new Date()}
+                          initialFocus
+                          className={cn("p-3 pointer-events-auto")}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  <div className="p-6 pt-2">
+                    <motion.button
+                      onClick={handleAddGoal}
+                      disabled={!newGoalTitle.trim()}
+                      className={`soft-button w-full ${!newGoalTitle.trim() ? 'opacity-50' : ''}`}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      Add to my vision
+                    </motion.button>
+                  </div>
+                </>
+              )}
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Trip Detail Sheet */}
+      <TripDetailSheet
+        goal={selectedTripGoal ? profile.goals.find(g => g.id === selectedTripGoal.id) ?? selectedTripGoal : null}
+        open={tripSheetOpen}
+        onOpenChange={setTripSheetOpen}
+      />
 
       <BottomNav />
     </div>
