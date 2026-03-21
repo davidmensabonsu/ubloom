@@ -181,6 +181,13 @@ interface UserStore {
   updateGoal: (id: string, updates: Partial<Omit<Goal, 'id'>>) => void;
   removeGoal: (id: string) => void;
   toggleGoalComplete: (id: string) => void;
+  // Trip planning
+  updateTripDetails: (goalId: string, details: Partial<TripDetails>) => void;
+  addItineraryItem: (goalId: string, item: Omit<TripItineraryItem, 'id'>) => void;
+  removeItineraryItem: (goalId: string, itemId: string) => void;
+  addChecklistItem: (goalId: string, title: string) => void;
+  toggleChecklistItem: (goalId: string, itemId: string) => void;
+  removeChecklistItem: (goalId: string, itemId: string) => void;
   completeOnboarding: () => void;
   resetProfile: () => void;
   // Core habits
