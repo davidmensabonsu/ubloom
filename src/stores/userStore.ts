@@ -109,6 +109,7 @@ export interface TripDetails {
   departureDate?: string;
   returnDate?: string;
   vibe?: string;
+  currency?: string;
   budget?: string;
   notes?: string;
   itinerary: TripItineraryItem[];
