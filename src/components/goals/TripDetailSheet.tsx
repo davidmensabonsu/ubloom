@@ -13,12 +13,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const vibeOptions = [
-  { value: 'romantic', emoji: '🌹', label: 'Romantic' },
-  { value: 'adventure', emoji: '🏔️', label: 'Adventure' },
-  { value: 'cultural', emoji: '🏛️', label: 'Cultural' },
-  { value: 'relaxation', emoji: '🌊', label: 'Relaxation' },
-  { value: 'girls-trip', emoji: '👯', label: 'Girls Trip' },
-  { value: 'solo', emoji: '🧘', label: 'Solo' },
+  { value: 'romantic', label: 'Romantic' },
+  { value: 'adventure', label: 'Adventure' },
+  { value: 'cultural', label: 'Cultural' },
+  { value: 'relaxation', label: 'Relaxation' },
+  { value: 'girls-trip', label: 'Girls Trip' },
+  { value: 'solo', label: 'Solo' },
 ];
 
 // Renders text with clickable hyperlinks
