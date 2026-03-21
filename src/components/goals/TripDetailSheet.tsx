@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MapPin, Calendar, Wallet, StickyNote, Pencil, Trash2, Check, X } from 'lucide-react';
+import { MapPin, Calendar, Wallet, StickyNote, Pencil, Trash2, Check, X, ImagePlus, Link } from 'lucide-react';
 import { useUserStore, type Goal } from '@/stores/userStore';
 import { format, parseISO, differenceInDays } from 'date-fns';
 import TripItinerary from './TripItinerary';
@@ -9,6 +9,8 @@ import TripChecklist from './TripChecklist';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarPicker } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const vibeOptions = [
   { value: 'romantic', emoji: '🌹', label: 'Romantic' },
@@ -18,6 +20,32 @@ const vibeOptions = [
   { value: 'girls-trip', emoji: '👯', label: 'Girls Trip' },
   { value: 'solo', emoji: '🧘', label: 'Solo' },
 ];
+
+// Renders text with clickable hyperlinks
+function RichText({ text }: { text: string }) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+  return (
+    <span className="whitespace-pre-wrap">
+      {parts.map((part, i) =>
+        urlRegex.test(part) ? (
+          <a
+            key={i}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline underline-offset-2 hover:text-primary/80 break-all"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {part}
+          </a>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </span>
+  );
+}
 
 interface TripDetailSheetProps {
   goal: Goal | null;
@@ -29,10 +57,13 @@ export default function TripDetailSheet({ goal, open, onOpenChange }: TripDetail
   const { updateTripDetails, updateGoal, removeGoal, toggleGoalComplete } = useUserStore();
   const [editingNotes, setEditingNotes] = useState(false);
   const [notesText, setNotesText] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!goal) return null;
 
   const trip = goal.tripDetails ?? { itinerary: [], checklist: [] };
+  const photos = trip.photos ?? [];
   const totalDays = trip.departureDate && trip.returnDate
     ? Math.max(1, differenceInDays(parseISO(trip.returnDate), parseISO(trip.departureDate)) + 1)
     : 0;
@@ -49,6 +80,41 @@ export default function TripDetailSheet({ goal, open, onOpenChange }: TripDetail
   const handleSaveNotes = () => {
     updateTripDetails(goal.id, { notes: notesText });
     setEditingNotes(false);
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploading(true);
+    const newPhotos: string[] = [];
+
+    for (const file of Array.from(files)) {
+      if (!file.type.startsWith('image/')) continue;
+      const ext = file.name.split('.').pop();
+      const path = `trips/${goal.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
+      const { error } = await supabase.storage.from('vision-images').upload(path, file);
+      if (error) {
+        toast.error('Failed to upload photo');
+        continue;
+      }
+
+      const { data: urlData } = supabase.storage.from('vision-images').getPublicUrl(path);
+      newPhotos.push(urlData.publicUrl);
+    }
+
+    if (newPhotos.length > 0) {
+      updateTripDetails(goal.id, { photos: [...photos, ...newPhotos] });
+      toast.success(`${newPhotos.length} photo${newPhotos.length > 1 ? 's' : ''} added`);
+    }
+
+    setUploading(false);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleRemovePhoto = (url: string) => {
+    updateTripDetails(goal.id, { photos: photos.filter((p) => p !== url) });
   };
 
   return (
@@ -85,6 +151,7 @@ export default function TripDetailSheet({ goal, open, onOpenChange }: TripDetail
             <TabsTrigger value="overview" className="flex-1 text-xs">Overview</TabsTrigger>
             <TabsTrigger value="itinerary" className="flex-1 text-xs">Itinerary</TabsTrigger>
             <TabsTrigger value="checklist" className="flex-1 text-xs">Checklist</TabsTrigger>
+            <TabsTrigger value="photos" className="flex-1 text-xs">Photos</TabsTrigger>
           </TabsList>
 
           <div className="flex-1 overflow-y-auto px-5 pb-8">
@@ -181,11 +248,15 @@ export default function TripDetailSheet({ goal, open, onOpenChange }: TripDetail
                 />
               </div>
 
-              {/* Notes */}
+              {/* Notes with hyperlink support */}
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1">
                   <StickyNote size={12} />
                   Notes
+                  <span className="ml-auto flex items-center gap-0.5 text-[10px] font-normal normal-case tracking-normal text-muted-foreground/60">
+                    <Link size={10} />
+                    Links auto-detect
+                  </span>
                 </label>
                 {editingNotes ? (
                   <div className="space-y-2">
@@ -193,8 +264,8 @@ export default function TripDetailSheet({ goal, open, onOpenChange }: TripDetail
                       autoFocus
                       value={notesText}
                       onChange={(e) => setNotesText(e.target.value)}
-                      rows={4}
-                      placeholder="Flight details, hotel links, outfit ideas..."
+                      rows={5}
+                      placeholder="Paste hotel links, flight details, outfit ideas...&#10;URLs will become clickable automatically!"
                       className="w-full text-sm bg-muted/50 rounded-xl px-3 py-2.5 resize-none focus:ring-2 focus:ring-primary/30 focus:outline-none"
                     />
                     <div className="flex gap-2">
@@ -207,7 +278,7 @@ export default function TripDetailSheet({ goal, open, onOpenChange }: TripDetail
                     onClick={handleStartEditNotes}
                     className="w-full text-left text-sm bg-muted/50 rounded-xl px-3 py-2.5 min-h-[60px] text-muted-foreground hover:bg-muted/70 transition-colors"
                   >
-                    {trip.notes || 'Tap to add notes...'}
+                    {trip.notes ? <RichText text={trip.notes} /> : 'Tap to add notes...'}
                   </button>
                 )}
               </div>
@@ -226,6 +297,49 @@ export default function TripDetailSheet({ goal, open, onOpenChange }: TripDetail
 
             <TabsContent value="checklist" className="mt-3">
               <TripChecklist goalId={goal.id} items={trip.checklist} />
+            </TabsContent>
+
+            <TabsContent value="photos" className="mt-3 space-y-4">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={handlePhotoUpload}
+              />
+
+              {/* Photo grid */}
+              {photos.length > 0 && (
+                <div className="grid grid-cols-2 gap-2">
+                  {photos.map((url, i) => (
+                    <div key={i} className="relative group rounded-xl overflow-hidden aspect-square bg-muted/30">
+                      <img src={url} alt={`Trip photo ${i + 1}`} className="w-full h-full object-cover" />
+                      <button
+                        onClick={() => handleRemovePhoto(url)}
+                        className="absolute top-1.5 right-1.5 p-1 rounded-full bg-background/80 text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Upload button */}
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="w-full flex flex-col items-center justify-center gap-2 py-8 rounded-xl border-2 border-dashed border-muted-foreground/20 text-muted-foreground hover:border-primary/40 hover:text-primary/70 transition-colors"
+              >
+                <ImagePlus size={24} />
+                <span className="text-sm">
+                  {uploading ? 'Uploading...' : 'Add inspiration photos'}
+                </span>
+                <span className="text-xs text-muted-foreground/60">
+                  Hotel screenshots, destination inspo, outfit ideas
+                </span>
+              </button>
             </TabsContent>
           </div>
         </Tabs>
