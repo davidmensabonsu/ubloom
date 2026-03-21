@@ -8,12 +8,12 @@ import { useUserStore } from '@/stores/userStore';
 import { motion } from 'framer-motion';
 
 const vibeOptions = [
-  { value: 'romantic', emoji: '🌹', label: 'Romantic' },
-  { value: 'adventure', emoji: '🏔️', label: 'Adventure' },
-  { value: 'cultural', emoji: '🏛️', label: 'Cultural' },
-  { value: 'relaxation', emoji: '🌊', label: 'Relaxation' },
-  { value: 'girls-trip', emoji: '👯', label: 'Girls Trip' },
-  { value: 'solo', emoji: '🧘', label: 'Solo' },
+  { value: 'romantic', label: 'Romantic' },
+  { value: 'adventure', label: 'Adventure' },
+  { value: 'cultural', label: 'Cultural' },
+  { value: 'relaxation', label: 'Relaxation' },
+  { value: 'girls-trip', label: 'Girls Trip' },
+  { value: 'solo', label: 'Solo' },
 ];
 
 interface AddTravelGoalFormProps {
