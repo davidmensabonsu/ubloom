@@ -28,6 +28,7 @@ export default function AddTravelGoalForm({ onClose }: AddTravelGoalFormProps) {
   const [departureDate, setDepartureDate] = useState<Date | undefined>();
   const [returnDate, setReturnDate] = useState<Date | undefined>();
   const [vibe, setVibe] = useState<string | undefined>();
+  const [currency, setCurrency] = useState<string>('£');
   const [budget, setBudget] = useState('');
 
   const handleSubmit = () => {
