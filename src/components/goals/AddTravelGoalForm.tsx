@@ -8,12 +8,12 @@ import { useUserStore } from '@/stores/userStore';
 import { motion } from 'framer-motion';
 
 const vibeOptions = [
-  { value: 'romantic', emoji: '🌹', label: 'Romantic' },
-  { value: 'adventure', emoji: '🏔️', label: 'Adventure' },
-  { value: 'cultural', emoji: '🏛️', label: 'Cultural' },
-  { value: 'relaxation', emoji: '🌊', label: 'Relaxation' },
-  { value: 'girls-trip', emoji: '👯', label: 'Girls Trip' },
-  { value: 'solo', emoji: '🧘', label: 'Solo' },
+  { value: 'romantic', label: 'Romantic' },
+  { value: 'adventure', label: 'Adventure' },
+  { value: 'cultural', label: 'Cultural' },
+  { value: 'relaxation', label: 'Relaxation' },
+  { value: 'girls-trip', label: 'Girls Trip' },
+  { value: 'solo', label: 'Solo' },
 ];
 
 interface AddTravelGoalFormProps {
@@ -58,7 +58,7 @@ export default function AddTravelGoalForm({ onClose }: AddTravelGoalFormProps) {
           autoFocus
           value={tripName}
           onChange={(e) => setTripName(e.target.value)}
-          placeholder="Name your trip ✈️"
+          placeholder="Name your trip"
           className="w-full p-4 rounded-2xl bg-muted border-0 focus:ring-2 focus:ring-primary/30 focus:outline-none"
         />
 
@@ -107,7 +107,6 @@ export default function AddTravelGoalForm({ onClose }: AddTravelGoalFormProps) {
                 onClick={() => setVibe(vibe === v.value ? undefined : v.value)}
                 className={cn("mood-pill text-sm", vibe === v.value && "selected")}
               >
-                <span>{v.emoji}</span>
                 <span>{v.label}</span>
               </button>
             ))}

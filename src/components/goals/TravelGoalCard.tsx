@@ -3,14 +3,6 @@ import { MapPin, Calendar, CheckCircle2, Plane } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import type { Goal } from '@/stores/userStore';
 
-const vibeEmojis: Record<string, string> = {
-  romantic: '🌹',
-  adventure: '🏔️',
-  cultural: '🏛️',
-  relaxation: '🌊',
-  'girls-trip': '👯',
-  solo: '🧘',
-};
 
 interface TravelGoalCardProps {
   goal: Goal;
@@ -41,10 +33,7 @@ export default function TravelGoalCard({ goal, onTap }: TravelGoalCardProps) {
             </p>
           )}
         </div>
-        {trip?.vibe && (
-          <span className="text-lg shrink-0">{vibeEmojis[trip.vibe] || '✈️'}</span>
-        )}
-        {!trip?.vibe && <Plane size={16} className="text-muted-foreground shrink-0" />}
+        <Plane size={16} className="text-muted-foreground shrink-0" />
       </div>
 
       {(trip?.departureDate || checklistTotal > 0) && (
