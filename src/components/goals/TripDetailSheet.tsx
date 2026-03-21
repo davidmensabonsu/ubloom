@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MapPin, Calendar, Wallet, StickyNote, Pencil, Trash2, Check, X } from 'lucide-react';
+import { MapPin, Calendar, StickyNote, Trash2, Check } from 'lucide-react';
 import { useUserStore, type Goal } from '@/stores/userStore';
 import { format, parseISO, differenceInDays } from 'date-fns';
 import TripItinerary from './TripItinerary';
