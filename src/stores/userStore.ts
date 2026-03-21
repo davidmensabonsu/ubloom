@@ -111,6 +111,7 @@ export interface TripDetails {
   vibe?: string;
   budget?: string;
   notes?: string;
+  photos?: string[]; // URLs of uploaded photos
   itinerary: TripItineraryItem[];
   checklist: TripChecklistItem[];
 }
