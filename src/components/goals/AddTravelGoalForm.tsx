@@ -118,11 +118,11 @@ export default function AddTravelGoalForm({ onClose }: AddTravelGoalFormProps) {
         </div>
 
         {/* Budget */}
-        <input
-          value={budget}
-          onChange={(e) => setBudget(e.target.value)}
-          placeholder="Budget (optional) e.g. £2,000"
-          className="w-full p-3 rounded-2xl bg-muted/50 text-sm focus:ring-2 focus:ring-primary/30 focus:outline-none"
+        <BudgetPicker
+          currency={currency}
+          budget={budget}
+          onCurrencyChange={setCurrency}
+          onBudgetChange={setBudget}
         />
       </div>
 
