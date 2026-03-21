@@ -102,7 +102,7 @@ export default function AddTravelGoalForm({ onClose }: AddTravelGoalFormProps) {
                 onClick={() => setVibe(vibe === v.value ? undefined : v.value)}
                 className={cn("mood-pill text-sm", vibe === v.value && "selected")}
               >
-                <span>{v.emoji}</span>
+                <img src={v.icon} alt={v.label} className="w-5 h-5 object-contain" />
                 <span>{v.label}</span>
               </button>
             ))}
