@@ -7,15 +7,7 @@ import { cn } from '@/lib/utils';
 import { useUserStore } from '@/stores/userStore';
 import { motion } from 'framer-motion';
 import BudgetPicker from './BudgetPicker';
-
-const vibeOptions = [
-  { value: 'romantic', emoji: '🌹', label: 'Romantic' },
-  { value: 'adventure', emoji: '🏔️', label: 'Adventure' },
-  { value: 'cultural', emoji: '🏛️', label: 'Cultural' },
-  { value: 'relaxation', emoji: '🌊', label: 'Relaxation' },
-  { value: 'girls-trip', emoji: '👯', label: 'Girls Trip' },
-  { value: 'solo', emoji: '🧘', label: 'Solo' },
-];
+import { vibeOptions } from '@/lib/vibeOptions';
 
 interface AddTravelGoalFormProps {
   onClose: () => void;
@@ -110,7 +102,7 @@ export default function AddTravelGoalForm({ onClose }: AddTravelGoalFormProps) {
                 onClick={() => setVibe(vibe === v.value ? undefined : v.value)}
                 className={cn("mood-pill text-sm", vibe === v.value && "selected")}
               >
-                <span>{v.emoji}</span>
+                <img src={v.icon} alt={v.label} className="w-5 h-5 object-contain" />
                 <span>{v.label}</span>
               </button>
             ))}

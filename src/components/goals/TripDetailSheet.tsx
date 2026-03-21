@@ -7,18 +7,10 @@ import { format, parseISO, differenceInDays } from 'date-fns';
 import TripItinerary from './TripItinerary';
 import TripChecklist from './TripChecklist';
 import BudgetPicker from './BudgetPicker';
+import { vibeOptions } from '@/lib/vibeOptions';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarPicker } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
-
-const vibeOptions = [
-  { value: 'romantic', emoji: '🌹', label: 'Romantic' },
-  { value: 'adventure', emoji: '🏔️', label: 'Adventure' },
-  { value: 'cultural', emoji: '🏛️', label: 'Cultural' },
-  { value: 'relaxation', emoji: '🌊', label: 'Relaxation' },
-  { value: 'girls-trip', emoji: '👯', label: 'Girls Trip' },
-  { value: 'solo', emoji: '🧘', label: 'Solo' },
-];
 
 interface TripDetailSheetProps {
   goal: Goal | null;
@@ -152,19 +144,19 @@ export default function TripDetailSheet({ goal, open, onOpenChange }: TripDetail
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Trip Vibe</label>
                 <div className="flex flex-wrap gap-2">
-                  {vibeOptions.map((v) => (
-                    <button
-                      key={v.value}
-                      onClick={() => handleVibeSelect(v.value)}
-                      className={cn(
-                        "mood-pill text-sm",
-                        trip.vibe === v.value && "selected"
-                      )}
-                    >
-                      <span>{v.emoji}</span>
-                      <span>{v.label}</span>
-                    </button>
-                  ))}
+                    {vibeOptions.map((v) => (
+                      <button
+                        key={v.value}
+                        onClick={() => handleVibeSelect(v.value)}
+                        className={cn(
+                          "mood-pill text-sm",
+                          trip.vibe === v.value && "selected"
+                        )}
+                      >
+                        <img src={v.icon} alt={v.label} className="w-5 h-5 object-contain" />
+                        <span>{v.label}</span>
+                      </button>
+                    ))}
                 </div>
               </div>
 
