@@ -6,6 +6,7 @@ import { useUserStore, type Goal } from '@/stores/userStore';
 import { format, parseISO, differenceInDays } from 'date-fns';
 import TripItinerary from './TripItinerary';
 import TripChecklist from './TripChecklist';
+import BudgetPicker from './BudgetPicker';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarPicker } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
