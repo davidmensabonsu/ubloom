@@ -44,6 +44,7 @@ export default function AddTravelGoalForm({ onClose }: AddTravelGoalFormProps) {
         departureDate: departureDate ? format(departureDate, 'yyyy-MM-dd') : undefined,
         returnDate: returnDate ? format(returnDate, 'yyyy-MM-dd') : undefined,
         vibe,
+        currency: currency || undefined,
         budget: budget || undefined,
         itinerary: [],
         checklist: [],
