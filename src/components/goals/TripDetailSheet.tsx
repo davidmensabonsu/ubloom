@@ -169,18 +169,12 @@ export default function TripDetailSheet({ goal, open, onOpenChange }: TripDetail
               </div>
 
               {/* Budget */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-                  <Wallet size={12} />
-                  Budget
-                </label>
-                <input
-                  value={trip.budget || ''}
-                  onChange={(e) => updateTripDetails(goal.id, { budget: e.target.value })}
-                  placeholder="e.g. £2,000"
-                  className="w-full text-sm bg-muted/50 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary/30 focus:outline-none"
-                />
-              </div>
+              <BudgetPicker
+                currency={trip.currency}
+                budget={trip.budget}
+                onCurrencyChange={(currency) => updateTripDetails(goal.id, { currency })}
+                onBudgetChange={(budget) => updateTripDetails(goal.id, { budget })}
+              />
 
               {/* Notes */}
               <div className="space-y-1.5">
