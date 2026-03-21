@@ -1,52 +1,52 @@
 
 
-## Fix Weekly Progress Bar Accuracy
+## Monetisation Plan: £4.99/month or £45/year with 3-day trial
 
-### Problem
+### Overview
+Add a Stripe-powered subscription with two pricing tiers (monthly and yearly) and a 3-day free trial. All new users get full access during the trial; after it expires, they hit a paywall. Existing users will also need to subscribe.
 
-Two bugs cause past days' progress bars to show incorrectly:
+### How it works for users
+1. User signs up and completes onboarding as normal — full access for 3 days
+2. After 3 days (or anytime), they see a subscription screen with two options
+3. They pick monthly (£4.99) or yearly (£45), enter payment via Stripe Checkout
+4. On success, they continue using the app; on cancellation/expiry, they hit the paywall again
+5. Users can manage their subscription from the Profile page
 
-1. **Timezone mismatch**: Habit completions are saved using UTC dates (`toISOString()`), but the weekly chart looks up dates using local time (`date-fns format()`). For anyone west of UTC, an evening completion on Tuesday gets stored as Wednesday, so Tuesday's bar stays empty.
+### Technical approach
 
-2. **Shifting denominator**: The chart always divides by the *current* number of core habits. If you had 3 habits on Tuesday (all completed) but later added a 4th, Tuesday shows as 75% instead of 100%.
+**1. Enable Stripe integration**
+- Use the Lovable Stripe tooling to set up products and prices (£4.99/month GBP, £45/year GBP, both with 3-day trial)
 
-### Solution
+**2. Database: `subscriptions` table**
+- Columns: `id`, `user_id`, `stripe_customer_id`, `stripe_subscription_id`, `status` (trialing/active/canceled/past_due), `current_period_end`, `trial_end`, `created_at`, `updated_at`
+- RLS: users can only read their own row
+- Populated/updated via Stripe webhooks
 
-**1. Standardize all date handling to local time**
+**3. Edge function: `create-checkout`**
+- Accepts `price_id` and user info
+- Creates or retrieves Stripe customer, creates a Checkout Session with the 3-day trial, returns the checkout URL
 
-Create a shared helper function `getLocalDateStr()` that formats dates using local timezone consistently. Replace every `new Date().toISOString().split('T')[0]` call in the store with this helper.
+**4. Edge function: `stripe-webhook`**
+- Handles `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`
+- Upserts into `subscriptions` table
 
-| Location | Change |
-|----------|--------|
-| `src/lib/dateUtils.ts` | New file with `getLocalDateStr(date?: Date)` helper |
-| `src/stores/userStore.ts` | Replace all 6 occurrences of `toISOString().split('T')[0]` with `getLocalDateStr()` |
+**5. Edge function: `create-portal-session`**
+- Creates a Stripe Customer Portal session so users can manage/cancel their subscription
 
-**2. Fix the weekly progress calculation**
+**6. Frontend: Subscription gate**
+- New `useSubscription` hook that queries the `subscriptions` table for the current user's status
+- New `SubscriptionGate` component wrapping protected routes — if no active/trialing subscription, redirect to a paywall page
+- New `/subscribe` paywall page with the two pricing cards (monthly/yearly), styled to match the app aesthetic
+- "Manage subscription" button on the Profile page linking to the Stripe Customer Portal
 
-For each past day, instead of using `coreHabits.length` as the denominator, count only completions that match current core habit IDs (excluding custom task completions). For the denominator, use the greater of: the current core habit count or the number of distinct core habit completions for that day. This way, if all habits that existed on a past day were completed, the bar shows 100%.
+**7. Flow**
+- New users: sign up → onboarding → 3-day trial starts automatically at first Stripe checkout (or we auto-create a trial subscription on signup)
+- Returning users without subscription: redirected to `/subscribe`
+- Active subscribers: normal app access
 
-| Location | Change |
-|----------|--------|
-| `src/components/routine/WeeklyProgress.tsx` | Filter completions to only core habit IDs. For past days, set `totalHabits = max(coreHabits.length, completedCoreHabits)` so a fully-completed past day always shows 100%. Apply the same logic in the streak calculation. |
-
-### Technical Details
-
-**New helper** (`src/lib/dateUtils.ts`):
-```
-export function getLocalDateStr(date?: Date): string {
-  const d = date || new Date();
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-```
-
-**WeeklyProgress fix** -- key logic change in the `weekData` loop:
-- Get set of current core habit IDs
-- For each day, count only completions whose `habitId` is in that set
-- For past days: `totalHabits = Math.max(coreHabits.length, completedCoreHabits)`
-- For today: `totalHabits = coreHabits.length` (standard)
-
-**Store fix** -- straightforward find-and-replace of the date pattern across 6 call sites in `userStore.ts`.
+### Files to create/modify
+- **New**: `src/hooks/useSubscription.ts`, `src/pages/Subscribe.tsx`, `src/components/SubscriptionGate.tsx`
+- **New edge functions**: `create-checkout`, `stripe-webhook`, `create-portal-session`
+- **New migration**: `subscriptions` table
+- **Modified**: `src/App.tsx` (add route + gate), `src/pages/Profile.tsx` (manage subscription button), `src/components/ProtectedRoute.tsx` (integrate subscription check)
 
