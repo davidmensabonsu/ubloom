@@ -3,14 +3,6 @@ import { MapPin, Calendar, CheckCircle2, Plane } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import type { Goal } from '@/stores/userStore';
 
-const vibeEmojis: Record<string, string> = {
-  romantic: '🌹',
-  adventure: '🏔️',
-  cultural: '🏛️',
-  relaxation: '🌊',
-  'girls-trip': '👯',
-  solo: '🧘',
-};
 
 interface TravelGoalCardProps {
   goal: Goal;
