@@ -28,9 +28,11 @@ export default function Routine() {
    const prevAllCompletedRef = useRef(false);
    const celebratedStreaksRef = useRef<Set<number>>(new Set());
 
-   // Mark routine setup as complete if onboarding is done
+   // Auto-generate habits from onboarding/dream life if none exist
    useEffect(() => {
-     if (profile.onboardingComplete && !profile.routineSetupComplete) {
+     if (profile.onboardingComplete && profile.coreHabits.length === 0) {
+       const habits = generateHabitsFromProfile(profile);
+       setCoreHabits(habits);
        completeRoutineSetup();
      }
    }, [profile.onboardingComplete]);
