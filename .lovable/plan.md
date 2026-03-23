@@ -1,78 +1,61 @@
 
 
-## Trip Planning for Travel & Experiences Goals
+## Add Habit Frequency Selection
 
-### What users will experience
+### What changes
 
-When a user adds or taps into a travel goal, they'll see a rich, interactive trip planner — not just a title and deadline. Each travel goal becomes a mini trip card that feels real and exciting:
-
-- **Destination & dates** — where and when (departure/return)
-- **Trip vibe** — pick the mood (romantic, adventure, cultural, relaxation, girls trip, solo)
-- **Itinerary builder** — day-by-day plan with activities, times, and notes
-- **Checklist** — packing list, bookings to make, things to research
-- **Budget tracker** — simple estimated budget field
-- **Notes** — free-text for flight details, hotel links, outfit ideas, etc.
-
-Tapping a travel goal opens a dedicated **Trip Detail sheet** (bottom drawer) where all this lives. The travel section of the Goals page will show trip cards with destination, dates, and a progress indicator (how many checklist items done).
+When adding or editing a habit, users will see a new "Frequency" picker with these options:
+- **Every day** (default, current behavior)
+- **Specific days** — pick which days of the week (Mon, Tue, Wed, etc.)
+- **One-off** — appears only today, then disappears
 
 ### Technical approach
 
-**1. Extend the Goal interface in `userStore.ts`**
+**1. Extend `CoreHabit` interface in `userStore.ts`**
 
-Add optional `tripDetails` field to the `Goal` type:
-```
-tripDetails?: {
-  destination?: string;
-  departureDate?: string;
-  returnDate?: string;
-  vibe?: string;
-  budget?: string;
-  notes?: string;
-  itinerary: Array<{ id: string; day: number; title: string; time?: string; notes?: string }>
-  checklist: Array<{ id: string; title: string; completed: boolean }>
+Add a `frequency` field:
+```typescript
+export type HabitFrequency = 'daily' | 'specific-days' | 'one-off';
+
+export interface CoreHabit {
+  id: string;
+  title: string;
+  timeOfDay: TimeOfDay;
+  icon?: string;
+  frequency?: HabitFrequency;       // defaults to 'daily'
+  specificDays?: number[];           // 0=Sun, 1=Mon, ... 6=Sat
+  oneOffDate?: string;               // yyyy-MM-dd for one-off habits
 }
 ```
 
-Add store actions: `updateTripDetails`, `addItineraryItem`, `removeItineraryItem`, `addChecklistItem`, `toggleChecklistItem`, `removeChecklistItem`.
+**2. Update `AddTaskDialog.tsx`**
 
-**2. Enhanced "Add Travel Goal" modal**
+Add a frequency selector section below "Time of day":
+- Three pill buttons: Every day, Specific days, One-off
+- When "Specific days" is selected, show 7 day-of-week toggle buttons (M T W T F S S)
+- Save `frequency`, `specificDays`, and `oneOffDate` (auto-set to today) on the new habit
 
-When category is `travel`, the add modal expands to show:
-- Destination input
-- Departure & return date pickers
-- Vibe selector (pill buttons with icons)
-- Budget input (optional)
-- The title becomes the trip name
+**3. Update `EditHabitDialog.tsx`**
 
-**3. New `TripDetailSheet` component**
+Add the same frequency selector so users can change frequency on existing habits.
 
-A slide-up sheet (`src/components/goals/TripDetailSheet.tsx`) opened by tapping a travel goal. Contains tabs/sections:
-- **Overview** — destination, dates, vibe, budget, notes
-- **Itinerary** — day-by-day timeline, add activities per day
-- **Checklist** — toggleable items (bookings, packing, research)
+**4. Update `CoreHabitsSection.tsx`**
 
-**4. Travel goal cards in the Goals page**
+Filter habits shown today based on frequency:
+- `daily` — always show
+- `specific-days` — show only if today's day-of-week is in `specificDays`
+- `one-off` — show only if `oneOffDate` matches today
 
-Instead of the simple goal row, travel goals render as richer cards showing destination, date range, checklist progress (e.g. "3/7 done"), and the vibe tag.
+Add a small label (like the existing "today only" tag) showing the frequency context (e.g., "Mon, Wed, Fri" or "one-off").
 
-**5. Route: no new route needed**
+**5. Update streak/progress calculations in `Routine.tsx`**
 
-Everything lives within the existing `/goals` page using the sheet/drawer pattern.
-
-### Files to create
-- `src/components/goals/TripDetailSheet.tsx` — the main trip detail drawer
-- `src/components/goals/TripItinerary.tsx` — itinerary day-by-day builder
-- `src/components/goals/TripChecklist.tsx` — checklist section
-- `src/components/goals/TravelGoalCard.tsx` — rich card for travel goals in the list
-- `src/components/goals/AddTravelGoalForm.tsx` — enhanced form for travel category
+Adjust the streak calculator to only count habits that were scheduled for each day, not all habits.
 
 ### Files to modify
-- `src/stores/userStore.ts` — extend `Goal` interface + add trip-related actions
-- `src/pages/Goals.tsx` — render travel goals differently + open trip detail sheet + use enhanced add form for travel category
-
-### Design notes
-- Matches existing app aesthetic: glass cards, rounded corners, soft animations, theme-aware colors
-- Vibe options: 🌹 Romantic, 🏔️ Adventure, 🏛️ Cultural, 🌊 Relaxation, 👯 Girls Trip, 🧘 Solo
-- Itinerary uses a clean timeline layout with "+" to add activities
-- Checklist items have the same check-circle style used elsewhere in the app
+- `src/stores/userStore.ts` — extend `CoreHabit` type
+- `src/components/routine/AddTaskDialog.tsx` — add frequency picker UI
+- `src/components/routine/EditHabitDialog.tsx` — add frequency picker UI
+- `src/components/routine/CoreHabitsSection.tsx` — filter habits by frequency for today
+- `src/pages/Routine.tsx` — adjust streak calculation for frequency-aware habits
 
