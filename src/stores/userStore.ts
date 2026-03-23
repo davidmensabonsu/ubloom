@@ -490,23 +490,9 @@ export const useUserStore = create<UserStore>()(
         })),
 
       skipRoutineSetup: () =>
-        set((state) => {
-          const defaultHabits: CoreHabit[] = [
-            { id: 'default-water-morning', title: 'Drink a glass of water', timeOfDay: 'morning', icon: 'glass-water' },
-            { id: 'default-skincare', title: 'Morning skincare', timeOfDay: 'morning', icon: 'sparkles' },
-            { id: 'default-walk', title: 'Take a walk', timeOfDay: 'midday', icon: 'heart' },
-            { id: 'default-water-midday', title: 'Drink water', timeOfDay: 'midday', icon: 'glass-water' },
-            { id: 'default-journal', title: 'Journal or reflect', timeOfDay: 'evening', icon: 'pencil' },
-            { id: 'default-unplug', title: 'Unplug from screens', timeOfDay: 'evening', icon: 'phone' },
-          ];
-          return {
-            profile: {
-              ...state.profile,
-              routineSetupComplete: true,
-              coreHabits: state.profile.coreHabits.length === 0 ? defaultHabits : state.profile.coreHabits,
-            },
-          };
-        }),
+        set((state) => ({
+          profile: { ...state.profile, routineSetupComplete: true },
+        })),
  
       removeHabit: (habitId) =>
         set((state) => ({
