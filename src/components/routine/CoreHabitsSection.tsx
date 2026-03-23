@@ -136,7 +136,7 @@ export default function CoreHabitsSection() {
 
       {/* Habits by time of day */}
       {(['morning', 'midday', 'evening'] as TimeOfDay[]).map((time, sectionIndex) => {
-        const habits = getHabitsByTime(time);
+        const habits = editMode ? getAllHabitsByTime(time) : getHabitsByTime(time);
         const tasks = getTodayTasks(time);
         const config = timeOfDayConfig[time];
         const Icon = config.icon;
