@@ -12,7 +12,7 @@ import WeeklyProgress from '@/components/routine/WeeklyProgress';
 import CelebrationOverlay from '@/components/routine/CelebrationOverlay';
 import ReminderSettings from '@/components/routine/ReminderSettings';
 import { useReminders } from '@/hooks/useReminders';
-import { generateHabitsFromProfile } from '@/lib/generateHabits';
+
 
 export default function Routine() {
    const { profile, setCoreHabits, completeRoutineSetup, isHabitCompletedToday } = useUserStore();
