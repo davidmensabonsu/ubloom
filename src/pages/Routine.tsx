@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import { useState, useEffect, useRef } from 'react';
 import { useUserStore } from '@/stores/userStore';
+import { isHabitScheduledForDate } from '@/components/routine/FrequencyPicker';
 import { Plus } from 'lucide-react';
 import ProfileButton from '@/components/ProfileButton';
 import BottomNav from '@/components/BottomNav';
