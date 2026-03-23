@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CoreHabit, TimeOfDay } from '@/stores/userStore';
+import { CoreHabit, TimeOfDay, HabitFrequency } from '@/stores/userStore';
 import { taskIconOptions, getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
 import { Sun, Clock, Moon, Sparkles } from 'lucide-react';
 import {
@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import FrequencyPicker from '@/components/routine/FrequencyPicker';
 
 const timeOptions: { value: TimeOfDay; label: string; emoji: string }[] = [
   { value: 'morning', label: 'Morning', emoji: '☀️' },
