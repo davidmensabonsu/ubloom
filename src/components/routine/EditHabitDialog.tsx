@@ -110,6 +110,14 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
             </div>
           </div>
 
+          {/* Frequency */}
+          <FrequencyPicker
+            frequency={frequency}
+            specificDays={specificDays}
+            onFrequencyChange={setFrequency}
+            onSpecificDaysChange={setSpecificDays}
+          />
+
           {/* Save */}
           <button
             onClick={handleSave}

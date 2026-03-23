@@ -137,6 +137,14 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
             </div>
           </div>
 
+          {/* Frequency */}
+          <FrequencyPicker
+            frequency={frequency}
+            specificDays={specificDays}
+            onFrequencyChange={setFrequency}
+            onSpecificDaysChange={setSpecificDays}
+          />
+
         </div>
 
         <DrawerFooter>

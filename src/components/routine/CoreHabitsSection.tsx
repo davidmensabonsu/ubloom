@@ -230,6 +230,9 @@ export default function CoreHabitsSection() {
                       <HabitIcon iconId={habit.icon} />
                       {habit.title}
                     </span>
+                    {getFrequencyLabel(habit) && (
+                      <span className="ml-auto text-xs text-muted-foreground/50">{getFrequencyLabel(habit)}</span>
+                    )}
                   </motion.button>
                 );
               })}
