@@ -5,6 +5,7 @@ import { useUserStore, TimeOfDay, CoreHabit } from '@/stores/userStore';
 import { Check, Sun, Clock, Moon, Plus, X, Sparkles, Pencil, Trash2, ChevronUp, ChevronDown, Settings2 } from 'lucide-react';
 import { getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
 import EditHabitDialog from '@/components/routine/EditHabitDialog';
+import { isHabitScheduledForDate, getFrequencyLabel } from '@/components/routine/FrequencyPicker';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -53,6 +54,11 @@ export default function CoreHabitsSection() {
   };
 
   const getHabitsByTime = (time: TimeOfDay) => {
+    return coreHabits.filter((h) => h.timeOfDay === time && isHabitScheduledForDate(h, today));
+  };
+
+  // All habits for reordering (unfiltered by date)
+  const getAllHabitsByTime = (time: TimeOfDay) => {
     return coreHabits.filter((h) => h.timeOfDay === time);
   };
 
@@ -130,7 +136,7 @@ export default function CoreHabitsSection() {
 
       {/* Habits by time of day */}
       {(['morning', 'midday', 'evening'] as TimeOfDay[]).map((time, sectionIndex) => {
-        const habits = getHabitsByTime(time);
+        const habits = editMode ? getAllHabitsByTime(time) : getHabitsByTime(time);
         const tasks = getTodayTasks(time);
         const config = timeOfDayConfig[time];
         const Icon = config.icon;
@@ -224,6 +230,9 @@ export default function CoreHabitsSection() {
                       <HabitIcon iconId={habit.icon} />
                       {habit.title}
                     </span>
+                    {getFrequencyLabel(habit) && (
+                      <span className="ml-auto text-xs text-muted-foreground/50">{getFrequencyLabel(habit)}</span>
+                    )}
                   </motion.button>
                 );
               })}

@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { useUserStore, TimeOfDay } from '@/stores/userStore';
+import { useUserStore, TimeOfDay, HabitFrequency } from '@/stores/userStore';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter, DrawerDescription } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sun, Clock, Moon } from 'lucide-react';
 import { taskIconOptions, iconCategories, renderTaskIcon, getTaskIcon } from '@/lib/taskIcons';
+import FrequencyPicker from '@/components/routine/FrequencyPicker';
+import { getLocalDateStr } from '@/lib/dateUtils';
 
 const timeOptions: { value: TimeOfDay; label: string; icon: typeof Sun }[] = [
   { value: 'morning', label: 'Morning', icon: Sun },
@@ -22,22 +24,34 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
   const [title, setTitle] = useState('');
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>('morning');
   const [icon, setIcon] = useState(taskIconOptions[0].id);
+  const [frequency, setFrequency] = useState<HabitFrequency>('daily');
+  const [specificDays, setSpecificDays] = useState<number[]>([]);
 
   const reset = () => {
     setTitle('');
     setTimeOfDay('morning');
     setIcon(taskIconOptions[0].id);
+    setFrequency('daily');
+    setSpecificDays([]);
   };
 
   const handleSubmit = () => {
     if (!title.trim()) return;
 
-    const newHabit = {
+    const newHabit: any = {
       id: `habit-${Date.now()}`,
       title: title.trim(),
       timeOfDay,
       icon,
+      frequency,
     };
+
+    if (frequency === 'specific-days') {
+      newHabit.specificDays = specificDays;
+    }
+    if (frequency === 'one-off') {
+      newHabit.oneOffDate = getLocalDateStr();
+    }
 
     setCoreHabits([...profile.coreHabits, newHabit]);
     reset();
@@ -122,6 +136,14 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
               })}
             </div>
           </div>
+
+          {/* Frequency */}
+          <FrequencyPicker
+            frequency={frequency}
+            specificDays={specificDays}
+            onFrequencyChange={setFrequency}
+            onSpecificDaysChange={setSpecificDays}
+          />
 
         </div>
 

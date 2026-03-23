@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import { useState, useEffect, useRef } from 'react';
 import { useUserStore } from '@/stores/userStore';
+import { isHabitScheduledForDate } from '@/components/routine/FrequencyPicker';
 import { Plus } from 'lucide-react';
 import ProfileButton from '@/components/ProfileButton';
 import BottomNav from '@/components/BottomNav';
@@ -31,39 +32,44 @@ export default function Routine() {
  
    // Calculate completion status
    const coreHabits = profile.coreHabits || [];
-   const completedCount = coreHabits.filter((h) => isHabitCompletedToday(h.id)).length;
-   const allCompleted = coreHabits.length > 0 && completedCount === coreHabits.length;
+   const today = getLocalDateStr();
+   const todayScheduled = coreHabits.filter((h) => isHabitScheduledForDate(h, today));
+   const completedCount = todayScheduled.filter((h) => isHabitCompletedToday(h.id)).length;
+   const allCompleted = todayScheduled.length > 0 && completedCount === todayScheduled.length;
  
     // Calculate streak (same logic as WeeklyProgress)
     const calculateStreak = () => {
       if (coreHabits.length === 0) return 0;
       const habitCompletions = profile.habitCompletions || [];
-      const coreHabitIds = new Set(coreHabits.map((h) => h.id));
       let currentStreak = 0;
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      const todayDate = new Date();
+      todayDate.setHours(0, 0, 0, 0);
   
       for (let i = 0; i <= 365; i++) {
-        const date = new Date(today);
+        const date = new Date(todayDate);
         date.setDate(date.getDate() - i);
         const dateStr = getLocalDateStr(date);
 
-       const dayCompletions = habitCompletions.filter(
-         (c) => c.date === dateStr && c.completed && coreHabitIds.has(c.habitId)
-       );
+        // Only count habits that were scheduled for this specific date
+        const scheduledForDay = coreHabits.filter((h) => isHabitScheduledForDate(h, dateStr));
+        if (scheduledForDay.length === 0) continue; // skip days with nothing scheduled
 
-       const effectiveTotal = Math.max(coreHabits.length, dayCompletions.length);
-       const completionRate = effectiveTotal > 0 ? dayCompletions.length / effectiveTotal : 0;
+        const scheduledIds = new Set(scheduledForDay.map((h) => h.id));
+        const dayCompletions = habitCompletions.filter(
+          (c) => c.date === dateStr && c.completed && scheduledIds.has(c.habitId)
+        );
 
-       if (completionRate >= 0.5) {
-         currentStreak++;
-       } else if (i > 0) {
-         break;
-       }
-     }
- 
-     return currentStreak;
-   };
+        const completionRate = dayCompletions.length / scheduledForDay.length;
+
+        if (completionRate >= 0.5) {
+          currentStreak++;
+        } else if (i > 0) {
+          break;
+        }
+      }
+  
+      return currentStreak;
+    };
  
    const streak = calculateStreak();
    const streakMilestones = [3, 7, 14, 30, 60, 90, 180, 365];

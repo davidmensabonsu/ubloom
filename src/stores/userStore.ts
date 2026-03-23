@@ -3,13 +3,16 @@ import { persist } from 'zustand/middleware';
 import { getLocalDateStr } from '@/lib/dateUtils';
 
 export type TimeOfDay = 'morning' | 'midday' | 'evening';
+export type HabitFrequency = 'daily' | 'specific-days' | 'one-off';
 
 export interface CoreHabit {
   id: string;
   title: string;
   timeOfDay: TimeOfDay;
   icon?: string;
-  
+  frequency?: HabitFrequency;       // defaults to 'daily'
+  specificDays?: number[];           // 0=Sun, 1=Mon, ... 6=Sat
+  oneOffDate?: string;               // yyyy-MM-dd for one-off habits
 }
 
 export interface HabitCompletion {

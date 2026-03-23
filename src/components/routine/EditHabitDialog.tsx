@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CoreHabit, TimeOfDay } from '@/stores/userStore';
+import { CoreHabit, TimeOfDay, HabitFrequency } from '@/stores/userStore';
 import { taskIconOptions, getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
 import { Sun, Clock, Moon, Sparkles } from 'lucide-react';
 import {
@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import FrequencyPicker from '@/components/routine/FrequencyPicker';
 
 const timeOptions: { value: TimeOfDay; label: string; emoji: string }[] = [
   { value: 'morning', label: 'Morning', emoji: '☀️' },
@@ -26,6 +27,8 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
   const [title, setTitle] = useState('');
   const [icon, setIcon] = useState('');
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>('morning');
+  const [frequency, setFrequency] = useState<HabitFrequency>('daily');
+  const [specificDays, setSpecificDays] = useState<number[]>([]);
 
   // Sync state when habit changes
   const [lastHabitId, setLastHabitId] = useState<string | null>(null);
@@ -33,6 +36,8 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
     setTitle(habit.title);
     setIcon(habit.icon || 'sparkles');
     setTimeOfDay(habit.timeOfDay);
+    setFrequency(habit.frequency || 'daily');
+    setSpecificDays(habit.specificDays || []);
     setLastHabitId(habit.id);
   }
   if (!habit && lastHabitId) {
@@ -41,7 +46,10 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
 
   const handleSave = () => {
     if (!habit || !title.trim()) return;
-    onSave(habit.id, { title: title.trim(), icon, timeOfDay });
+    const updates: Partial<Omit<CoreHabit, 'id'>> = { title: title.trim(), icon, timeOfDay, frequency };
+    if (frequency === 'specific-days') updates.specificDays = specificDays;
+    if (frequency === 'one-off') updates.oneOffDate = habit.oneOffDate;
+    onSave(habit.id, updates);
     onOpenChange(false);
   };
 
@@ -101,6 +109,14 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
               ))}
             </div>
           </div>
+
+          {/* Frequency */}
+          <FrequencyPicker
+            frequency={frequency}
+            specificDays={specificDays}
+            onFrequencyChange={setFrequency}
+            onSpecificDaysChange={setSpecificDays}
+          />
 
           {/* Save */}
           <button
