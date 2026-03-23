@@ -54,6 +54,11 @@ export default function CoreHabitsSection() {
   };
 
   const getHabitsByTime = (time: TimeOfDay) => {
+    return coreHabits.filter((h) => h.timeOfDay === time && isHabitScheduledForDate(h, today));
+  };
+
+  // All habits for reordering (unfiltered by date)
+  const getAllHabitsByTime = (time: TimeOfDay) => {
     return coreHabits.filter((h) => h.timeOfDay === time);
   };
 
