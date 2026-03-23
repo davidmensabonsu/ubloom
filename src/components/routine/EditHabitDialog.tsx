@@ -27,6 +27,8 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
   const [title, setTitle] = useState('');
   const [icon, setIcon] = useState('');
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>('morning');
+  const [frequency, setFrequency] = useState<HabitFrequency>('daily');
+  const [specificDays, setSpecificDays] = useState<number[]>([]);
 
   // Sync state when habit changes
   const [lastHabitId, setLastHabitId] = useState<string | null>(null);
@@ -34,6 +36,8 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
     setTitle(habit.title);
     setIcon(habit.icon || 'sparkles');
     setTimeOfDay(habit.timeOfDay);
+    setFrequency(habit.frequency || 'daily');
+    setSpecificDays(habit.specificDays || []);
     setLastHabitId(habit.id);
   }
   if (!habit && lastHabitId) {
@@ -42,7 +46,10 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
 
   const handleSave = () => {
     if (!habit || !title.trim()) return;
-    onSave(habit.id, { title: title.trim(), icon, timeOfDay });
+    const updates: Partial<Omit<CoreHabit, 'id'>> = { title: title.trim(), icon, timeOfDay, frequency };
+    if (frequency === 'specific-days') updates.specificDays = specificDays;
+    if (frequency === 'one-off') updates.oneOffDate = habit.oneOffDate;
+    onSave(habit.id, updates);
     onOpenChange(false);
   };
 
