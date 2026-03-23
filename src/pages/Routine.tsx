@@ -32,8 +32,10 @@ export default function Routine() {
  
    // Calculate completion status
    const coreHabits = profile.coreHabits || [];
-   const completedCount = coreHabits.filter((h) => isHabitCompletedToday(h.id)).length;
-   const allCompleted = coreHabits.length > 0 && completedCount === coreHabits.length;
+   const today = getLocalDateStr();
+   const todayScheduled = coreHabits.filter((h) => isHabitScheduledForDate(h, today));
+   const completedCount = todayScheduled.filter((h) => isHabitCompletedToday(h.id)).length;
+   const allCompleted = todayScheduled.length > 0 && completedCount === todayScheduled.length;
  
     // Calculate streak (same logic as WeeklyProgress)
     const calculateStreak = () => {
