@@ -97,21 +97,7 @@ export default function CoreHabitsSection() {
   );
 
   if (coreHabits.length === 0 && !hasAnyContent) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="glass-card rounded-3xl p-8 text-center space-y-3"
-      >
-        <div className="icon-3d mx-auto w-fit">
-          <Sparkles size={28} strokeWidth={2} />
-        </div>
-        <h3 className="font-semibold text-base">Start building your routine</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed max-w-[260px] mx-auto">
-          Small daily habits lead to big transformations. Tap the <span className="inline-flex align-middle"><Plus size={14} strokeWidth={2.5} className="text-primary" /></span> button to add your first one!
-        </p>
-      </motion.div>
-    );
+    return null;
   }
 
   return (
