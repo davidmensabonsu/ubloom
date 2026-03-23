@@ -24,22 +24,34 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
   const [title, setTitle] = useState('');
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>('morning');
   const [icon, setIcon] = useState(taskIconOptions[0].id);
+  const [frequency, setFrequency] = useState<HabitFrequency>('daily');
+  const [specificDays, setSpecificDays] = useState<number[]>([]);
 
   const reset = () => {
     setTitle('');
     setTimeOfDay('morning');
     setIcon(taskIconOptions[0].id);
+    setFrequency('daily');
+    setSpecificDays([]);
   };
 
   const handleSubmit = () => {
     if (!title.trim()) return;
 
-    const newHabit = {
+    const newHabit: any = {
       id: `habit-${Date.now()}`,
       title: title.trim(),
       timeOfDay,
       icon,
+      frequency,
     };
+
+    if (frequency === 'specific-days') {
+      newHabit.specificDays = specificDays;
+    }
+    if (frequency === 'one-off') {
+      newHabit.oneOffDate = getLocalDateStr();
+    }
 
     setCoreHabits([...profile.coreHabits, newHabit]);
     reset();
