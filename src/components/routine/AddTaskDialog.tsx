@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { useUserStore, TimeOfDay } from '@/stores/userStore';
+import { useUserStore, TimeOfDay, HabitFrequency } from '@/stores/userStore';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter, DrawerDescription } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sun, Clock, Moon } from 'lucide-react';
 import { taskIconOptions, iconCategories, renderTaskIcon, getTaskIcon } from '@/lib/taskIcons';
+import FrequencyPicker from '@/components/routine/FrequencyPicker';
+import { getLocalDateStr } from '@/lib/dateUtils';
 
 const timeOptions: { value: TimeOfDay; label: string; icon: typeof Sun }[] = [
   { value: 'morning', label: 'Morning', icon: Sun },
