@@ -28,14 +28,6 @@ export default function Routine() {
    const prevAllCompletedRef = useRef(false);
    const celebratedStreaksRef = useRef<Set<number>>(new Set());
 
-   // Auto-generate habits from onboarding/dream life if none exist
-   useEffect(() => {
-     if (profile.onboardingComplete && profile.coreHabits.length === 0) {
-       const habits = generateHabitsFromProfile(profile);
-       setCoreHabits(habits);
-       completeRoutineSetup();
-     }
-   }, [profile.onboardingComplete]);
  
    // Calculate completion status
    const coreHabits = profile.coreHabits || [];
