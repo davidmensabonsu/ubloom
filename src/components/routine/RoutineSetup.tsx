@@ -4,17 +4,7 @@ import { useUserStore, CoreHabit, TimeOfDay } from '@/stores/userStore';
 import { Check, Sun, Clock, Moon, Plus, X, Sparkles } from 'lucide-react';
 import { taskIconOptions, getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
 
-const presetHabits: { title: string; icon: string; timeOfDay: TimeOfDay }[] = [
-  // Morning
-  { title: 'Drink a glass of water', icon: 'glass-water', timeOfDay: 'morning' },
-  { title: 'Morning skincare', icon: 'sparkles', timeOfDay: 'morning' },
-  // Midday
-  { title: 'Take a walk', icon: 'heart', timeOfDay: 'midday' },
-  { title: 'Screen break', icon: 'phone', timeOfDay: 'midday' },
-  // Evening
-  { title: 'Evening skincare', icon: 'sparkles', timeOfDay: 'evening' },
-  { title: 'Journal or reflect', icon: 'pencil', timeOfDay: 'evening' },
-];
+const presetHabits: { title: string; icon: string; timeOfDay: TimeOfDay }[] = [];
 
 const timeOfDayConfig = {
   morning: { label: 'Morning', icon: Sun, color: 'text-primary' },
