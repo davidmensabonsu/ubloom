@@ -5,6 +5,7 @@ import { useUserStore, TimeOfDay, CoreHabit } from '@/stores/userStore';
 import { Check, Sun, Clock, Moon, Plus, X, Sparkles, Pencil, Trash2, ChevronUp, ChevronDown, Settings2 } from 'lucide-react';
 import { getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
 import EditHabitDialog from '@/components/routine/EditHabitDialog';
+import { isHabitScheduledForDate, getFrequencyLabel } from '@/components/routine/FrequencyPicker';
 import {
   AlertDialog,
   AlertDialogAction,
