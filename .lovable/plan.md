@@ -1,61 +1,39 @@
 
 
-## Add Habit Frequency Selection
+## Move "How did you feel today?" to a Daily Check-in Popup
 
 ### What changes
 
-When adding or editing a habit, users will see a new "Frequency" picker with these options:
-- **Every day** (default, current behavior)
-- **Specific days** — pick which days of the week (Mon, Tue, Wed, etc.)
-- **One-off** — appears only today, then disappears
+The mood feelings selector will be removed from the Alignment page and instead appear as a full-screen modal/dialog the first time a user opens the app each day. Once they select and confirm their feelings, it won't appear again until the next day.
 
 ### Technical approach
 
-**1. Extend `CoreHabit` interface in `userStore.ts`**
+**1. Create `DailyMoodCheckin` component** (`src/components/DailyMoodCheckin.tsx`)
+- A modal overlay with the feelings selector UI (moved from Alignment page)
+- Shows the same feeling options, 3-max selection, confirm button
+- On confirm, calls `addMoodEntry()` and closes
+- Include a "Skip" option so users aren't forced
 
-Add a `frequency` field:
-```typescript
-export type HabitFrequency = 'daily' | 'specific-days' | 'one-off';
+**2. Track last check-in date in `userStore.ts`**
+- Add `lastMoodCheckinDate?: string` (yyyy-MM-dd) to `UserProfile`
+- After confirming feelings, set this to today's date
+- Skipping also sets the date (so it doesn't re-appear)
 
-export interface CoreHabit {
-  id: string;
-  title: string;
-  timeOfDay: TimeOfDay;
-  icon?: string;
-  frequency?: HabitFrequency;       // defaults to 'daily'
-  specificDays?: number[];           // 0=Sun, 1=Mon, ... 6=Sat
-  oneOffDate?: string;               // yyyy-MM-dd for one-off habits
-}
-```
+**3. Render in `App.tsx`**
+- Add `DailyMoodCheckin` inside the protected route area (after `CloudSyncProvider`)
+- Only render when:
+  - User is authenticated and onboarding is complete
+  - `lastMoodCheckinDate` is not today
+  - Current route is a main app page (not onboarding/auth)
 
-**2. Update `AddTaskDialog.tsx`**
-
-Add a frequency selector section below "Time of day":
-- Three pill buttons: Every day, Specific days, One-off
-- When "Specific days" is selected, show 7 day-of-week toggle buttons (M T W T F S S)
-- Save `frequency`, `specificDays`, and `oneOffDate` (auto-set to today) on the new habit
-
-**3. Update `EditHabitDialog.tsx`**
-
-Add the same frequency selector so users can change frequency on existing habits.
-
-**4. Update `CoreHabitsSection.tsx`**
-
-Filter habits shown today based on frequency:
-- `daily` — always show
-- `specific-days` — show only if today's day-of-week is in `specificDays`
-- `one-off` — show only if `oneOffDate` matches today
-
-Add a small label (like the existing "today only" tag) showing the frequency context (e.g., "Mon, Wed, Fri" or "one-off").
-
-**5. Update streak/progress calculations in `Routine.tsx`**
-
-Adjust the streak calculator to only count habits that were scheduled for each day, not all habits.
+**4. Remove feelings section from `Alignment.tsx`**
+- Remove the "How did you feel today?" card, related state (`selectedFeelings`, `feelingsConfirmed`, `feelingsExpanded`), and the feelings logic from `handleSave`
+- Keep the journal, future self message, mood trends, and history sections
+- Update the save button to only handle journal entries
 
 ### Files to modify
-- `src/stores/userStore.ts` — extend `CoreHabit` type
-- `src/components/routine/AddTaskDialog.tsx` — add frequency picker UI
-- `src/components/routine/EditHabitDialog.tsx` — add frequency picker UI
-- `src/components/routine/CoreHabitsSection.tsx` — filter habits by frequency for today
-- `src/pages/Routine.tsx` — adjust streak calculation for frequency-aware habits
+- `src/stores/userStore.ts` — add `lastMoodCheckinDate` field
+- `src/components/DailyMoodCheckin.tsx` — new modal component
+- `src/App.tsx` — render the check-in modal
+- `src/pages/Alignment.tsx` — remove feelings section
 
