@@ -95,42 +95,6 @@ export interface RoutineTask {
   timeOfDay?: TimeOfDay;
 }
 
-export interface TripItineraryItem {
-  id: string;
-  day: number;
-  title: string;
-  time?: string;
-  notes?: string;
-}
-
-export interface TripChecklistItem {
-  id: string;
-  title: string;
-  completed: boolean;
-}
-
-export interface TripDetails {
-  destination?: string;
-  departureDate?: string;
-  returnDate?: string;
-  vibe?: string;
-  budget?: string;
-  notes?: string;
-  photos?: string[]; // URLs of uploaded photos
-  itinerary: TripItineraryItem[];
-  checklist: TripChecklistItem[];
-}
-
-export interface Goal {
-  id: string;
-  title: string;
-  category: 'lifestyle' | 'career' | 'wellness' | 'travel';
-  vision?: string;
-  completed: boolean;
-  deadline?: string; // yyyy-MM-dd format
-  tripDetails?: TripDetails;
-}
-
 export interface CachedFutureSelfMessage {
   message: string;
   weekKey: string; // e.g. "2026-W07"
