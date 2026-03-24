@@ -23,7 +23,7 @@ import ChooseAesthetic from "./pages/ChooseAesthetic";
 import Home from "./pages/Home";
 import Alignment from "./pages/Alignment";
 import Routine from "./pages/Routine";
-import Goals from "./pages/Goals";
+import Wonder from "./pages/Wonder";
 import Moodboard from "./pages/Moodboard";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
@@ -53,7 +53,7 @@ function MoodCheckinGate() {
   const { profile } = useUserStore();
   const location = useLocation();
 
-  const mainRoutes = ['/home', '/alignment', '/routine', '/goals', '/moodboard', '/profile'];
+  const mainRoutes = ['/home', '/alignment', '/routine', '/wonder', '/moodboard', '/profile'];
   const isMainRoute = mainRoutes.includes(location.pathname);
 
   const shouldShow =
@@ -70,7 +70,7 @@ function MoodCheckinGate() {
   );
 }
 
-const routeOrder = ['/', '/auth', '/reset-password', '/onboarding', '/dream-life', '/choose-aesthetic', '/home', '/alignment', '/routine', '/goals', '/moodboard', '/profile'];
+const routeOrder = ['/', '/auth', '/reset-password', '/onboarding', '/dream-life', '/choose-aesthetic', '/home', '/alignment', '/routine', '/wonder', '/moodboard', '/profile'];
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -98,7 +98,7 @@ function AnimatedRoutes() {
           <Route path="/home" element={<ProtectedRoute><PageTransition direction={direction}><Home /></PageTransition></ProtectedRoute>} />
           <Route path="/alignment" element={<ProtectedRoute><PageTransition direction={direction}><Alignment /></PageTransition></ProtectedRoute>} />
           <Route path="/routine" element={<ProtectedRoute><PageTransition direction={direction}><Routine /></PageTransition></ProtectedRoute>} />
-          <Route path="/goals" element={<ProtectedRoute><PageTransition direction={direction}><Goals /></PageTransition></ProtectedRoute>} />
+          <Route path="/wonder" element={<ProtectedRoute><PageTransition direction={direction}><Wonder /></PageTransition></ProtectedRoute>} />
           <Route path="/moodboard" element={<ProtectedRoute><PageTransition direction={direction}><Moodboard /></PageTransition></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><PageTransition direction={direction}><Profile /></PageTransition></ProtectedRoute>} />
           <Route path="*" element={<PageTransition direction={direction}><NotFound /></PageTransition>} />

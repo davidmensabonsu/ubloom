@@ -63,7 +63,8 @@ export interface UserProfile {
   habitCompletions: HabitCompletion[];
   routineSetupComplete: boolean;
    reminderSettings: ReminderSettings;
-  goals: Goal[];
+  savedResources: string[];
+  usedResources: string[];
   moodboardItems: MoodboardItem[];
   cachedFutureSelfMessage?: CachedFutureSelfMessage;
   cachedMindsetMessage?: CachedMindsetMessage;
@@ -182,17 +183,10 @@ interface UserStore {
   addMoodEntry: (moods: string[]) => void;
   addRoutineTask: (task: Omit<RoutineTask, 'id'>) => void;
   toggleTask: (id: string) => void;
-  addGoal: (goal: Omit<Goal, 'id'>) => void;
-  updateGoal: (id: string, updates: Partial<Omit<Goal, 'id'>>) => void;
-  removeGoal: (id: string) => void;
-  toggleGoalComplete: (id: string) => void;
-  // Trip planning
-  updateTripDetails: (goalId: string, details: Partial<TripDetails>) => void;
-  addItineraryItem: (goalId: string, item: Omit<TripItineraryItem, 'id'>) => void;
-  removeItineraryItem: (goalId: string, itemId: string) => void;
-  addChecklistItem: (goalId: string, title: string) => void;
-  toggleChecklistItem: (goalId: string, itemId: string) => void;
-  removeChecklistItem: (goalId: string, itemId: string) => void;
+  saveResource: (id: string) => void;
+  unsaveResource: (id: string) => void;
+  markResourceUsed: (id: string) => void;
+  unmarkResourceUsed: (id: string) => void;
   completeOnboarding: () => void;
   resetProfile: () => void;
   // Core habits
@@ -251,7 +245,8 @@ const initialProfile: UserProfile = {
      },
      lastNotified: {},
    },
-  goals: [],
+   savedResources: [],
+  usedResources: [],
   moodboardItems: [],
   onboardingComplete: false,
 };
@@ -322,115 +317,35 @@ export const useUserStore = create<UserStore>()(
           },
         })),
       
-      addGoal: (goal) =>
+      saveResource: (id) =>
         set((state) => ({
           profile: {
             ...state.profile,
-            goals: [
-              { ...goal, id: Date.now().toString() },
-              ...state.profile.goals,
-            ],
+            savedResources: [...(state.profile.savedResources || []).filter((r) => r !== id), id],
           },
         })),
 
-      updateGoal: (id, updates) =>
+      unsaveResource: (id) =>
         set((state) => ({
           profile: {
             ...state.profile,
-            goals: state.profile.goals.map((g) =>
-              g.id === id ? { ...g, ...updates } : g
-            ),
+            savedResources: (state.profile.savedResources || []).filter((r) => r !== id),
           },
         })),
 
-      removeGoal: (id) =>
+      markResourceUsed: (id) =>
         set((state) => ({
           profile: {
             ...state.profile,
-            goals: state.profile.goals.filter((g) => g.id !== id),
+            usedResources: [...(state.profile.usedResources || []).filter((r) => r !== id), id],
           },
         })),
 
-      toggleGoalComplete: (id) =>
+      unmarkResourceUsed: (id) =>
         set((state) => ({
           profile: {
             ...state.profile,
-            goals: state.profile.goals.map((g) =>
-              g.id === id ? { ...g, completed: !g.completed } : g
-            ),
-          },
-        })),
-
-      // Trip planning actions
-      updateTripDetails: (goalId, details) =>
-        set((state) => ({
-          profile: {
-            ...state.profile,
-            goals: state.profile.goals.map((g) =>
-              g.id === goalId
-                ? { ...g, tripDetails: { ...(g.tripDetails ?? { itinerary: [], checklist: [] }), ...details } }
-                : g
-            ),
-          },
-        })),
-
-      addItineraryItem: (goalId, item) =>
-        set((state) => ({
-          profile: {
-            ...state.profile,
-            goals: state.profile.goals.map((g) =>
-              g.id === goalId && g.tripDetails
-                ? { ...g, tripDetails: { ...g.tripDetails, itinerary: [...g.tripDetails.itinerary, { ...item, id: `itin-${Date.now()}` }] } }
-                : g
-            ),
-          },
-        })),
-
-      removeItineraryItem: (goalId, itemId) =>
-        set((state) => ({
-          profile: {
-            ...state.profile,
-            goals: state.profile.goals.map((g) =>
-              g.id === goalId && g.tripDetails
-                ? { ...g, tripDetails: { ...g.tripDetails, itinerary: g.tripDetails.itinerary.filter((i) => i.id !== itemId) } }
-                : g
-            ),
-          },
-        })),
-
-      addChecklistItem: (goalId, title) =>
-        set((state) => ({
-          profile: {
-            ...state.profile,
-            goals: state.profile.goals.map((g) =>
-              g.id === goalId && g.tripDetails
-                ? { ...g, tripDetails: { ...g.tripDetails, checklist: [...g.tripDetails.checklist, { id: `chk-${Date.now()}`, title, completed: false }] } }
-                : g
-            ),
-          },
-        })),
-
-      toggleChecklistItem: (goalId, itemId) =>
-        set((state) => ({
-          profile: {
-            ...state.profile,
-            goals: state.profile.goals.map((g) =>
-              g.id === goalId && g.tripDetails
-                ? { ...g, tripDetails: { ...g.tripDetails, checklist: g.tripDetails.checklist.map((c) => c.id === itemId ? { ...c, completed: !c.completed } : c) } }
-                : g
-            ),
-          },
-        })),
-
-      removeChecklistItem: (goalId, itemId) =>
-        set((state) => ({
-          profile: {
-            ...state.profile,
-            goals: state.profile.goals.map((g) =>
-              g.id === goalId && g.tripDetails
-                ? { ...g, tripDetails: { ...g.tripDetails, checklist: g.tripDetails.checklist.filter((c) => c.id !== itemId) } }
-                : g
-            ),
+            usedResources: (state.profile.usedResources || []).filter((r) => r !== id),
           },
         })),
       

@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.generate-habit-icon]
 verify_jwt = false
+
+[functions.wonder-recommendations]
+verify_jwt = false
