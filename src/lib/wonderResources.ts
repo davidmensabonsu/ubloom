@@ -15,12 +15,12 @@ export interface WonderResource {
 }
 
 export const categoryColors: Record<WonderCategory, string> = {
-  mindset: '280 60% 75%',
-  wellness: '150 45% 65%',
-  fitness: '20 80% 65%',
-  nutrition: '85 50% 60%',
-  lifestyle: '320 55% 72%',
-  calm: '210 50% 70%',
+  mindset: '280 70% 60%',
+  wellness: '150 55% 50%',
+  fitness: '20 85% 55%',
+  nutrition: '85 60% 48%',
+  lifestyle: '320 65% 58%',
+  calm: '210 60% 55%',
 };
 
 export const wonderCategories: { key: WonderCategory; label: string; emoji: string }[] = [
