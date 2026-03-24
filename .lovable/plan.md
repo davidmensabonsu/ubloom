@@ -1,37 +1,36 @@
 
 
-## Redesign Wonder Page — More Visual Hierarchy and Focus
+## Make the Wonder Page Bolder and More Impactful
 
-### Problem
-The current Wonder page is a long, flat list of same-sized resource cards. The recommended section and explore section look identical, nothing visually "pops," and it feels overwhelming rather than calming.
+### Changes
 
-### Design Changes
+**1. Page header** (`Wonder.tsx`)
+- Page title: bump from `page-title` (text-3xl) to `text-4xl font-semibold` with a gradient text effect
+- Subtitle: increase from `text-sm` to `text-base` with slightly darker color
 
-**1. Recommended Section — Make it the hero**
-- Show only 3 recommendations (not 6) to keep it focused
-- Use a horizontal scroll of larger, more visual cards with:
-  - Colored category accent strip on the left edge
-  - Larger title text (font-display)
-  - The "why this is for you" reason displayed prominently
-  - Type emoji as a soft background watermark
-- Add a subtle "See more" link if there are additional recommendations
+**2. "For You" section header** (`RecommendedSection.tsx`)
+- Increase from `text-xl` to `text-2xl font-semibold`
+- Make the Sparkles icon larger (16 → 20)
+- Recommended cards: title from `text-base` to `text-lg font-semibold`, type badge from `text-[10px]` to `text-xs`, card width from 280px to 300px, padding increased
+- Accent strip from `w-1` to `w-1.5`
+- Watermark emoji from `text-4xl` to `text-5xl` with slightly more opacity
 
-**2. Explore Section — Compact, scannable grid**
-- Switch from a vertical list to a 2-column grid of compact cards
-- Each card shows: emoji, title, and type badge only (no description — that's in the detail sheet)
-- Cards are smaller, making the library feel browsable rather than overwhelming
-- Category pills get slightly larger and more tappable
+**3. "Explore" section header** (`Wonder.tsx`)
+- Increase from `text-lg` to `text-xl font-semibold`
+- Category pills: from `text-xs` to `text-sm`, increase padding
 
-**3. Visual polish**
-- Add a soft gradient accent behind the recommended section header
-- Recommended cards use `glass-card` with subtle `shadow-soft` to pop against the flat explore grid
-- Explore grid cards use a lighter `bg-muted/30` to create contrast with the recommended section
-- Limit the explore section to show 8 items initially with a "Show all" button
+**4. Compact resource cards** (`ResourceCard.tsx`)
+- Emoji: from `text-lg` to `text-xl`
+- Title: from `text-xs` to `text-sm font-semibold`
+- Type badge: from `text-[10px]` to `text-xs`
+- Card padding: from `p-3` to `p-3.5`
+- Top accent bar: from `h-0.5` to `h-1`
+
+**5. Grid gap** (`Wonder.tsx`)
+- Increase grid gap from `gap-2` to `gap-3`
 
 ### Files to modify
-
-- **`src/pages/Wonder.tsx`** — restructure layout: horizontal scroll for recommended, 2-column grid for explore, add "Show all" toggle
-- **`src/components/wonder/RecommendedSection.tsx`** — limit to 3 items, use larger horizontal card layout with accent colors
-- **`src/components/wonder/ResourceCard.tsx`** — add a `compact` prop for the 2-column grid variant (emoji + title only, no description)
-- **`src/lib/wonderResources.ts`** — add a `color` field to each category for accent strips
+- `src/pages/Wonder.tsx`
+- `src/components/wonder/RecommendedSection.tsx`
+- `src/components/wonder/ResourceCard.tsx`
 
