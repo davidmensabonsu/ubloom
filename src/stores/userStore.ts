@@ -68,6 +68,7 @@ export interface UserProfile {
   cachedFutureSelfMessage?: CachedFutureSelfMessage;
   cachedMindsetMessage?: CachedMindsetMessage;
   onboardingComplete: boolean;
+  lastMoodCheckinDate?: string; // yyyy-MM-dd
 }
 
 export interface JournalEntry {

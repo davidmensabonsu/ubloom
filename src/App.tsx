@@ -5,11 +5,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useUserStore } from "@/stores/userStore";
 import { useEffect, useRef } from "react";
-import { AuthProvider } from "@/hooks/useAuth";
+import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { CloudSyncProvider } from "@/hooks/useCloudSync";
+import { CloudSyncProvider, useCloudSyncStatus } from "@/hooks/useCloudSync";
 import { AnimatePresence } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
+import DailyMoodCheckin from "@/components/DailyMoodCheckin";
+import { getLocalDateStr } from "@/lib/dateUtils";
 
 // Pages
 import Welcome from "./pages/Welcome";
@@ -44,7 +46,29 @@ function ThemeManager() {
   return null;
 }
 
-// CloudSync is now handled by CloudSyncProvider
+// Daily mood check-in gate
+function MoodCheckinGate() {
+  const { user } = useAuth();
+  const cloudSyncLoaded = useCloudSyncStatus();
+  const { profile } = useUserStore();
+  const location = useLocation();
+
+  const mainRoutes = ['/home', '/alignment', '/routine', '/goals', '/moodboard', '/profile'];
+  const isMainRoute = mainRoutes.includes(location.pathname);
+
+  const shouldShow =
+    user &&
+    cloudSyncLoaded &&
+    profile.onboardingComplete &&
+    isMainRoute &&
+    profile.lastMoodCheckinDate !== getLocalDateStr();
+
+  return (
+    <AnimatePresence>
+      {shouldShow && <DailyMoodCheckin />}
+    </AnimatePresence>
+  );
+}
 
 const routeOrder = ['/', '/auth', '/reset-password', '/onboarding', '/dream-life', '/choose-aesthetic', '/home', '/alignment', '/routine', '/goals', '/moodboard', '/profile'];
 
@@ -61,23 +85,26 @@ function AnimatedRoutes() {
   }, [location.pathname]);
   
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<PageTransition direction={direction}><Welcome /></PageTransition>} />
-        <Route path="/auth" element={<PageTransition direction={direction}><Auth /></PageTransition>} />
-        <Route path="/reset-password" element={<PageTransition direction={direction}><ResetPassword /></PageTransition>} />
-        <Route path="/onboarding" element={<ProtectedRoute><PageTransition direction={direction}><Onboarding /></PageTransition></ProtectedRoute>} />
-        <Route path="/dream-life" element={<ProtectedRoute><PageTransition direction={direction}><DreamLife /></PageTransition></ProtectedRoute>} />
-        <Route path="/choose-aesthetic" element={<ProtectedRoute><PageTransition direction={direction}><ChooseAesthetic /></PageTransition></ProtectedRoute>} />
-        <Route path="/home" element={<ProtectedRoute><PageTransition direction={direction}><Home /></PageTransition></ProtectedRoute>} />
-        <Route path="/alignment" element={<ProtectedRoute><PageTransition direction={direction}><Alignment /></PageTransition></ProtectedRoute>} />
-        <Route path="/routine" element={<ProtectedRoute><PageTransition direction={direction}><Routine /></PageTransition></ProtectedRoute>} />
-        <Route path="/goals" element={<ProtectedRoute><PageTransition direction={direction}><Goals /></PageTransition></ProtectedRoute>} />
-        <Route path="/moodboard" element={<ProtectedRoute><PageTransition direction={direction}><Moodboard /></PageTransition></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><PageTransition direction={direction}><Profile /></PageTransition></ProtectedRoute>} />
-        <Route path="*" element={<PageTransition direction={direction}><NotFound /></PageTransition>} />
-      </Routes>
-    </AnimatePresence>
+    <>
+      <MoodCheckinGate />
+      <AnimatePresence mode="wait" initial={false}>
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<PageTransition direction={direction}><Welcome /></PageTransition>} />
+          <Route path="/auth" element={<PageTransition direction={direction}><Auth /></PageTransition>} />
+          <Route path="/reset-password" element={<PageTransition direction={direction}><ResetPassword /></PageTransition>} />
+          <Route path="/onboarding" element={<ProtectedRoute><PageTransition direction={direction}><Onboarding /></PageTransition></ProtectedRoute>} />
+          <Route path="/dream-life" element={<ProtectedRoute><PageTransition direction={direction}><DreamLife /></PageTransition></ProtectedRoute>} />
+          <Route path="/choose-aesthetic" element={<ProtectedRoute><PageTransition direction={direction}><ChooseAesthetic /></PageTransition></ProtectedRoute>} />
+          <Route path="/home" element={<ProtectedRoute><PageTransition direction={direction}><Home /></PageTransition></ProtectedRoute>} />
+          <Route path="/alignment" element={<ProtectedRoute><PageTransition direction={direction}><Alignment /></PageTransition></ProtectedRoute>} />
+          <Route path="/routine" element={<ProtectedRoute><PageTransition direction={direction}><Routine /></PageTransition></ProtectedRoute>} />
+          <Route path="/goals" element={<ProtectedRoute><PageTransition direction={direction}><Goals /></PageTransition></ProtectedRoute>} />
+          <Route path="/moodboard" element={<ProtectedRoute><PageTransition direction={direction}><Moodboard /></PageTransition></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><PageTransition direction={direction}><Profile /></PageTransition></ProtectedRoute>} />
+          <Route path="*" element={<PageTransition direction={direction}><NotFound /></PageTransition>} />
+        </Routes>
+      </AnimatePresence>
+    </>
   );
 }
 
