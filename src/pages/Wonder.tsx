@@ -93,7 +93,7 @@ export default function Wonder() {
                     : 'bg-muted/60 text-muted-foreground hover:bg-muted'
                 }`}
               >
-                <span>{cat.emoji}</span>
+                <img src={cat.icon} alt="" className="w-4 h-4 object-contain clay-icon" />
                 {cat.label}
               </button>
             ))}

@@ -24,7 +24,7 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
       <SheetContent side="bottom" className="rounded-t-3xl max-h-[85vh] overflow-y-auto">
         <SheetHeader className="text-left pb-4">
           <div className="flex items-center gap-2 mb-1">
-            <span>{typeInfo.emoji}</span>
+            <img src={typeInfo.icon} alt="" className="w-5 h-5 object-contain clay-icon" />
             <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{typeInfo.label}</span>
           </div>
           <SheetTitle className="font-display text-xl">{resource.title}</SheetTitle>
