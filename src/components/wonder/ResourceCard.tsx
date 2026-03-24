@@ -20,22 +20,22 @@ export default function ResourceCard({ resource, onTap, compact }: ResourceCardP
     return (
       <motion.button
         onClick={onTap}
-        className="w-full text-left p-3 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors relative overflow-hidden"
+        className="w-full text-left p-3.5 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors relative overflow-hidden"
         whileTap={{ scale: 0.97 }}
       >
         {/* Subtle top accent */}
         <div
-          className="absolute top-0 left-0 right-0 h-0.5"
-          style={{ backgroundColor: `hsl(${color} / 0.4)` }}
+          className="absolute top-0 left-0 right-0 h-1"
+          style={{ backgroundColor: `hsl(${color} / 0.5)` }}
         />
         <div className="flex items-start gap-2">
-          <span className="text-lg shrink-0 mt-0.5">{typeInfo.emoji}</span>
+          <span className="text-xl shrink-0 mt-0.5">{typeInfo.emoji}</span>
           <div className="flex-1 min-w-0">
-            <h4 className="text-xs font-medium text-foreground leading-snug line-clamp-2">
+            <h4 className="text-sm font-semibold text-foreground leading-snug line-clamp-2">
               {resource.title}
             </h4>
             <span
-              className="text-[10px] font-medium mt-1 inline-block px-1.5 py-0.5 rounded-full"
+              className="text-xs font-medium mt-1 inline-block px-2 py-0.5 rounded-full"
               style={{
                 backgroundColor: `hsl(${color} / 0.12)`,
                 color: `hsl(${color})`,

@@ -68,8 +68,8 @@ export default function RecommendedSection({ onSelectResource }: { onSelectResou
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
-        <Sparkles size={16} className="text-primary" />
-        <h2 className="font-display text-xl font-medium text-foreground">For You</h2>
+        <Sparkles size={20} className="text-primary" />
+        <h2 className="font-display text-2xl font-semibold text-foreground">For You</h2>
       </div>
 
       {loading ? (
@@ -90,23 +90,23 @@ export default function RecommendedSection({ onSelectResource }: { onSelectResou
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.08 }}
-                  className="snap-start shrink-0 w-[280px] text-left glass-card rounded-2xl overflow-hidden shadow-soft relative group"
+                  className="snap-start shrink-0 w-[300px] text-left glass-card rounded-2xl overflow-hidden shadow-soft relative group"
                   whileTap={{ scale: 0.97 }}
                 >
                   {/* Category accent strip */}
                   <div
-                    className="absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl"
+                    className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl"
                     style={{ backgroundColor: `hsl(${color})` }}
                   />
 
                   {/* Watermark emoji */}
-                  <span className="absolute right-3 top-3 text-4xl opacity-[0.07] pointer-events-none select-none">
+                  <span className="absolute right-3 top-3 text-5xl opacity-[0.10] pointer-events-none select-none">
                     {typeInfo.emoji}
                   </span>
 
-                  <div className="p-4 pl-5 space-y-2">
+                  <div className="p-5 pl-6 space-y-2">
                     <span
-                      className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                      className="text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full"
                       style={{
                         backgroundColor: `hsl(${color} / 0.15)`,
                         color: `hsl(${color})`,
@@ -114,7 +114,7 @@ export default function RecommendedSection({ onSelectResource }: { onSelectResou
                     >
                       {typeInfo.label}
                     </span>
-                    <h3 className="font-display text-base font-medium text-foreground leading-snug mt-1.5">
+                    <h3 className="font-display text-lg font-semibold text-foreground leading-snug mt-1.5">
                       {resource.title}
                     </h3>
                     {reason && (

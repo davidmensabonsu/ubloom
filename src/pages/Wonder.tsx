@@ -36,7 +36,7 @@ export default function Wonder() {
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="page-title"
+            className="font-display text-4xl font-semibold tracking-tight text-gradient"
           >
             Wonder
           </motion.h1>
@@ -46,7 +46,7 @@ export default function Wonder() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="subtle-text mt-0.5"
+          className="text-base text-muted-foreground mt-0.5"
         >
           Everything you need to become her
         </motion.p>
@@ -69,13 +69,13 @@ export default function Wonder() {
           transition={{ delay: 0.25 }}
           className="space-y-3"
         >
-          <h2 className="font-display text-lg font-medium text-foreground">Explore</h2>
+          <h2 className="font-display text-xl font-semibold text-foreground">Explore</h2>
 
           {/* Category Pills */}
           <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
             <button
               onClick={() => { setActiveCategory('all'); setShowAll(false); }}
-              className={`shrink-0 px-4 py-2 rounded-full text-xs font-medium transition-colors ${
+              className={`shrink-0 px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${
                 activeCategory === 'all'
                   ? 'bg-primary/15 text-foreground ring-1 ring-primary/50'
                   : 'bg-muted/60 text-muted-foreground hover:bg-muted'
@@ -87,7 +87,7 @@ export default function Wonder() {
               <button
                 key={cat.key}
                 onClick={() => { setActiveCategory(cat.key); setShowAll(false); }}
-                className={`shrink-0 px-4 py-2 rounded-full text-xs font-medium transition-colors flex items-center gap-1.5 ${
+                className={`shrink-0 px-5 py-2.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
                   activeCategory === cat.key
                     ? 'bg-primary/15 text-foreground ring-1 ring-primary/50'
                     : 'bg-muted/60 text-muted-foreground hover:bg-muted'
@@ -100,7 +100,7 @@ export default function Wonder() {
           </div>
 
           {/* 2-Column Compact Grid */}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             {visibleResources.map((resource, i) => (
               <motion.div
                 key={resource.id}
