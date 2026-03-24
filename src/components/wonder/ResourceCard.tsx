@@ -23,12 +23,13 @@ export default function ResourceCard({ resource, onTap, compact }: ResourceCardP
         className="w-full text-left p-3 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors relative overflow-hidden"
         whileTap={{ scale: 0.97 }}
       >
+        {/* Subtle top accent */}
         <div
           className="absolute top-0 left-0 right-0 h-0.5"
           style={{ backgroundColor: `hsl(${color} / 0.4)` }}
         />
         <div className="flex items-start gap-2">
-          <img src={typeInfo.icon} alt="" className="w-5 h-5 object-contain clay-icon shrink-0 mt-0.5" />
+          <span className="text-lg shrink-0 mt-0.5">{typeInfo.emoji}</span>
           <div className="flex-1 min-w-0">
             <h4 className="text-xs font-medium text-foreground leading-snug line-clamp-2">
               {resource.title}
@@ -63,7 +64,7 @@ export default function ResourceCard({ resource, onTap, compact }: ResourceCardP
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 mb-1">
-            <img src={typeInfo.icon} alt="" className="w-4 h-4 object-contain clay-icon" />
+            <span className="text-xs">{typeInfo.emoji}</span>
             <span className="text-xs text-muted-foreground font-medium">{typeInfo.label}</span>
           </div>
           <h4 className="text-sm font-medium text-foreground leading-snug">

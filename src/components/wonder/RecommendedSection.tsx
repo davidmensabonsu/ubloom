@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Loader2, ChevronRight } from 'lucide-react';
+import { Sparkles, Loader2, ChevronRight } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
-import { wonderResources, categoryColors, categoryIcons, typeLabels, type WonderResource } from '@/lib/wonderResources';
+import { wonderResources, categoryColors, typeLabels, type WonderResource } from '@/lib/wonderResources';
 import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
-import sparklesIcon from '@/assets/icons/sparkles.png';
 
 interface Recommendation {
   id: string;
@@ -69,7 +68,7 @@ export default function RecommendedSection({ onSelectResource }: { onSelectResou
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
-        <img src={sparklesIcon} alt="" className="w-5 h-5 object-contain clay-icon" />
+        <Sparkles size={16} className="text-primary" />
         <h2 className="font-display text-xl font-medium text-foreground">For You</h2>
       </div>
 
@@ -84,7 +83,6 @@ export default function RecommendedSection({ onSelectResource }: { onSelectResou
             {visibleRecs.map(({ resource, reason }, i) => {
               const color = categoryColors[resource.category];
               const typeInfo = typeLabels[resource.type];
-              const catIcon = categoryIcons[resource.category];
               return (
                 <motion.button
                   key={resource.id}
@@ -101,26 +99,21 @@ export default function RecommendedSection({ onSelectResource }: { onSelectResou
                     style={{ backgroundColor: `hsl(${color})` }}
                   />
 
-                  {/* Watermark icon */}
-                  <img
-                    src={catIcon}
-                    alt=""
-                    className="absolute right-3 top-3 w-10 h-10 object-contain opacity-[0.08] pointer-events-none select-none"
-                  />
+                  {/* Watermark emoji */}
+                  <span className="absolute right-3 top-3 text-4xl opacity-[0.07] pointer-events-none select-none">
+                    {typeInfo.emoji}
+                  </span>
 
                   <div className="p-4 pl-5 space-y-2">
-                    <div className="flex items-center gap-1.5">
-                      <img src={typeInfo.icon} alt="" className="w-3.5 h-3.5 object-contain clay-icon" />
-                      <span
-                        className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full"
-                        style={{
-                          backgroundColor: `hsl(${color} / 0.15)`,
-                          color: `hsl(${color})`,
-                        }}
-                      >
-                        {typeInfo.label}
-                      </span>
-                    </div>
+                    <span
+                      className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                      style={{
+                        backgroundColor: `hsl(${color} / 0.15)`,
+                        color: `hsl(${color})`,
+                      }}
+                    >
+                      {typeInfo.label}
+                    </span>
                     <h3 className="font-display text-base font-medium text-foreground leading-snug mt-1.5">
                       {resource.title}
                     </h3>
