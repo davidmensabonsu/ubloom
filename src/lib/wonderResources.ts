@@ -14,6 +14,16 @@ export interface WonderResource {
   link?: string;
 }
 
+import sparklesIcon from '@/assets/icons/sparkles.png';
+import leafIcon from '@/assets/icons/leaf.png';
+import dumbbellIcon from '@/assets/icons/dumbbell.png';
+import saladIcon from '@/assets/icons/salad.png';
+import butterflyIcon from '@/assets/icons/butterfly.png';
+import yogaIcon from '@/assets/icons/yoga.png';
+import bookIcon from '@/assets/icons/book.png';
+import movieIcon from '@/assets/icons/movie.png';
+import pillIcon from '@/assets/icons/pill.png';
+
 export const categoryColors: Record<WonderCategory, string> = {
   mindset: '280 70% 60%',
   wellness: '150 55% 50%',
@@ -23,21 +33,21 @@ export const categoryColors: Record<WonderCategory, string> = {
   calm: '210 60% 55%',
 };
 
-export const wonderCategories: { key: WonderCategory; label: string; emoji: string }[] = [
-  { key: 'mindset', label: 'Mindset & Self-Worth', emoji: '✨' },
-  { key: 'wellness', label: 'Wellness & Body', emoji: '🌿' },
-  { key: 'fitness', label: 'Fitness & Movement', emoji: '💪' },
-  { key: 'nutrition', label: 'Nutrition & Vitamins', emoji: '🥗' },
-  { key: 'lifestyle', label: 'Lifestyle & Habits', emoji: '🦋' },
-  { key: 'calm', label: 'Calm & Nervous System', emoji: '🧘' },
+export const wonderCategories: { key: WonderCategory; label: string; icon: string }[] = [
+  { key: 'mindset', label: 'Mindset & Self-Worth', icon: sparklesIcon },
+  { key: 'wellness', label: 'Wellness & Body', icon: leafIcon },
+  { key: 'fitness', label: 'Fitness & Movement', icon: dumbbellIcon },
+  { key: 'nutrition', label: 'Nutrition & Vitamins', icon: saladIcon },
+  { key: 'lifestyle', label: 'Lifestyle & Habits', icon: butterflyIcon },
+  { key: 'calm', label: 'Calm & Nervous System', icon: yogaIcon },
 ];
 
-export const typeLabels: Record<WonderType, { label: string; emoji: string }> = {
-  book: { label: 'Book', emoji: '📚' },
-  video: { label: 'Video', emoji: '🎥' },
-  technique: { label: 'Technique', emoji: '🧘' },
-  'nutrition-tip': { label: 'Nutrition Tip', emoji: '🥗' },
-  vitamin: { label: 'Wellness Tip', emoji: '💊' },
+export const typeLabels: Record<WonderType, { label: string; icon: string }> = {
+  book: { label: 'Book', icon: bookIcon },
+  video: { label: 'Video', icon: movieIcon },
+  technique: { label: 'Technique', icon: yogaIcon },
+  'nutrition-tip': { label: 'Nutrition Tip', icon: saladIcon },
+  vitamin: { label: 'Wellness Tip', icon: pillIcon },
 };
 
 export const wonderResources: WonderResource[] = [

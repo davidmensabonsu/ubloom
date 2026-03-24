@@ -29,7 +29,7 @@ export default function ResourceCard({ resource, onTap, compact }: ResourceCardP
           style={{ backgroundColor: `hsl(${color} / 0.5)` }}
         />
         <div className="flex items-start gap-2">
-          <span className="text-xl shrink-0 mt-0.5">{typeInfo.emoji}</span>
+          <img src={typeInfo.icon} alt="" className="w-6 h-6 object-contain clay-icon shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
             <h4 className="text-sm font-semibold text-foreground leading-snug line-clamp-2">
               {resource.title}
@@ -64,7 +64,7 @@ export default function ResourceCard({ resource, onTap, compact }: ResourceCardP
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 mb-1">
-            <span className="text-xs">{typeInfo.emoji}</span>
+            <img src={typeInfo.icon} alt="" className="w-4 h-4 object-contain clay-icon" />
             <span className="text-xs text-muted-foreground font-medium">{typeInfo.label}</span>
           </div>
           <h4 className="text-sm font-medium text-foreground leading-snug">

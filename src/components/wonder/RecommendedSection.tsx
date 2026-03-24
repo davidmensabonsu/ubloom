@@ -99,10 +99,12 @@ export default function RecommendedSection({ onSelectResource }: { onSelectResou
                     style={{ backgroundColor: `hsl(${color})` }}
                   />
 
-                  {/* Watermark emoji */}
-                  <span className="absolute right-3 top-3 text-5xl opacity-[0.10] pointer-events-none select-none">
-                    {typeInfo.emoji}
-                  </span>
+                  {/* Watermark icon */}
+                  <img
+                    src={typeInfo.icon}
+                    alt=""
+                    className="absolute right-3 top-3 w-12 h-12 object-contain opacity-[0.12] pointer-events-none select-none"
+                  />
 
                   <div className="p-5 pl-6 space-y-2">
                     <span
