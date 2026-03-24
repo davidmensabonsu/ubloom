@@ -14,6 +14,15 @@ export interface WonderResource {
   link?: string;
 }
 
+export const categoryColors: Record<WonderCategory, string> = {
+  mindset: '280 60% 75%',
+  wellness: '150 45% 65%',
+  fitness: '20 80% 65%',
+  nutrition: '85 50% 60%',
+  lifestyle: '320 55% 72%',
+  calm: '210 50% 70%',
+};
+
 export const wonderCategories: { key: WonderCategory; label: string; emoji: string }[] = [
   { key: 'mindset', label: 'Mindset & Self-Worth', emoji: '✨' },
   { key: 'wellness', label: 'Wellness & Body', emoji: '🌿' },

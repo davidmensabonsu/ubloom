@@ -1,20 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Sparkles, Loader2 } from 'lucide-react';
+import { Sparkles, Loader2, ChevronRight } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
-import { wonderResources, type WonderResource } from '@/lib/wonderResources';
-import ResourceCard from './ResourceCard';
+import { wonderResources, categoryColors, typeLabels, type WonderResource } from '@/lib/wonderResources';
 import { supabase } from '@/integrations/supabase/client';
+import { motion } from 'framer-motion';
 
 interface Recommendation {
   id: string;
   reason?: string;
 }
 
+const VISIBLE_COUNT = 3;
+
 export default function RecommendedSection({ onSelectResource }: { onSelectResource: (r: WonderResource) => void }) {
   const { profile } = useUserStore();
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -40,8 +42,6 @@ export default function RecommendedSection({ onSelectResource }: { onSelectResou
         }
       } catch (e) {
         console.error('Failed to fetch recommendations:', e);
-        if (!cancelled) setError(true);
-        // Fallback: show random selection
         if (!cancelled) {
           const shuffled = [...wonderResources].sort(() => 0.5 - Math.random());
           setRecommendations(shuffled.slice(0, 6).map((r) => ({ id: r.id })));
@@ -62,32 +62,84 @@ export default function RecommendedSection({ onSelectResource }: { onSelectResou
     }))
     .filter((r) => r.resource) as { resource: WonderResource; reason?: string }[];
 
+  const visibleRecs = showAll ? recommendedResources : recommendedResources.slice(0, VISIBLE_COUNT);
+  const hasMore = recommendedResources.length > VISIBLE_COUNT;
+
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Sparkles size={16} className="text-primary" />
-        <h2 className="section-title text-lg">Recommended for You</h2>
+        <h2 className="font-display text-xl font-medium text-foreground">For You</h2>
       </div>
 
       {loading ? (
         <div className="flex items-center justify-center py-8">
           <Loader2 size={20} className="animate-spin text-muted-foreground" />
-          <span className="text-sm text-muted-foreground ml-2">Finding what resonates with you...</span>
+          <span className="text-sm text-muted-foreground ml-2">Finding what resonates…</span>
         </div>
-      ) : recommendedResources.length > 0 ? (
-        <div className="space-y-2">
-          {recommendedResources.map(({ resource, reason }) => (
-            <ResourceCard
-              key={resource.id}
-              resource={resource}
-              onTap={() => onSelectResource(resource)}
-              context={reason}
-            />
-          ))}
-        </div>
+      ) : visibleRecs.length > 0 ? (
+        <>
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide snap-x snap-mandatory">
+            {visibleRecs.map(({ resource, reason }, i) => {
+              const color = categoryColors[resource.category];
+              const typeInfo = typeLabels[resource.type];
+              return (
+                <motion.button
+                  key={resource.id}
+                  onClick={() => onSelectResource(resource)}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.08 }}
+                  className="snap-start shrink-0 w-[280px] text-left glass-card rounded-2xl overflow-hidden shadow-soft relative group"
+                  whileTap={{ scale: 0.97 }}
+                >
+                  {/* Category accent strip */}
+                  <div
+                    className="absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl"
+                    style={{ backgroundColor: `hsl(${color})` }}
+                  />
+
+                  {/* Watermark emoji */}
+                  <span className="absolute right-3 top-3 text-4xl opacity-[0.07] pointer-events-none select-none">
+                    {typeInfo.emoji}
+                  </span>
+
+                  <div className="p-4 pl-5 space-y-2">
+                    <span
+                      className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                      style={{
+                        backgroundColor: `hsl(${color} / 0.15)`,
+                        color: `hsl(${color})`,
+                      }}
+                    >
+                      {typeInfo.label}
+                    </span>
+                    <h3 className="font-display text-base font-medium text-foreground leading-snug mt-1.5">
+                      {resource.title}
+                    </h3>
+                    {reason && (
+                      <p className="text-xs italic text-primary/80 leading-relaxed">
+                        "{reason}"
+                      </p>
+                    )}
+                  </div>
+                </motion.button>
+              );
+            })}
+          </div>
+
+          {hasMore && !showAll && (
+            <button
+              onClick={() => setShowAll(true)}
+              className="text-xs text-primary font-medium flex items-center gap-0.5 mx-auto hover:underline"
+            >
+              See more <ChevronRight size={12} />
+            </button>
+          )}
+        </>
       ) : (
         <p className="text-sm text-muted-foreground text-center py-4">
-          Explore the library below to discover resources for you.
+          Explore below to discover resources for you.
         </p>
       )}
     </div>
