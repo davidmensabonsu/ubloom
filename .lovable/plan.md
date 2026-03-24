@@ -1,115 +1,37 @@
 
 
-## Replace Goals with Wonder Page
+## Redesign Wonder Page — More Visual Hierarchy and Focus
 
-### Overview
+### Problem
+The current Wonder page is a long, flat list of same-sized resource cards. The recommended section and explore section look identical, nothing visually "pops," and it feels overwhelming rather than calming.
 
-Remove the Goals page and replace it with **Wonder** -- a calming resource hub that combines a curated library (same for all users) with AI-personalized recommendations based on the user's profile, moods, journal entries, and habits.
+### Design Changes
 
-### Architecture
+**1. Recommended Section — Make it the hero**
+- Show only 3 recommendations (not 6) to keep it focused
+- Use a horizontal scroll of larger, more visual cards with:
+  - Colored category accent strip on the left edge
+  - Larger title text (font-display)
+  - The "why this is for you" reason displayed prominently
+  - Type emoji as a soft background watermark
+- Add a subtle "See more" link if there are additional recommendations
 
-```text
-┌─────────────────────────────────┐
-│         Wonder Page             │
-├─────────────────────────────────┤
-│  "Recommended for You"          │  ← AI-ranked, 5-8 items
-│  (personalized cards)           │
-│  + optional "Why this is for    │
-│    you" soft context line       │
-├─────────────────────────────────┤
-│  Explore All Resources          │  ← Static library, grouped
-│  ┌─────────┐ ┌─────────┐       │     by category tabs/pills
-│  │ Mindset  │ │ Wellness│ ...   │
-│  └─────────┘ └─────────┘       │
-│  Resource cards (book, video,   │
-│  technique, nutrition, vitamin) │
-│  → tap to open detail modal     │
-│  → save for later / mark used   │
-└─────────────────────────────────┘
-```
+**2. Explore Section — Compact, scannable grid**
+- Switch from a vertical list to a 2-column grid of compact cards
+- Each card shows: emoji, title, and type badge only (no description — that's in the detail sheet)
+- Cards are smaller, making the library feel browsable rather than overwhelming
+- Category pills get slightly larger and more tappable
 
-### Technical Plan
-
-**1. Static resource data** (`src/lib/wonderResources.ts`)
-
-Create ~40-50 curated resources, each with:
-```typescript
-interface WonderResource {
-  id: string;
-  title: string;
-  description: string;
-  category: 'mindset' | 'wellness' | 'fitness' | 'nutrition' | 'lifestyle' | 'calm';
-  type: 'book' | 'video' | 'technique' | 'nutrition-tip' | 'vitamin';
-  tags: string[];           // e.g. ['confidence', 'calm', 'grounded']
-  emotionalTone: string;    // e.g. 'calm', 'empowering'
-  goalAlignment: string[];  // e.g. ['peace', 'discipline']
-  thumbnail?: string;       // optional image URL
-  content?: string;         // longer description or instructions for techniques
-  link?: string;            // external link for books/videos
-}
-```
-
-All users see the same library. Tags enable AI matching.
-
-**2. User store updates** (`src/stores/userStore.ts`)
-
-- Remove all goal-related interfaces, state, and actions (Goal, TripDetails, TripItinerary, TripChecklist, and associated methods)
-- Add new fields:
-```typescript
-savedResources: string[];    // resource IDs saved for later
-usedResources: string[];     // resource IDs marked as used
-```
-- Add actions: `saveResource(id)`, `unsaveResource(id)`, `markResourceUsed(id)`, `unmarkResourceUsed(id)`
-
-**3. AI personalization edge function** (`supabase/functions/wonder-recommendations/index.ts`)
-
-- Accepts: user profile summary (struggles, desired feelings, dream self, recent moods, recent journal themes, habit categories)
-- Uses Lovable AI to rank resource IDs by relevance and generate short "why this is for you" lines
-- Returns: ordered list of 5-8 resource IDs with optional context strings
-- Uses tool calling for structured output
-
-**4. Wonder page** (`src/pages/Wonder.tsx`)
-
-- **Header**: "Wonder" title + subtitle
-- **Recommended section**: Fetches AI recommendations on mount (cached per session), shows horizontal scroll or vertical cards with soft "why" context
-- **Explore section**: Category pill filters, grid of resource cards
-- **Resource detail**: Modal/sheet with full description, save/used buttons
-- Matches existing design system (glass-card, rounded-3xl, soft shadows, theme colors)
-
-**5. Supporting components**
-- `src/components/wonder/ResourceCard.tsx` -- card for library grid
-- `src/components/wonder/ResourceDetailSheet.tsx` -- bottom sheet for resource details
-- `src/components/wonder/RecommendedSection.tsx` -- personalized top section
-
-**6. Routing & navigation updates**
-
-- `App.tsx`: Replace `/goals` route with `/wonder`, update imports
-- `BottomNav.tsx`: Change Goals nav item to Wonder (use `Sparkles` icon, label "Wonder")
-- `MoodCheckinGate`: Update mainRoutes array
-
-**7. Cleanup**
-
-- Delete `src/pages/Goals.tsx` and goal-related components (`src/components/goals/*`)
-- Remove goal-related imports from store and any other files referencing goals
-
-### Files to create
-- `src/lib/wonderResources.ts` -- static resource data
-- `src/pages/Wonder.tsx` -- main page
-- `src/components/wonder/ResourceCard.tsx`
-- `src/components/wonder/ResourceDetailSheet.tsx`
-- `src/components/wonder/RecommendedSection.tsx`
-- `supabase/functions/wonder-recommendations/index.ts`
+**3. Visual polish**
+- Add a soft gradient accent behind the recommended section header
+- Recommended cards use `glass-card` with subtle `shadow-soft` to pop against the flat explore grid
+- Explore grid cards use a lighter `bg-muted/30` to create contrast with the recommended section
+- Limit the explore section to show 8 items initially with a "Show all" button
 
 ### Files to modify
-- `src/stores/userStore.ts` -- remove goals, add saved/used resources
-- `src/App.tsx` -- swap route
-- `src/components/BottomNav.tsx` -- swap nav item
 
-### Files to delete
-- `src/pages/Goals.tsx`
-- `src/components/goals/AddTravelGoalForm.tsx`
-- `src/components/goals/TravelGoalCard.tsx`
-- `src/components/goals/TripChecklist.tsx`
-- `src/components/goals/TripDetailSheet.tsx`
-- `src/components/goals/TripItinerary.tsx`
+- **`src/pages/Wonder.tsx`** — restructure layout: horizontal scroll for recommended, 2-column grid for explore, add "Show all" toggle
+- **`src/components/wonder/RecommendedSection.tsx`** — limit to 3 items, use larger horizontal card layout with accent colors
+- **`src/components/wonder/ResourceCard.tsx`** — add a `compact` prop for the 2-column grid variant (emoji + title only, no description)
+- **`src/lib/wonderResources.ts`** — add a `color` field to each category for accent strips
 
