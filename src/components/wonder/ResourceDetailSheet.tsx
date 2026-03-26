@@ -36,6 +36,7 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
             'Gargle with water slowly for 30 seconds — this activates the vagus nerve at the back of your throat.',
             'Place your hand on your heart. Breathe in for 4, out for 6. Repeat 5 times.',
           ]}
+          onComplete={onComplete}
         />
       );
     case 'well-1': // Dry Brushing
