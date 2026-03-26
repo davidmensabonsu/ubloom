@@ -209,6 +209,10 @@ export const fitnessThumbnails: Record<string, string> = {
   'fw-14': fwHipOpener,
   'fw-15': fwBedtimeStretch,
   'fw-16': fwDeepFlexibility,
+  'fw-17': fwTotalBodyBurn,
+  'fw-18': fwBeginnerFullbody,
+  'fw-19': fwDumbbellSculpt,
+  'fw-20': fwHiit,
 };
 
 /** AI-generated demo videos for exercise / video-type resources */
