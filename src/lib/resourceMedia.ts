@@ -187,8 +187,25 @@ export const resourceThumbnails: Record<string, string> = {
   'meal-16': mealHummusVeggies,
 };
 
-/** Fitness workout thumbnails — placeholder until images are generated */
-export const fitnessThumbnails: Record<string, string> = {};
+/** Fitness workout thumbnails */
+export const fitnessThumbnails: Record<string, string> = {
+  'fw-1': fwTonedArms,
+  'fw-2': fwPushup,
+  'fw-3': fwBackPosture,
+  'fw-4': fwBandArms,
+  'fw-5': fwGluteBridge,
+  'fw-6': fwSquatLunge,
+  'fw-7': fwInnerThigh,
+  'fw-8': fwCalfAnkle,
+  'fw-9': fwPilatesCore,
+  'fw-10': fwPlank,
+  'fw-11': fwGentleAbs,
+  'fw-12': fwOblique,
+  'fw-13': fwSunSalutation,
+  'fw-14': fwHipOpener,
+  'fw-15': fwBedtimeStretch,
+  'fw-16': fwDeepFlexibility,
+};
 
 /** AI-generated demo videos for exercise / video-type resources */
 export const resourceVideos: Record<string, string> = {
