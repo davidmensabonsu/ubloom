@@ -300,6 +300,50 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
             </div>
           )}
 
+          {/* Recipes */}
+          {resource.recipes && resource.recipes.length > 0 && (
+            <div className="space-y-3">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground px-1">Recipes to try</h4>
+              {resource.recipes.map((recipe, i) => (
+                <details
+                  key={i}
+                  className="rounded-2xl bg-muted/40 overflow-hidden group"
+                >
+                  <summary className="flex items-center justify-between p-4 cursor-pointer select-none hover:bg-muted/60 transition-colors">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-foreground">{recipe.name}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground shrink-0">{recipe.time}</span>
+                  </summary>
+                  <div className="px-4 pb-4 space-y-3 border-t border-border/30">
+                    <div className="pt-3">
+                      <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Ingredients</p>
+                      <ul className="space-y-1">
+                        {recipe.ingredients.map((ing, j) => (
+                          <li key={j} className="text-xs text-foreground flex items-start gap-1.5">
+                            <span className="text-primary mt-0.5">•</span>
+                            {ing}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Steps</p>
+                      <ol className="space-y-1.5">
+                        {recipe.steps.map((step, j) => (
+                          <li key={j} className="text-xs text-foreground flex items-start gap-2">
+                            <span className="text-primary font-semibold shrink-0">{j + 1}.</span>
+                            {step}
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  </div>
+                </details>
+              ))}
+            </div>
+          )}
+
           <div className="flex flex-wrap gap-1.5">
             {resource.tags.map((tag) => (
               <span key={tag} className="mood-pill text-xs">
