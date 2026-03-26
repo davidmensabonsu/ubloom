@@ -78,6 +78,11 @@ export const resourceImages: Record<string, string> = {
   'nutr-2': magnesium,
   'nutr-3': omega3,
   'nutr-5': vitaminD,
+  'nutr-8': vitaminZinc,
+  'nutr-9': vitaminBComplex,
+  'nutr-10': vitaminProbiotics,
+  'nutr-11': vitaminIron,
+  'nutr-12': vitaminCollagen,
   // Books
   'mind-2': bookBadass,
   'mind-4': bookImperfection,
