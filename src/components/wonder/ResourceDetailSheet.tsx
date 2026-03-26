@@ -396,21 +396,40 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
           {bookLinks[resource.id] && (
             <div className="p-4 rounded-2xl bg-muted/50 space-y-2.5">
               <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{resource.type === 'vitamin' ? 'Where to buy' : 'Get this book'}</h4>
-              <div className="flex flex-wrap gap-2">
+              <div className="space-y-2">
                 {bookLinks[resource.id].map((link) => (
                   <a
                     key={link.label}
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-colors ${
+                    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                       link.topPick
                         ? 'bg-primary/10 border-2 border-primary text-primary hover:bg-primary/20'
                         : 'bg-background border border-border text-foreground hover:bg-muted'
                     }`}
                   >
-                    {link.topPick && <span className="text-[10px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-1.5 py-0.5 rounded-md">Top Pick</span>}
-                    {link.label}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        {link.topPick && <span className="text-[10px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-1.5 py-0.5 rounded-md">Top Pick</span>}
+                        <span className="truncate">{link.label}</span>
+                      </div>
+                      {link.rating != null && (
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <div className="flex items-center gap-0.5">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <svg key={i} className={`w-3 h-3 ${i < Math.round(link.rating!) ? 'text-amber-400' : 'text-muted-foreground/30'}`} fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                            ))}
+                          </div>
+                          <span className="text-xs text-muted-foreground">{link.rating}</span>
+                          {link.reviews != null && (
+                            <span className="text-xs text-muted-foreground">({link.reviews >= 1000 ? `${(link.reviews / 1000).toFixed(1)}k` : link.reviews} reviews)</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
                     <ExternalLink size={12} className={link.topPick ? 'text-primary/60' : 'text-muted-foreground'} />
                   </a>
                 ))}
