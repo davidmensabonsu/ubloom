@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Clock } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import { wonderResources } from '@/lib/wonderResources';
-import { categoryIcons, categoryColors } from '@/lib/wonderResources';
+import { wonderCategories, categoryColors } from '@/lib/wonderResources';
 
 export default function RecentlyPracticed({ onSelectResource }: { onSelectResource?: (r: any) => void }) {
   const { resourceCompletions = [] } = useUserStore((s) => s.profile);
