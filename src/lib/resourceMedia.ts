@@ -32,6 +32,10 @@ import thumbGrounding from '@/assets/wonder/thumb-grounding.jpg';
 import thumbCapsule from '@/assets/wonder/thumb-capsule-wardrobe.jpg';
 import thumbGratitude from '@/assets/wonder/thumb-gratitude.jpg';
 import thumbVagus from '@/assets/wonder/thumb-vagus.jpg';
+import thumbColdSplash from '@/assets/wonder/thumb-cold-splash.jpg';
+import thumbJournalingCalm from '@/assets/wonder/thumb-journaling-calm.jpg';
+import thumbProgressiveRelaxation from '@/assets/wonder/thumb-progressive-relaxation.jpg';
+import thumbReframing from '@/assets/wonder/thumb-reframing.jpg';
 
 // Meal thumbnails
 import mealOvernightOats from '@/assets/wonder/meal-overnight-oats.jpg';
@@ -87,11 +91,11 @@ export const resourceThumbnails: Record<string, string> = {
   'mind-4': bookImperfection,
   'mind-5': thumbJournal,
   'mind-6': bookAtomic,
-  'mind-7': thumbJournal,
+  'mind-7': thumbReframing,
   'mind-8': videoVulnerability.url,
   // Wellness
   'well-1': thumbDryBrush,
-  'well-2': thumbBreathing, // reuse zen stones for cold splash
+  'well-2': thumbColdSplash,
   'well-3': thumbSleep,
   'well-4': bookBodyScore,
   'well-5': thumbGuaSha,
@@ -124,8 +128,8 @@ export const resourceThumbnails: Record<string, string> = {
   'calm-3': thumbVagus,
   'calm-4': bookUntethered,
   'calm-5': thumbGrounding,
-  'calm-6': thumbBodyScan,
-  'calm-7': thumbJournal,
+  'calm-6': thumbProgressiveRelaxation,
+  'calm-7': thumbJournalingCalm,
   'calm-8': videoNervousReset.url,
   // Meals
   'meal-1': mealOvernightOats,
