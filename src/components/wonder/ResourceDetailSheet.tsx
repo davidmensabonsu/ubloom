@@ -18,14 +18,14 @@ interface ResourceDetailSheetProps {
 }
 
 /** Map resource IDs to interactive visual components */
-function ResourceVisual({ resourceId }: { resourceId: string }) {
+function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComplete: () => void }) {
   switch (resourceId) {
     case 'calm-1': // 4-7-8 Breathing
-      return <BreathingCircle pattern={[4, 7, 8]} cycles={4} />;
+      return <BreathingCircle pattern={[4, 7, 8]} cycles={4} onComplete={onComplete} />;
     case 'calm-2': // Body Scan Meditation
-      return <BodyScanGuide />;
+      return <BodyScanGuide onComplete={onComplete} />;
     case 'calm-5': // 5-4-3-2-1 Grounding
-      return <GroundingExercise />;
+      return <GroundingExercise onComplete={onComplete} />;
     case 'calm-3': // Vagus Nerve Stimulation
       return (
         <StepByStepGuide
