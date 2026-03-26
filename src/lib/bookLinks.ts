@@ -1,7 +1,7 @@
 export interface BookLink {
   label: string;
-  /** Optional icon hint for rendering */
   url: string;
+  topPick?: boolean;
 }
 
 /** Purchase / listen links for each book resource */
