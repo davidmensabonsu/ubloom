@@ -3,7 +3,7 @@ import { Star, ChefHat, Heart, Clock, Bookmark, CheckCircle2 } from 'lucide-reac
 import { Button } from '@/components/ui/button';
 import type { MealRecipe } from '@/lib/wonderResources';
 import { useUserStore } from '@/stores/userStore';
-import { triggerHaptic } from '@/lib/feedback';
+import { haptic } from '@/lib/feedback';
 
 interface RecipeDetailSheetProps {
   recipe: MealRecipe | null;
@@ -34,7 +34,7 @@ export default function RecipeDetailSheet({ recipe, open, onOpenChange }: Recipe
   const isSaved = (profile.savedRecipes || []).includes(recipeKey);
 
   const handleToggleSave = () => {
-    triggerHaptic('light');
+    haptic();
     if (isSaved) {
       unsaveRecipe(recipeKey);
     } else {
