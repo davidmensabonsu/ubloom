@@ -6,6 +6,11 @@ import hydration from '@/assets/wonder/hydration.jpg';
 import magnesium from '@/assets/wonder/magnesium.jpg';
 import omega3 from '@/assets/wonder/omega3.jpg';
 import vitaminD from '@/assets/wonder/vitamin-d.jpg';
+import vitaminZinc from '@/assets/wonder/vitamin-zinc.jpg';
+import vitaminBComplex from '@/assets/wonder/vitamin-b-complex.jpg';
+import vitaminProbiotics from '@/assets/wonder/vitamin-probiotics.jpg';
+import vitaminIron from '@/assets/wonder/vitamin-iron.jpg';
+import vitaminCollagen from '@/assets/wonder/vitamin-collagen.jpg';
 import bookBadass from '@/assets/wonder/book-badass.jpg';
 import bookImperfection from '@/assets/wonder/book-imperfection.jpg';
 import bookAtomic from '@/assets/wonder/book-atomic.jpg';
@@ -73,6 +78,11 @@ export const resourceImages: Record<string, string> = {
   'nutr-2': magnesium,
   'nutr-3': omega3,
   'nutr-5': vitaminD,
+  'nutr-8': vitaminZinc,
+  'nutr-9': vitaminBComplex,
+  'nutr-10': vitaminProbiotics,
+  'nutr-11': vitaminIron,
+  'nutr-12': vitaminCollagen,
   // Books
   'mind-2': bookBadass,
   'mind-4': bookImperfection,
@@ -115,6 +125,11 @@ export const resourceThumbnails: Record<string, string> = {
   'nutr-5': vitaminD,
   'nutr-6': hydration,
   'nutr-7': antiInflammatory,
+  'nutr-8': vitaminZinc,
+  'nutr-9': vitaminBComplex,
+  'nutr-10': vitaminProbiotics,
+  'nutr-11': vitaminIron,
+  'nutr-12': vitaminCollagen,
   // Lifestyle
   'life-1': thumbTidy,
   'life-2': thumbSunday,
