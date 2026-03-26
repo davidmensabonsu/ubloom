@@ -8,6 +8,7 @@ const mealTabs: { key: MealType; label: string; emoji: string }[] = [
   { key: 'breakfast', label: 'Breakfast', emoji: '🌅' },
   { key: 'lunch', label: 'Lunch', emoji: '☀️' },
   { key: 'dinner', label: 'Dinner', emoji: '🌙' },
+  { key: 'snack', label: 'Snacks', emoji: '🍎' },
 ];
 
 export default function FoodRecipesSection() {
