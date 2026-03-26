@@ -2,6 +2,8 @@ export interface BookLink {
   label: string;
   url: string;
   topPick?: boolean;
+  rating?: number;
+  reviews?: number;
 }
 
 /** Purchase / listen links for each book resource */
