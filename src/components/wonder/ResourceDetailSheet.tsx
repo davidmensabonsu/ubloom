@@ -222,14 +222,14 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
 }
 
 export default function ResourceDetailSheet({ resource, open, onOpenChange }: ResourceDetailSheetProps) {
-  const { profile, saveResource, unsaveResource, markResourceUsed, unmarkResourceUsed } = useUserStore();
+  const { profile, saveResource, unsaveResource, markResourceUsed, unmarkResourceUsed, logResourceCompletion } = useUserStore();
 
   if (!resource) return null;
 
   const isSaved = profile.savedResources?.includes(resource.id);
   const isUsed = profile.usedResources?.includes(resource.id);
   const typeInfo = typeLabels[resource.type];
-  const hasVisual = <ResourceVisual resourceId={resource.id} /> !== null;
+  const handleComplete = () => logResourceCompletion(resource.id);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -248,7 +248,7 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
           </p>
 
           {/* Interactive visual */}
-          <ResourceVisual resourceId={resource.id} />
+          <ResourceVisual resourceId={resource.id} onComplete={handleComplete} />
 
           {resource.content && (
             <div className="p-4 rounded-2xl bg-muted/50 space-y-2">
