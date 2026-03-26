@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, RotateCcw, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAmbientSound } from '@/hooks/useAmbientSound';
+import { playDing, playChime } from '@/lib/feedback';
 
 const BODY_PARTS = [
   { name: 'Toes & Feet', instruction: 'Bring your attention to your toes. Wiggle them gently, then relax.', position: 90 },
@@ -59,7 +60,7 @@ export default function BodyScanGuide() {
               <motion.div key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-3">
                 <p className="text-xs uppercase tracking-widest text-primary font-medium">{current.name}</p>
                 <p className="text-sm text-foreground leading-relaxed">{current.instruction}</p>
-                <Button size="sm" className="rounded-xl gap-1" onClick={() => setStep(s => s + 1)}>
+                <Button size="sm" className="rounded-xl gap-1" onClick={() => { setStep(s => s + 1); step < BODY_PARTS.length - 1 ? playDing() : playChime(); }}>
                   {step < BODY_PARTS.length - 1 ? 'Next area' : 'Complete'}
                   <ChevronRight size={14} />
                 </Button>

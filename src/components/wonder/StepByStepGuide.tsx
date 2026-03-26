@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronLeft, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { playDing, playChime } from '@/lib/feedback';
 
 interface StepByStepGuideProps {
   steps: string[];
@@ -50,7 +51,7 @@ export default function StepByStepGuide({ steps, title }: StepByStepGuideProps) 
           </Button>
         )}
         {current < steps.length - 1 ? (
-          <Button size="sm" className="rounded-xl gap-1 ml-auto" onClick={() => setCurrent(c => c + 1)}>
+          <Button size="sm" className="rounded-xl gap-1 ml-auto" onClick={() => { setCurrent(c => c + 1); playDing(); }}>
             Next <ChevronRight size={14} />
           </Button>
         ) : (

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Droplets, RotateCcw } from 'lucide-react';
+import { playPop, playChime } from '@/lib/feedback';
 import { Button } from '@/components/ui/button';
 
 const GOAL = 8; // 8 glasses
@@ -27,7 +28,14 @@ export default function HydrationTracker() {
                 borderColor: filled ? 'hsl(200 80% 55%)' : 'hsl(var(--muted))',
               }}
               whileTap={{ scale: 0.9 }}
-              onClick={() => setGlasses(filled ? i : i + 1)}
+              onClick={() => {
+                const next = filled ? i : i + 1;
+                setGlasses(next);
+                if (!filled) {
+                  if (next >= GOAL) playChime();
+                  else playPop();
+                }
+              }}
             >
               {/* Water fill */}
               <motion.div

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, Hand, Ear, Flower2, Coffee, ChevronRight, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { playDing, playChime } from '@/lib/feedback';
 
 const SENSES = [
   { count: 5, label: 'things you can see', icon: Eye, color: 'hsl(var(--primary))' },
@@ -51,7 +52,7 @@ export default function GroundingExercise() {
               <p className="text-sm text-muted-foreground mt-1">{current.label}</p>
             </div>
             <p className="text-xs text-muted-foreground/60">Take your time. Notice them slowly.</p>
-            <Button size="sm" className="rounded-xl gap-1" onClick={() => setStep(s => s + 1)}>
+            <Button size="sm" className="rounded-xl gap-1" onClick={() => { setStep(s => s + 1); step < 4 ? playDing() : playChime(); }}>
               {step < 4 ? 'Next' : 'Finish'}
               <ChevronRight size={14} />
             </Button>

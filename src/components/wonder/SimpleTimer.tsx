@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Play, Pause, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { playChime } from '@/lib/feedback';
 
 interface SimpleTimerProps {
   /** Duration in seconds */
@@ -44,6 +45,8 @@ export default function SimpleTimer({ duration, label = 'Timer', doneMessage = '
             cleanup();
             setIsRunning(false);
             setIsDone(true);
+            playChime();
+            return 0;
             return 0;
           }
           return prev - 1;
