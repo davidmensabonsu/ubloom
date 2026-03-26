@@ -403,10 +403,15 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-background border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-colors ${
+                      link.topPick
+                        ? 'bg-primary/10 border-2 border-primary text-primary hover:bg-primary/20'
+                        : 'bg-background border border-border text-foreground hover:bg-muted'
+                    }`}
                   >
+                    {link.topPick && <span className="text-[10px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-1.5 py-0.5 rounded-md">Top Pick</span>}
                     {link.label}
-                    <ExternalLink size={12} className="text-muted-foreground" />
+                    <ExternalLink size={12} className={link.topPick ? 'text-primary/60' : 'text-muted-foreground'} />
                   </a>
                 ))}
               </div>
