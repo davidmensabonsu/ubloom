@@ -169,6 +169,9 @@ export const resourceThumbnails: Record<string, string> = {
   'meal-16': mealHummusVeggies,
 };
 
+/** Fitness workout thumbnails — placeholder until images are generated */
+export const fitnessThumbnails: Record<string, string> = {};
+
 /** AI-generated demo videos for exercise / video-type resources */
 export const resourceVideos: Record<string, string> = {
   'fit-1': videoMorningStretch.url,

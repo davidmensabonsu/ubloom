@@ -4,6 +4,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import ProfileButton from '@/components/ProfileButton';
 import BottomNav from '@/components/BottomNav';
 import RecommendedSection from '@/components/wonder/RecommendedSection';
+import FitnessSection from '@/components/wonder/FitnessSection';
 import ResourceCard from '@/components/wonder/ResourceCard';
 import ResourceDetailSheet from '@/components/wonder/ResourceDetailSheet';
 import WonderStreak from '@/components/wonder/WonderStreak';
