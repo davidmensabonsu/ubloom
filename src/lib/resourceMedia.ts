@@ -125,6 +125,11 @@ export const resourceThumbnails: Record<string, string> = {
   'nutr-5': vitaminD,
   'nutr-6': hydration,
   'nutr-7': antiInflammatory,
+  'nutr-8': vitaminZinc,
+  'nutr-9': vitaminBComplex,
+  'nutr-10': vitaminProbiotics,
+  'nutr-11': vitaminIron,
+  'nutr-12': vitaminCollagen,
   // Lifestyle
   'life-1': thumbTidy,
   'life-2': thumbSunday,
