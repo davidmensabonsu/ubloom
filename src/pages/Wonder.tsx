@@ -15,7 +15,7 @@ const INITIAL_SHOW = 8;
 export default function Wonder() {
   const [selectedResource, setSelectedResource] = useState<WonderResource | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<WonderCategory | 'all'>('all');
+  const [activeCategory, setActiveCategory] = useState<WonderCategory | 'all' | 'for-you'>('for-you');
   const [showAll, setShowAll] = useState(false);
 
   const handleSelectResource = (resource: WonderResource) => {
@@ -23,7 +23,7 @@ export default function Wonder() {
     setSheetOpen(true);
   };
 
-  const filteredResources = activeCategory === 'all'
+  const filteredResources = activeCategory === 'all' || activeCategory === 'for-you'
     ? wonderResources
     : wonderResources.filter((r) => r.category === activeCategory);
 
@@ -67,26 +67,27 @@ export default function Wonder() {
         {/* Recently Practiced */}
         <RecentlyPracticed onSelectResource={handleSelectResource} />
 
-        {/* Recommended — Hero Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.18 }}
-        >
-          <RecommendedSection onSelectResource={handleSelectResource} />
-        </motion.div>
-
         {/* Explore Library */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
+          transition={{ delay: 0.18 }}
           className="space-y-3"
         >
           <h2 className="font-display text-xl font-semibold text-foreground">Explore</h2>
 
-          {/* Category Pills */}
+          {/* Category Pills — "For You" is the first tab */}
           <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
+            <button
+              onClick={() => { setActiveCategory('for-you'); setShowAll(false); }}
+              className={`shrink-0 px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${
+                activeCategory === 'for-you'
+                  ? 'bg-primary/15 text-foreground ring-1 ring-primary/50'
+                  : 'bg-muted/60 text-muted-foreground hover:bg-muted'
+              }`}
+            >
+              ✨ For You
+            </button>
             <button
               onClick={() => { setActiveCategory('all'); setShowAll(false); }}
               className={`shrink-0 px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${
@@ -113,35 +114,41 @@ export default function Wonder() {
             ))}
           </div>
 
-          {/* 2-Column Compact Grid */}
-          <div className="grid grid-cols-2 gap-3">
-            {visibleResources.map((resource, i) => (
-              <motion.div
-                key={resource.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: Math.min(i * 0.03, 0.2) }}
-              >
-                <ResourceCard
-                  resource={resource}
-                  onTap={() => handleSelectResource(resource)}
-                  compact
-                />
-              </motion.div>
-            ))}
-          </div>
+          {/* Content — either For You recommendations or category grid */}
+          {activeCategory === 'for-you' ? (
+            <RecommendedSection onSelectResource={handleSelectResource} />
+          ) : (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                {visibleResources.map((resource, i) => (
+                  <motion.div
+                    key={resource.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: Math.min(i * 0.03, 0.2) }}
+                  >
+                    <ResourceCard
+                      resource={resource}
+                      onTap={() => handleSelectResource(resource)}
+                      compact
+                    />
+                  </motion.div>
+                ))}
+              </div>
 
-          {hasMore && (
-            <button
-              onClick={() => setShowAll(!showAll)}
-              className="flex items-center gap-1 mx-auto text-xs text-primary font-medium hover:underline py-2"
-            >
-              {showAll ? (
-                <>Show less <ChevronUp size={14} /></>
-              ) : (
-                <>Show all ({filteredResources.length}) <ChevronDown size={14} /></>
+              {hasMore && (
+                <button
+                  onClick={() => setShowAll(!showAll)}
+                  className="flex items-center gap-1 mx-auto text-xs text-primary font-medium hover:underline py-2"
+                >
+                  {showAll ? (
+                    <>Show less <ChevronUp size={14} /></>
+                  ) : (
+                    <>Show all ({filteredResources.length}) <ChevronDown size={14} /></>
+                  )}
+                </button>
               )}
-            </button>
+            </>
           )}
         </motion.div>
       </div>
