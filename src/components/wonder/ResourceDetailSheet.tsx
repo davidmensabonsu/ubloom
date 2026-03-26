@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Bookmark, BookmarkCheck, CheckCircle2, Circle } from 'lucide-react';
 import { typeLabels, type WonderResource } from '@/lib/wonderResources';
 import { useUserStore } from '@/stores/userStore';
+import { resourceImages, resourceVideos } from '@/lib/resourceMedia';
 import BreathingCircle from './BreathingCircle';
 import GroundingExercise from './GroundingExercise';
 import BodyScanGuide from './BodyScanGuide';
@@ -259,6 +260,31 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
           <p className="text-sm text-muted-foreground leading-relaxed">
             {resource.description}
           </p>
+
+          {/* Static image (books, food, vitamins) */}
+          {resourceImages[resource.id] && (
+            <div className="rounded-2xl overflow-hidden">
+              <img
+                src={resourceImages[resource.id]}
+                alt={resource.title}
+                className={`w-full object-cover ${resource.type === 'book' ? 'max-h-64 object-top' : 'max-h-48'}`}
+                loading="lazy"
+              />
+            </div>
+          )}
+
+          {/* YouTube video embed */}
+          {resourceVideos[resource.id] && (
+            <div className="rounded-2xl overflow-hidden aspect-video">
+              <iframe
+                src={`https://www.youtube.com/embed/${resourceVideos[resource.id]}?rel=0`}
+                title={resource.title}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          )}
 
           {/* Interactive visual */}
           <ResourceVisual resourceId={resource.id} onComplete={handleComplete} />
