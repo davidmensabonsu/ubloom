@@ -2,6 +2,7 @@ export type WonderCategory = 'mindset' | 'wellness' | 'fitness' | 'nutrition' | 
 export type WonderType = 'book' | 'video' | 'technique' | 'nutrition-tip' | 'vitamin';
 
 export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
+export type FitnessType = 'upper-body' | 'lower-body' | 'core' | 'stretches-yoga';
 
 export interface Recipe {
   name: string;
@@ -26,6 +27,20 @@ export interface MealRecipe {
   healthBenefits: string[];
   ingredients: string[];
   steps: string[];
+}
+
+export interface FitnessWorkout {
+  id: string;
+  name: string;
+  fitnessType: FitnessType;
+  description: string;
+  duration: string;
+  difficulty: number; // 1-5
+  intensity: number; // 1-5
+  musclesTargeted: string[];
+  equipment: string[];
+  steps: string[];
+  benefits: string[];
 }
 
 export interface VitaminDosage {
