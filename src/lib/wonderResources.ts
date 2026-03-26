@@ -35,6 +35,7 @@ export interface FitnessWorkout {
   fitnessType: FitnessType;
   description: string;
   duration: string;
+  calories: number;
   difficulty: number; // 1-5
   intensity: number; // 1-5
   musclesTargeted: string[];
