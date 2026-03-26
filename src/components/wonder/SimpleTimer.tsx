@@ -49,7 +49,6 @@ export default function SimpleTimer({ duration, label = 'Timer', doneMessage = '
              playChime();
             onComplete?.();
             return 0;
-            return 0;
           }
           return prev - 1;
         });
