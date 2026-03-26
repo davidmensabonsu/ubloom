@@ -1,4 +1,4 @@
-export type WonderCategory = 'mindset' | 'wellness' | 'fitness' | 'nutrition' | 'vitamins' | 'lifestyle' | 'calm';
+export type WonderCategory = 'mindset' | 'wellness' | 'fitness' | 'nutrition' | 'vitamins' | 'lifestyle' | 'calm' | 'books';
 export type WonderType = 'book' | 'video' | 'technique' | 'nutrition-tip' | 'vitamin';
 
 export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
@@ -60,6 +60,7 @@ export const categoryColors: Record<WonderCategory, string> = {
   vitamins: '45 75% 55%',
   lifestyle: '320 65% 58%',
   calm: '210 60% 55%',
+  books: '35 80% 50%',
 };
 
 export const wonderCategories: { key: WonderCategory; label: string; icon: string }[] = [
@@ -68,6 +69,7 @@ export const wonderCategories: { key: WonderCategory; label: string; icon: strin
   { key: 'fitness', label: 'Fitness & Movement', icon: dumbbellIcon },
   { key: 'nutrition', label: 'Food & Recipes', icon: saladIcon },
   { key: 'vitamins', label: 'Vitamins & Supplements', icon: pillIcon },
+  { key: 'books', label: 'Books', icon: bookIcon },
   { key: 'lifestyle', label: 'Lifestyle & Habits', icon: butterflyIcon },
   { key: 'calm', label: 'Calm & Nervous System', icon: yogaIcon },
 ];
