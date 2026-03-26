@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Sparkles, Loader2, ChevronRight } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import { wonderResources, categoryColors, typeLabels, type WonderResource } from '@/lib/wonderResources';
+import { resourceThumbnails } from '@/lib/resourceMedia';
 import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
 
@@ -83,6 +84,7 @@ export default function RecommendedSection({ onSelectResource }: { onSelectResou
             {visibleRecs.map(({ resource, reason }, i) => {
               const color = categoryColors[resource.category];
               const typeInfo = typeLabels[resource.type];
+              const thumbnail = resourceThumbnails[resource.id];
               return (
                 <motion.button
                   key={resource.id}
@@ -93,20 +95,25 @@ export default function RecommendedSection({ onSelectResource }: { onSelectResou
                   className="snap-start shrink-0 w-[300px] text-left glass-card rounded-2xl overflow-hidden shadow-soft relative group"
                   whileTap={{ scale: 0.97 }}
                 >
+                  {/* Thumbnail image */}
+                  {thumbnail && (
+                    <div className="w-full aspect-[4/3] overflow-hidden">
+                      <img
+                        src={thumbnail}
+                        alt={resource.title}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
+
                   {/* Category accent strip */}
                   <div
                     className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl"
                     style={{ backgroundColor: `hsl(${color})` }}
                   />
 
-                  {/* Watermark icon */}
-                  <img
-                    src={typeInfo.icon}
-                    alt=""
-                    className="absolute right-3 top-3 w-12 h-12 object-contain opacity-[0.12] pointer-events-none select-none"
-                  />
-
-                  <div className="p-5 pl-6 space-y-2">
+                  <div className="p-4 space-y-2">
                     <span
                       className="text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full"
                       style={{
