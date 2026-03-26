@@ -64,6 +64,9 @@ export default function Wonder() {
           <WonderStreak />
         </motion.div>
 
+        {/* Recently Practiced */}
+        <RecentlyPracticed onSelectResource={handleSelectResource} />
+
         {/* Recommended — Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
