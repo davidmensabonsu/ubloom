@@ -413,6 +413,7 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
                       <div className="flex items-center gap-1.5">
                         {link.topPick && <span className="text-[10px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-1.5 py-0.5 rounded-md">Top Pick</span>}
                         <span className="truncate">{link.label}</span>
+                        {link.price && <span className="ml-auto shrink-0 text-xs font-semibold text-foreground">{link.price}</span>}
                       </div>
                       {link.rating != null && (
                         <div className="flex items-center gap-1.5 mt-1">
