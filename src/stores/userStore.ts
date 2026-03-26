@@ -65,6 +65,7 @@ export interface UserProfile {
    reminderSettings: ReminderSettings;
   savedResources: string[];
   usedResources: string[];
+  resourceCompletions: ResourceCompletion[];
   moodboardItems: MoodboardItem[];
   cachedFutureSelfMessage?: CachedFutureSelfMessage;
   cachedMindsetMessage?: CachedMindsetMessage;
@@ -116,6 +117,12 @@ export interface CustomTask {
   createdAt: string;
 }
 
+export interface ResourceCompletion {
+  resourceId: string;
+  date: string; // yyyy-MM-dd
+  timestamp: string; // ISO string
+}
+
 export interface MoodboardItem {
   id: string;
   type: 'image' | 'quote';
@@ -151,6 +158,7 @@ interface UserStore {
   unsaveResource: (id: string) => void;
   markResourceUsed: (id: string) => void;
   unmarkResourceUsed: (id: string) => void;
+  logResourceCompletion: (resourceId: string) => void;
   completeOnboarding: () => void;
   resetProfile: () => void;
   // Core habits
@@ -211,6 +219,7 @@ const initialProfile: UserProfile = {
    },
    savedResources: [],
   usedResources: [],
+  resourceCompletions: [],
   moodboardItems: [],
   onboardingComplete: false,
 };
@@ -462,6 +471,16 @@ export const useUserStore = create<UserStore>()(
           profile: { ...state.profile, moodboardItems: items },
         })),
 
+      logResourceCompletion: (resourceId) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            resourceCompletions: [
+              ...(state.profile.resourceCompletions || []),
+              { resourceId, date: getLocalDateStr(), timestamp: new Date().toISOString() },
+            ],
+          },
+        })),
 
       // Custom tasks
       addCustomTask: (task) =>
@@ -567,6 +586,8 @@ export const useUserStore = create<UserStore>()(
               const cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 90);
               const cutoffStr = getLocalDateStr(cutoff);
               state.profile.habitCompletions = (state.profile.habitCompletions || [])
+                .filter((c) => c.date >= cutoffStr);
+              state.profile.resourceCompletions = (state.profile.resourceCompletions || [])
                 .filter((c) => c.date >= cutoffStr);
               state.profile.journalEntries = (state.profile.journalEntries || []).slice(0, 200);
               state.profile.moodHistory = (state.profile.moodHistory || []).slice(0, 200);
