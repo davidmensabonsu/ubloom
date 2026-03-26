@@ -1,9 +1,29 @@
 export type WonderCategory = 'mindset' | 'wellness' | 'fitness' | 'nutrition' | 'vitamins' | 'lifestyle' | 'calm';
 export type WonderType = 'book' | 'video' | 'technique' | 'nutrition-tip' | 'vitamin';
 
+export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
+
 export interface Recipe {
   name: string;
   time: string;
+  ingredients: string[];
+  steps: string[];
+}
+
+export interface MealRecipe {
+  id: string;
+  name: string;
+  mealType: MealType;
+  thumbnail?: string;
+  prepTime: string;
+  calories: number;
+  protein: string;
+  carbs: string;
+  fat: string;
+  sugar: string;
+  difficultyRating: number; // 1-5
+  healthRating: number; // 1-5
+  healthBenefits: string[];
   ingredients: string[];
   steps: string[];
 }
