@@ -38,27 +38,43 @@ export const bookLinks: Record<string, BookLink[]> = {
 
   // ── Vitamins & Supplements ──
   'nutr-2': [ // Magnesium
-    { label: 'Amazon', url: 'https://www.amazon.com/s?k=magnesium+glycinate+supplement' },
+    { label: 'Nature Made', url: 'https://www.amazon.com/dp/B004U3Y9FU' },
+    { label: 'Doctor\'s Best', url: 'https://www.amazon.com/dp/B000BD0RT0' },
+    { label: 'Natural Vitality Calm', url: 'https://www.amazon.com/dp/B00BPUY3W0' },
   ],
   'nutr-3': [ // Omega-3
-    { label: 'Amazon', url: 'https://www.amazon.com/s?k=omega+3+fish+oil+supplement' },
+    { label: 'Nordic Naturals', url: 'https://www.amazon.com/dp/B002CQU564' },
+    { label: 'Nature Made Fish Oil', url: 'https://www.amazon.com/dp/B005GG0MN4' },
+    { label: 'Viva Naturals', url: 'https://www.amazon.com/dp/B011LUK3AC' },
   ],
   'nutr-5': [ // Vitamin D
-    { label: 'Amazon', url: 'https://www.amazon.com/s?k=vitamin+d3+supplement' },
+    { label: 'NatureWise D3', url: 'https://www.amazon.com/dp/B00GB85JR4' },
+    { label: 'Sports Research D3', url: 'https://www.amazon.com/dp/B00JGCBGZQ' },
+    { label: 'Nature Made D3', url: 'https://www.amazon.com/dp/B004U3Y894' },
   ],
   'nutr-8': [ // Zinc
-    { label: 'Amazon', url: 'https://www.amazon.com/s?k=zinc+supplement' },
+    { label: 'Garden of Life', url: 'https://www.amazon.com/dp/B07GBSP7R3' },
+    { label: 'Nature Made Zinc', url: 'https://www.amazon.com/dp/B0000DJBBV' },
+    { label: 'Thorne Zinc Picolinate', url: 'https://www.amazon.com/dp/B0797DMJCF' },
   ],
   'nutr-9': [ // B-Complex
-    { label: 'Amazon', url: 'https://www.amazon.com/s?k=vitamin+b+complex+supplement' },
+    { label: 'Garden of Life B-Complex', url: 'https://www.amazon.com/dp/B00K5NEPJY' },
+    { label: 'Nature Made Super B', url: 'https://www.amazon.com/dp/B001F71XAI' },
+    { label: 'Thorne B-Complex', url: 'https://www.amazon.com/dp/B000FGWDTK' },
   ],
   'nutr-10': [ // Probiotics
-    { label: 'Amazon', url: 'https://www.amazon.com/s?k=probiotics+supplement+women' },
+    { label: 'Garden of Life Women\'s', url: 'https://www.amazon.com/dp/B00Y8MP4G6' },
+    { label: 'Culturelle Daily', url: 'https://www.amazon.com/dp/B071DZQLPQ' },
+    { label: 'Renew Life Women\'s', url: 'https://www.amazon.com/dp/B002ECUJDC' },
   ],
   'nutr-11': [ // Iron
-    { label: 'Amazon', url: 'https://www.amazon.com/s?k=iron+supplement+gentle' },
+    { label: 'Garden of Life Iron', url: 'https://www.amazon.com/dp/B019GN70QE' },
+    { label: 'MegaFood Blood Builder', url: 'https://www.amazon.com/dp/B009NH8QDG' },
+    { label: 'Nature Made Iron', url: 'https://www.amazon.com/dp/B0000DJBKK' },
   ],
   'nutr-12': [ // Collagen
-    { label: 'Amazon', url: 'https://www.amazon.com/s?k=collagen+peptides+powder' },
+    { label: 'Vital Proteins', url: 'https://www.amazon.com/dp/B00K6JUG4K' },
+    { label: 'Sports Research', url: 'https://www.amazon.com/dp/B01BQX7GLC' },
+    { label: 'Garden of Life Collagen', url: 'https://www.amazon.com/dp/B01LQZ7IS4' },
   ],
 };
