@@ -7,6 +7,9 @@ import BreathingCircle from './BreathingCircle';
 import GroundingExercise from './GroundingExercise';
 import BodyScanGuide from './BodyScanGuide';
 import StepByStepGuide from './StepByStepGuide';
+import SimpleTimer from './SimpleTimer';
+import HydrationTracker from './HydrationTracker';
+import JournalPrompt from './JournalPrompt';
 
 interface ResourceDetailSheetProps {
   resource: WonderResource | null;
