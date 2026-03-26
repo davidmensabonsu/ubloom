@@ -30,19 +30,20 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
       return (
         <StepByStepGuide
           title="Vagus nerve exercises"
+          onComplete={onComplete}
           steps={[
             'Hum gently for 2 minutes — feel the vibration in your chest and throat.',
             'Splash cold water on your face, or hold a cold cloth on your forehead for 30 seconds.',
             'Gargle with water slowly for 30 seconds — this activates the vagus nerve at the back of your throat.',
             'Place your hand on your heart. Breathe in for 4, out for 6. Repeat 5 times.',
           ]}
-          onComplete={onComplete}
         />
       );
     case 'well-1': // Dry Brushing
       return (
         <StepByStepGuide
           title="Dry brushing routine"
+          onComplete={onComplete}
           steps={[
             'Use a natural bristle brush on dry skin before your shower.',
             'Start at your feet — brush upward in long, firm strokes toward your heart.',
@@ -56,6 +57,7 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
       return (
         <StepByStepGuide
           title="Wind-down timeline"
+          onComplete={onComplete}
           steps={[
             '60 min before bed: Dim all lights in your home.',
             '30 min before bed: Put your phone in another room.',
@@ -69,6 +71,7 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
       return (
         <StepByStepGuide
           title="Gua sha facial routine"
+          onComplete={onComplete}
           steps={[
             'Apply a generous layer of facial oil to clean skin.',
             'Start at the chin — glide the gua sha upward along your jawline to your ear. Repeat 5x each side.',
@@ -82,6 +85,7 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
       return (
         <StepByStepGuide
           title="Sunday reset checklist"
+          onComplete={onComplete}
           steps={[
             'Tidy your space — clear surfaces, put things back where they belong.',
             'Do a load of laundry. Fold and put away.',
@@ -95,6 +99,7 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
       return (
         <StepByStepGuide
           title="Mirror affirmation practice"
+          onComplete={onComplete}
           steps={[
             'Stand in front of your mirror. Look into your own eyes.',
             'Say: "I am worthy of love and good things."',
@@ -105,29 +110,29 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
         />
       );
     // TIMERS
-    case 'mind-1': // Mountain Meditation
-      return <SimpleTimer duration={300} label="Mountain meditation" doneMessage="You are the mountain ✨" />;
-    case 'fit-2': // Walk & Talk
-      return <SimpleTimer duration={1200} label="Mindful walk" doneMessage="Beautiful walk ✨" />;
-    case 'fit-4': // Dance It Out
-      return <SimpleTimer duration={210} label="Dance it out" doneMessage="You danced! 💃" />;
-    case 'life-1': // 5-Minute Tidy
-      return <SimpleTimer duration={300} label="Tidy time" doneMessage="Space cleared ✨" />;
-    case 'life-4': // Phone-Free Mornings
-      return <SimpleTimer duration={3600} label="Phone-free" doneMessage="One hour reclaimed ✨" />;
-    case 'calm-6': // Legs Up the Wall
-      return <SimpleTimer duration={300} label="Legs up the wall" doneMessage="Rest complete ✨" />;
-    case 'calm-7': // Journaling for Release
-      return <SimpleTimer duration={600} label="Free write" doneMessage="Release complete ✨" />;
-    case 'well-2': // Cold Water Face Splash
-      return <SimpleTimer duration={60} label="Cold splash" doneMessage="Refreshed! 💦" />;
-    case 'well-6': // Digital Sunset
-      return <SimpleTimer duration={3600} label="Digital sunset" doneMessage="Screens off ✨" />;
+    case 'mind-1':
+      return <SimpleTimer duration={300} label="Mountain meditation" doneMessage="You are the mountain ✨" onComplete={onComplete} />;
+    case 'fit-2':
+      return <SimpleTimer duration={1200} label="Mindful walk" doneMessage="Beautiful walk ✨" onComplete={onComplete} />;
+    case 'fit-4':
+      return <SimpleTimer duration={210} label="Dance it out" doneMessage="You danced! 💃" onComplete={onComplete} />;
+    case 'life-1':
+      return <SimpleTimer duration={300} label="Tidy time" doneMessage="Space cleared ✨" onComplete={onComplete} />;
+    case 'life-4':
+      return <SimpleTimer duration={3600} label="Phone-free" doneMessage="One hour reclaimed ✨" onComplete={onComplete} />;
+    case 'calm-6':
+      return <SimpleTimer duration={300} label="Legs up the wall" doneMessage="Rest complete ✨" onComplete={onComplete} />;
+    case 'calm-7':
+      return <SimpleTimer duration={600} label="Free write" doneMessage="Release complete ✨" onComplete={onComplete} />;
+    case 'well-2':
+      return <SimpleTimer duration={60} label="Cold splash" doneMessage="Refreshed! 💦" onComplete={onComplete} />;
+    case 'well-6':
+      return <SimpleTimer duration={3600} label="Digital sunset" doneMessage="Screens off ✨" onComplete={onComplete} />;
     // HYDRATION
-    case 'nutr-6': // Hydration Ritual
-      return <HydrationTracker />;
+    case 'nutr-6':
+      return <HydrationTracker onComplete={onComplete} />;
     // JOURNAL PROMPTS
-    case 'life-5': // Gratitude Before Sleep
+    case 'life-5':
       return (
         <JournalPrompt
           prompts={[
@@ -138,9 +143,10 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
           placeholder="I'm grateful for..."
           doneMessage="Sweet dreams ✨"
           maxEntries={3}
+          onComplete={onComplete}
         />
       );
-    case 'mind-5': // Rewriting Inner Narrative
+    case 'mind-5':
       return (
         <JournalPrompt
           prompts={[
@@ -151,9 +157,10 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
           placeholder="Write freely..."
           doneMessage="A kinder story, written ✨"
           maxEntries={3}
+          onComplete={onComplete}
         />
       );
-    case 'mind-7': // Future Self Journaling
+    case 'mind-7':
       return (
         <JournalPrompt
           prompts={[
@@ -164,13 +171,15 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
           placeholder="Dear present me..."
           doneMessage="Your future self is proud of you ✨"
           maxEntries={3}
+          onComplete={onComplete}
         />
       );
     // STEP-BY-STEP for remaining nutrition tips
-    case 'nutr-1': // Morning Lemon Water
+    case 'nutr-1':
       return (
         <StepByStepGuide
           title="Morning lemon water"
+          onComplete={onComplete}
           steps={[
             'Boil water and let it cool until warm (not hot).',
             'Squeeze half a fresh lemon into the warm water.',
@@ -179,10 +188,11 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
           ]}
         />
       );
-    case 'nutr-7': // Anti-Inflammatory Eating
+    case 'nutr-7':
       return (
         <StepByStepGuide
           title="Anti-inflammatory plate"
+          onComplete={onComplete}
           steps={[
             'Fill half your plate with colourful vegetables and leafy greens.',
             'Add a portion of omega-3 rich protein (salmon, sardines, or lentils).',
@@ -192,10 +202,11 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
           ]}
         />
       );
-    case 'nutr-4': // Gut-Friendly Foods
+    case 'nutr-4':
       return (
         <StepByStepGuide
           title="Gut-friendly daily plan"
+          onComplete={onComplete}
           steps={[
             'Morning: Start with yoghurt or kefir for probiotics.',
             'Lunch: Add fibre-rich foods — oats, beans, or whole grains.',
@@ -204,10 +215,11 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
           ]}
         />
       );
-    case 'life-6': // Capsule Wardrobe
+    case 'life-6':
       return (
         <StepByStepGuide
           title="Capsule wardrobe in 5 steps"
+          onComplete={onComplete}
           steps={[
             'Pull out everything from your wardrobe. Yes, everything.',
             'Keep only pieces you love AND that fit well right now.',
