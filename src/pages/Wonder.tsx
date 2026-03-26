@@ -115,9 +115,11 @@ export default function Wonder() {
             ))}
           </div>
 
-          {/* Content — either For You recommendations or category grid */}
+          {/* Content — either For You recommendations, Food & Recipes, or category grid */}
           {activeCategory === 'for-you' ? (
             <RecommendedSection onSelectResource={handleSelectResource} />
+          ) : activeCategory === 'nutrition' ? (
+            <FoodRecipesSection />
           ) : (
             <>
               <div className="grid grid-cols-2 gap-3">
