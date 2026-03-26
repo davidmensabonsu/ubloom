@@ -1,4 +1,4 @@
-export type WonderCategory = 'mindset' | 'wellness' | 'fitness' | 'nutrition' | 'lifestyle' | 'calm';
+export type WonderCategory = 'mindset' | 'wellness' | 'fitness' | 'nutrition' | 'vitamins' | 'lifestyle' | 'calm';
 export type WonderType = 'book' | 'video' | 'technique' | 'nutrition-tip' | 'vitamin';
 
 export interface Recipe {
@@ -37,6 +37,7 @@ export const categoryColors: Record<WonderCategory, string> = {
   wellness: '150 55% 50%',
   fitness: '20 85% 55%',
   nutrition: '85 60% 48%',
+  vitamins: '45 75% 55%',
   lifestyle: '320 65% 58%',
   calm: '210 60% 55%',
 };
@@ -45,7 +46,8 @@ export const wonderCategories: { key: WonderCategory; label: string; icon: strin
   { key: 'mindset', label: 'Mindset & Self-Worth', icon: sparklesIcon },
   { key: 'wellness', label: 'Wellness & Body', icon: leafIcon },
   { key: 'fitness', label: 'Fitness & Movement', icon: dumbbellIcon },
-  { key: 'nutrition', label: 'Nutrition & Vitamins', icon: saladIcon },
+  { key: 'nutrition', label: 'Food & Recipes', icon: saladIcon },
+  { key: 'vitamins', label: 'Vitamins & Supplements', icon: pillIcon },
   { key: 'lifestyle', label: 'Lifestyle & Habits', icon: butterflyIcon },
   { key: 'calm', label: 'Calm & Nervous System', icon: yogaIcon },
 ];
@@ -306,7 +308,7 @@ export const wonderResources: WonderResource[] = [
     id: 'nutr-2',
     title: 'Magnesium for Calm',
     description: 'Magnesium glycinate can help with sleep, anxiety, and muscle tension.',
-    category: 'nutrition',
+    category: 'vitamins',
     type: 'vitamin',
     tags: ['calm', 'sleep', 'anxiety'],
     emotionalTone: 'calm',
@@ -317,7 +319,7 @@ export const wonderResources: WonderResource[] = [
     id: 'nutr-3',
     title: 'Omega-3 for Brain Health',
     description: 'Support mood and mental clarity with omega-3 fatty acids.',
-    category: 'nutrition',
+    category: 'vitamins',
     type: 'vitamin',
     tags: ['clarity', 'mood', 'focus'],
     emotionalTone: 'clear',
@@ -353,7 +355,7 @@ export const wonderResources: WonderResource[] = [
     id: 'nutr-5',
     title: 'Vitamin D & Sunshine',
     description: 'Get 15 minutes of sunlight daily or consider supplementation.',
-    category: 'nutrition',
+    category: 'vitamins',
     type: 'vitamin',
     tags: ['energy', 'mood', 'bones'],
     emotionalTone: 'warm',
