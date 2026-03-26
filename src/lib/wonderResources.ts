@@ -287,6 +287,20 @@ export const wonderResources: WonderResource[] = [
     emotionalTone: 'gentle',
     goalAlignment: ['wellness', 'glow'],
     content: 'Squeeze half a lemon into warm (not hot) water. Drink it first thing before breakfast. It supports hydration, digestion, and gives your skin a gentle glow.',
+    recipes: [
+      {
+        name: 'Warm Lemon & Ginger Tonic',
+        time: '5 min',
+        ingredients: ['½ lemon, juiced', '1 cup warm water', '½ inch fresh ginger, grated', '1 tsp raw honey (optional)'],
+        steps: ['Heat water until warm (not boiling).', 'Add lemon juice and grated ginger.', 'Stir in honey if desired.', 'Sip slowly on an empty stomach.'],
+      },
+      {
+        name: 'Lemon Mint Detox Water',
+        time: '3 min',
+        ingredients: ['1 lemon, sliced', '5-6 fresh mint leaves', '1 litre cold water', 'Ice cubes'],
+        steps: ['Add lemon slices and mint to a jug.', 'Fill with cold water and ice.', 'Let it infuse for 10 minutes.', 'Sip throughout the morning.'],
+      },
+    ],
   },
   {
     id: 'nutr-2',
@@ -320,6 +334,20 @@ export const wonderResources: WonderResource[] = [
     emotionalTone: 'nurturing',
     goalAlignment: ['wellness', 'energy'],
     content: 'Include yoghurt, kimchi, sauerkraut, or kefir daily. Add fibre from oats, beans, and vegetables. A happy gut means better mood, energy, and skin.',
+    recipes: [
+      {
+        name: 'Probiotic Breakfast Bowl',
+        time: '10 min',
+        ingredients: ['1 cup Greek yoghurt', '¼ cup granola', '1 tbsp chia seeds', 'Fresh berries', '1 tsp honey', '1 tbsp sauerkraut (on the side)'],
+        steps: ['Spoon yoghurt into a bowl.', 'Top with granola, chia seeds, and berries.', 'Drizzle with honey.', 'Enjoy sauerkraut on the side for extra probiotics.'],
+      },
+      {
+        name: 'Gut-Healing Miso Soup',
+        time: '15 min',
+        ingredients: ['2 cups water', '2 tbsp white miso paste', '½ block soft tofu, cubed', '1 spring onion, sliced', '1 sheet nori, torn', '½ tsp grated ginger'],
+        steps: ['Bring water to a gentle simmer (don\'t boil).', 'Dissolve miso paste into the water.', 'Add tofu cubes and ginger.', 'Serve topped with spring onion and nori.'],
+      },
+    ],
   },
   {
     id: 'nutr-5',
@@ -342,6 +370,20 @@ export const wonderResources: WonderResource[] = [
     emotionalTone: 'refreshing',
     goalAlignment: ['glow', 'energy'],
     content: 'Aim for 2 litres of water daily. Get a beautiful water bottle. Add sliced cucumber, mint, or berries for flavour. Set gentle reminders every 2 hours.',
+    recipes: [
+      {
+        name: 'Cucumber Spa Water',
+        time: '5 min',
+        ingredients: ['½ cucumber, thinly sliced', '1 litre water', '5 fresh mint leaves', '3 slices of lemon'],
+        steps: ['Add cucumber, mint, and lemon to a large jar.', 'Fill with filtered water.', 'Refrigerate for 30 min or serve with ice.', 'Refill the jar once — flavour lasts two rounds.'],
+      },
+      {
+        name: 'Berry Glow Infusion',
+        time: '5 min',
+        ingredients: ['¼ cup mixed berries (strawberry, blueberry, raspberry)', '1 litre sparkling or still water', '2 basil leaves', 'Ice cubes'],
+        steps: ['Lightly muddle berries at the bottom of a jug.', 'Add basil and ice.', 'Pour in water and stir gently.', 'Let it sit for 10 minutes, then enjoy.'],
+      },
+    ],
   },
   {
     id: 'nutr-7',
@@ -353,6 +395,20 @@ export const wonderResources: WonderResource[] = [
     emotionalTone: 'nurturing',
     goalAlignment: ['wellness', 'healing'],
     content: 'Focus on berries, leafy greens, turmeric, ginger, nuts, and olive oil. Minimise processed foods, refined sugar, and excess alcohol. Your body will feel lighter and more vibrant.',
+    recipes: [
+      {
+        name: 'Golden Turmeric Bowl',
+        time: '20 min',
+        ingredients: ['1 cup quinoa, cooked', '1 cup roasted sweet potato cubes', '2 cups spinach', '½ avocado, sliced', '1 tbsp olive oil', '½ tsp turmeric', '¼ tsp black pepper', 'Squeeze of lemon'],
+        steps: ['Toss sweet potato in olive oil, turmeric, and pepper. Roast at 200°C for 15 min.', 'Build bowl: quinoa base, spinach, roasted sweet potato.', 'Top with avocado slices.', 'Squeeze lemon over everything and enjoy.'],
+      },
+      {
+        name: 'Anti-Inflammatory Smoothie',
+        time: '5 min',
+        ingredients: ['1 cup frozen mango', '½ banana', '1 tsp turmeric', '1 tbsp ground flaxseed', '1 cup oat milk', '½ tsp cinnamon', 'Pinch of black pepper'],
+        steps: ['Add all ingredients to a blender.', 'Blend until smooth and creamy.', 'Pour into a glass and enjoy immediately.', 'Best had in the morning or post-workout.'],
+      },
+    ],
   },
 
   // LIFESTYLE & HABITS
