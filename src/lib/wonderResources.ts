@@ -2,7 +2,7 @@ export type WonderCategory = 'mindset' | 'wellness' | 'fitness' | 'nutrition' | 
 export type WonderType = 'book' | 'video' | 'technique' | 'nutrition-tip' | 'vitamin';
 
 export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
-export type FitnessType = 'upper-body' | 'lower-body' | 'core' | 'stretches-yoga';
+export type FitnessType = 'upper-body' | 'lower-body' | 'core' | 'stretches-yoga' | 'full-body';
 
 export interface Recipe {
   name: string;

@@ -8,6 +8,7 @@ const fitnessTabs: { key: FitnessType; label: string; emoji: string }[] = [
   { key: 'upper-body', label: 'Upper Body', emoji: '💪' },
   { key: 'lower-body', label: 'Lower Body', emoji: '🦵' },
   { key: 'core', label: 'Core', emoji: '🔥' },
+  { key: 'full-body', label: 'Full Body', emoji: '🏋️‍♀️' },
   { key: 'stretches-yoga', label: 'Stretches & Yoga', emoji: '🧘‍♀️' },
 ];
 
