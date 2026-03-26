@@ -273,15 +273,16 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
             </div>
           )}
 
-          {/* YouTube video embed */}
+          {/* AI-generated demo video */}
           {resourceVideos[resource.id] && (
-            <div className="rounded-2xl overflow-hidden aspect-video">
-              <iframe
-                src={`https://www.youtube.com/embed/${resourceVideos[resource.id]}?rel=0`}
-                title={resource.title}
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
+            <div className="rounded-2xl overflow-hidden">
+              <video
+                src={resourceVideos[resource.id]}
+                className="w-full rounded-2xl"
+                controls
+                loop
+                playsInline
+                preload="metadata"
               />
             </div>
           )}
