@@ -28,6 +28,13 @@ export interface MealRecipe {
   steps: string[];
 }
 
+export interface VitaminDosage {
+  amount: string;
+  timing: 'morning' | 'evening' | 'with food' | 'morning with food' | 'evening with food' | 'any time with food';
+  withFood: boolean;
+  notes?: string;
+}
+
 export interface WonderResource {
   id: string;
   title: string;
@@ -40,6 +47,7 @@ export interface WonderResource {
   content?: string;
   link?: string;
   recipes?: Recipe[];
+  dosage?: VitaminDosage;
 }
 
 import sparklesIcon from '@/assets/icons/sparkles.png';
@@ -336,6 +344,7 @@ export const wonderResources: WonderResource[] = [
     emotionalTone: 'calm',
     goalAlignment: ['peace', 'wellness'],
     content: 'Magnesium glycinate (200-400mg before bed) may support better sleep and reduced anxiety. Always consult your healthcare provider before starting supplements.',
+    dosage: { amount: '200–400 mg', timing: 'evening', withFood: false, notes: 'Take 30–60 min before bed for best sleep support' },
   },
   {
     id: 'nutr-3',
@@ -347,6 +356,7 @@ export const wonderResources: WonderResource[] = [
     emotionalTone: 'clear',
     goalAlignment: ['clarity', 'wellness'],
     content: 'Omega-3s from fish oil, flaxseed, or algae supplements support brain function and mood regulation. Aim for foods rich in omega-3s or speak with a provider about supplementation.',
+    dosage: { amount: '1,000–2,000 mg EPA+DHA', timing: 'morning with food', withFood: true, notes: 'Take with a meal containing fat for better absorption' },
   },
   {
     id: 'nutr-4',
@@ -383,6 +393,7 @@ export const wonderResources: WonderResource[] = [
     emotionalTone: 'warm',
     goalAlignment: ['energy', 'wellness'],
     content: 'Vitamin D supports mood, immunity, and bone health. Try to get 15 minutes of morning sunlight daily. If you live in a cloudy climate, ask your provider about vitamin D3 supplementation.',
+    dosage: { amount: '1,000–4,000 IU (D3)', timing: 'morning with food', withFood: true, notes: 'Take with breakfast containing fat; get levels tested first' },
   },
   {
     id: 'nutr-8',
@@ -394,6 +405,7 @@ export const wonderResources: WonderResource[] = [
     emotionalTone: 'strong',
     goalAlignment: ['wellness', 'glow'],
     content: 'Zinc plays a crucial role in immune defence, wound healing, and hormone production. Foods rich in zinc include pumpkin seeds, oysters, red meat, and chickpeas. Supplementing with 15-30mg daily (as zinc picolinate) can help if your diet is low. Always take with food to avoid nausea.',
+    dosage: { amount: '15–30 mg (zinc picolinate)', timing: 'evening with food', withFood: true, notes: 'Always take with food to avoid nausea; don\'t combine with iron' },
   },
   {
     id: 'nutr-9',
@@ -405,6 +417,7 @@ export const wonderResources: WonderResource[] = [
     emotionalTone: 'energising',
     goalAlignment: ['energy', 'clarity'],
     content: 'B vitamins (B1, B6, B9, B12) are essential for converting food into energy, supporting brain function, and regulating mood. Leafy greens, eggs, legumes, and fortified foods are great sources. A B-complex supplement can help fill gaps, especially for plant-based diets.',
+    dosage: { amount: '1 capsule B-complex', timing: 'morning with food', withFood: true, notes: 'Take in the morning — B vitamins can be energising and may disrupt sleep if taken late' },
   },
   {
     id: 'nutr-10',
@@ -416,6 +429,7 @@ export const wonderResources: WonderResource[] = [
     emotionalTone: 'nurturing',
     goalAlignment: ['wellness', 'clarity'],
     content: 'Probiotics introduce beneficial bacteria to your gut, supporting digestion, immune function, and even mood regulation via the gut-brain axis. Look for strains like Lactobacillus and Bifidobacterium. Fermented foods (yoghurt, kimchi, kefir) are natural sources, or choose a high-quality supplement with at least 10 billion CFU.',
+    dosage: { amount: '10–50 billion CFU', timing: 'morning', withFood: false, notes: 'Take on an empty stomach 30 min before breakfast for best colonisation' },
   },
   {
     id: 'nutr-11',
@@ -427,6 +441,7 @@ export const wonderResources: WonderResource[] = [
     emotionalTone: 'strong',
     goalAlignment: ['energy', 'strength'],
     content: 'Iron is essential for carrying oxygen in your blood and preventing fatigue. Women are especially prone to low iron. Rich sources include spinach, lentils, red meat, and fortified cereals. Pair iron-rich foods with vitamin C (citrus, peppers) to boost absorption. Consult your provider before supplementing.',
+    dosage: { amount: '18–27 mg (ferrous bisglycinate)', timing: 'morning', withFood: false, notes: 'Take on empty stomach with vitamin C; avoid with calcium, tea, or coffee' },
   },
   {
     id: 'nutr-12',
@@ -438,6 +453,7 @@ export const wonderResources: WonderResource[] = [
     emotionalTone: 'radiant',
     goalAlignment: ['glow', 'wellness'],
     content: 'Collagen is the most abundant protein in your body, supporting skin elasticity, hair strength, and joint health. Production naturally decreases with age. Hydrolysed collagen peptides (10-15g daily) mixed into coffee, smoothies, or water can help. Pair with vitamin C for better synthesis. Bone broth is a natural source.',
+    dosage: { amount: '10–15 g hydrolysed peptides', timing: 'any time with food', withFood: true, notes: 'Mix into coffee, smoothies, or water; pair with vitamin C for better synthesis' },
   },
   {
     id: 'nutr-6',

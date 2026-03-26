@@ -262,6 +262,31 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
             {resource.description}
           </p>
 
+          {/* Vitamin dosage info */}
+          {resource.dosage && (
+            <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 space-y-2.5">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-primary">Dosage & Timing</h4>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Amount</p>
+                  <p className="text-sm font-semibold text-foreground">{resource.dosage.amount}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">When to take</p>
+                  <p className="text-sm font-semibold text-foreground capitalize">{resource.dosage.timing.replace('-', ' ')}</p>
+                </div>
+              </div>
+              {resource.dosage.withFood && (
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <span className="text-primary">🍽</span> Take with food
+                </div>
+              )}
+              {resource.dosage.notes && (
+                <p className="text-xs text-muted-foreground italic leading-relaxed">{resource.dosage.notes}</p>
+              )}
+            </div>
+          )}
+
           {/* Static image (books, food, vitamins) */}
           {resourceImages[resource.id] && (
             <div className="rounded-2xl overflow-hidden">
