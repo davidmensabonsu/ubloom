@@ -34,6 +34,10 @@ import thumbPhoneFree from '@/assets/wonder/thumb-phone-free.jpg';
 import thumbBreathing from '@/assets/wonder/thumb-breathing.jpg';
 import thumbBodyScan from '@/assets/wonder/thumb-body-scan.jpg';
 import thumbGrounding from '@/assets/wonder/thumb-grounding.jpg';
+import thumbMorningStretch from '@/assets/wonder/thumb-morning-stretch.jpg';
+import thumbPilates from '@/assets/wonder/thumb-pilates.jpg';
+import thumbYoga from '@/assets/wonder/thumb-yoga.jpg';
+import thumbStrength from '@/assets/wonder/thumb-strength.jpg';
 import thumbCapsule from '@/assets/wonder/thumb-capsule-wardrobe.jpg';
 import thumbGratitude from '@/assets/wonder/thumb-gratitude.jpg';
 import thumbVagus from '@/assets/wonder/thumb-vagus.jpg';
@@ -111,12 +115,12 @@ export const resourceThumbnails: Record<string, string> = {
   'well-5': thumbGuaSha,
   'well-6': thumbDigital,
   // Fitness
-  'fit-1': videoMorningStretch.url,
+  'fit-1': thumbMorningStretch,
   'fit-2': thumbWalk,
-  'fit-3': videoPilates.url,
+  'fit-3': thumbPilates,
   'fit-4': thumbDance,
-  'fit-5': videoYoga.url,
-  'fit-6': videoStrength.url,
+  'fit-5': thumbYoga,
+  'fit-6': thumbStrength,
   // Nutrition
   'nutr-1': lemonWater,
   'nutr-2': magnesium,
