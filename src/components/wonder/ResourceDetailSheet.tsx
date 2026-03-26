@@ -434,7 +434,6 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
                   </a>
                 ))}
               </div>
-              </div>
             </div>
           )}
 
