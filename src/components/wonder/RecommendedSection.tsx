@@ -11,7 +11,7 @@ interface Recommendation {
   reason?: string;
 }
 
-const VISIBLE_COUNT = 3;
+const VISIBLE_COUNT = 6;
 
 export default function RecommendedSection({ onSelectResource }: { onSelectResource: (r: WonderResource) => void }) {
   const { profile } = useUserStore();
