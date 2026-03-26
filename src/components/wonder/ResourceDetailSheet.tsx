@@ -3,11 +3,106 @@ import { Button } from '@/components/ui/button';
 import { Bookmark, BookmarkCheck, CheckCircle2, Circle } from 'lucide-react';
 import { typeLabels, type WonderResource } from '@/lib/wonderResources';
 import { useUserStore } from '@/stores/userStore';
+import BreathingCircle from './BreathingCircle';
+import GroundingExercise from './GroundingExercise';
+import BodyScanGuide from './BodyScanGuide';
+import StepByStepGuide from './StepByStepGuide';
 
 interface ResourceDetailSheetProps {
   resource: WonderResource | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+}
+
+/** Map resource IDs to interactive visual components */
+function ResourceVisual({ resourceId }: { resourceId: string }) {
+  switch (resourceId) {
+    case 'calm-1': // 4-7-8 Breathing
+      return <BreathingCircle pattern={[4, 7, 8]} cycles={4} />;
+    case 'calm-2': // Body Scan Meditation
+      return <BodyScanGuide />;
+    case 'calm-5': // 5-4-3-2-1 Grounding
+      return <GroundingExercise />;
+    case 'calm-3': // Vagus Nerve Stimulation
+      return (
+        <StepByStepGuide
+          title="Vagus nerve exercises"
+          steps={[
+            'Hum gently for 2 minutes — feel the vibration in your chest and throat.',
+            'Splash cold water on your face, or hold a cold cloth on your forehead for 30 seconds.',
+            'Gargle with water slowly for 30 seconds — this activates the vagus nerve at the back of your throat.',
+            'Place your hand on your heart. Breathe in for 4, out for 6. Repeat 5 times.',
+          ]}
+        />
+      );
+    case 'well-1': // Dry Brushing
+      return (
+        <StepByStepGuide
+          title="Dry brushing routine"
+          steps={[
+            'Use a natural bristle brush on dry skin before your shower.',
+            'Start at your feet — brush upward in long, firm strokes toward your heart.',
+            'Move to your legs, then belly, then arms — always brushing toward the heart.',
+            'Brush gently over your chest and back.',
+            'Shower as normal. Your skin will tingle and glow!',
+          ]}
+        />
+      );
+    case 'well-3': // Sleep Hygiene
+      return (
+        <StepByStepGuide
+          title="Wind-down timeline"
+          steps={[
+            '60 min before bed: Dim all lights in your home.',
+            '30 min before bed: Put your phone in another room.',
+            '15 min before bed: Gentle stretching or light reading.',
+            '5 min before bed: 4-7-8 breathing (inhale 4, hold 7, exhale 8).',
+            'Close your eyes. Let your body know it\'s safe to rest.',
+          ]}
+        />
+      );
+    case 'well-5': // Gua Sha
+      return (
+        <StepByStepGuide
+          title="Gua sha facial routine"
+          steps={[
+            'Apply a generous layer of facial oil to clean skin.',
+            'Start at the chin — glide the gua sha upward along your jawline to your ear. Repeat 5x each side.',
+            'Move to cheekbones — sweep outward from nose to hairline. Repeat 5x each side.',
+            'Forehead — stroke upward from brows to hairline. Repeat 5x.',
+            'Finish with gentle downward strokes along the neck to drain lymph.',
+          ]}
+        />
+      );
+    case 'life-2': // Sunday Reset
+      return (
+        <StepByStepGuide
+          title="Sunday reset checklist"
+          steps={[
+            'Tidy your space — clear surfaces, put things back where they belong.',
+            'Do a load of laundry. Fold and put away.',
+            'Meal prep something simple for the week ahead.',
+            'Review your calendar — set 3 intentions for the week.',
+            'Light a candle, play gentle music. End with a moment of calm.',
+          ]}
+        />
+      );
+    case 'mind-3': // Mirror Affirmation
+      return (
+        <StepByStepGuide
+          title="Mirror affirmation practice"
+          steps={[
+            'Stand in front of your mirror. Look into your own eyes.',
+            'Say: "I am worthy of love and good things."',
+            'Say: "I am becoming the person I\'m meant to be."',
+            'Say one more thing you genuinely love about yourself.',
+            'Hold your gaze for a moment. Let it feel soft, not forced.',
+          ]}
+        />
+      );
+    default:
+      return null;
+  }
 }
 
 export default function ResourceDetailSheet({ resource, open, onOpenChange }: ResourceDetailSheetProps) {
@@ -18,6 +113,7 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
   const isSaved = profile.savedResources?.includes(resource.id);
   const isUsed = profile.usedResources?.includes(resource.id);
   const typeInfo = typeLabels[resource.type];
+  const hasVisual = <ResourceVisual resourceId={resource.id} /> !== null;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -34,6 +130,9 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
           <p className="text-sm text-muted-foreground leading-relaxed">
             {resource.description}
           </p>
+
+          {/* Interactive visual */}
+          <ResourceVisual resourceId={resource.id} />
 
           {resource.content && (
             <div className="p-4 rounded-2xl bg-muted/50 space-y-2">
