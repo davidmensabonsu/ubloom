@@ -12,7 +12,7 @@ const SENSES = [
   { count: 1, label: 'thing you can taste', icon: Coffee, color: 'hsl(85 60% 48%)' },
 ];
 
-export default function GroundingExercise() {
+export default function GroundingExercise({ onComplete }: { onComplete?: () => void }) {
   const [step, setStep] = useState(-1); // -1 = not started, 0-4 = senses, 5 = done
 
   const isActive = step >= 0 && step < 5;
@@ -52,7 +52,7 @@ export default function GroundingExercise() {
               <p className="text-sm text-muted-foreground mt-1">{current.label}</p>
             </div>
             <p className="text-xs text-muted-foreground/60">Take your time. Notice them slowly.</p>
-            <Button size="sm" className="rounded-xl gap-1" onClick={() => { setStep(s => s + 1); step < 4 ? playDing() : playChime(); }}>
+            <Button size="sm" className="rounded-xl gap-1" onClick={() => { setStep(s => s + 1); if (step < 4) playDing(); else { playChime(); onComplete?.(); } }}>
               {step < 4 ? 'Next' : 'Finish'}
               <ChevronRight size={14} />
             </Button>

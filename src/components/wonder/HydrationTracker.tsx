@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 
 const GOAL = 8; // 8 glasses
 
-export default function HydrationTracker() {
+export default function HydrationTracker({ onComplete }: { onComplete?: () => void }) {
   const [glasses, setGlasses] = useState(0);
   const isDone = glasses >= GOAL;
 
@@ -32,7 +32,7 @@ export default function HydrationTracker() {
                 const next = filled ? i : i + 1;
                 setGlasses(next);
                 if (!filled) {
-                  if (next >= GOAL) playChime();
+                  if (next >= GOAL) { playChime(); onComplete?.(); }
                   else playPop();
                 }
               }}

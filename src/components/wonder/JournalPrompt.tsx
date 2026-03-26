@@ -9,9 +9,10 @@ interface JournalPromptProps {
   placeholder?: string;
   doneMessage?: string;
   maxEntries?: number;
+  onComplete?: () => void;
 }
 
-export default function JournalPrompt({ prompts, placeholder = 'Write here...', doneMessage = 'Beautiful ✨', maxEntries }: JournalPromptProps) {
+export default function JournalPrompt({ prompts, placeholder = 'Write here...', doneMessage = 'Beautiful ✨', maxEntries, onComplete }: JournalPromptProps) {
   const [entries, setEntries] = useState<string[]>([]);
   const [currentText, setCurrentText] = useState('');
   const [promptIndex, setPromptIndex] = useState(0);
@@ -28,6 +29,7 @@ export default function JournalPrompt({ prompts, placeholder = 'Write here...', 
     if (newEntries.length >= limit) {
       setIsDone(true);
       playChime();
+      onComplete?.();
     } else {
       setPromptIndex(prev => prev + 1);
       playDing();
