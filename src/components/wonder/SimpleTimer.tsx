@@ -10,9 +10,10 @@ interface SimpleTimerProps {
   label?: string;
   doneMessage?: string;
   color?: string;
+  onComplete?: () => void;
 }
 
-export default function SimpleTimer({ duration, label = 'Timer', doneMessage = 'Well done ✨', color }: SimpleTimerProps) {
+export default function SimpleTimer({ duration, label = 'Timer', doneMessage = 'Well done ✨', color, onComplete }: SimpleTimerProps) {
   const [remaining, setRemaining] = useState(duration);
   const [isRunning, setIsRunning] = useState(false);
   const [isDone, setIsDone] = useState(false);
@@ -45,8 +46,8 @@ export default function SimpleTimer({ duration, label = 'Timer', doneMessage = '
             cleanup();
             setIsRunning(false);
             setIsDone(true);
-            playChime();
-            return 0;
+             playChime();
+            onComplete?.();
             return 0;
           }
           return prev - 1;

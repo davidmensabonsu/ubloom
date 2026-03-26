@@ -7,9 +7,10 @@ import { playDing, playChime } from '@/lib/feedback';
 interface StepByStepGuideProps {
   steps: string[];
   title?: string;
+  onComplete?: () => void;
 }
 
-export default function StepByStepGuide({ steps, title }: StepByStepGuideProps) {
+export default function StepByStepGuide({ steps, title, onComplete }: StepByStepGuideProps) {
   const [current, setCurrent] = useState(0);
 
   return (
@@ -55,8 +56,8 @@ export default function StepByStepGuide({ steps, title }: StepByStepGuideProps) 
             Next <ChevronRight size={14} />
           </Button>
         ) : (
-          <Button size="sm" variant="ghost" className="rounded-xl gap-1 ml-auto" onClick={() => setCurrent(0)}>
-            <RotateCcw size={14} /> Restart
+          <Button size="sm" variant="ghost" className="rounded-xl gap-1 ml-auto" onClick={() => { setCurrent(0); onComplete?.(); }}>
+            <RotateCcw size={14} /> Done
           </Button>
         )}
       </div>

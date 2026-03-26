@@ -14,7 +14,7 @@ const BODY_PARTS = [
   { name: 'Neck & Head', instruction: 'Soften your jaw. Relax your forehead. Let go of any holding.', position: 12 },
 ];
 
-export default function BodyScanGuide() {
+export default function BodyScanGuide({ onComplete }: { onComplete?: () => void }) {
   const [step, setStep] = useState(-1);
   const ambient = useAmbientSound('bodyscan');
   const isActive = step >= 0 && step < BODY_PARTS.length;
@@ -60,7 +60,7 @@ export default function BodyScanGuide() {
               <motion.div key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-3">
                 <p className="text-xs uppercase tracking-widest text-primary font-medium">{current.name}</p>
                 <p className="text-sm text-foreground leading-relaxed">{current.instruction}</p>
-                <Button size="sm" className="rounded-xl gap-1" onClick={() => { setStep(s => s + 1); step < BODY_PARTS.length - 1 ? playDing() : playChime(); }}>
+                <Button size="sm" className="rounded-xl gap-1" onClick={() => { setStep(s => s + 1); if (step < BODY_PARTS.length - 1) playDing(); else { playChime(); onComplete?.(); } }}>
                   {step < BODY_PARTS.length - 1 ? 'Next area' : 'Complete'}
                   <ChevronRight size={14} />
                 </Button>

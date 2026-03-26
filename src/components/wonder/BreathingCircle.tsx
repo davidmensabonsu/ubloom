@@ -9,6 +9,7 @@ interface BreathingCircleProps {
   /** Pattern as [inhale, hold, exhale] in seconds */
   pattern?: [number, number, number];
   cycles?: number;
+  onComplete?: () => void;
 }
 
 type Phase = 'inhale' | 'hold' | 'exhale' | 'idle' | 'done';
@@ -29,7 +30,7 @@ const PHASE_COLORS: Record<Phase, string> = {
   done: 'hsl(var(--primary) / 0.4)',
 };
 
-export default function BreathingCircle({ pattern = [4, 7, 8], cycles = 4 }: BreathingCircleProps) {
+export default function BreathingCircle({ pattern = [4, 7, 8], cycles = 4, onComplete }: BreathingCircleProps) {
   const [phase, setPhase] = useState<Phase>('idle');
   const [countdown, setCountdown] = useState(0);
   const [currentCycle, setCurrentCycle] = useState(0);
@@ -90,7 +91,8 @@ export default function BreathingCircle({ pattern = [4, 7, 8], cycles = 4 }: Bre
             setPhase('done');
             setCountdown(0);
             setIsRunning(false);
-            playChime();
+             playChime();
+            onComplete?.();
             if (timerRef.current) clearInterval(timerRef.current);
             return;
           }

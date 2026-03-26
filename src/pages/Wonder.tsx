@@ -6,6 +6,7 @@ import BottomNav from '@/components/BottomNav';
 import RecommendedSection from '@/components/wonder/RecommendedSection';
 import ResourceCard from '@/components/wonder/ResourceCard';
 import ResourceDetailSheet from '@/components/wonder/ResourceDetailSheet';
+import WonderStreak from '@/components/wonder/WonderStreak';
 import { wonderResources, wonderCategories, type WonderResource, type WonderCategory } from '@/lib/wonderResources';
 
 const INITIAL_SHOW = 8;
@@ -53,11 +54,20 @@ export default function Wonder() {
       </div>
 
       <div className="px-5 space-y-6">
+        {/* Practice Streak */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12 }}
+        >
+          <WonderStreak />
+        </motion.div>
+
         {/* Recommended — Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
+          transition={{ delay: 0.18 }}
         >
           <RecommendedSection onSelectResource={handleSelectResource} />
         </motion.div>
