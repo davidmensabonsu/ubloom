@@ -140,6 +140,10 @@ export const resourceThumbnails: Record<string, string> = {
   'meal-10': mealStirfry,
   'meal-11': mealLentilCurry,
   'meal-12': mealBakedCod,
+  'meal-13': mealEnergyBalls,
+  'meal-14': mealFruitPlate,
+  'meal-15': mealGreenSmoothie,
+  'meal-16': mealHummusVeggies,
 };
 
 /** AI-generated demo videos for exercise / video-type resources */
