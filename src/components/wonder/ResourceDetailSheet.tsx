@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Bookmark, BookmarkCheck, CheckCircle2, Circle } from 'lucide-react';
 import { typeLabels, type WonderResource } from '@/lib/wonderResources';
 import { useUserStore } from '@/stores/userStore';
+import { resourceImages, resourceVideos } from '@/lib/resourceMedia';
 import BreathingCircle from './BreathingCircle';
 import GroundingExercise from './GroundingExercise';
 import BodyScanGuide from './BodyScanGuide';
