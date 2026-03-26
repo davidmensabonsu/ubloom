@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Pause, RotateCcw } from 'lucide-react';
+import { Play, Pause, RotateCcw, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAmbientSound } from '@/hooks/useAmbientSound';
 
 interface BreathingCircleProps {
   /** Pattern as [inhale, hold, exhale] in seconds */
@@ -36,6 +37,7 @@ export default function BreathingCircle({ pattern = [4, 7, 8], cycles = 4 }: Bre
   const phaseRef = useRef<Phase>('idle');
   const countRef = useRef(0);
   const cycleRef = useRef(0);
+  const ambient = useAmbientSound('breathing');
 
   const [inhale, hold, exhale] = pattern;
 
@@ -172,11 +174,21 @@ export default function BreathingCircle({ pattern = [4, 7, 8], cycles = 4 }: Bre
         )}
       </div>
 
-      {/* Pattern info */}
-      <div className="flex gap-3 text-[10px] text-muted-foreground uppercase tracking-widest">
-        <span>In {inhale}s</span>
-        <span>Hold {hold}s</span>
-        <span>Out {exhale}s</span>
+      {/* Sound toggle & pattern info */}
+      <div className="flex items-center gap-4">
+        <button
+          onClick={ambient.toggle}
+          className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+          aria-label={ambient.isPlaying ? 'Mute ambient sound' : 'Play ambient sound'}
+        >
+          {ambient.isPlaying ? <Volume2 size={14} className="text-primary" /> : <VolumeX size={14} />}
+          <span>{ambient.isPlaying ? 'Sound on' : 'Sound off'}</span>
+        </button>
+        <div className="flex gap-3 text-[10px] text-muted-foreground uppercase tracking-widest">
+          <span>In {inhale}s</span>
+          <span>Hold {hold}s</span>
+          <span>Out {exhale}s</span>
+        </div>
       </div>
     </div>
   );

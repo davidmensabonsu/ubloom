@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, RotateCcw } from 'lucide-react';
+import { ChevronRight, RotateCcw, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAmbientSound } from '@/hooks/useAmbientSound';
 
 const BODY_PARTS = [
   { name: 'Toes & Feet', instruction: 'Bring your attention to your toes. Wiggle them gently, then relax.', position: 90 },
@@ -14,6 +15,7 @@ const BODY_PARTS = [
 
 export default function BodyScanGuide() {
   const [step, setStep] = useState(-1);
+  const ambient = useAmbientSound('bodyscan');
   const isActive = step >= 0 && step < BODY_PARTS.length;
   const isDone = step >= BODY_PARTS.length;
   const current = isActive ? BODY_PARTS[step] : null;
@@ -75,6 +77,16 @@ export default function BodyScanGuide() {
           </AnimatePresence>
         </div>
       </div>
+
+      {/* Sound toggle */}
+      <button
+        onClick={ambient.toggle}
+        className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+        aria-label={ambient.isPlaying ? 'Mute ambient sound' : 'Play ambient sound'}
+      >
+        {ambient.isPlaying ? <Volume2 size={14} className="text-primary" /> : <VolumeX size={14} />}
+        <span>{ambient.isPlaying ? 'Sound on' : 'Sound off'}</span>
+      </button>
     </div>
   );
 }
