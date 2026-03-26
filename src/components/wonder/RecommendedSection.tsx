@@ -11,7 +11,7 @@ interface Recommendation {
   reason?: string;
 }
 
-const VISIBLE_COUNT = 3;
+const VISIBLE_COUNT = 6;
 
 export default function RecommendedSection({ onSelectResource }: { onSelectResource: (r: WonderResource) => void }) {
   const { profile } = useUserStore();
@@ -67,12 +67,7 @@ export default function RecommendedSection({ onSelectResource }: { onSelectResou
   const hasMore = recommendedResources.length > VISIBLE_COUNT;
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Sparkles size={20} className="text-primary" />
-        <h2 className="font-display text-2xl font-semibold text-foreground">For You</h2>
-      </div>
-
+    <div className="space-y-3">
       {loading ? (
         <div className="flex items-center justify-center py-8">
           <Loader2 size={20} className="animate-spin text-muted-foreground" />
@@ -80,7 +75,7 @@ export default function RecommendedSection({ onSelectResource }: { onSelectResou
         </div>
       ) : visibleRecs.length > 0 ? (
         <>
-          <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide snap-x snap-mandatory">
+          <div className="grid grid-cols-2 gap-3">
             {visibleRecs.map(({ resource, reason }, i) => {
               const color = categoryColors[resource.category];
               const typeInfo = typeLabels[resource.type];
@@ -89,13 +84,12 @@ export default function RecommendedSection({ onSelectResource }: { onSelectResou
                 <motion.button
                   key={resource.id}
                   onClick={() => onSelectResource(resource)}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.08 }}
-                  className="snap-start shrink-0 w-[300px] text-left glass-card rounded-2xl overflow-hidden shadow-soft relative group"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="w-full text-left rounded-2xl bg-muted/30 hover:bg-muted/50 transition-colors relative overflow-hidden"
                   whileTap={{ scale: 0.97 }}
                 >
-                  {/* Thumbnail image */}
                   {thumbnail && (
                     <div className="w-full aspect-[4/3] overflow-hidden">
                       <img
@@ -107,27 +101,21 @@ export default function RecommendedSection({ onSelectResource }: { onSelectResou
                     </div>
                   )}
 
-                  {/* Category accent strip */}
-                  <div
-                    className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl"
-                    style={{ backgroundColor: `hsl(${color})` }}
-                  />
-
-                  <div className="p-4 space-y-2">
+                  <div className="p-3 space-y-1.5">
                     <span
-                      className="text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full"
+                      className="text-[10px] font-medium inline-block px-2 py-0.5 rounded-full"
                       style={{
-                        backgroundColor: `hsl(${color} / 0.15)`,
+                        backgroundColor: `hsl(${color} / 0.12)`,
                         color: `hsl(${color})`,
                       }}
                     >
                       {typeInfo.label}
                     </span>
-                    <h3 className="font-display text-lg font-semibold text-foreground leading-snug mt-1.5">
+                    <h3 className="text-sm font-semibold text-foreground leading-snug line-clamp-2">
                       {resource.title}
                     </h3>
                     {reason && (
-                      <p className="text-xs italic text-primary/80 leading-relaxed">
+                      <p className="text-xs italic text-primary/80 leading-relaxed line-clamp-2">
                         "{reason}"
                       </p>
                     )}
