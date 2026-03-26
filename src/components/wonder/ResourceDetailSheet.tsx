@@ -7,6 +7,9 @@ import BreathingCircle from './BreathingCircle';
 import GroundingExercise from './GroundingExercise';
 import BodyScanGuide from './BodyScanGuide';
 import StepByStepGuide from './StepByStepGuide';
+import SimpleTimer from './SimpleTimer';
+import HydrationTracker from './HydrationTracker';
+import JournalPrompt from './JournalPrompt';
 
 interface ResourceDetailSheetProps {
   resource: WonderResource | null;
@@ -97,6 +100,119 @@ function ResourceVisual({ resourceId }: { resourceId: string }) {
             'Say: "I am becoming the person I\'m meant to be."',
             'Say one more thing you genuinely love about yourself.',
             'Hold your gaze for a moment. Let it feel soft, not forced.',
+          ]}
+        />
+      );
+    // TIMERS
+    case 'mind-1': // Mountain Meditation
+      return <SimpleTimer duration={300} label="Mountain meditation" doneMessage="You are the mountain ✨" />;
+    case 'fit-2': // Walk & Talk
+      return <SimpleTimer duration={1200} label="Mindful walk" doneMessage="Beautiful walk ✨" />;
+    case 'fit-4': // Dance It Out
+      return <SimpleTimer duration={210} label="Dance it out" doneMessage="You danced! 💃" />;
+    case 'life-1': // 5-Minute Tidy
+      return <SimpleTimer duration={300} label="Tidy time" doneMessage="Space cleared ✨" />;
+    case 'life-4': // Phone-Free Mornings
+      return <SimpleTimer duration={3600} label="Phone-free" doneMessage="One hour reclaimed ✨" />;
+    case 'calm-6': // Legs Up the Wall
+      return <SimpleTimer duration={300} label="Legs up the wall" doneMessage="Rest complete ✨" />;
+    case 'calm-7': // Journaling for Release
+      return <SimpleTimer duration={600} label="Free write" doneMessage="Release complete ✨" />;
+    case 'well-2': // Cold Water Face Splash
+      return <SimpleTimer duration={60} label="Cold splash" doneMessage="Refreshed! 💦" />;
+    case 'well-6': // Digital Sunset
+      return <SimpleTimer duration={3600} label="Digital sunset" doneMessage="Screens off ✨" />;
+    // HYDRATION
+    case 'nutr-6': // Hydration Ritual
+      return <HydrationTracker />;
+    // JOURNAL PROMPTS
+    case 'life-5': // Gratitude Before Sleep
+      return (
+        <JournalPrompt
+          prompts={[
+            'Name something small that made you smile today.',
+            'What\'s something you\'re grateful for about yourself?',
+            'What\'s one kind thing someone did for you recently?',
+          ]}
+          placeholder="I'm grateful for..."
+          doneMessage="Sweet dreams ✨"
+          maxEntries={3}
+        />
+      );
+    case 'mind-5': // Rewriting Inner Narrative
+      return (
+        <JournalPrompt
+          prompts={[
+            'Write down a belief you hold about yourself that hurts.',
+            'Ask yourself: "Is this actually true? Where did this come from?"',
+            'Now write a kinder, truer version of that belief.',
+          ]}
+          placeholder="Write freely..."
+          doneMessage="A kinder story, written ✨"
+          maxEntries={3}
+        />
+      );
+    case 'mind-7': // Future Self Journaling
+      return (
+        <JournalPrompt
+          prompts={[
+            'Imagine it\'s one year from now. Where are you? What does your day look like?',
+            'What does your future self want you to know right now?',
+            'What\'s one thing she did to get where she is?',
+          ]}
+          placeholder="Dear present me..."
+          doneMessage="Your future self is proud of you ✨"
+          maxEntries={3}
+        />
+      );
+    // STEP-BY-STEP for remaining nutrition tips
+    case 'nutr-1': // Morning Lemon Water
+      return (
+        <StepByStepGuide
+          title="Morning lemon water"
+          steps={[
+            'Boil water and let it cool until warm (not hot).',
+            'Squeeze half a fresh lemon into the warm water.',
+            'Drink it slowly, first thing, before breakfast.',
+            'Wait 15-30 minutes before eating to let it work.',
+          ]}
+        />
+      );
+    case 'nutr-7': // Anti-Inflammatory Eating
+      return (
+        <StepByStepGuide
+          title="Anti-inflammatory plate"
+          steps={[
+            'Fill half your plate with colourful vegetables and leafy greens.',
+            'Add a portion of omega-3 rich protein (salmon, sardines, or lentils).',
+            'Include healthy fats — olive oil, avocado, or a handful of nuts.',
+            'Season with turmeric, ginger, or garlic for extra anti-inflammatory power.',
+            'Minimise processed foods, refined sugar, and excess alcohol.',
+          ]}
+        />
+      );
+    case 'nutr-4': // Gut-Friendly Foods
+      return (
+        <StepByStepGuide
+          title="Gut-friendly daily plan"
+          steps={[
+            'Morning: Start with yoghurt or kefir for probiotics.',
+            'Lunch: Add fibre-rich foods — oats, beans, or whole grains.',
+            'Snack: Reach for fermented foods — kimchi, sauerkraut, or kombucha.',
+            'Dinner: Include plenty of vegetables for prebiotic fibre.',
+          ]}
+        />
+      );
+    case 'life-6': // Capsule Wardrobe
+      return (
+        <StepByStepGuide
+          title="Capsule wardrobe in 5 steps"
+          steps={[
+            'Pull out everything from your wardrobe. Yes, everything.',
+            'Keep only pieces you love AND that fit well right now.',
+            'Aim for 30-40 versatile items that mix and match.',
+            'Organise by category: tops, bottoms, layers, dresses.',
+            'Donate or sell the rest. Getting dressed is now effortless.',
           ]}
         />
       );
