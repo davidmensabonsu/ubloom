@@ -64,6 +64,7 @@ export interface UserProfile {
   routineSetupComplete: boolean;
    reminderSettings: ReminderSettings;
   savedResources: string[];
+  savedRecipes: string[]; // "resourceId::recipeIndex"
   usedResources: string[];
   resourceCompletions: ResourceCompletion[];
   moodboardItems: MoodboardItem[];
@@ -156,6 +157,8 @@ interface UserStore {
   toggleTask: (id: string) => void;
   saveResource: (id: string) => void;
   unsaveResource: (id: string) => void;
+  saveRecipe: (key: string) => void;
+  unsaveRecipe: (key: string) => void;
   markResourceUsed: (id: string) => void;
   unmarkResourceUsed: (id: string) => void;
   logResourceCompletion: (resourceId: string) => void;
@@ -218,7 +221,8 @@ const initialProfile: UserProfile = {
      lastNotified: {},
    },
    savedResources: [],
-  usedResources: [],
+   savedRecipes: [],
+   usedResources: [],
   resourceCompletions: [],
   moodboardItems: [],
   onboardingComplete: false,
@@ -303,6 +307,22 @@ export const useUserStore = create<UserStore>()(
           profile: {
             ...state.profile,
             savedResources: (state.profile.savedResources || []).filter((r) => r !== id),
+          },
+        })),
+
+      saveRecipe: (key) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            savedRecipes: [...(state.profile.savedRecipes || []).filter((r) => r !== key), key],
+          },
+        })),
+
+      unsaveRecipe: (key) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            savedRecipes: (state.profile.savedRecipes || []).filter((r) => r !== key),
           },
         })),
 
