@@ -1,9 +1,29 @@
 export type WonderCategory = 'mindset' | 'wellness' | 'fitness' | 'nutrition' | 'vitamins' | 'lifestyle' | 'calm';
 export type WonderType = 'book' | 'video' | 'technique' | 'nutrition-tip' | 'vitamin';
 
+export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
+
 export interface Recipe {
   name: string;
   time: string;
+  ingredients: string[];
+  steps: string[];
+}
+
+export interface MealRecipe {
+  id: string;
+  name: string;
+  mealType: MealType;
+  thumbnail?: string;
+  prepTime: string;
+  calories: number;
+  protein: string;
+  carbs: string;
+  fat: string;
+  sugar: string;
+  difficultyRating: number; // 1-5
+  healthRating: number; // 1-5
+  healthBenefits: string[];
   ingredients: string[];
   steps: string[];
 }
@@ -566,5 +586,205 @@ export const wonderResources: WonderResource[] = [
     tags: ['nervous-system', 'calm', 'healing'],
     emotionalTone: 'calm',
     goalAlignment: ['peace', 'healing'],
+  },
+];
+
+export const mealRecipes: MealRecipe[] = [
+  // BREAKFAST
+  {
+    id: 'meal-1',
+    name: 'Overnight Oats with Berries',
+    mealType: 'breakfast',
+    prepTime: '10 min + overnight',
+    calories: 350,
+    protein: '12g',
+    carbs: '52g',
+    fat: '10g',
+    sugar: '14g',
+    difficultyRating: 1,
+    healthRating: 5,
+    healthBenefits: ['High in fibre for gut health', 'Sustained energy from complex carbs', 'Antioxidant-rich berries'],
+    ingredients: ['½ cup rolled oats', '½ cup oat milk', '¼ cup Greek yoghurt', '1 tbsp chia seeds', '½ cup mixed berries', '1 tsp honey', 'Pinch of cinnamon'],
+    steps: ['Mix oats, milk, yoghurt, chia seeds, and cinnamon in a jar.', 'Refrigerate overnight (or at least 4 hours).', 'Top with berries and honey before eating.', 'Enjoy cold or gently warmed.'],
+  },
+  {
+    id: 'meal-2',
+    name: 'Avocado Toast with Poached Egg',
+    mealType: 'breakfast',
+    prepTime: '15 min',
+    calories: 380,
+    protein: '14g',
+    carbs: '30g',
+    fat: '22g',
+    sugar: '3g',
+    difficultyRating: 2,
+    healthRating: 4,
+    healthBenefits: ['Healthy fats from avocado', 'Complete protein from egg', 'Good source of vitamin E'],
+    ingredients: ['1 slice sourdough bread', '½ ripe avocado', '1 egg', '1 tsp lemon juice', 'Chilli flakes', 'Salt & pepper', 'Microgreens (optional)'],
+    steps: ['Toast the sourdough until golden.', 'Mash avocado with lemon juice, salt, and pepper.', 'Poach the egg in simmering water with a splash of vinegar for 3 min.', 'Spread avocado on toast, top with egg, chilli flakes, and microgreens.'],
+  },
+  {
+    id: 'meal-3',
+    name: 'Green Smoothie Bowl',
+    mealType: 'breakfast',
+    prepTime: '8 min',
+    calories: 290,
+    protein: '8g',
+    carbs: '48g',
+    fat: '8g',
+    sugar: '22g',
+    difficultyRating: 1,
+    healthRating: 5,
+    healthBenefits: ['Packed with vitamins A, C, K', 'Supports immune system', 'Hydrating and detoxifying'],
+    ingredients: ['1 frozen banana', '1 cup spinach', '½ cup frozen mango', '½ cup almond milk', '1 tbsp almond butter', 'Toppings: granola, coconut, chia seeds'],
+    steps: ['Blend banana, spinach, mango, and almond milk until thick and smooth.', 'Pour into a bowl.', 'Top with granola, coconut, and chia seeds.', 'Eat with a spoon — enjoy slowly!'],
+  },
+  {
+    id: 'meal-4',
+    name: 'Probiotic Breakfast Bowl',
+    mealType: 'breakfast',
+    prepTime: '10 min',
+    calories: 310,
+    protein: '18g',
+    carbs: '38g',
+    fat: '9g',
+    sugar: '16g',
+    difficultyRating: 1,
+    healthRating: 5,
+    healthBenefits: ['Supports gut microbiome', 'Rich in probiotics and prebiotics', 'High protein for satiety'],
+    ingredients: ['1 cup Greek yoghurt', '¼ cup granola', '1 tbsp chia seeds', 'Fresh berries', '1 tsp honey', '1 tbsp sauerkraut (on the side)'],
+    steps: ['Spoon yoghurt into a bowl.', 'Top with granola, chia seeds, and berries.', 'Drizzle with honey.', 'Enjoy sauerkraut on the side for extra probiotics.'],
+  },
+
+  // LUNCH
+  {
+    id: 'meal-5',
+    name: 'Quinoa Power Bowl',
+    mealType: 'lunch',
+    prepTime: '25 min',
+    calories: 450,
+    protein: '16g',
+    carbs: '55g',
+    fat: '18g',
+    sugar: '6g',
+    difficultyRating: 2,
+    healthRating: 5,
+    healthBenefits: ['Complete plant protein from quinoa', 'Anti-inflammatory turmeric', 'High in iron and fibre'],
+    ingredients: ['1 cup cooked quinoa', '1 cup roasted sweet potato', '2 cups spinach', '½ avocado', '¼ cup chickpeas', '1 tbsp olive oil', 'Lemon tahini dressing'],
+    steps: ['Roast sweet potato cubes at 200°C for 20 min.', 'Build bowl: quinoa base, spinach, sweet potato, chickpeas.', 'Slice avocado on top.', 'Drizzle with lemon tahini dressing.'],
+  },
+  {
+    id: 'meal-6',
+    name: 'Mediterranean Wrap',
+    mealType: 'lunch',
+    prepTime: '15 min',
+    calories: 420,
+    protein: '14g',
+    carbs: '42g',
+    fat: '22g',
+    sugar: '5g',
+    difficultyRating: 1,
+    healthRating: 4,
+    healthBenefits: ['Heart-healthy olive oil & hummus', 'Rich in antioxidants', 'Good source of fibre'],
+    ingredients: ['1 wholemeal wrap', '3 tbsp hummus', '¼ cup feta cheese', 'Cucumber, tomato, red onion sliced', 'Handful of mixed greens', 'Kalamata olives', 'Drizzle of olive oil'],
+    steps: ['Spread hummus across the wrap.', 'Layer vegetables, feta, and olives.', 'Drizzle with olive oil.', 'Roll tightly and slice in half.'],
+  },
+  {
+    id: 'meal-7',
+    name: 'Gut-Healing Miso Soup',
+    mealType: 'lunch',
+    prepTime: '15 min',
+    calories: 180,
+    protein: '12g',
+    carbs: '14g',
+    fat: '8g',
+    sugar: '3g',
+    difficultyRating: 2,
+    healthRating: 5,
+    healthBenefits: ['Fermented miso supports gut bacteria', 'Low calorie and hydrating', 'Anti-inflammatory ginger'],
+    ingredients: ['2 cups water', '2 tbsp white miso paste', '½ block soft tofu, cubed', '1 spring onion, sliced', '1 sheet nori, torn', '½ tsp grated ginger'],
+    steps: ['Bring water to a gentle simmer (don\'t boil).', 'Dissolve miso paste into the water.', 'Add tofu cubes and ginger.', 'Serve topped with spring onion and nori.'],
+  },
+  {
+    id: 'meal-8',
+    name: 'Golden Turmeric Bowl',
+    mealType: 'lunch',
+    prepTime: '20 min',
+    calories: 410,
+    protein: '12g',
+    carbs: '52g',
+    fat: '18g',
+    sugar: '8g',
+    difficultyRating: 2,
+    healthRating: 5,
+    healthBenefits: ['Powerful anti-inflammatory effects', 'Rich in vitamins A and C', 'Supports joint and brain health'],
+    ingredients: ['1 cup quinoa, cooked', '1 cup roasted sweet potato cubes', '2 cups spinach', '½ avocado, sliced', '1 tbsp olive oil', '½ tsp turmeric', '¼ tsp black pepper', 'Squeeze of lemon'],
+    steps: ['Toss sweet potato in olive oil, turmeric, and pepper. Roast at 200°C for 15 min.', 'Build bowl: quinoa base, spinach, roasted sweet potato.', 'Top with avocado slices.', 'Squeeze lemon over everything and enjoy.'],
+  },
+
+  // DINNER
+  {
+    id: 'meal-9',
+    name: 'Salmon with Roasted Vegetables',
+    mealType: 'dinner',
+    prepTime: '30 min',
+    calories: 520,
+    protein: '35g',
+    carbs: '28g',
+    fat: '28g',
+    sugar: '6g',
+    difficultyRating: 3,
+    healthRating: 5,
+    healthBenefits: ['Omega-3 fatty acids for brain health', 'High quality protein', 'Supports heart health'],
+    ingredients: ['1 salmon fillet', '1 cup broccoli florets', '1 cup sweet potato cubes', '1 tbsp olive oil', '1 clove garlic, minced', 'Lemon wedge', 'Fresh dill', 'Salt & pepper'],
+    steps: ['Preheat oven to 200°C.', 'Toss vegetables in olive oil, garlic, salt, and pepper. Spread on a baking sheet.', 'Season salmon and place on the sheet. Roast for 20-25 min.', 'Serve with lemon wedge and fresh dill.'],
+  },
+  {
+    id: 'meal-10',
+    name: 'Chicken & Veggie Stir-Fry',
+    mealType: 'dinner',
+    prepTime: '20 min',
+    calories: 440,
+    protein: '32g',
+    carbs: '35g',
+    fat: '16g',
+    sugar: '8g',
+    difficultyRating: 2,
+    healthRating: 4,
+    healthBenefits: ['Lean protein for muscle recovery', 'Colourful vegetables = diverse nutrients', 'Quick and balanced meal'],
+    ingredients: ['200g chicken breast, sliced', '1 cup broccoli', '1 bell pepper, sliced', '1 carrot, julienned', '2 tbsp soy sauce', '1 tbsp sesame oil', '1 tsp ginger, grated', 'Brown rice to serve'],
+    steps: ['Cook brown rice according to package instructions.', 'Heat sesame oil in a wok. Stir-fry chicken until golden.', 'Add vegetables and ginger. Cook 3-4 min until tender-crisp.', 'Add soy sauce, toss well. Serve over rice.'],
+  },
+  {
+    id: 'meal-11',
+    name: 'Lentil & Vegetable Curry',
+    mealType: 'dinner',
+    prepTime: '35 min',
+    calories: 380,
+    protein: '18g',
+    carbs: '52g',
+    fat: '10g',
+    sugar: '8g',
+    difficultyRating: 2,
+    healthRating: 5,
+    healthBenefits: ['Plant-based iron and protein', 'High fibre for digestion', 'Anti-inflammatory spices'],
+    ingredients: ['1 cup red lentils', '1 can coconut milk', '1 can diced tomatoes', '1 onion, diced', '2 cloves garlic', '1 tbsp curry powder', '1 tsp turmeric', 'Fresh coriander', 'Basmati rice to serve'],
+    steps: ['Sauté onion and garlic until soft.', 'Add curry powder and turmeric, cook 1 min.', 'Add lentils, tomatoes, and coconut milk. Simmer 25 min.', 'Serve over rice with fresh coriander.'],
+  },
+  {
+    id: 'meal-12',
+    name: 'Baked Cod with Herb Crust',
+    mealType: 'dinner',
+    prepTime: '25 min',
+    calories: 340,
+    protein: '30g',
+    carbs: '18g',
+    fat: '14g',
+    sugar: '2g',
+    difficultyRating: 3,
+    healthRating: 5,
+    healthBenefits: ['Lean white fish high in protein', 'Low calorie and heart-friendly', 'Rich in B vitamins and selenium'],
+    ingredients: ['2 cod fillets', '¼ cup breadcrumbs', '2 tbsp fresh parsley, chopped', '1 tbsp olive oil', '1 clove garlic, minced', 'Lemon zest', 'Steamed green beans to serve'],
+    steps: ['Preheat oven to 190°C.', 'Mix breadcrumbs, parsley, garlic, lemon zest, and olive oil.', 'Press the herb crust onto the cod fillets.', 'Bake for 15-18 min. Serve with steamed green beans.'],
   },
 ];
