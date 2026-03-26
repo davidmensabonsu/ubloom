@@ -1,9 +1,10 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Bookmark, BookmarkCheck, CheckCircle2, Circle } from 'lucide-react';
+import { Bookmark, BookmarkCheck, CheckCircle2, Circle, ExternalLink } from 'lucide-react';
 import { typeLabels, type WonderResource } from '@/lib/wonderResources';
 import { useUserStore } from '@/stores/userStore';
 import { resourceImages, resourceVideos } from '@/lib/resourceMedia';
+import { bookLinks } from '@/lib/bookLinks';
 import BreathingCircle from './BreathingCircle';
 import GroundingExercise from './GroundingExercise';
 import BodyScanGuide from './BodyScanGuide';
@@ -306,6 +307,27 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
               </span>
             ))}
           </div>
+
+          {/* Book purchase links */}
+          {bookLinks[resource.id] && (
+            <div className="p-4 rounded-2xl bg-muted/50 space-y-2.5">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Get this book</h4>
+              <div className="flex flex-wrap gap-2">
+                {bookLinks[resource.id].map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-background border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                  >
+                    {link.label}
+                    <ExternalLink size={12} className="text-muted-foreground" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="flex gap-3 pt-2">
             <Button
