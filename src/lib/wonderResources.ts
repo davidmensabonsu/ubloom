@@ -2,6 +2,7 @@ export type WonderCategory = 'mindset' | 'wellness' | 'fitness' | 'nutrition' | 
 export type WonderType = 'book' | 'video' | 'technique' | 'nutrition-tip' | 'vitamin';
 
 export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
+export type FitnessType = 'upper-body' | 'lower-body' | 'core' | 'stretches-yoga';
 
 export interface Recipe {
   name: string;
@@ -26,6 +27,20 @@ export interface MealRecipe {
   healthBenefits: string[];
   ingredients: string[];
   steps: string[];
+}
+
+export interface FitnessWorkout {
+  id: string;
+  name: string;
+  fitnessType: FitnessType;
+  description: string;
+  duration: string;
+  difficulty: number; // 1-5
+  intensity: number; // 1-5
+  musclesTargeted: string[];
+  equipment: string[];
+  steps: string[];
+  benefits: string[];
 }
 
 export interface VitaminDosage {
@@ -924,5 +939,223 @@ export const mealRecipes: MealRecipe[] = [
     healthBenefits: ['High in plant protein and fibre', 'Anti-inflammatory chickpea base', 'Low-calorie, nutrient-dense snacking'],
     ingredients: ['½ cup hummus', '1 carrot, cut into sticks', '1 cucumber, cut into sticks', '1 bell pepper, sliced', '6 cherry tomatoes'],
     steps: ['Wash and cut vegetables into sticks.', 'Arrange around a bowl of hummus.', 'Dip and enjoy!'],
+  },
+];
+
+export const fitnessWorkouts: FitnessWorkout[] = [
+  // UPPER BODY
+  {
+    id: 'fw-1',
+    name: 'Toned Arms Sculpt',
+    fitnessType: 'upper-body',
+    description: 'Sculpt lean, defined arms with this targeted upper-body routine.',
+    duration: '15 min',
+    difficulty: 2,
+    intensity: 3,
+    musclesTargeted: ['Biceps', 'Triceps', 'Shoulders'],
+    equipment: ['Light dumbbells (2-5 lbs)', 'Mat'],
+    steps: ['Warm up with arm circles (1 min each direction).', 'Bicep curls — 3 sets of 12 reps.', 'Tricep dips on a chair — 3 sets of 10.', 'Shoulder press — 3 sets of 10.', 'Lateral raises — 3 sets of 12.', 'Cool down with gentle arm stretches.'],
+    benefits: ['Builds lean muscle definition', 'Improves posture and shoulder stability', 'Boosts metabolism'],
+  },
+  {
+    id: 'fw-2',
+    name: 'Push-Up Power',
+    fitnessType: 'upper-body',
+    description: 'Master push-up variations to build chest and shoulder strength.',
+    duration: '12 min',
+    difficulty: 3,
+    intensity: 4,
+    musclesTargeted: ['Chest', 'Shoulders', 'Triceps', 'Core'],
+    equipment: ['Mat'],
+    steps: ['Start with 10 standard push-ups.', 'Wide-grip push-ups — 8 reps.', 'Diamond push-ups — 8 reps.', 'Incline push-ups on a step — 10 reps.', 'Negative push-ups (slow lower) — 6 reps.', 'Rest 30 sec between sets. Repeat circuit twice.'],
+    benefits: ['Builds functional upper body strength', 'No equipment needed', 'Strengthens core stability'],
+  },
+  {
+    id: 'fw-3',
+    name: 'Back & Posture Fix',
+    fitnessType: 'upper-body',
+    description: 'Strengthen your back to improve posture and reduce tension.',
+    duration: '18 min',
+    difficulty: 2,
+    intensity: 3,
+    musclesTargeted: ['Upper back', 'Lats', 'Rear deltoids'],
+    equipment: ['Resistance band', 'Mat'],
+    steps: ['Band pull-aparts — 3 sets of 15.', 'Bent-over rows with band — 3 sets of 12.', 'Prone Y-raises — 3 sets of 10.', 'Superman holds — 3 sets of 20 sec.', 'Cat-cow stretch cool down — 1 min.'],
+    benefits: ['Corrects rounded shoulders', 'Reduces back and neck pain', 'Improves confidence through better posture'],
+  },
+  {
+    id: 'fw-4',
+    name: 'Resistance Band Arms',
+    fitnessType: 'upper-body',
+    description: 'A gentle yet effective arm workout using only a resistance band.',
+    duration: '14 min',
+    difficulty: 1,
+    intensity: 2,
+    musclesTargeted: ['Biceps', 'Triceps', 'Forearms'],
+    equipment: ['Resistance band'],
+    steps: ['Band bicep curls — 3 sets of 15.', 'Overhead tricep extensions — 3 sets of 12.', 'Band pull-aparts — 3 sets of 15.', 'Wrist curls — 2 sets of 15.', 'Stretch and release.'],
+    benefits: ['Joint-friendly resistance training', 'Perfect for travel or home', 'Builds toned arms gradually'],
+  },
+
+  // LOWER BODY
+  {
+    id: 'fw-5',
+    name: 'Glute Bridge Burn',
+    fitnessType: 'lower-body',
+    description: 'Activate and strengthen your glutes with targeted bridge variations.',
+    duration: '15 min',
+    difficulty: 2,
+    intensity: 3,
+    musclesTargeted: ['Glutes', 'Hamstrings', 'Lower back'],
+    equipment: ['Mat', 'Optional resistance band'],
+    steps: ['Basic glute bridges — 3 sets of 15.', 'Single-leg bridges — 3 sets of 10 each side.', 'Banded bridge holds — 3 sets of 20 sec.', 'Frog pumps — 2 sets of 20.', 'Hip flexor stretch — 30 sec each side.'],
+    benefits: ['Reduces lower back pain', 'Shapes and lifts glutes', 'Improves hip mobility'],
+  },
+  {
+    id: 'fw-6',
+    name: 'Squat & Lunge Circuit',
+    fitnessType: 'lower-body',
+    description: 'Build strong legs with this squat and lunge combination workout.',
+    duration: '20 min',
+    difficulty: 3,
+    intensity: 4,
+    musclesTargeted: ['Quads', 'Glutes', 'Hamstrings', 'Calves'],
+    equipment: ['Mat', 'Optional dumbbells'],
+    steps: ['Bodyweight squats — 15 reps.', 'Forward lunges — 12 each leg.', 'Sumo squats — 15 reps.', 'Reverse lunges — 12 each leg.', 'Wall sit — 45 sec.', 'Repeat circuit twice with 1 min rest.'],
+    benefits: ['Builds lower body strength', 'Burns significant calories', 'Improves balance and coordination'],
+  },
+  {
+    id: 'fw-7',
+    name: 'Inner Thigh Toner',
+    fitnessType: 'lower-body',
+    description: 'Target your inner thighs with pilates-inspired movements.',
+    duration: '12 min',
+    difficulty: 2,
+    intensity: 2,
+    musclesTargeted: ['Inner thighs', 'Hip adductors', 'Core'],
+    equipment: ['Mat', 'Small pilates ball (optional)'],
+    steps: ['Side-lying inner thigh lifts — 20 each side.', 'Sumo squat pulses — 3 sets of 15.', 'Ball squeeze (or pillow) — 3 sets of 15.', 'Cossack squats — 8 each side.', 'Butterfly stretch — 1 min.'],
+    benefits: ['Tones hard-to-reach muscles', 'Improves hip flexibility', 'Supports knee stability'],
+  },
+  {
+    id: 'fw-8',
+    name: 'Calf & Ankle Strength',
+    fitnessType: 'lower-body',
+    description: 'Strengthen calves and ankles for better balance and stability.',
+    duration: '10 min',
+    difficulty: 1,
+    intensity: 2,
+    musclesTargeted: ['Calves', 'Ankles', 'Feet'],
+    equipment: ['Mat', 'Step or stair'],
+    steps: ['Standing calf raises — 3 sets of 20.', 'Single-leg calf raises — 3 sets of 12 each.', 'Ankle circles — 15 each direction per foot.', 'Toe walks — 1 min.', 'Heel walks — 1 min.'],
+    benefits: ['Prevents ankle injuries', 'Improves balance for heels', 'Supports running and walking'],
+  },
+
+  // CORE
+  {
+    id: 'fw-9',
+    name: 'Pilates Core Burn',
+    fitnessType: 'core',
+    description: 'A pilates-inspired core routine for a strong, sculpted midsection.',
+    duration: '15 min',
+    difficulty: 3,
+    intensity: 3,
+    musclesTargeted: ['Abs', 'Obliques', 'Deep core'],
+    equipment: ['Mat'],
+    steps: ['The Hundred — 100 pumps.', 'Roll-ups — 10 reps.', 'Single-leg stretch — 10 each side.', 'Criss-cross — 10 each side.', 'Plank hold — 45 sec.', 'Side plank — 30 sec each side.'],
+    benefits: ['Flattens and tones the stomach', 'Improves spinal support', 'Better posture throughout the day'],
+  },
+  {
+    id: 'fw-10',
+    name: 'Plank Challenge',
+    fitnessType: 'core',
+    description: 'Progressive plank variations to build endurance and core stability.',
+    duration: '10 min',
+    difficulty: 3,
+    intensity: 4,
+    musclesTargeted: ['Core', 'Shoulders', 'Back'],
+    equipment: ['Mat'],
+    steps: ['Standard plank — 30 sec.', 'Forearm plank — 30 sec.', 'Side plank left — 20 sec.', 'Side plank right — 20 sec.', 'Plank shoulder taps — 20 reps.', 'Plank up-downs — 10 reps.', 'Rest 30 sec, repeat twice.'],
+    benefits: ['Builds full-body stability', 'Strengthens without crunching', 'Improves mental endurance'],
+  },
+  {
+    id: 'fw-11',
+    name: 'Gentle Ab Toning',
+    fitnessType: 'core',
+    description: 'A softer core workout perfect for beginners or recovery days.',
+    duration: '12 min',
+    difficulty: 1,
+    intensity: 2,
+    musclesTargeted: ['Lower abs', 'Transverse abdominis'],
+    equipment: ['Mat'],
+    steps: ['Dead bugs — 10 each side.', 'Pelvic tilts — 15 reps.', 'Leg slides — 10 each side.', 'Bird dogs — 10 each side.', 'Gentle twist — 8 each side.', 'Deep breathing cool down — 1 min.'],
+    benefits: ['Safe for beginners and postnatal', 'Activates deep stabilizers', 'Reduces lower back discomfort'],
+  },
+  {
+    id: 'fw-12',
+    name: 'Oblique Sculptor',
+    fitnessType: 'core',
+    description: 'Define your waistline with targeted oblique exercises.',
+    duration: '14 min',
+    difficulty: 2,
+    intensity: 3,
+    musclesTargeted: ['Obliques', 'Serratus', 'Hip flexors'],
+    equipment: ['Mat', 'Optional dumbbell'],
+    steps: ['Side crunches — 15 each side.', 'Bicycle crunches — 20 total.', 'Russian twists — 20 total.', 'Standing side bends — 15 each side.', 'Woodchops — 12 each side.', 'Side plank dips — 10 each side.'],
+    benefits: ['Creates defined waistline', 'Improves rotational strength', 'Helps with sports and daily movement'],
+  },
+
+  // STRETCHES & YOGA
+  {
+    id: 'fw-13',
+    name: 'Morning Sun Salutation',
+    fitnessType: 'stretches-yoga',
+    description: 'Wake up your body with this classic yoga flow sequence.',
+    duration: '10 min',
+    difficulty: 1,
+    intensity: 2,
+    musclesTargeted: ['Full body', 'Spine', 'Hamstrings'],
+    equipment: ['Mat'],
+    steps: ['Mountain pose — 5 breaths.', 'Forward fold — hold 5 breaths.', 'Halfway lift — 3 breaths.', 'Low lunge right — 5 breaths.', 'Downward dog — 5 breaths.', 'Low lunge left — 5 breaths.', 'Return to standing. Repeat 3 times.'],
+    benefits: ['Energizes without caffeine', 'Improves flexibility over time', 'Sets a calm, intentional tone for the day'],
+  },
+  {
+    id: 'fw-14',
+    name: 'Hip Opener Flow',
+    fitnessType: 'stretches-yoga',
+    description: 'Release deep tension stored in your hips with this gentle flow.',
+    duration: '15 min',
+    difficulty: 2,
+    intensity: 1,
+    musclesTargeted: ['Hip flexors', 'Glutes', 'Inner thighs'],
+    equipment: ['Mat', 'Yoga block (optional)'],
+    steps: ['Butterfly pose — 1 min.', 'Low lunge with twist — 1 min each side.', 'Pigeon pose — 1 min each side.', 'Happy baby — 1 min.', 'Reclined bound angle — 2 min.', 'Savasana — 2 min.'],
+    benefits: ['Releases emotional tension held in hips', 'Reduces sciatica and lower back pain', 'Improves range of motion'],
+  },
+  {
+    id: 'fw-15',
+    name: 'Bedtime Stretch Ritual',
+    fitnessType: 'stretches-yoga',
+    description: 'A soothing stretch sequence to prepare your body for restful sleep.',
+    duration: '12 min',
+    difficulty: 1,
+    intensity: 1,
+    musclesTargeted: ['Neck', 'Shoulders', 'Spine', 'Hamstrings'],
+    equipment: ['Mat or bed'],
+    steps: ['Neck rolls — 1 min.', 'Seated forward fold — 1 min.', 'Supine twist — 1 min each side.', 'Legs up the wall — 3 min.', 'Child\'s pose — 2 min.', 'Final relaxation with deep breathing — 2 min.'],
+    benefits: ['Activates parasympathetic nervous system', 'Releases day\'s tension from body', 'Improves sleep quality naturally'],
+  },
+  {
+    id: 'fw-16',
+    name: 'Deep Flexibility Flow',
+    fitnessType: 'stretches-yoga',
+    description: 'A slow, deep stretch session for increasing overall flexibility.',
+    duration: '25 min',
+    difficulty: 2,
+    intensity: 1,
+    musclesTargeted: ['Hamstrings', 'Spine', 'Shoulders', 'Hips'],
+    equipment: ['Mat', 'Strap or towel'],
+    steps: ['Standing forward fold — 1 min.', 'Wide-legged fold — 1 min.', 'Seated straddle — 2 min.', 'Seated hamstring stretch — 1 min each side.', 'Thread the needle — 1 min each side.', 'Reclining hand-to-big-toe — 1 min each.', 'Final savasana — 3 min.'],
+    benefits: ['Gradually increases flexibility', 'Reduces muscle soreness', 'Promotes mindfulness and body awareness'],
   },
 ];

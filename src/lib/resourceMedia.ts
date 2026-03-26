@@ -64,6 +64,24 @@ import mealFruitPlate from '@/assets/wonder/meal-fruit-plate.jpg';
 import mealGreenSmoothie from '@/assets/wonder/meal-green-smoothie.jpg';
 import mealHummusVeggies from '@/assets/wonder/meal-hummus-veggies.jpg';
 
+// Fitness workout thumbnails
+import fwTonedArms from '@/assets/wonder/fw-toned-arms.jpg';
+import fwPushup from '@/assets/wonder/fw-pushup.jpg';
+import fwBackPosture from '@/assets/wonder/fw-back-posture.jpg';
+import fwBandArms from '@/assets/wonder/fw-band-arms.jpg';
+import fwGluteBridge from '@/assets/wonder/fw-glute-bridge.jpg';
+import fwSquatLunge from '@/assets/wonder/fw-squat-lunge.jpg';
+import fwInnerThigh from '@/assets/wonder/fw-inner-thigh.jpg';
+import fwCalfAnkle from '@/assets/wonder/fw-calf-ankle.jpg';
+import fwPilatesCore from '@/assets/wonder/fw-pilates-core.jpg';
+import fwPlank from '@/assets/wonder/fw-plank.jpg';
+import fwGentleAbs from '@/assets/wonder/fw-gentle-abs.jpg';
+import fwOblique from '@/assets/wonder/fw-oblique.jpg';
+import fwSunSalutation from '@/assets/wonder/fw-sun-salutation.jpg';
+import fwHipOpener from '@/assets/wonder/fw-hip-opener.jpg';
+import fwBedtimeStretch from '@/assets/wonder/fw-bedtime-stretch.jpg';
+import fwDeepFlexibility from '@/assets/wonder/fw-deep-flexibility.jpg';
+
 // Videos (CDN asset pointers)
 import videoMorningStretch from '@/assets/wonder/video-morning-stretch.mp4.asset.json';
 import videoPilates from '@/assets/wonder/video-pilates.mp4.asset.json';
@@ -167,6 +185,26 @@ export const resourceThumbnails: Record<string, string> = {
   'meal-14': mealFruitPlate,
   'meal-15': mealGreenSmoothie,
   'meal-16': mealHummusVeggies,
+};
+
+/** Fitness workout thumbnails */
+export const fitnessThumbnails: Record<string, string> = {
+  'fw-1': fwTonedArms,
+  'fw-2': fwPushup,
+  'fw-3': fwBackPosture,
+  'fw-4': fwBandArms,
+  'fw-5': fwGluteBridge,
+  'fw-6': fwSquatLunge,
+  'fw-7': fwInnerThigh,
+  'fw-8': fwCalfAnkle,
+  'fw-9': fwPilatesCore,
+  'fw-10': fwPlank,
+  'fw-11': fwGentleAbs,
+  'fw-12': fwOblique,
+  'fw-13': fwSunSalutation,
+  'fw-14': fwHipOpener,
+  'fw-15': fwBedtimeStretch,
+  'fw-16': fwDeepFlexibility,
 };
 
 /** AI-generated demo videos for exercise / video-type resources */
