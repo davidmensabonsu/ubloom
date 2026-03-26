@@ -121,6 +121,8 @@ export default function Wonder() {
             <RecommendedSection onSelectResource={handleSelectResource} />
           ) : activeCategory === 'nutrition' ? (
             <FoodRecipesSection />
+          ) : activeCategory === 'fitness' ? (
+            <FitnessSection />
           ) : (
             <>
               <div className="grid grid-cols-2 gap-3">
