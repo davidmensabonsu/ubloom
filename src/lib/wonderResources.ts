@@ -1,6 +1,13 @@
 export type WonderCategory = 'mindset' | 'wellness' | 'fitness' | 'nutrition' | 'lifestyle' | 'calm';
 export type WonderType = 'book' | 'video' | 'technique' | 'nutrition-tip' | 'vitamin';
 
+export interface Recipe {
+  name: string;
+  time: string;
+  ingredients: string[];
+  steps: string[];
+}
+
 export interface WonderResource {
   id: string;
   title: string;
@@ -12,6 +19,7 @@ export interface WonderResource {
   goalAlignment: string[];
   content?: string;
   link?: string;
+  recipes?: Recipe[];
 }
 
 import sparklesIcon from '@/assets/icons/sparkles.png';
