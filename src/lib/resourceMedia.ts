@@ -81,6 +81,10 @@ import fwSunSalutation from '@/assets/wonder/fw-sun-salutation.jpg';
 import fwHipOpener from '@/assets/wonder/fw-hip-opener.jpg';
 import fwBedtimeStretch from '@/assets/wonder/fw-bedtime-stretch.jpg';
 import fwDeepFlexibility from '@/assets/wonder/fw-deep-flexibility.jpg';
+import fwTotalBodyBurn from '@/assets/wonder/fw-total-body-burn.jpg';
+import fwBeginnerFullbody from '@/assets/wonder/fw-beginner-fullbody.jpg';
+import fwDumbbellSculpt from '@/assets/wonder/fw-dumbbell-sculpt.jpg';
+import fwHiit from '@/assets/wonder/fw-hiit.jpg';
 
 // Videos (CDN asset pointers)
 import videoMorningStretch from '@/assets/wonder/video-morning-stretch.mp4.asset.json';
