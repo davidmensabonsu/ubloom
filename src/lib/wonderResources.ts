@@ -1,4 +1,4 @@
-export type WonderCategory = 'mindset' | 'wellness' | 'fitness' | 'nutrition' | 'vitamins' | 'lifestyle' | 'calm';
+export type WonderCategory = 'mindset' | 'wellness' | 'fitness' | 'nutrition' | 'vitamins' | 'lifestyle' | 'calm' | 'books';
 export type WonderType = 'book' | 'video' | 'technique' | 'nutrition-tip' | 'vitamin';
 
 export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
@@ -60,6 +60,7 @@ export const categoryColors: Record<WonderCategory, string> = {
   vitamins: '45 75% 55%',
   lifestyle: '320 65% 58%',
   calm: '210 60% 55%',
+  books: '35 80% 50%',
 };
 
 export const wonderCategories: { key: WonderCategory; label: string; icon: string }[] = [
@@ -68,6 +69,7 @@ export const wonderCategories: { key: WonderCategory; label: string; icon: strin
   { key: 'fitness', label: 'Fitness & Movement', icon: dumbbellIcon },
   { key: 'nutrition', label: 'Food & Recipes', icon: saladIcon },
   { key: 'vitamins', label: 'Vitamins & Supplements', icon: pillIcon },
+  { key: 'books', label: 'Books', icon: bookIcon },
   { key: 'lifestyle', label: 'Lifestyle & Habits', icon: butterflyIcon },
   { key: 'calm', label: 'Calm & Nervous System', icon: yogaIcon },
 ];
@@ -97,7 +99,7 @@ export const wonderResources: WonderResource[] = [
     id: 'mind-2',
     title: 'You Are a Badass',
     description: 'Jen Sincero\'s guide to ditching self-doubt and embracing your greatness.',
-    category: 'mindset',
+    category: 'books',
     type: 'book',
     tags: ['confidence', 'empowerment', 'self-worth'],
     emotionalTone: 'empowering',
@@ -118,7 +120,7 @@ export const wonderResources: WonderResource[] = [
     id: 'mind-4',
     title: 'The Gifts of Imperfection',
     description: 'Brené Brown on letting go of who you think you should be.',
-    category: 'mindset',
+    category: 'books',
     type: 'book',
     tags: ['self-worth', 'vulnerability', 'peace'],
     emotionalTone: 'gentle',
@@ -139,7 +141,7 @@ export const wonderResources: WonderResource[] = [
     id: 'mind-6',
     title: 'Atomic Habits',
     description: 'James Clear on how tiny changes create remarkable results.',
-    category: 'mindset',
+    category: 'books',
     type: 'book',
     tags: ['discipline', 'growth', 'consistency'],
     emotionalTone: 'motivating',
@@ -205,7 +207,7 @@ export const wonderResources: WonderResource[] = [
     id: 'well-4',
     title: 'The Body Keeps the Score',
     description: 'Bessel van der Kolk explores how trauma lives in the body.',
-    category: 'wellness',
+    category: 'books',
     type: 'book',
     tags: ['healing', 'body-awareness', 'peace'],
     emotionalTone: 'deep',
@@ -460,7 +462,7 @@ export const wonderResources: WonderResource[] = [
     id: 'life-3',
     title: 'Slow Living',
     description: 'Embrace the art of doing less with more intention.',
-    category: 'lifestyle',
+    category: 'books',
     type: 'book',
     tags: ['peace', 'intention', 'simplicity'],
     emotionalTone: 'calm',
@@ -538,7 +540,7 @@ export const wonderResources: WonderResource[] = [
     id: 'calm-4',
     title: 'The Untethered Soul',
     description: 'Michael Singer on freeing yourself from habitual thoughts and emotions.',
-    category: 'calm',
+    category: 'books',
     type: 'book',
     tags: ['peace', 'freedom', 'awareness'],
     emotionalTone: 'liberating',
