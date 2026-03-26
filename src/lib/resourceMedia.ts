@@ -13,6 +13,14 @@ import bookBodyScore from '@/assets/wonder/book-body-score.jpg';
 import bookSlowLiving from '@/assets/wonder/book-slow-living.jpg';
 import bookUntethered from '@/assets/wonder/book-untethered.jpg';
 
+// Videos (CDN asset pointers)
+import videoMorningStretch from '@/assets/wonder/video-morning-stretch.mp4.asset.json';
+import videoPilates from '@/assets/wonder/video-pilates.mp4.asset.json';
+import videoYoga from '@/assets/wonder/video-yoga.mp4.asset.json';
+import videoStrength from '@/assets/wonder/video-strength.mp4.asset.json';
+import videoNervousReset from '@/assets/wonder/video-nervous-reset.mp4.asset.json';
+import videoVulnerability from '@/assets/wonder/video-vulnerability.mp4.asset.json';
+
 /** Static image to show in the resource detail sheet */
 export const resourceImages: Record<string, string> = {
   // Nutrition
@@ -32,12 +40,12 @@ export const resourceImages: Record<string, string> = {
   'calm-4': bookUntethered,
 };
 
-/** YouTube video IDs for exercise / video-type resources */
+/** AI-generated demo videos for exercise / video-type resources */
 export const resourceVideos: Record<string, string> = {
-  'fit-1': 'g_tea8ZNtKA',  // 10-min morning stretch
-  'fit-3': 'K56Z12XNQ5c',  // Pilates for posture
-  'fit-5': 'sTANio_2E0Q',  // 20-min yoga flow
-  'fit-6': 'U9ENCkaYmEE',  // Strength training basics
-  'calm-8': 'CyFSAz_eYyU', // Nervous system reset
-  'mind-8': 'iCvmsMzlF7o',  // Brené Brown — Power of Vulnerability
+  'fit-1': videoMorningStretch.url,
+  'fit-3': videoPilates.url,
+  'fit-5': videoYoga.url,
+  'fit-6': videoStrength.url,
+  'calm-8': videoNervousReset.url,
+  'mind-8': videoVulnerability.url,
 };
