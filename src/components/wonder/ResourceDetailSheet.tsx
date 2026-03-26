@@ -1,6 +1,6 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Bookmark, BookmarkCheck, CheckCircle2, Circle, ExternalLink } from 'lucide-react';
+import { Bookmark, BookmarkCheck, CheckCircle2, Circle, ExternalLink, Heart, HeartOff } from 'lucide-react';
 import { typeLabels, type WonderResource } from '@/lib/wonderResources';
 import { useUserStore } from '@/stores/userStore';
 import { resourceImages, resourceVideos } from '@/lib/resourceMedia';
@@ -237,7 +237,7 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
 }
 
 export default function ResourceDetailSheet({ resource, open, onOpenChange }: ResourceDetailSheetProps) {
-  const { profile, saveResource, unsaveResource, markResourceUsed, unmarkResourceUsed, logResourceCompletion } = useUserStore();
+  const { profile, saveResource, unsaveResource, saveRecipe, unsaveRecipe, markResourceUsed, unmarkResourceUsed, logResourceCompletion } = useUserStore();
 
   if (!resource) return null;
 
@@ -315,6 +315,21 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
                     </div>
                     <span className="text-xs text-muted-foreground shrink-0">{recipe.time}</span>
                   </summary>
+                  {(() => {
+                    const recipeKey = `${resource.id}::${i}`;
+                    const isRecipeSaved = (profile.savedRecipes || []).includes(recipeKey);
+                    return (
+                      <div className="px-4 pt-2 flex justify-end">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); isRecipeSaved ? unsaveRecipe(recipeKey) : saveRecipe(recipeKey); }}
+                          className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          {isRecipeSaved ? <Heart size={14} className="fill-primary text-primary" /> : <Heart size={14} />}
+                          {isRecipeSaved ? 'Saved' : 'Save recipe'}
+                        </button>
+                      </div>
+                    );
+                  })()}
                   <div className="px-4 pb-4 space-y-3 border-t border-border/30">
                     <div className="pt-3">
                       <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Ingredients</p>
