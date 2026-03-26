@@ -32,6 +32,10 @@ import thumbGrounding from '@/assets/wonder/thumb-grounding.jpg';
 import thumbCapsule from '@/assets/wonder/thumb-capsule-wardrobe.jpg';
 import thumbGratitude from '@/assets/wonder/thumb-gratitude.jpg';
 import thumbVagus from '@/assets/wonder/thumb-vagus.jpg';
+import thumbColdSplash from '@/assets/wonder/thumb-cold-splash.jpg';
+import thumbJournalingCalm from '@/assets/wonder/thumb-journaling-calm.jpg';
+import thumbProgressiveRelaxation from '@/assets/wonder/thumb-progressive-relaxation.jpg';
+import thumbReframing from '@/assets/wonder/thumb-reframing.jpg';
 
 // Meal thumbnails
 import mealOvernightOats from '@/assets/wonder/meal-overnight-oats.jpg';
