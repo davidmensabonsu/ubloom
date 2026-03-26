@@ -7,6 +7,7 @@ import RecommendedSection from '@/components/wonder/RecommendedSection';
 import ResourceCard from '@/components/wonder/ResourceCard';
 import ResourceDetailSheet from '@/components/wonder/ResourceDetailSheet';
 import WonderStreak from '@/components/wonder/WonderStreak';
+import RecentlyPracticed from '@/components/wonder/RecentlyPracticed';
 import { wonderResources, wonderCategories, type WonderResource, type WonderCategory } from '@/lib/wonderResources';
 
 const INITIAL_SHOW = 8;
