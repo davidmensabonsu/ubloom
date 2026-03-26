@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { playDing, playChime } from '@/lib/feedback';
 
 interface JournalPromptProps {
   prompts: string[];
@@ -26,8 +27,10 @@ export default function JournalPrompt({ prompts, placeholder = 'Write here...', 
     setCurrentText('');
     if (newEntries.length >= limit) {
       setIsDone(true);
+      playChime();
     } else {
       setPromptIndex(prev => prev + 1);
+      playDing();
     }
   };
 

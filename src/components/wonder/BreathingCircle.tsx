@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, RotateCcw, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAmbientSound } from '@/hooks/useAmbientSound';
+import { playChime } from '@/lib/feedback';
 
 interface BreathingCircleProps {
   /** Pattern as [inhale, hold, exhale] in seconds */
@@ -89,6 +90,7 @@ export default function BreathingCircle({ pattern = [4, 7, 8], cycles = 4 }: Bre
             setPhase('done');
             setCountdown(0);
             setIsRunning(false);
+            playChime();
             if (timerRef.current) clearInterval(timerRef.current);
             return;
           }
