@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Sparkles, Loader2, ChevronRight } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import { wonderResources, categoryColors, typeLabels, type WonderResource } from '@/lib/wonderResources';
+import { resourceThumbnails } from '@/lib/resourceMedia';
 import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
 
