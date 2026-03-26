@@ -46,6 +46,10 @@ import mealSalmon from '@/assets/wonder/meal-salmon.jpg';
 import mealStirfry from '@/assets/wonder/meal-stirfry.jpg';
 import mealLentilCurry from '@/assets/wonder/meal-lentil-curry.jpg';
 import mealBakedCod from '@/assets/wonder/meal-baked-cod.jpg';
+import mealEnergyBalls from '@/assets/wonder/meal-energy-balls.jpg';
+import mealFruitPlate from '@/assets/wonder/meal-fruit-plate.jpg';
+import mealGreenSmoothie from '@/assets/wonder/meal-green-smoothie.jpg';
+import mealHummusVeggies from '@/assets/wonder/meal-hummus-veggies.jpg';
 
 // Videos (CDN asset pointers)
 import videoMorningStretch from '@/assets/wonder/video-morning-stretch.mp4.asset.json';
