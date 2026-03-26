@@ -33,6 +33,20 @@ import thumbCapsule from '@/assets/wonder/thumb-capsule-wardrobe.jpg';
 import thumbGratitude from '@/assets/wonder/thumb-gratitude.jpg';
 import thumbVagus from '@/assets/wonder/thumb-vagus.jpg';
 
+// Meal thumbnails
+import mealOvernightOats from '@/assets/wonder/meal-overnight-oats.jpg';
+import mealAvocadoToast from '@/assets/wonder/meal-avocado-toast.jpg';
+import mealSmoothieBowl from '@/assets/wonder/meal-smoothie-bowl.jpg';
+import mealProbioticBowl from '@/assets/wonder/meal-probiotic-bowl.jpg';
+import mealQuinoaBowl from '@/assets/wonder/meal-quinoa-bowl.jpg';
+import mealMedWrap from '@/assets/wonder/meal-med-wrap.jpg';
+import mealMisoSoup from '@/assets/wonder/meal-miso-soup.jpg';
+import mealTurmericBowl from '@/assets/wonder/meal-turmeric-bowl.jpg';
+import mealSalmon from '@/assets/wonder/meal-salmon.jpg';
+import mealStirfry from '@/assets/wonder/meal-stirfry.jpg';
+import mealLentilCurry from '@/assets/wonder/meal-lentil-curry.jpg';
+import mealBakedCod from '@/assets/wonder/meal-baked-cod.jpg';
+
 // Videos (CDN asset pointers)
 import videoMorningStretch from '@/assets/wonder/video-morning-stretch.mp4.asset.json';
 import videoPilates from '@/assets/wonder/video-pilates.mp4.asset.json';
@@ -109,6 +123,19 @@ export const resourceThumbnails: Record<string, string> = {
   'calm-6': thumbBodyScan,
   'calm-7': thumbJournal,
   'calm-8': videoNervousReset.url,
+  // Meals
+  'meal-1': mealOvernightOats,
+  'meal-2': mealAvocadoToast,
+  'meal-3': mealSmoothieBowl,
+  'meal-4': mealProbioticBowl,
+  'meal-5': mealQuinoaBowl,
+  'meal-6': mealMedWrap,
+  'meal-7': mealMisoSoup,
+  'meal-8': mealTurmericBowl,
+  'meal-9': mealSalmon,
+  'meal-10': mealStirfry,
+  'meal-11': mealLentilCurry,
+  'meal-12': mealBakedCod,
 };
 
 /** AI-generated demo videos for exercise / video-type resources */
