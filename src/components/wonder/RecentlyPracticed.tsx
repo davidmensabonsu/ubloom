@@ -59,7 +59,8 @@ export default function RecentlyPracticed({ onSelectResource }: { onSelectResour
           const resource = wonderResources.find((r) => r.id === item.resourceId);
           if (!resource) return null;
           const color = categoryColors[resource.category];
-          const icon = categoryIcons[resource.category];
+          const catInfo = wonderCategories.find((c) => c.key === resource.category);
+          const icon = catInfo?.icon;
           return (
             <motion.button
               key={`${item.resourceId}-${item.timestamp}`}
