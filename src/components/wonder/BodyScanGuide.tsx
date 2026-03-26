@@ -77,7 +77,6 @@ export default function BodyScanGuide() {
           </AnimatePresence>
         </div>
       </div>
-      </div>
 
       {/* Sound toggle */}
       <button
