@@ -1,0 +1,206 @@
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Send, Trash2, Square, Sparkles } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import { useUbiChat, UbiMessage } from '@/hooks/useUbiChat';
+import BottomNav from '@/components/BottomNav';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const presetPrompts = [
+  "How am I really doing?",
+  "Help me find clarity right now",
+  "What patterns do you see in my mood?",
+  "I'm feeling stuck — what should I do?",
+  "Am I aligned with my dream self?",
+  "Give me something to focus on today",
+];
+
+export default function Ubi() {
+  const { messages, isStreaming, sendMessage, clearChat, stopStreaming } = useUbiChat();
+  const [input, setInput] = useState('');
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  const handleSend = () => {
+    const text = input.trim();
+    if (!text || isStreaming) return;
+    setInput('');
+    sendMessage(text);
+    if (inputRef.current) inputRef.current.style.height = 'auto';
+  };
+
+  const handlePreset = (prompt: string) => {
+    if (isStreaming) return;
+    sendMessage(prompt);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value);
+    const el = e.target;
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  };
+
+  return (
+    <div className="min-h-screen gradient-background flex flex-col">
+      {/* Header */}
+      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border/50 px-4 py-3">
+        <div className="flex items-center justify-between max-w-lg mx-auto">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+              <Sparkles size={16} className="text-primary" />
+            </div>
+            <div>
+              <h1 className="text-base font-semibold text-foreground">Ubi</h1>
+              <p className="text-xs text-muted-foreground">Your personal mentor</p>
+            </div>
+          </div>
+          {messages.length > 0 && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={clearChat}
+              className="text-muted-foreground hover:text-destructive"
+              title="Clear chat"
+            >
+              <Trash2 size={18} />
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 pb-36 pt-4">
+        <div className="max-w-lg mx-auto space-y-4">
+          {messages.length === 0 ? (
+            <div className="flex flex-col items-center pt-8">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                <Sparkles size={28} className="text-primary" />
+              </div>
+              <h2 className="text-lg font-semibold text-foreground mb-1">Hey, I'm Ubi 💛</h2>
+              <p className="text-sm text-muted-foreground text-center mb-6 max-w-xs">
+                I'm here to help you reflect, find clarity, and grow into the person you want to be. What's on your mind?
+              </p>
+              <div className="flex flex-wrap gap-2 justify-center">
+                {presetPrompts.map((prompt) => (
+                  <button
+                    key={prompt}
+                    onClick={() => handlePreset(prompt)}
+                    className="px-3 py-2 rounded-full text-sm bg-secondary/80 hover:bg-secondary text-secondary-foreground transition-colors border border-border/50"
+                  >
+                    {prompt}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <AnimatePresence initial={false}>
+              {messages.map((msg, i) => (
+                <MessageBubble key={i} message={msg} />
+              ))}
+              {isStreaming && messages[messages.length - 1]?.role !== 'assistant' && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex gap-2 items-start"
+                >
+                  <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
+                    <Sparkles size={14} className="text-primary" />
+                  </div>
+                  <div className="space-y-2 pt-1">
+                    <Skeleton className="h-4 w-48" />
+                    <Skeleton className="h-4 w-32" />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          )}
+        </div>
+      </div>
+
+      {/* Input */}
+      <div className="fixed bottom-16 left-0 right-0 bg-background/90 backdrop-blur-md border-t border-border/50 px-4 py-3 z-10">
+        <div className="max-w-lg mx-auto flex items-end gap-2">
+          <textarea
+            ref={inputRef}
+            value={input}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            placeholder="Talk to Ubi..."
+            rows={1}
+            className="flex-1 resize-none rounded-2xl border border-input bg-secondary/50 px-4 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 max-h-[120px]"
+          />
+          {isStreaming ? (
+            <Button
+              size="icon"
+              variant="outline"
+              onClick={stopStreaming}
+              className="shrink-0 rounded-full h-10 w-10"
+            >
+              <Square size={16} />
+            </Button>
+          ) : (
+            <Button
+              size="icon"
+              onClick={handleSend}
+              disabled={!input.trim()}
+              className="shrink-0 rounded-full h-10 w-10"
+            >
+              <Send size={16} />
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <BottomNav />
+    </div>
+  );
+}
+
+function MessageBubble({ message }: { message: UbiMessage }) {
+  const isUser = message.role === 'user';
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
+      className={`flex gap-2 items-start ${isUser ? 'flex-row-reverse' : ''}`}
+    >
+      {!isUser && (
+        <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
+          <Sparkles size={14} className="text-primary" />
+        </div>
+      )}
+      <div
+        className={`rounded-2xl px-4 py-2.5 max-w-[85%] text-sm ${
+          isUser
+            ? 'bg-primary text-primary-foreground rounded-br-md'
+            : 'bg-secondary/80 text-foreground rounded-bl-md'
+        }`}
+      >
+        {isUser ? (
+          <p className="whitespace-pre-wrap">{message.content}</p>
+        ) : (
+          <div className="prose prose-sm dark:prose-invert max-w-none [&>p]:mb-2 [&>p:last-child]:mb-0 [&>ul]:mb-2 [&>ol]:mb-2">
+            <ReactMarkdown>{message.content}</ReactMarkdown>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+}
