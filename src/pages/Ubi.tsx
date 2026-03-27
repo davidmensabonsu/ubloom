@@ -80,6 +80,7 @@ export default function Ubi() {
     setInput(prompt);
     setTimeout(() => {
       inputRef.current?.focus();
+      inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 50);
   };
 
