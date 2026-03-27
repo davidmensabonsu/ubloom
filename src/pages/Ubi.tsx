@@ -84,6 +84,13 @@ export default function Ubi() {
   const handlePreset = (prompt: string) => {
     if (isStreaming) return;
     markPromptUsed(prompt);
+    // Persist to localStorage for daily tracking
+    const key = `ubi-used-presets-${getLocalDateStr()}`;
+    const used: string[] = JSON.parse(localStorage.getItem(key) || '[]');
+    if (!used.includes(prompt)) {
+      used.push(prompt);
+      localStorage.setItem(key, JSON.stringify(used));
+    }
     setInput(prompt);
     setTimeout(() => {
       inputRef.current?.focus();
