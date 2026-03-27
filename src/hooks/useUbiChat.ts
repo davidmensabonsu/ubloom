@@ -5,6 +5,7 @@ import { getLocalDateStr } from '@/lib/dateUtils';
 export interface UbiMessage {
   role: 'user' | 'assistant';
   content: string;
+  rating?: 'up' | 'down' | null;
 }
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ubi-chat`;
@@ -209,5 +210,18 @@ export function useUbiChat() {
     abortRef.current?.abort();
   }, []);
 
-  return { messages, isStreaming, sendMessage, clearChat, stopStreaming };
+  const rateMessage = useCallback(
+    (index: number, rating: 'up' | 'down') => {
+      setMessages((prev) => {
+        const updated = prev.map((m, i) =>
+          i === index ? { ...m, rating: m.rating === rating ? null : rating } : m
+        );
+        persistMessages(updated);
+        return updated;
+      });
+    },
+    [persistMessages]
+  );
+
+  return { messages, isStreaming, sendMessage, clearChat, stopStreaming, rateMessage };
 }
