@@ -85,6 +85,10 @@ import fwTotalBodyBurn from '@/assets/wonder/fw-total-body-burn.jpg';
 import fwBeginnerFullbody from '@/assets/wonder/fw-beginner-fullbody.jpg';
 import fwDumbbellSculpt from '@/assets/wonder/fw-dumbbell-sculpt.jpg';
 import fwHiit from '@/assets/wonder/fw-hiit.jpg';
+import fwDanceCardio from '@/assets/wonder/fw-dance-cardio.jpg';
+import fwJumpRope from '@/assets/wonder/fw-jump-rope.jpg';
+import fwPowerWalk from '@/assets/wonder/fw-power-walk.jpg';
+import fwStairClimber from '@/assets/wonder/fw-stair-climber.jpg';
 
 // Videos (CDN asset pointers)
 import videoMorningStretch from '@/assets/wonder/video-morning-stretch.mp4.asset.json';
