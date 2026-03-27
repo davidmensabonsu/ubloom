@@ -128,6 +128,7 @@ export default function Wonder() {
             <PodcastsSection />
           ) : (
             <>
+              <div className="grid grid-cols-2 gap-3">
                 {visibleResources.map((resource, i) => (
                   <motion.div
                     key={resource.id}
