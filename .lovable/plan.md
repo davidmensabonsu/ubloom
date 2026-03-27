@@ -1,57 +1,44 @@
 
 
-## Store Ubi Message Ratings in the Database
+## Refine Wonder 2 — Pinterest Layout with Category Detail Pages
 
 ### Overview
-Create a new `ubi_ratings` table to persist thumbs up/down ratings, and update the rating logic to write to the database in addition to local state.
+Transform Wonder 2 into a proper Pinterest-style discovery hub where each card represents a real Wonder category. Tapping a card navigates to a dedicated detail page showing that category's resources, with a back button to return.
 
-### Database Migration
+### Architecture
 
-New table `ubi_ratings`:
-```sql
-CREATE TABLE public.ubi_ratings (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL,
-  message_content text NOT NULL,
-  rating text NOT NULL CHECK (rating IN ('up', 'down')),
-  conversation_context text, -- the user message that preceded this response
-  created_at timestamptz NOT NULL DEFAULT now()
-);
-
-ALTER TABLE public.ubi_ratings ENABLE ROW LEVEL SECURITY;
-
--- Users can insert their own ratings
-CREATE POLICY "Users can insert ratings" ON public.ubi_ratings
-  FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
-
--- Users can view their own ratings
-CREATE POLICY "Users can view own ratings" ON public.ubi_ratings
-  FOR SELECT TO authenticated USING (auth.uid() = user_id);
-
--- Users can update their own ratings (for toggling)
-CREATE POLICY "Users can update own ratings" ON public.ubi_ratings
-  FOR UPDATE TO authenticated USING (auth.uid() = user_id);
-
--- Users can delete their own ratings (for un-rating)
-CREATE POLICY "Users can delete own ratings" ON public.ubi_ratings
-  FOR DELETE TO authenticated USING (auth.uid() = user_id);
+```text
+/wonder2          →  Pinterest masonry grid (main hub)
+/wonder2/:category →  Category detail page (resources list)
 ```
 
-### Code Changes
+### Changes
 
-**`src/hooks/useUbiChat.ts`** — Update `rateMessage` to:
-1. Continue toggling rating in local state as it does now
-2. Additionally upsert/delete from `ubi_ratings` table using the Supabase client
-3. Include the preceding user message as `conversation_context` for analysis context
-4. Use the authenticated user's ID from the auth hook
+**1. New file: `src/pages/Wonder2Category.tsx`**
+- A detail page that receives the category from the URL param
+- Shows a back arrow + category title header
+- Renders the appropriate existing section component based on category (reuses `FitnessSection`, `BooksSection`, `PodcastsSection`, `HygieneSection`, `FoodRecipesSection`, `CategoryGridSection`)
+- Includes `BottomNav`
 
-**`src/pages/Ubi.tsx`** — No changes needed; it already calls `rateMessage` from the hook.
+**2. Rewrite `src/pages/Wonder2.tsx`**
+- Map each masonry card to a real `wonderCategories` entry (Fitness, Books, Skincare/Hygiene, Podcasts, Mindset, Wellness, Nutrition, Calm, Vitamins, Lifestyle)
+- Each card uses its category thumbnail image and clicking navigates to `/wonder2/{category-key}`
+- Keep the Pinterest masonry aesthetic: alternating tall (aspect-[3/4]) and square cards, circle-category groups, and the featured banner
+- Use `useNavigate` for card taps
+- Keep the search bar with For You / Popular tabs, heart save toggle using the existing `useUserStore` saved resources
+
+**3. Generate additional thumbnail images**
+- Create ~5 more category thumbnail images (for categories not yet covered like mindset, wellness, nutrition, calm, vitamins) using AI image generation
+
+**4. Update `src/App.tsx`**
+- Add route `/wonder2/:category` pointing to `Wonder2Category`
 
 ### Technical Details
 
-- Ratings are stored per-message-content rather than by index, so they survive chat clears
-- When a user un-rates (toggles off), the row is deleted from the database
-- When a user changes rating direction, the existing row is updated
-- The `conversation_context` field stores the user message that prompted the rated response, giving analysts the full Q&A pair
-- Auth user ID comes from `supabase.auth.getUser()` or the existing `useAuth` hook
+| File | Change |
+|------|--------|
+| `src/pages/Wonder2.tsx` | Replace hardcoded cards with category-mapped masonry cards; `useNavigate` on tap |
+| `src/pages/Wonder2Category.tsx` | New page — URL param determines which section component to render; back button via `useNavigate(-1)` |
+| `src/App.tsx` | Add `/wonder2/:category` route |
+| `src/assets/wonder2/` | Generate additional category thumbnails |
 
