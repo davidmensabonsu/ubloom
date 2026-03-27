@@ -17,6 +17,12 @@ import bookAtomic from '@/assets/wonder/book-atomic.jpg';
 import bookBodyScore from '@/assets/wonder/book-body-score.jpg';
 import bookSlowLiving from '@/assets/wonder/book-slow-living.jpg';
 import bookUntethered from '@/assets/wonder/book-untethered.jpg';
+import bookGirlWash from '@/assets/wonder/book-girl-wash.jpg';
+import bookThinkGrow from '@/assets/wonder/book-think-grow.jpg';
+import bookAlchemist from '@/assets/wonder/book-alchemist.jpg';
+import bookRichDad from '@/assets/wonder/book-rich-dad.jpg';
+import bookPowerOfNow from '@/assets/wonder/book-power-of-now.jpg';
+import bookLeanIn from '@/assets/wonder/book-lean-in.jpg';
 
 // Thumbnails
 import thumbMountain from '@/assets/wonder/thumb-mountain-meditation.jpg';
@@ -139,6 +145,12 @@ export const resourceImages: Record<string, string> = {
   'well-4': bookBodyScore,
   'life-3': bookSlowLiving,
   'calm-4': bookUntethered,
+  'book-1': bookGirlWash,
+  'book-2': bookThinkGrow,
+  'book-3': bookAlchemist,
+  'book-4': bookRichDad,
+  'book-5': bookPowerOfNow,
+  'book-6': bookLeanIn,
 };
 
 /** Thumbnail images for resource cards in the grid */
@@ -192,6 +204,13 @@ export const resourceThumbnails: Record<string, string> = {
   'calm-3': thumbVagus,
   'calm-4': bookUntethered,
   'calm-5': thumbGrounding,
+  // Books (dedicated)
+  'book-1': bookGirlWash,
+  'book-2': bookThinkGrow,
+  'book-3': bookAlchemist,
+  'book-4': bookRichDad,
+  'book-5': bookPowerOfNow,
+  'book-6': bookLeanIn,
   'calm-6': thumbProgressiveRelaxation,
   'calm-7': thumbJournalingCalm,
   'calm-8': videoNervousReset.url,

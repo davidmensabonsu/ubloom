@@ -39,6 +39,37 @@ export const bookLinks: Record<string, BookLink[]> = {
     { label: 'Amazon', url: 'https://www.amazon.com/dp/1572245379' },
   ],
 
+  'book-1': [ // Girl, Wash Your Face
+    { label: 'Apple Books', url: 'https://books.apple.com/us/book/girl-wash-your-face/id1269400326' },
+    { label: 'Audible', url: 'https://www.audible.com/pd/Girl-Wash-Your-Face-Audiobook/B0756GBYM2' },
+    { label: 'Amazon', url: 'https://www.amazon.com/dp/1400201659' },
+  ],
+  'book-2': [ // Think and Grow Rich
+    { label: 'Apple Books', url: 'https://books.apple.com/us/book/think-and-grow-rich/id498592568' },
+    { label: 'Audible', url: 'https://www.audible.com/pd/Think-and-Grow-Rich-Audiobook/B002V5D950' },
+    { label: 'Amazon', url: 'https://www.amazon.com/dp/0449214923' },
+  ],
+  'book-3': [ // The Alchemist
+    { label: 'Apple Books', url: 'https://books.apple.com/us/book/the-alchemist/id357232767' },
+    { label: 'Audible', url: 'https://www.audible.com/pd/The-Alchemist-Audiobook/B002V0Q4LG' },
+    { label: 'Amazon', url: 'https://www.amazon.com/dp/0062315005' },
+  ],
+  'book-4': [ // Rich Dad Poor Dad
+    { label: 'Apple Books', url: 'https://books.apple.com/us/book/rich-dad-poor-dad/id381816674' },
+    { label: 'Audible', url: 'https://www.audible.com/pd/Rich-Dad-Poor-Dad-Audiobook/B008BT3C1Q' },
+    { label: 'Amazon', url: 'https://www.amazon.com/dp/1612681131' },
+  ],
+  'book-5': [ // The Power of Now
+    { label: 'Apple Books', url: 'https://books.apple.com/us/book/the-power-of-now/id360348977' },
+    { label: 'Audible', url: 'https://www.audible.com/pd/The-Power-of-Now-Audiobook/B002V0PN36' },
+    { label: 'Amazon', url: 'https://www.amazon.com/dp/1577314808' },
+  ],
+  'book-6': [ // Lean In
+    { label: 'Apple Books', url: 'https://books.apple.com/us/book/lean-in/id567474024' },
+    { label: 'Audible', url: 'https://www.audible.com/pd/Lean-In-Audiobook/B00B3YS5EM' },
+    { label: 'Amazon', url: 'https://www.amazon.com/dp/0385349947' },
+  ],
+
   // ── Vitamins & Supplements ──
   'nutr-2': [ // Magnesium
     { label: 'Doctor\'s Best', url: 'https://www.amazon.com/dp/B000BD0RT0', topPick: true, rating: 4.7, reviews: 89400, price: '$9.99' },
