@@ -93,11 +93,25 @@ export default function Home() {
           }
         </motion.div>
 
+        {/* Today's Mindset */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="glass-card rounded-3xl p-5">
+          
+          <h2 className="section-title mb-3 flex items-center gap-2">
+            <Heart size={18} className="text-primary" />
+            Today's Mindset
+          </h2>
+          {loading ? <Skeleton className="h-5 w-3/4" /> : <p className="text-foreground/80">{mindsetMessage}</p>}
+        </motion.div>
+
         {/* Your Focus Today */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
+          transition={{ delay: 0.35 }}
           className="glass-card rounded-3xl p-5 border border-primary/20">
           
           <h2 className="section-title mb-3 flex items-center gap-2">
@@ -112,20 +126,6 @@ export default function Home() {
           ) : (
             <p className="font-medium text-foreground/90 text-base leading-relaxed">{focusToday}</p>
           )}
-        </motion.div>
-
-        {/* Today's Mindset */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
-          className="glass-card rounded-3xl p-5">
-          
-          <h2 className="section-title mb-3 flex items-center gap-2">
-            <Heart size={18} className="text-primary" />
-            Today's Mindset
-          </h2>
-          {loading ? <Skeleton className="h-5 w-3/4" /> : <p className="text-foreground/80">{mindsetMessage}</p>}
         </motion.div>
 
         {/* Quick Actions */}
