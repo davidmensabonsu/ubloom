@@ -74,6 +74,7 @@ export interface UserProfile {
   ubiMessages?: UbiMessage[];
   onboardingComplete: boolean;
   lastMoodCheckinDate?: string; // yyyy-MM-dd
+  ubiIntroSeen?: boolean;
 }
 
 export interface JournalEntry {
