@@ -76,7 +76,12 @@ export default function Ubi() {
 
   const handlePreset = (prompt: string) => {
     if (isStreaming) return;
-    sendMessage(prompt);
+    setInput(prompt);
+    // Focus the input field
+    setTimeout(() => {
+      const inputEl = document.querySelector('input[type="text"]') as HTMLInputElement;
+      inputEl?.focus();
+    }, 50);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
