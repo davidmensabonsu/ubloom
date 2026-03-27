@@ -70,7 +70,7 @@ export default function Wonder2Category() {
           className="flex items-center gap-3"
         >
           <button
-            onClick={() => navigate('/wonder2')}
+            onClick={() => navigate('/wonder')}
             className="w-10 h-10 rounded-full bg-card border border-border/30 flex items-center justify-center shrink-0"
           >
             <ArrowLeft size={18} className="text-foreground" />
