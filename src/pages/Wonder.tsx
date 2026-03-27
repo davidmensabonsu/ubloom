@@ -115,13 +115,18 @@ export default function Wonder() {
             </button>
             <button
               onClick={() => setActiveCategory('all')}
-              className={`shrink-0 px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${
+              className={`shrink-0 px-5 py-2.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1 ${
                 activeCategory === 'all'
                   ? 'bg-primary/15 text-foreground ring-1 ring-primary/50'
                   : 'bg-muted/60 text-muted-foreground hover:bg-muted'
               }`}
             >
               All
+              {(savedCounts['all'] || 0) > 0 && (
+                <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-full font-semibold">
+                  {savedCounts['all']}
+                </span>
+              )}
             </button>
             {wonderCategories.map((cat) => (
               <button
@@ -135,6 +140,11 @@ export default function Wonder() {
               >
                 <img src={cat.icon} alt="" className="w-5 h-5 object-contain clay-icon" />
                 {cat.label}
+                {(savedCounts[cat.key] || 0) > 0 && (
+                  <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-full font-semibold">
+                    {savedCounts[cat.key]}
+                  </span>
+                )}
               </button>
             ))}
           </div>
