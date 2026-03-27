@@ -9,6 +9,7 @@ const navItems = [
   { path: '/ubi', icon: Heart, label: 'Ubi', isCenter: true },
   { path: '/routine', icon: Calendar, label: 'Routine' },
   { path: '/wonder', icon: Sparkles, label: 'Wonder' },
+  { path: '/wonder2', icon: LayoutGrid, label: 'Wonder 2' },
 ];
 
 export default function BottomNav() {
