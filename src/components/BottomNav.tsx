@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Compass, Calendar, Sparkles, Heart } from 'lucide-react';
+import { Home, Compass, Calendar, Sparkles, Heart, LayoutGrid } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ubloomLogo from '@/assets/ubloom-flower.png';
 
