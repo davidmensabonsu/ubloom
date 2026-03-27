@@ -1,41 +1,69 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Heart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
 import ProfileButton from '@/components/ProfileButton';
+import { useUserStore } from '@/stores/userStore';
+import { wonderResources, mealRecipes, fitnessWorkouts } from '@/lib/wonderResources';
 
 import booksBanner from '@/assets/wonder2/books-banner.jpg';
-import morningStretch from '@/assets/wonder2/morning-stretch.jpg';
-import followAlong from '@/assets/wonder2/follow-along.jpg';
-import skincare from '@/assets/wonder2/skincare.jpg';
+import fitnessImg from '@/assets/wonder2/fitness.jpg';
+import skincareImg from '@/assets/wonder2/skincare.jpg';
 import podcastImg from '@/assets/wonder2/podcast.jpg';
+import mindsetImg from '@/assets/wonder2/mindset.jpg';
+import wellnessImg from '@/assets/wonder2/wellness.jpg';
+import nutritionImg from '@/assets/wonder2/nutrition.jpg';
+import calmImg from '@/assets/wonder2/calm.jpg';
+import vitaminsImg from '@/assets/wonder2/vitamins.jpg';
+import lifestyleImg from '@/assets/wonder2/lifestyle.jpg';
 
-const circleCategories = [
-  { label: 'Weight Loss', color: 'hsl(var(--primary) / 0.15)' },
-  { label: 'Book Recs', color: 'hsl(var(--primary) / 0.12)' },
-  { label: 'Hygiene Tips', color: 'hsl(var(--primary) / 0.1)' },
-];
+interface CategoryCard {
+  key: string;
+  label: string;
+  subtitle: string;
+  image: string;
+  tall?: boolean;
+}
 
-const circleCategories2 = [
-  { label: 'Weight Tips' },
-  { label: 'Wellness Routines' },
-  { label: 'Book Recs' },
-  { label: 'Hygiene Tips' },
+const categoryCards: CategoryCard[] = [
+  { key: 'fitness', label: 'Fitness', subtitle: 'Move your body', image: fitnessImg, tall: true },
+  { key: 'wellness', label: 'Wellness', subtitle: 'Feel your best', image: wellnessImg },
+  { key: 'calm', label: 'Calm', subtitle: 'Find your peace', image: calmImg },
+  { key: 'mindset', label: 'Mindset', subtitle: 'Level up your mind', image: mindsetImg, tall: true },
+  { key: 'nutrition', label: 'Food & Recipes', subtitle: 'Nourish yourself', image: nutritionImg, tall: true },
+  { key: 'podcasts', label: 'Podcasts', subtitle: 'Listen & learn', image: podcastImg },
+  { key: 'vitamins', label: 'Vitamins', subtitle: 'Boost from within', image: vitaminsImg },
+  { key: 'hygiene', label: 'Skincare & Hygiene', subtitle: 'Glow up tips', image: skincareImg, tall: true },
+  { key: 'lifestyle', label: 'Lifestyle', subtitle: 'Design your life', image: lifestyleImg },
 ];
 
 type Tab = 'for-you' | 'popular';
 
 export default function Wonder2() {
   const [tab, setTab] = useState<Tab>('for-you');
-  const [saved, setSaved] = useState<Set<string>>(new Set());
+  const navigate = useNavigate();
+  const savedIds = useUserStore((s) => s.profile.savedResources) || [];
+  const { saveResource, unsaveResource } = useUserStore();
 
-  const toggleSave = (id: string) => {
-    setSaved((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
+  const savedSet = new Set(savedIds);
+
+  const toggleSave = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    savedSet.has(id) ? unsaveResource(id) : saveResource(id);
   };
+
+  // Count saved per category
+  const savedCounts: Record<string, number> = {};
+  for (const r of wonderResources) {
+    if (savedSet.has(r.id)) savedCounts[r.category] = (savedCounts[r.category] || 0) + 1;
+  }
+  for (const r of mealRecipes) {
+    if (savedSet.has(r.id)) savedCounts['nutrition'] = (savedCounts['nutrition'] || 0) + 1;
+  }
+  for (const r of fitnessWorkouts) {
+    if (savedSet.has(r.id)) savedCounts['fitness'] = (savedCounts['fitness'] || 0) + 1;
+  }
 
   return (
     <div className="min-h-screen pb-24" style={{ backgroundColor: 'hsl(var(--background))' }}>
@@ -77,7 +105,8 @@ export default function Wonder2() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative rounded-2xl overflow-hidden bg-card border border-border/30"
+          className="relative rounded-2xl overflow-hidden bg-card border border-border/30 cursor-pointer"
+          onClick={() => navigate('/wonder2/books')}
         >
           <div className="flex items-center">
             <div className="flex-1 p-5 space-y-3">
@@ -95,134 +124,38 @@ export default function Wonder2() {
         </motion.div>
 
         {/* Masonry grid */}
-        <div className="grid grid-cols-2 gap-3">
-          {/* Card: Morning Stretch — tall */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-            className="rounded-2xl overflow-hidden bg-card border border-border/30 relative"
-          >
-            <img src={morningStretch} alt="Morning stretches" className="w-full aspect-[3/4] object-cover" loading="lazy" />
-            <div className="p-3 flex items-end justify-between">
-              <p className="text-sm font-semibold text-foreground leading-tight">4 Good Morning Stretches</p>
-              <button onClick={() => toggleSave('stretch')} className="shrink-0">
-                <Heart
-                  size={18}
-                  className={saved.has('stretch') ? 'fill-primary text-primary' : 'text-primary/40'}
-                />
-              </button>
-            </div>
-          </motion.div>
-
-          {/* Right column: Follow Along + circle categories */}
-          <div className="space-y-3">
+        <div className="columns-2 gap-3 space-y-3">
+          {categoryCards.map((card, i) => (
             <motion.div
+              key={card.key}
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.08 }}
-              className="rounded-2xl overflow-hidden bg-card border border-border/30 relative"
+              transition={{ delay: 0.05 + i * 0.04 }}
+              className="break-inside-avoid rounded-2xl overflow-hidden bg-card border border-border/30 relative cursor-pointer"
+              onClick={() => navigate(`/wonder2/${card.key}`)}
             >
-              <div className="relative">
-                <img src={followAlong} alt="Follow along" className="w-full aspect-square object-cover" loading="lazy" />
-                <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-card/70 backdrop-blur-sm text-xs font-medium text-foreground">
-                  Follow Along
-                </span>
-                <button onClick={() => toggleSave('follow')} className="absolute top-3 right-3">
-                  <Heart
-                    size={16}
-                    className={saved.has('follow') ? 'fill-primary text-primary' : 'text-primary/40'}
-                  />
-                </button>
+              <img
+                src={card.image}
+                alt={card.label}
+                className={`w-full object-cover ${card.tall ? 'aspect-[3/4]' : 'aspect-square'}`}
+                loading="lazy"
+              />
+              <div className="p-3 flex items-end justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-foreground leading-tight truncate">{card.label}</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">{card.subtitle}</p>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {(savedCounts[card.key] || 0) > 0 && (
+                    <span className="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded-full font-semibold">
+                      {savedCounts[card.key]}
+                    </span>
+                  )}
+                  <Heart size={16} className="text-primary/40" />
+                </div>
               </div>
             </motion.div>
-
-            {/* Small circle categories */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="rounded-2xl bg-card border border-border/30 p-3"
-            >
-              <div className="flex justify-between items-start">
-                <div className="flex gap-2.5">
-                  {circleCategories.map((c) => (
-                    <div key={c.label} className="flex flex-col items-center gap-1.5">
-                      <div
-                        className="w-12 h-12 rounded-full"
-                        style={{ backgroundColor: c.color }}
-                      />
-                      <span className="text-[10px] text-muted-foreground text-center leading-tight max-w-[48px]">
-                        {c.label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <Heart size={14} className="text-primary/40 mt-1" />
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Circle categories card — left */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.12 }}
-            className="rounded-2xl bg-card border border-border/30 p-3"
-          >
-            <div className="grid grid-cols-2 gap-2.5">
-              {circleCategories2.map((c) => (
-                <div key={c.label} className="flex flex-col items-center gap-1.5">
-                  <div className="w-12 h-12 rounded-full bg-primary/10" />
-                  <span className="text-[10px] text-muted-foreground text-center leading-tight">
-                    {c.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Skincare card — right, tall */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.14 }}
-            className="rounded-2xl overflow-hidden bg-card border border-border/30 row-span-2 relative"
-          >
-            <img src={skincare} alt="Skincare tips" className="w-full aspect-[3/4] object-cover" loading="lazy" />
-            <div className="p-3 flex items-end justify-between">
-              <p className="text-sm font-semibold text-foreground leading-tight">
-                10 Skincare Tips to Get Glowing 🧴✨
-              </p>
-              <button onClick={() => toggleSave('skincare')} className="shrink-0">
-                <Heart
-                  size={18}
-                  className={saved.has('skincare') ? 'fill-primary text-primary' : 'text-primary/40'}
-                />
-              </button>
-            </div>
-          </motion.div>
-
-          {/* Podcast card — left */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.16 }}
-            className="rounded-2xl overflow-hidden bg-card border border-border/30 relative"
-          >
-            <img src={podcastImg} alt="Podcasts" className="w-full aspect-square object-cover" loading="lazy" />
-            <div className="p-3 flex items-end justify-between">
-              <p className="text-sm font-semibold text-foreground leading-tight">
-                Inspiring Podcast Episodes
-              </p>
-              <button onClick={() => toggleSave('podcast')} className="shrink-0">
-                <Heart
-                  size={18}
-                  className={saved.has('podcast') ? 'fill-primary text-primary' : 'text-primary/40'}
-                />
-              </button>
-            </div>
-          </motion.div>
+          ))}
         </div>
       </div>
 
