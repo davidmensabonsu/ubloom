@@ -69,6 +69,7 @@ export function useUbiChat() {
   );
   const [isStreaming, setIsStreaming] = useState(false);
   const [suggestedPrompts, setSuggestedPrompts] = useState<string[]>([]);
+  const usedPromptsRef = useRef<Set<string>>(new Set());
   const abortRef = useRef<AbortController | null>(null);
 
   const persistMessages = useCallback(
@@ -189,9 +190,10 @@ export function useUbiChat() {
 
         // Extract prompts from final content
         const { cleanContent, prompts } = extractPrompts(assistantSoFar);
-        if (prompts.length > 0) {
-          setSuggestedPrompts(prompts);
-        }
+          const filtered = prompts.filter(p => !usedPromptsRef.current.has(p));
+          if (filtered.length > 0) {
+            setSuggestedPrompts(filtered);
+          }
 
         // Persist with clean content
         setMessages((prev) => {
@@ -220,8 +222,14 @@ export function useUbiChat() {
   const clearChat = useCallback(() => {
     setMessages([]);
     setSuggestedPrompts([]);
+    usedPromptsRef.current.clear();
     persistMessages([]);
   }, [persistMessages]);
+
+  const markPromptUsed = useCallback((prompt: string) => {
+    usedPromptsRef.current.add(prompt);
+    setSuggestedPrompts(prev => prev.filter(p => p !== prompt));
+  }, []);
 
   const stopStreaming = useCallback(() => {
     abortRef.current?.abort();
@@ -284,5 +292,5 @@ export function useUbiChat() {
     [messages, persistMessages]
   );
 
-  return { messages, isStreaming, sendMessage, clearChat, stopStreaming, rateMessage, suggestedPrompts };
+  return { messages, isStreaming, sendMessage, clearChat, stopStreaming, rateMessage, suggestedPrompts, markPromptUsed };
 }
