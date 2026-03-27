@@ -9,15 +9,24 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import ubiAvatar from '@/assets/ubi-avatar-cartoon.png';
 
+import crystalBallIcon from '@/assets/icons/crystal-ball.png';
+import sparklesIcon from '@/assets/icons/sparkles.png';
+import starIcon from '@/assets/icons/star.png';
+import sunriseIcon from '@/assets/icons/sunrise.png';
+import heartIcon from '@/assets/icons/heart.png';
+import flameIcon from '@/assets/icons/flame.png';
+import brainIcon from '@/assets/icons/brain.png';
+import butterflyIcon from '@/assets/icons/butterfly.png';
+
 const presetPrompts = [
-  { text: "I feel lost, help me find direction", icon: "🧭" },
-  { text: "How can I level up my mindset?", icon: "✨" },
-  { text: "What should I focus on today?", icon: "🌟" },
-  { text: "Be honest, am I wasting my time?", icon: "⏳" },
-  { text: "Help me figure out my purpose", icon: "💗" },
-  { text: "I want advice on building discipline", icon: "🚩" },
-  { text: "What patterns do you see in my mood?", icon: "🔍" },
-  { text: "Am I aligned with my dream self?", icon: "🦋" },
+  { text: "I feel lost, help me find direction", icon: crystalBallIcon },
+  { text: "How can I level up my mindset?", icon: sparklesIcon },
+  { text: "What should I focus on today?", icon: starIcon },
+  { text: "Be honest, am I wasting my time?", icon: sunriseIcon },
+  { text: "Help me figure out my purpose", icon: heartIcon },
+  { text: "I want advice on building discipline", icon: flameIcon },
+  { text: "What patterns do you see in my mood?", icon: brainIcon },
+  { text: "Am I aligned with my dream self?", icon: butterflyIcon },
 ];
 
 export default function Ubi() {
@@ -161,7 +170,7 @@ export default function Ubi() {
                     onClick={() => handlePreset(prompt.text)}
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-secondary/60 hover:bg-secondary/90 border border-border/40 transition-colors text-left group"
                   >
-                    <span className="text-base shrink-0">{prompt.icon}</span>
+                    <img src={prompt.icon} alt="" className="w-5 h-5 object-contain shrink-0 clay-icon" />
                     <span className="flex-1 text-sm text-foreground/90">{prompt.text}</span>
                     <ChevronRight size={16} className="text-muted-foreground/50 group-hover:text-muted-foreground transition-colors shrink-0" />
                   </button>
