@@ -249,7 +249,33 @@ export const fitnessThumbnails: Record<string, string> = {
   'fw-24': fwStairClimber,
 };
 
-/** AI-generated demo videos for exercise / video-type resources */
+/** Fitness form illustration diagrams (gym-equipment style) */
+export const fitnessFormIllustrations: Record<string, string> = {
+  'fw-1': formFw1,
+  'fw-2': formFw2,
+  'fw-3': formFw3,
+  'fw-4': formFw4,
+  'fw-5': formFw5,
+  'fw-6': formFw6,
+  'fw-7': formFw7,
+  'fw-8': formFw8,
+  'fw-9': formFw9,
+  'fw-10': formFw10,
+  'fw-11': formFw11,
+  'fw-12': formFw12,
+  'fw-13': formFw13,
+  'fw-14': formFw14,
+  'fw-15': formFw15,
+  'fw-16': formFw16,
+  'fw-17': formFw17,
+  'fw-18': formFw18,
+  'fw-19': formFw19,
+  'fw-20': formFw20,
+  'fw-21': formFw21,
+  'fw-22': formFw22,
+  'fw-23': formFw23,
+  'fw-24': formFw24,
+};
 export const resourceVideos: Record<string, string> = {
   'fit-1': videoMorningStretch.url,
   'fit-3': videoPilates.url,
