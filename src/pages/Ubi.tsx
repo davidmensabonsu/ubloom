@@ -39,10 +39,13 @@ export default function Ubi() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const welcomeSent = useRef(false);
 
-  // Auto-send welcome message on first open (no messages yet)
+  const setProfile = useUserStore((s) => s.setProfile);
+
+  // Auto-send welcome message only once ever (persisted flag)
   useEffect(() => {
-    if (messages.length === 0 && !welcomeSent.current && !isStreaming) {
+    if (messages.length === 0 && !welcomeSent.current && !isStreaming && !profile.ubiIntroSeen) {
       welcomeSent.current = true;
+      setProfile({ ubiIntroSeen: true });
       const dreamFeels = profile.dreamSelfFeels?.length ? profile.dreamSelfFeels.join(', ') : '';
       const identity = profile.identityStatement || '';
       const name = profile.currentFeeling ? `someone feeling ${profile.currentFeeling}` : '';
