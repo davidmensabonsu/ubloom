@@ -176,8 +176,52 @@ export default function Alignment() {
           />
         </motion.div>
 
+        {/* Save button + Talk to Ubi */}
+        <motion.div
+          className="space-y-3"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+        >
+          <motion.button
+            onClick={handleSave}
+            disabled={!journalText.trim()}
+            className={`soft-button w-full flex items-center justify-center gap-2 ${!journalText.trim() ? 'opacity-50' : ''}`}
+            whileTap={{ scale: 0.98 }}
+          >
+            {saved ? (
+              <>
+                <span>Saved</span>
+                <Heart size={18} className="fill-current" />
+              </>
+            ) : (
+              <>
+                <span>Save journal entry</span>
+                <Infinity size={18} />
+              </>
+            )}
+          </motion.button>
+
+          <AnimatePresence>
+            {saved && savedText && (
+              <motion.button
+                onClick={handleTalkToUbi}
+                className="soft-button w-full flex items-center justify-center gap-2 bg-gradient-to-r from-primary/15 to-accent/15 border-2 border-primary/30 text-primary font-medium shadow-sm"
+                initial={{ opacity: 0, y: 10, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                transition={{ duration: 0.3 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <MessageCircle size={18} />
+                <span>Talk to Ubi about this</span>
+              </motion.button>
+            )}
+          </AnimatePresence>
+        </motion.div>
+
         {/* Journal History */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
           <Collapsible open={historyOpen} onOpenChange={setHistoryOpen}>
             <CollapsibleTrigger className="w-full">
               <div className="glass-card rounded-3xl p-4 flex items-center justify-between">
@@ -317,47 +361,6 @@ export default function Alignment() {
             </CollapsibleContent>
           </Collapsible>
         </motion.div>
-
-        {/* Save button */}
-        <motion.button
-          onClick={handleSave}
-          disabled={!journalText.trim()}
-          className={`soft-button w-full flex items-center justify-center gap-2 ${!journalText.trim() ? 'opacity-50' : ''}`}
-          whileTap={{ scale: 0.98 }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          {saved ? (
-            <>
-              <span>Saved</span>
-              <Heart size={18} className="fill-current" />
-            </>
-          ) : (
-            <>
-              <span>Save journal entry</span>
-              <Infinity size={18} />
-            </>
-          )}
-        </motion.button>
-
-        {/* Talk to Ubi button */}
-        <AnimatePresence>
-          {saved && savedText && (
-            <motion.button
-              onClick={handleTalkToUbi}
-              className="soft-button w-full flex items-center justify-center gap-2 bg-primary/10 border border-primary/20 text-primary"
-              initial={{ opacity: 0, y: 10, height: 0 }}
-              animate={{ opacity: 1, y: 0, height: 'auto' }}
-              exit={{ opacity: 0, y: -10, height: 0 }}
-              transition={{ duration: 0.3 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <MessageCircle size={18} />
-              <span>Talk to Ubi about this</span>
-            </motion.button>
-          )}
-        </AnimatePresence>
       </div>
 
       <BottomNav />
