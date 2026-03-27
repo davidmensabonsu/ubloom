@@ -9,15 +9,24 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import ubiAvatar from '@/assets/ubi-avatar-cartoon.png';
 
+import crystalBallIcon from '@/assets/icons/crystal-ball.png';
+import sparklesIcon from '@/assets/icons/sparkles.png';
+import starIcon from '@/assets/icons/star.png';
+import sunriseIcon from '@/assets/icons/sunrise.png';
+import heartIcon from '@/assets/icons/heart.png';
+import flameIcon from '@/assets/icons/flame.png';
+import brainIcon from '@/assets/icons/brain.png';
+import butterflyIcon from '@/assets/icons/butterfly.png';
+
 const presetPrompts = [
-  { text: "I feel lost, help me find direction", icon: "🧭" },
-  { text: "How can I level up my mindset?", icon: "✨" },
-  { text: "What should I focus on today?", icon: "🌟" },
-  { text: "Be honest, am I wasting my time?", icon: "⏳" },
-  { text: "Help me figure out my purpose", icon: "💗" },
-  { text: "I want advice on building discipline", icon: "🚩" },
-  { text: "What patterns do you see in my mood?", icon: "🔍" },
-  { text: "Am I aligned with my dream self?", icon: "🦋" },
+  { text: "I feel lost, help me find direction", icon: crystalBallIcon },
+  { text: "How can I level up my mindset?", icon: sparklesIcon },
+  { text: "What should I focus on today?", icon: starIcon },
+  { text: "Be honest, am I wasting my time?", icon: sunriseIcon },
+  { text: "Help me figure out my purpose", icon: heartIcon },
+  { text: "I want advice on building discipline", icon: flameIcon },
+  { text: "What patterns do you see in my mood?", icon: brainIcon },
+  { text: "Am I aligned with my dream self?", icon: butterflyIcon },
 ];
 
 export default function Ubi() {
