@@ -66,6 +66,11 @@ export default function Wonder2() {
     if (savedSet.has(r.id)) savedCounts['fitness'] = (savedCounts['fitness'] || 0) + 1;
   }
 
+  const query = search.toLowerCase().trim();
+  const filteredCards = query
+    ? categoryCards.filter(c => c.label.toLowerCase().includes(query) || c.subtitle.toLowerCase().includes(query))
+    : categoryCards;
+
   return (
     <div className="min-h-screen pb-24" style={{ backgroundColor: 'hsl(var(--background))' }}>
       {/* Search bar */}
