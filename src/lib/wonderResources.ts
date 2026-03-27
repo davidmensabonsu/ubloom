@@ -844,6 +844,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['career', 'confidence'],
     content: 'Practical money advice without the jargon. Covers saving strategies, investing basics, career negotiations, and building a life you can actually afford.',
     link: 'https://thefinancialdiet.com/podcast/',
+    episodeDuration: '20–45 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/4KIiXOlvsh5VGqOMkGmWdN' },
+      { platform: 'YouTube', url: 'https://www.youtube.com/@ThefinancialDiet' },
+    ],
   },
   {
     id: 'pod-10',
@@ -856,6 +861,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['career', 'confidence'],
     content: 'From first investments to property goals, Victoria covers every financial milestone with clarity and encouragement. Perfect for women ready to take control of their money.',
     link: 'https://shesonthemoney.com.au/',
+    episodeDuration: '30–50 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/1MHGo5mWQSXz2pXQIDUNJX' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/au/podcast/shes-on-the-money/id1476827498' },
+    ],
   },
   {
     id: 'pod-11',
@@ -868,6 +878,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['career', 'confidence'],
     content: 'Real conversations about salary negotiation, investing, entrepreneurship, and navigating corporate spaces as a woman of colour. Honest, funny, and deeply useful.',
     link: 'https://brownambition.com/',
+    episodeDuration: '35–60 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/3A07Kj7lxLmAjqkYJFME3D' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/brown-ambition/id1358484189' },
+    ],
   },
 
   // PODCASTS — Creativity
@@ -882,6 +897,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['purpose', 'confidence'],
     content: 'Short, energising episodes on overcoming creative blocks, finding your unique voice, and turning your creativity into a sustainable practice. Perfect when you need a spark.',
     link: 'https://www.creativepeptalk.com/',
+    episodeDuration: '20–40 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/6ULJpJSEmmFpYqoNEWHx2K' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/creative-pep-talk/id929743897' },
+    ],
   },
   {
     id: 'pod-13',
@@ -894,6 +914,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['purpose', 'career'],
     content: 'Explores the intersection of creativity and productivity. Learn systems for generating better ideas, managing creative energy, and doing your best work consistently.',
     link: 'https://accidentalcreative.com/podcast/',
+    episodeDuration: '15–30 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/3bpFCz0ymcGRkIaEbkJNZr' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/the-accidental-creative/id94098101' },
+    ],
   },
 
   // PODCASTS — Spirituality
@@ -908,6 +933,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['purpose', 'inner-peace'],
     content: 'Deep, soul-nourishing conversations about meaning, faith, resilience, and personal transformation. Features guests like Eckhart Tolle, Brené Brown, and Thich Nhat Hanh.',
     link: 'https://www.oprah.com/own-super-soul-sunday',
+    episodeDuration: '30–60 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/63YGCe5k3TT5wQdJbcn3V3' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/oprahs-super-soul/id1264843400' },
+    ],
   },
   {
     id: 'pod-15',
@@ -920,6 +950,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['purpose', 'inner-peace'],
     content: 'Gentle, reflective episodes on journaling, vision boards, manifestation, and designing a life with intention. Perfect for quiet Sunday mornings.',
     link: 'https://www.lavendaire.com/podcast/',
+    episodeDuration: '15–30 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/5ZwJnVVfFEkHKFnViHq2Pi' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/the-lavendaire-lifestyle/id1104668318' },
+    ],
   },
   {
     id: 'pod-16',
@@ -932,6 +967,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['purpose', 'relationships'],
     content: 'Covers everything from human design to nervous system regulation to spiritual awakenings. A safe space for women exploring who they really are.',
     link: 'https://almost30podcast.com/',
+    episodeDuration: '45–75 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/1EzFMWEB2DakHlbdKF7OBK' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/almost-30/id1187639107' },
+    ],
   },
 
   // HYGIENE & SELF-CARE
