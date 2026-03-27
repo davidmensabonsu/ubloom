@@ -27,6 +27,7 @@ import Wonder from "./pages/Wonder";
 import Moodboard from "./pages/Moodboard";
 import Ubi from "./pages/Ubi";
 import Profile from "./pages/Profile";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -103,6 +104,7 @@ function AnimatedRoutes() {
           <Route path="/ubi" element={<ProtectedRoute><PageTransition direction={direction}><Ubi /></PageTransition></ProtectedRoute>} />
           <Route path="/moodboard" element={<ProtectedRoute><PageTransition direction={direction}><Moodboard /></PageTransition></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><PageTransition direction={direction}><Profile /></PageTransition></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute><PageTransition direction={direction}><AdminDashboard /></PageTransition></ProtectedRoute>} />
           <Route path="*" element={<PageTransition direction={direction}><NotFound /></PageTransition>} />
         </Routes>
       </AnimatePresence>
