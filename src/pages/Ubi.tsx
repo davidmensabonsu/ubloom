@@ -39,7 +39,7 @@ export default function Ubi() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const welcomeSent = useRef(false);
 
-  const setProfile = useUserStore((s) => s.setProfile);
+  const updateProfile = useUserStore((s) => s.updateProfile);
 
   // Auto-send welcome message only once ever (persisted flag)
   useEffect(() => {
