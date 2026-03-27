@@ -127,6 +127,8 @@ export default function Wonder() {
             <FitnessSection />
           ) : activeCategory === 'podcasts' ? (
             <PodcastsSection />
+          ) : activeCategory === 'hygiene' ? (
+            <HygieneSection />
           ) : (
             <>
               <div className="grid grid-cols-2 gap-3">
