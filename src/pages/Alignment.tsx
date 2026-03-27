@@ -125,7 +125,7 @@ export default function Alignment() {
           <ProfileButton />
         </div>
         <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="page-title">
-          Daily Alignment
+          Daily Reflect
         </motion.h1>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="flex items-center justify-between">
           <p className="subtle-text">A quiet moment before your day unfolds</p>

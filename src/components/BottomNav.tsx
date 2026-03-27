@@ -5,7 +5,7 @@ import ubloomLogo from '@/assets/ubloom-flower.png';
 
 const navItems = [
   { path: '/home', icon: Home, label: 'Home' },
-  { path: '/alignment', icon: Compass, label: 'Align' },
+  { path: '/alignment', icon: Compass, label: 'Reflect' },
   { path: '/ubi', icon: Heart, label: 'Ubi', isCenter: true },
   { path: '/routine', icon: Calendar, label: 'Routine' },
   { path: '/wonder', icon: Sparkles, label: 'Wonder' },
