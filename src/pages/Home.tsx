@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useUserStore } from '@/stores/userStore';
-import { Heart, Sun, Moon, Cloud } from 'lucide-react';
+import { Heart, Sun, Moon, Cloud, Target } from 'lucide-react';
 import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/BottomNav';
@@ -19,7 +19,7 @@ const timeGreetings = () => {
 };
 
 export default function Home() {
-  const { futureSelfMessage, mindsetMessage, loading } = useHomeMessages();
+  const { futureSelfMessage, mindsetMessage, focusToday, loading } = useHomeMessages();
   const { profile } = useUserStore();
   const greeting = timeGreetings();
   const GreetingIcon = greeting.icon;
@@ -93,11 +93,32 @@ export default function Home() {
           }
         </motion.div>
 
+        {/* Your Focus Today */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="glass-card rounded-3xl p-5 border border-primary/20">
+          
+          <h2 className="section-title mb-3 flex items-center gap-2">
+            <Target size={18} className="text-primary" />
+            Your focus today
+          </h2>
+          {loading ? (
+            <div className="space-y-2">
+              <Skeleton className="h-5 w-full" />
+              <Skeleton className="h-5 w-3/5" />
+            </div>
+          ) : (
+            <p className="font-medium text-foreground/90 text-base leading-relaxed">{focusToday}</p>
+          )}
+        </motion.div>
+
         {/* Today's Mindset */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.35 }}
           className="glass-card rounded-3xl p-5">
           
           <h2 className="section-title mb-3 flex items-center gap-2">

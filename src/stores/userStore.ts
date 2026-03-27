@@ -70,6 +70,7 @@ export interface UserProfile {
   moodboardItems: MoodboardItem[];
   cachedFutureSelfMessage?: CachedFutureSelfMessage;
   cachedMindsetMessage?: CachedMindsetMessage;
+  cachedFocusToday?: CachedMindsetMessage; // reuses same shape (message + dateKey)
   onboardingComplete: boolean;
   lastMoodCheckinDate?: string; // yyyy-MM-dd
 }

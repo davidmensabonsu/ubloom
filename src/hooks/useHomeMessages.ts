@@ -6,6 +6,7 @@ import { getISOWeek, getISOWeekYear } from 'date-fns';
 
 const DEFAULT_FUTURE_SELF = "Okay, you don't need to have everything figured out right now. You're getting there.";
 const DEFAULT_MINDSET = "You're not behind. You're on your own timeline.";
+const DEFAULT_FOCUS = "Do one small thing today that your future self would thank you for.";
 
 function getWeekKey(): string {
   const now = new Date();
@@ -24,6 +25,9 @@ export function useHomeMessages() {
   const [mindsetMessage, setMindsetMessage] = useState(
     profile.cachedMindsetMessage?.message || DEFAULT_MINDSET
   );
+  const [focusToday, setFocusToday] = useState(
+    profile.cachedFocusToday?.message || DEFAULT_FOCUS
+  );
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -32,11 +36,13 @@ export function useHomeMessages() {
 
     const weekFresh = profile.cachedFutureSelfMessage?.weekKey === weekKey;
     const dayFresh = profile.cachedMindsetMessage?.dateKey === todayKey;
+    const focusFresh = profile.cachedFocusToday?.dateKey === todayKey;
 
-    // If both are fresh, use cached values
-    if (weekFresh && dayFresh) {
+    // If all are fresh, use cached values
+    if (weekFresh && dayFresh && focusFresh) {
       setFutureSelfMessage(profile.cachedFutureSelfMessage!.message);
       setMindsetMessage(profile.cachedMindsetMessage!.message);
+      setFocusToday(profile.cachedFocusToday!.message);
       return;
     }
 
@@ -52,6 +58,7 @@ export function useHomeMessages() {
       // Use date-seeded static fallbacks
       setFutureSelfMessage(getStaticFutureSelf(weekKey));
       setMindsetMessage(getStaticMindset(todayKey));
+      setFocusToday(getStaticFocus(todayKey));
       return;
     }
 
@@ -83,24 +90,29 @@ export function useHomeMessages() {
           // Fall back to static
           if (!weekFresh) setFutureSelfMessage(getStaticFutureSelf(weekKey));
           if (!dayFresh) setMindsetMessage(getStaticMindset(todayKey));
+          if (!focusFresh) setFocusToday(getStaticFocus(todayKey));
           return;
         }
 
         const newFuture = data.futureSelfMessage || DEFAULT_FUTURE_SELF;
         const newMindset = data.mindsetMessage || DEFAULT_MINDSET;
+        const newFocus = data.focusToday || DEFAULT_FOCUS;
 
         setFutureSelfMessage(newFuture);
         setMindsetMessage(newMindset);
+        setFocusToday(newFocus);
 
         // Cache in store
         updateProfile({
           cachedFutureSelfMessage: { message: newFuture, weekKey },
           cachedMindsetMessage: { message: newMindset, dateKey: todayKey },
+          cachedFocusToday: { message: newFocus, dateKey: todayKey },
         });
       } catch (err) {
         console.error('Failed to fetch AI messages:', err);
         if (!weekFresh) setFutureSelfMessage(getStaticFutureSelf(weekKey));
         if (!dayFresh) setMindsetMessage(getStaticMindset(todayKey));
+        if (!focusFresh) setFocusToday(getStaticFocus(todayKey));
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -111,7 +123,7 @@ export function useHomeMessages() {
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return { futureSelfMessage, mindsetMessage, loading };
+  return { futureSelfMessage, mindsetMessage, focusToday, loading };
 }
 
 // Date-seeded static fallbacks for users with no profile data
@@ -152,4 +164,19 @@ function getStaticFutureSelf(weekKey: string): string {
 
 function getStaticMindset(todayKey: string): string {
   return staticMindsetMessages[hashSeed(todayKey) % staticMindsetMessages.length];
+}
+
+const staticFocusMessages = [
+  "Do one small thing today that your future self would thank you for.",
+  "Spend 10 minutes on that thing you keep putting off.",
+  "Say no to one thing that drains your energy today.",
+  "Reach out to someone you've been meaning to connect with.",
+  "Move your body for at least 15 minutes — walk, stretch, dance.",
+  "Write down three things you're grateful for before bed tonight.",
+  "Set one boundary today, even a small one.",
+  "Put your phone down for an hour and be fully present.",
+];
+
+function getStaticFocus(todayKey: string): string {
+  return staticFocusMessages[hashSeed(todayKey + '-focus') % staticFocusMessages.length];
 }

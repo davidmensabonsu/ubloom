@@ -53,6 +53,8 @@ You will generate TWO messages:
 
 2. **DAILY MINDSET MESSAGE**: A single short sentence — today's anchor. Should sound like an honest reminder tailored to what she's going through and what she needs to hear, not a generic affirmation.
 
+3. **FOCUS TODAY**: A single, specific, actionable thing she can do TODAY that bridges the gap between where she is now and who she wants to become. It should be concrete (not vague like "be more confident") — something she can actually do in the next few hours. Examples: "Text that person back you've been avoiding", "Spend 10 minutes on that project you keep putting off", "Say no to one thing that drains you today." Base it on her struggles, emotional patterns, and dream self vision. Make it feel like practical advice from someone who knows her well.
+
 Rules:
 - Sound like a real person, not a life coach or poet
 - Use casual, honest language — contractions, pauses (dashes, ellipses), real talk
@@ -62,7 +64,7 @@ Rules:
 - Speak in second person ("you") — this is her future self talking to her
 - The messages MUST feel tailored to this specific person — reference her emotional patterns, struggles, or aspirations indirectly
 - If she struggles with overthinking, speak to that. If she wants confidence, speak to that. Make it personal.
-- Output ONLY valid JSON with keys "futureSelfMessage" and "mindsetMessage"`;
+- Output ONLY valid JSON with keys "futureSelfMessage", "mindsetMessage", and "focusToday"`;
 
     const userPrompt = `Here is context about the user:
 
@@ -128,6 +130,7 @@ Generate the two messages now.`;
       parsed = {
         futureSelfMessage: "Okay, you don't need to have everything figured out right now. You're getting there.",
         mindsetMessage: "You're not behind. You're on your own timeline.",
+        focusToday: "Do one small thing today that your future self would thank you for.",
       };
     }
 
