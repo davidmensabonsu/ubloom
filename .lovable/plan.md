@@ -1,31 +1,36 @@
 
 
-## Refine Ubi's System Prompt for Better Tone & Brevity
+## Dynamic Preset Prompts for Ubi Chat
 
-### Problem
-Three issues with Ubi's current responses:
-1. **Too verbose** — 3-5 paragraphs feels overwhelming, especially as an opening
-2. **Mismatched openers** — says things like "I hear you" before the user has shared anything
-3. **Premature follow-ups** — asks "how did that task feel?" before the user has done it
+### What Changes
 
-All three stem from the system prompt instructions in the edge function.
+After each Ubi response, the preset prompt buttons will show a mix of **contextual follow-ups** (responding to what Ubi just said) and **new topic starters** (for switching conversation direction). Always 5-6 buttons visible.
 
-### Changes
+### How It Works
 
-**File: `supabase/functions/ubi-chat/index.ts`** — Rewrite the system prompt:
+**1. Edge function generates suggested prompts** (`supabase/functions/ubi-chat/index.ts`)
 
-1. **Condense response length**: Change "3-5 paragraphs" to "2-3 short paragraphs max". Add rule: "Be concise. Say more with less. Avoid walls of text."
+After the main streaming response completes, a separate non-streaming AI call generates 5-6 suggested follow-up prompts as a JSON array. These are appended to the streamed response as a special delimiter block (e.g. `\n<!--PROMPTS:["...", "..."]-->`) so the client can parse them out.
 
-2. **Fix contextual awareness**: Add rules:
-   - "NEVER use phrases like 'I hear you', 'I see you', or 'I feel that' unless the user has actually shared something in the conversation first."
-   - "Match your opener to the conversation state — if it's the first message or a preset prompt, respond directly to the topic without pretending you've been listening."
+The prompt instructs the AI to return:
+- 3-4 contextual follow-ups that naturally continue or dig deeper into what Ubi just discussed
+- 2 new topic starters drawn from a pool of conversation themes (discipline, mood patterns, purpose, dream self, etc.)
 
-3. **Fix premature task follow-ups**: Add rule:
-   - "When suggesting an action, do NOT immediately ask how it went or how it felt. The user hasn't done it yet. Instead, encourage them to try it and come back to share."
+**2. Client parses and displays dynamic prompts** (`src/pages/Ubi.tsx`, `src/hooks/useUbiChat.ts`)
 
-4. **Soften the data reference requirement**: Change "NEVER give generic advice. Always tie it back to THEIR data" to "Personalise using their goals and vision when relevant, but don't force data references into every sentence. Let it feel natural."
+- `useUbiChat` extracts the `<!--PROMPTS:...-->` block from the final assistant message content, strips it from the displayed text, and exposes a `suggestedPrompts` state array.
+- The preset prompts section renders `suggestedPrompts` when available (after a conversation has started), falling back to the existing static presets for the initial empty state.
+- Each dynamic prompt gets a random icon from the existing icon set for visual variety.
 
-5. **Simplify response structure**: Change the rigid 3-element structure (Insight + Direct Observation + Clear Action) to a softer guideline: "Naturally weave in a reflection and a concrete action when appropriate — but keep it conversational, not formulaic."
+**3. Static presets remain for empty state** (`src/pages/Ubi.tsx`)
 
-**File: `src/pages/Ubi.tsx`** — Update the welcome prompt to reinforce brevity: add "Keep it to 2 short paragraphs max."
+The current 8 static presets stay as the initial prompt grid shown before any messages exist. Once the conversation starts, dynamic prompts take over.
+
+### Files to Change
+
+| File | Change |
+|------|--------|
+| `supabase/functions/ubi-chat/index.ts` | After streaming the main response, make a second non-streaming AI call to generate 5-6 suggested prompts as JSON. Append them as a parseable delimiter to the stream. |
+| `src/hooks/useUbiChat.ts` | Parse the `<!--PROMPTS:...-->` block from assistant messages, strip it from displayed content, expose `suggestedPrompts` state. |
+| `src/pages/Ubi.tsx` | Use `suggestedPrompts` from the hook when available; fall back to static presets on empty state. Assign random icons from existing icon pool. Reduce displayed count to 5-6. |
 
