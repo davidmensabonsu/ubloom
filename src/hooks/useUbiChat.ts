@@ -69,6 +69,7 @@ export function useUbiChat() {
   );
   const [isStreaming, setIsStreaming] = useState(false);
   const [suggestedPrompts, setSuggestedPrompts] = useState<string[]>([]);
+  const usedPromptsRef = useRef<Set<string>>(new Set());
   const abortRef = useRef<AbortController | null>(null);
 
   const persistMessages = useCallback(
