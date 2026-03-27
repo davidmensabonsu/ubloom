@@ -213,8 +213,8 @@ export default function Alignment() {
                 transition={{ duration: 0.3 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <MessageCircle size={18} />
-                <span>Talk to Ubi about this</span>
+                <MessageCircle size={18} className="shrink-0" />
+                <span>Ask Ubi about this</span>
               </motion.button>
             )}
           </AnimatePresence>
