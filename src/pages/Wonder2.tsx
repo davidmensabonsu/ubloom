@@ -7,7 +7,7 @@ import ProfileButton from '@/components/ProfileButton';
 import { useUserStore } from '@/stores/userStore';
 import { wonderResources, mealRecipes, fitnessWorkouts } from '@/lib/wonderResources';
 
-import booksBanner from '@/assets/wonder2/books-banner.jpg';
+import booksBanner from '@/assets/wonder/book-imperfection.jpg';
 import fitnessImg from '@/assets/wonder2/fitness.jpg';
 import skincareImg from '@/assets/wonder2/skincare.jpg';
 import podcastImg from '@/assets/wonder2/podcast.jpg';
