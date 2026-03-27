@@ -74,10 +74,12 @@ export function useUbiChat() {
   );
 
   const sendMessage = useCallback(
-    async (input: string) => {
+    async (input: string, options?: { hideUserMessage?: boolean }) => {
       const userMsg: UbiMessage = { role: 'user', content: input };
-      const newMessages = [...messages, userMsg];
-      setMessages(newMessages);
+      const apiMessages = [...messages, userMsg];
+      // If hideUserMessage, don't show the user bubble (used for welcome prompt)
+      const displayMessages = options?.hideUserMessage ? [...messages] : apiMessages;
+      setMessages(displayMessages);
       setIsStreaming(true);
 
       const userContext = buildUserContext(profile);
