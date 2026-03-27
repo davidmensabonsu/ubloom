@@ -49,7 +49,7 @@ export default function Ubi() {
       if (identity) contextHint = `Their identity statement is: "${identity}".`;
       else if (dreamFeels) contextHint = `They want their dream self to feel: ${dreamFeels}.`;
 
-      const welcomePrompt = `[SYSTEM: The user just opened the Ubi chat for the first time. Send a warm, personalised welcome message. Introduce yourself as Ubi — their personal mentor and guide inside uBloom. Reference their dream self vision if available. Keep it short (2-3 paragraphs), warm, and end by inviting them to share what's on their mind. ${contextHint} ${name ? `They described themselves as ${name}.` : ''}]`;
+      const welcomePrompt = `[SYSTEM: The user just opened the Ubi chat for the first time. Send a warm, personalised welcome. Introduce yourself as Ubi — their mentor inside uBloom. Reference their dream self vision if available. Keep it to 2 short paragraphs max. End by inviting them to share what's on their mind. ${contextHint} ${name ? `They described themselves as ${name}.` : ''}]`;
 
       sendMessage(welcomePrompt, { hideUserMessage: true });
     }
