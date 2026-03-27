@@ -7,19 +7,21 @@ import ResourceDetailSheet from './ResourceDetailSheet';
 const hygieneTopics = [
   { key: 'all', label: 'All' },
   { key: 'body', label: 'Body' },
+  { key: 'skin', label: 'Skin & Face' },
   { key: 'hair', label: 'Hair' },
-  { key: 'skin', label: 'Skin' },
-  { key: 'oral', label: 'Oral Care' },
+  { key: 'oral', label: 'Oral & Lips' },
+  { key: 'fragrance', label: 'Fragrance' },
   { key: 'hands-feet', label: 'Hands & Feet' },
 ] as const;
 
 type TopicKey = (typeof hygieneTopics)[number]['key'];
 
 const topicTagMap: Record<Exclude<TopicKey, 'all'>, string[]> = {
-  body: ['morning', 'shower', 'freshness', 'confidence', 'daily', 'intimate care'],
+  body: ['morning', 'shower', 'freshness', 'confidence', 'daily', 'intimate care', 'body', 'exfoliation', 'shaving', 'bedtime'],
+  skin: ['skincare', 'glow', 'facial'],
   hair: ['hair', 'beauty'],
-  skin: ['skincare', 'beauty', 'glow'],
-  oral: ['dental', 'smile', 'health'],
+  'oral': ['dental', 'smile', 'health', 'lips'],
+  fragrance: ['fragrance'],
   'hands-feet': ['nails', 'hands', 'grooming', 'feet', 'self-care'],
 };
 
