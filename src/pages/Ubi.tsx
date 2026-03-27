@@ -164,64 +164,10 @@ export default function Ubi() {
             </AnimatePresence>
           )}
 
-          {/* Prompts — dynamic after conversation, static on empty state */}
-          {!isStreaming && (
-            <div className={messages.length > 0 ? 'pt-2' : 'pt-4'}>
-              {messages.length === 0 && (
-                <p className="text-xs text-muted-foreground text-center mb-3">
-                  Tap a prompt or type your own question
-                </p>
-              )}
-              {messages.length === 0 ? (
-                <>
-                  <h3 className="text-sm font-semibold text-foreground/70 mb-2 px-1">Suggested Prompts</h3>
-                  <div className="space-y-2">
-                    {presetPrompts.slice(0, 6).map((prompt) => (
-                      <button
-                        key={prompt.text}
-                        onClick={() => handlePreset(prompt.text)}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-secondary/60 hover:bg-secondary/90 border border-border/40 transition-colors text-left group"
-                      >
-                        <img src={prompt.icon} alt="" className="w-5 h-5 object-contain shrink-0 clay-icon" />
-                        <span className="flex-1 text-sm text-foreground/90">{prompt.text}</span>
-                        <ChevronRight size={16} className="text-muted-foreground/50 group-hover:text-muted-foreground transition-colors shrink-0" />
-                      </button>
-                    ))}
-                  </div>
-                </>
-              ) : suggestedPrompts.length > 0 ? (
-                <div className="space-y-2">
-                  {suggestedPrompts.map((prompt, i) => (
-                    <button
-                      key={`${prompt}-${i}`}
-                      onClick={() => handlePreset(prompt)}
-                      className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-secondary/60 hover:bg-secondary/90 border border-border/40 transition-colors text-left group"
-                    >
-                      <img src={promptIcons[i % promptIcons.length]} alt="" className="w-5 h-5 object-contain shrink-0 clay-icon" />
-                      <span className="flex-1 text-sm text-foreground/90">{prompt}</span>
-                      <ChevronRight size={16} className="text-muted-foreground/50 group-hover:text-muted-foreground transition-colors shrink-0" />
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {presetPrompts.slice(0, 6).map((prompt) => (
-                    <button
-                      key={prompt.text}
-                      onClick={() => handlePreset(prompt.text)}
-                      className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-secondary/60 hover:bg-secondary/90 border border-border/40 transition-colors text-left group"
-                    >
-                      <img src={prompt.icon} alt="" className="w-5 h-5 object-contain shrink-0 clay-icon" />
-                      <span className="flex-1 text-sm text-foreground/90">{prompt.text}</span>
-                      <ChevronRight size={16} className="text-muted-foreground/50 group-hover:text-muted-foreground transition-colors shrink-0" />
-                    </button>
-                  ))}
-                </div>
-              )}
-              <p className="text-xs text-muted-foreground text-center mt-4">
-                Ubi learns from your habits and check-ins to guide you better each day.
-              </p>
-            </div>
+          {messages.length === 0 && (
+            <p className="text-xs text-muted-foreground text-center mt-8">
+              Tap a prompt or type your own question to get started
+            </p>
           )}
         </div>
       </div>
