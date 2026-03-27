@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import ProfileButton from '@/components/ProfileButton';
 import BottomNav from '@/components/BottomNav';
@@ -12,12 +12,43 @@ import WonderStreak from '@/components/wonder/WonderStreak';
 import RecentlyPracticed from '@/components/wonder/RecentlyPracticed';
 import FoodRecipesSection from '@/components/wonder/FoodRecipesSection';
 import CategoryGridSection from '@/components/wonder/CategoryGridSection';
-import { wonderResources, wonderCategories, type WonderResource, type WonderCategory } from '@/lib/wonderResources';
+import { useUserStore } from '@/stores/userStore';
+import { wonderResources, wonderCategories, mealRecipes, fitnessWorkouts, type WonderResource, type WonderCategory } from '@/lib/wonderResources';
 
 export default function Wonder() {
   const [selectedResource, setSelectedResource] = useState<WonderResource | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<WonderCategory | 'all' | 'for-you'>('for-you');
+  const savedIds = useUserStore((s) => s.profile.savedResources) || [];
+
+  // Build a map of category -> saved count (includes wonderResources, meals, fitness)
+  const savedCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    const savedSet = new Set(savedIds);
+
+    // wonderResources
+    for (const r of wonderResources) {
+      if (savedSet.has(r.id)) {
+        counts[r.category] = (counts[r.category] || 0) + 1;
+        counts['all'] = (counts['all'] || 0) + 1;
+      }
+    }
+    // meal recipes → nutrition
+    for (const r of mealRecipes) {
+      if (savedSet.has(r.id)) {
+        counts['nutrition'] = (counts['nutrition'] || 0) + 1;
+        counts['all'] = (counts['all'] || 0) + 1;
+      }
+    }
+    // fitness workouts → fitness
+    for (const r of fitnessWorkouts) {
+      if (savedSet.has(r.id)) {
+        counts['fitness'] = (counts['fitness'] || 0) + 1;
+        counts['all'] = (counts['all'] || 0) + 1;
+      }
+    }
+    return counts;
+  }, [savedIds]);
 
   const handleSelectResource = (resource: WonderResource) => {
     setSelectedResource(resource);
@@ -84,13 +115,18 @@ export default function Wonder() {
             </button>
             <button
               onClick={() => setActiveCategory('all')}
-              className={`shrink-0 px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${
+              className={`shrink-0 px-5 py-2.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1 ${
                 activeCategory === 'all'
                   ? 'bg-primary/15 text-foreground ring-1 ring-primary/50'
                   : 'bg-muted/60 text-muted-foreground hover:bg-muted'
               }`}
             >
               All
+              {(savedCounts['all'] || 0) > 0 && (
+                <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-full font-semibold">
+                  {savedCounts['all']}
+                </span>
+              )}
             </button>
             {wonderCategories.map((cat) => (
               <button
@@ -104,6 +140,11 @@ export default function Wonder() {
               >
                 <img src={cat.icon} alt="" className="w-5 h-5 object-contain clay-icon" />
                 {cat.label}
+                {(savedCounts[cat.key] || 0) > 0 && (
+                  <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-full font-semibold">
+                    {savedCounts[cat.key]}
+                  </span>
+                )}
               </button>
             ))}
           </div>
