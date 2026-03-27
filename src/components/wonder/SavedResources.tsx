@@ -1,9 +1,10 @@
-import { useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { Bookmark, ChevronRight } from 'lucide-react';
+import { useMemo, useRef, useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Bookmark, X } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import { wonderResources, typeLabels, categoryColors, type WonderResource } from '@/lib/wonderResources';
 import { resourceThumbnails } from '@/lib/resourceMedia';
+import { toast } from 'sonner';
 
 interface SavedResourcesProps {
   onSelectResource: (r: WonderResource) => void;
