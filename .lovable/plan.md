@@ -1,34 +1,20 @@
 
 
-## Fix: Suggested Prompts Not Appearing After Messages
+## "Ask Ubi about this" — Journal-to-Ubi Bridge
 
-### Root Cause
-The edge function manually constructs a JSON string containing the prompts block, but doesn't escape the inner JSON properly. The generated SSE line looks like:
+### What it does
+After saving a journal entry, a button appears saying **"Talk to Ubi about this"** that navigates the user to the Ubi page with their journal text pre-loaded as the first message, starting a new conversation seamlessly.
 
-```text
-data: {"choices":[{"delta":{"content":"<!--PROMPTS:["What are...","How do..."]-->"}}]}
-```
+### How it works
 
-The unescaped quotes inside the content string make this invalid JSON. The client's `JSON.parse()` fails silently, so the prompt comment is never appended to `assistantSoFar`, and `extractPrompts` finds nothing.
+1. **`src/pages/Alignment.tsx`** — After save confirmation, show an animated "Talk to Ubi about this" button (using a chat/message icon). On click, navigate to `/ubi` with the journal content passed via React Router state: `navigate('/ubi', { state: { journalEntry: savedText } })`. Store the text before clearing `journalText` in `handleSave`.
 
-### Fix
-
-**`supabase/functions/ubi-chat/index.ts`** (~line 163): Properly escape the prompts JSON before embedding it in the outer JSON string. Replace the manual string interpolation with `JSON.stringify()` for the entire content value:
-
-```typescript
-// Before (broken):
-const promptBlock = `\n\ndata: {"choices":[{"delta":{"content":"<!--PROMPTS:${JSON.stringify(prompts)}-->"}}]}\n\n`;
-
-// After (fixed):
-const promptContent = `<!--PROMPTS:${JSON.stringify(prompts)}-->`;
-const promptBlock = `\n\ndata: ${JSON.stringify({ choices: [{ delta: { content: promptContent } }] })}\n\n`;
-```
-
-This ensures all inner quotes are properly escaped in the SSE data line.
+2. **`src/pages/Ubi.tsx`** — Read `location.state?.journalEntry`. If present, start a new conversation and auto-send a contextual message like: `"I just wrote this in my journal and I'd like to talk about it:\n\n{entry}"`. Clear the location state after consuming it so refresh doesn't re-trigger.
 
 ### Files Changed
 
 | File | Change |
 |------|--------|
-| `supabase/functions/ubi-chat/index.ts` | Fix JSON serialization of the prompts SSE block |
+| `src/pages/Alignment.tsx` | Add `useNavigate`, store saved text, show "Talk to Ubi about this" button after save, navigate with state |
+| `src/pages/Ubi.tsx` | Read `location.state?.journalEntry`, auto-start new conversation with journal context |
 
