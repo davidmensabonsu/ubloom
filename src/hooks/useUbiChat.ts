@@ -74,10 +74,12 @@ export function useUbiChat() {
   );
 
   const sendMessage = useCallback(
-    async (input: string) => {
+    async (input: string, options?: { hideUserMessage?: boolean }) => {
       const userMsg: UbiMessage = { role: 'user', content: input };
-      const newMessages = [...messages, userMsg];
-      setMessages(newMessages);
+      const apiMessages = [...messages, userMsg];
+      // If hideUserMessage, don't show the user bubble (used for welcome prompt)
+      const displayMessages = options?.hideUserMessage ? [...messages] : apiMessages;
+      setMessages(displayMessages);
       setIsStreaming(true);
 
       const userContext = buildUserContext(profile);
@@ -94,7 +96,7 @@ export function useUbiChat() {
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
           body: JSON.stringify({
-            messages: newMessages.map((m) => ({ role: m.role, content: m.content })),
+            messages: apiMessages.map((m) => ({ role: m.role, content: m.content })),
             userContext,
           }),
           signal: controller.signal,
@@ -103,7 +105,7 @@ export function useUbiChat() {
         if (!resp.ok) {
           const err = await resp.json().catch(() => ({ error: 'Something went wrong' }));
           const errorMsg: UbiMessage = { role: 'assistant', content: err.error || 'Something went wrong. Try again in a moment.' };
-          const final = [...newMessages, errorMsg];
+          const final = [...displayMessages, errorMsg];
           setMessages(final);
           persistMessages(final);
           setIsStreaming(false);
@@ -186,7 +188,7 @@ export function useUbiChat() {
         if (e.name !== 'AbortError') {
           console.error('Ubi chat error:', e);
           const errorMsg: UbiMessage = { role: 'assistant', content: "I couldn't connect right now. Try again in a moment 💛" };
-          const final = [...newMessages, errorMsg];
+          const final = [...displayMessages, errorMsg];
           setMessages(final);
           persistMessages(final);
         }
