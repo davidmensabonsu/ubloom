@@ -1,30 +1,34 @@
 
 
-## Persist Used Preset Prompts Per Day & Dynamic Post-Message Prompts
+## Fix: Suggested Prompts Not Appearing After Messages
 
-### Problem
-1. Preset prompts reappear after page reload even if used today
-2. After sending a message, prompts don't update to reflect the current conversation topic — they stay as generic presets until AI-generated suggestions arrive
+### Root Cause
+The edge function manually constructs a JSON string containing the prompts block, but doesn't escape the inner JSON properly. The generated SSE line looks like:
 
-### Solution
+```text
+data: {"choices":[{"delta":{"content":"<!--PROMPTS:["What are...","How do..."]-->"}}]}
+```
 
-**1. Daily preset persistence** — Store used preset prompt texts in `localStorage` with today's date as key. On load, filter out any presets already used today. Reset automatically on new day.
+The unescaped quotes inside the content string make this invalid JSON. The client's `JSON.parse()` fails silently, so the prompt comment is never appended to `assistantSoFar`, and `extractPrompts` finds nothing.
 
-**2. Prompts always reflect conversation** — After the first message is sent (and AI responds), only show AI-generated `suggestedPrompts`. Never fall back to generic presets once a conversation has started. The presets only show on an empty/new chat.
+### Fix
+
+**`supabase/functions/ubi-chat/index.ts`** (~line 163): Properly escape the prompts JSON before embedding it in the outer JSON string. Replace the manual string interpolation with `JSON.stringify()` for the entire content value:
+
+```typescript
+// Before (broken):
+const promptBlock = `\n\ndata: {"choices":[{"delta":{"content":"<!--PROMPTS:${JSON.stringify(prompts)}-->"}}]}\n\n`;
+
+// After (fixed):
+const promptContent = `<!--PROMPTS:${JSON.stringify(prompts)}-->`;
+const promptBlock = `\n\ndata: ${JSON.stringify({ choices: [{ delta: { content: promptContent } }] })}\n\n`;
+```
+
+This ensures all inner quotes are properly escaped in the SSE data line.
 
 ### Files Changed
 
 | File | Change |
 |------|--------|
-| `src/pages/Ubi.tsx` | Add localStorage tracking of used presets by date; filter presets list; only show presets when `messages.length === 0`, otherwise show only `suggestedPrompts` |
-| `src/hooks/useUbiChat.ts` | No changes needed — `markPromptUsed` already handles in-session hiding |
-
-### Detail
-
-- **localStorage key**: `ubi-used-presets-YYYY-MM-DD` storing a JSON array of used prompt strings
-- **`handlePreset`**: On use, append prompt text to today's localStorage array
-- **Prompt display logic**:
-  - If no messages yet → show presets filtered by today's used list
-  - If messages exist → show only `suggestedPrompts` (AI-generated, conversation-specific)
-  - If messages exist but no suggestedPrompts yet (still streaming) → show nothing
+| `supabase/functions/ubi-chat/index.ts` | Fix JSON serialization of the prompts SSE block |
 
