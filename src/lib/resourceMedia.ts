@@ -63,8 +63,18 @@ import mealEnergyBalls from '@/assets/wonder/meal-energy-balls.jpg';
 import mealFruitPlate from '@/assets/wonder/meal-fruit-plate.jpg';
 import mealGreenSmoothie from '@/assets/wonder/meal-green-smoothie.jpg';
 import mealHummusVeggies from '@/assets/wonder/meal-hummus-veggies.jpg';
+// Podcast thumbnails
+import thumbPodcast1 from '@/assets/wonder/thumb-podcast-1.jpg';
+import thumbPodcast2 from '@/assets/wonder/thumb-podcast-2.jpg';
+import thumbPodcast3 from '@/assets/wonder/thumb-podcast-3.jpg';
+import thumbPodcast4 from '@/assets/wonder/thumb-podcast-4.jpg';
 
-// Fitness workout thumbnails
+// Hygiene thumbnails
+import thumbHygieneShower from '@/assets/wonder/thumb-hygiene-shower.jpg';
+import thumbHygieneSkincare from '@/assets/wonder/thumb-hygiene-skincare.jpg';
+import thumbHygieneNails from '@/assets/wonder/thumb-hygiene-nails.jpg';
+import thumbHygieneHair from '@/assets/wonder/thumb-hygiene-hair.jpg';
+
 import fwTonedArms from '@/assets/wonder/fw-toned-arms.jpg';
 import fwPushup from '@/assets/wonder/fw-pushup.jpg';
 import fwBackPosture from '@/assets/wonder/fw-back-posture.jpg';
@@ -193,6 +203,24 @@ export const resourceThumbnails: Record<string, string> = {
   'meal-14': mealFruitPlate,
   'meal-15': mealGreenSmoothie,
   'meal-16': mealHummusVeggies,
+  // Podcasts
+  'pod-1': thumbPodcast1,
+  'pod-2': thumbPodcast2,
+  'pod-3': thumbPodcast3,
+  'pod-4': thumbPodcast4,
+  'pod-5': thumbPodcast1,
+  'pod-6': thumbPodcast2,
+  'pod-7': thumbPodcast3,
+  'pod-8': thumbPodcast4,
+  // Hygiene
+  'hyg-1': thumbHygieneShower,
+  'hyg-2': thumbHygieneSkincare,
+  'hyg-3': thumbHygieneShower,
+  'hyg-4': thumbHygieneSkincare,
+  'hyg-5': thumbHygieneHair,
+  'hyg-6': thumbHygieneSkincare,
+  'hyg-7': thumbHygieneNails,
+  'hyg-8': thumbHygieneShower,
 };
 
 /** Fitness workout thumbnails */
