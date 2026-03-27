@@ -1,9 +1,10 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Trash2, Square, Plus, History, ThumbsUp, ThumbsDown, ArrowLeft, X, Search } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useUbiChat, UbiMessage, UbiConversation } from '@/hooks/useUbiChat';
 import { useUserStore } from '@/stores/userStore';
+import { getLocalDateStr } from '@/lib/dateUtils';
 import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -83,6 +84,13 @@ export default function Ubi() {
   const handlePreset = (prompt: string) => {
     if (isStreaming) return;
     markPromptUsed(prompt);
+    // Persist to localStorage for daily tracking
+    const key = `ubi-used-presets-${getLocalDateStr()}`;
+    const used: string[] = JSON.parse(localStorage.getItem(key) || '[]');
+    if (!used.includes(prompt)) {
+      used.push(prompt);
+      localStorage.setItem(key, JSON.stringify(used));
+    }
     setInput(prompt);
     setTimeout(() => {
       inputRef.current?.focus();
@@ -286,13 +294,36 @@ export default function Ubi() {
       <div className="fixed bottom-16 left-0 right-0 bg-background/90 backdrop-blur-md border-t border-border/50 z-10">
         {/* Horizontal scrollable prompts */}
         {!isStreaming && (() => {
-          const prompts = suggestedPrompts.length > 0
-            ? suggestedPrompts.map((text, i) => ({ text, icon: promptIcons[i % promptIcons.length] }))
-            : presetPrompts.slice(0, 6);
-          return prompts.length > 0 ? (
+          const hasMessages = messages.length > 0;
+          if (hasMessages) {
+            // After conversation starts, only show AI-generated suggestions
+            if (suggestedPrompts.length === 0) return null;
+            const prompts = suggestedPrompts.map((text, i) => ({ text, icon: promptIcons[i % promptIcons.length] }));
+            return (
+              <div className="overflow-x-auto scrollbar-hide border-b border-border/30">
+                <div className="flex gap-2 px-4 py-2 max-w-lg mx-auto w-max min-w-full">
+                  {prompts.map((prompt, i) => (
+                    <button
+                      key={`${prompt.text}-${i}`}
+                      onClick={() => handlePreset(prompt.text)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary/60 hover:bg-secondary/90 border border-border/40 transition-colors whitespace-nowrap shrink-0"
+                    >
+                      <img src={prompt.icon} alt="" className="w-4 h-4 object-contain shrink-0 clay-icon" />
+                      <span className="text-xs text-foreground/90">{prompt.text}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          }
+          // No messages yet — show presets filtered by today's used list
+          const usedToday: string[] = JSON.parse(localStorage.getItem(`ubi-used-presets-${getLocalDateStr()}`) || '[]');
+          const filtered = presetPrompts.filter(p => !usedToday.includes(p.text));
+          if (filtered.length === 0) return null;
+          return (
             <div className="overflow-x-auto scrollbar-hide border-b border-border/30">
               <div className="flex gap-2 px-4 py-2 max-w-lg mx-auto w-max min-w-full">
-                {prompts.map((prompt, i) => (
+                {filtered.map((prompt, i) => (
                   <button
                     key={`${prompt.text}-${i}`}
                     onClick={() => handlePreset(prompt.text)}
@@ -304,7 +335,7 @@ export default function Ubi() {
                 ))}
               </div>
             </div>
-          ) : null;
+          );
         })()}
 
         {/* Input row */}
