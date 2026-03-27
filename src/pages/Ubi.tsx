@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Trash2, Square, Sparkles } from 'lucide-react';
+import { Send, Trash2, Square, Sparkles, ChevronRight } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useUbiChat, UbiMessage } from '@/hooks/useUbiChat';
 import { useUserStore } from '@/stores/userStore';
