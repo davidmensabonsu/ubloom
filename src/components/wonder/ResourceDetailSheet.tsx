@@ -1,6 +1,6 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Bookmark, BookmarkCheck, CheckCircle2, Circle, ExternalLink, Heart, HeartOff } from 'lucide-react';
+import { Bookmark, BookmarkCheck, CheckCircle2, Circle, Clock, ExternalLink, Heart, HeartOff } from 'lucide-react';
 import { typeLabels, type WonderResource } from '@/lib/wonderResources';
 import { useUserStore } from '@/stores/userStore';
 import { resourceImages, resourceVideos } from '@/lib/resourceMedia';
@@ -391,6 +391,33 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
               </span>
             ))}
           </div>
+
+          {/* Podcast listen links */}
+          {resource.listenLinks && resource.listenLinks.length > 0 && (
+            <div className="p-4 rounded-2xl bg-muted/50 space-y-2.5">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Listen on</h4>
+              {resource.episodeDuration && (
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+                  <Clock size={12} />
+                  <span>{resource.episodeDuration} per episode</span>
+                </div>
+              )}
+              <div className="space-y-2">
+                {resource.listenLinks.map((ll) => (
+                  <a
+                    key={ll.platform}
+                    href={ll.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors bg-background border border-border text-foreground hover:bg-muted"
+                  >
+                    <span className="flex-1">{ll.platform}</span>
+                    <ExternalLink size={12} className="text-muted-foreground" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Purchase / product links */}
           {bookLinks[resource.id] && (
