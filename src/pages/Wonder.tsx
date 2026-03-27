@@ -8,6 +8,7 @@ import FitnessSection from '@/components/wonder/FitnessSection';
 import ResourceCard from '@/components/wonder/ResourceCard';
 import ResourceDetailSheet from '@/components/wonder/ResourceDetailSheet';
 import PodcastsSection from '@/components/wonder/PodcastsSection';
+import HygieneSection from '@/components/wonder/HygieneSection';
 import WonderStreak from '@/components/wonder/WonderStreak';
 import RecentlyPracticed from '@/components/wonder/RecentlyPracticed';
 import FoodRecipesSection from '@/components/wonder/FoodRecipesSection';
@@ -126,6 +127,8 @@ export default function Wonder() {
             <FitnessSection />
           ) : activeCategory === 'podcasts' ? (
             <PodcastsSection />
+          ) : activeCategory === 'hygiene' ? (
+            <HygieneSection />
           ) : (
             <>
               <div className="grid grid-cols-2 gap-3">
