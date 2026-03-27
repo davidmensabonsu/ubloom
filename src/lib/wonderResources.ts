@@ -739,6 +739,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['peace', 'healing'],
     content: 'Jay Shetty draws on his experience as a former monk to deliver deep conversations about finding your purpose, building meaningful relationships, and living with intention. Great for reflective mornings.',
     link: 'https://jayshetty.me/podcast/',
+    episodeDuration: '40–75 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/5EqqB52m2bsr4k1Ii7sStc' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/on-purpose-with-jay-shetty/id1450994021' },
+    ],
   },
   {
     id: 'pod-4',
@@ -751,6 +756,12 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['wellness', 'confidence'],
     content: 'Deep dives into sleep, stress, nutrition, exercise, and brain health backed by peer-reviewed research. Long-form episodes perfect for understanding how your body and mind actually work.',
     link: 'https://www.hubermanlab.com/podcast',
+    episodeDuration: '90–180 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/79CkJF3UJTHFV8Dse3Oy0P' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/huberman-lab/id1545953110' },
+      { platform: 'YouTube', url: 'https://www.youtube.com/@hubaboratorylab' },
+    ],
   },
   {
     id: 'pod-5',
@@ -763,6 +774,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['healing', 'peace'],
     content: 'Raw conversations about doing the hard things that make life beautiful. Topics range from addiction and anxiety to parenting and partnerships. You\'ll feel less alone after every episode.',
     link: 'https://momastery.com/blog/we-can-do-hard-things/',
+    episodeDuration: '30–60 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/2rNSMCAyEhOFsPvJGnDTwL' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/we-can-do-hard-things/id1564530722' },
+    ],
   },
   {
     id: 'pod-6',
@@ -775,6 +791,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['lifestyle', 'confidence'],
     content: 'Lauryn and Michael Bosstick bring an unfiltered take on entrepreneurship, beauty routines, health hacks, and relationships. Fun, fast-paced, and packed with practical tips.',
     link: 'https://www.theskinnyconfidential.com/podcast/',
+    episodeDuration: '45–75 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/3JAxz9SLyNPT0z99EqzGGR' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/the-skinny-confidential-him-her-podcast/id1049251533' },
+    ],
   },
   {
     id: 'pod-7',
@@ -787,6 +808,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['healing', 'peace'],
     content: 'A safe space exploring mental health topics that are often overlooked. Dr. Joy covers therapy basics, relationship dynamics, workplace stress, and self-care with cultural awareness and warmth.',
     link: 'https://therapyforblackgirls.com/podcast/',
+    episodeDuration: '30–50 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/6cfm28hJDE3RTjpfSPiV7P' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/therapy-for-black-girls/id1268706071' },
+    ],
   },
   {
     id: 'pod-8',
@@ -799,6 +825,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['career', 'confidence'],
     content: 'Inspiring conversations with people who have overcome challenges to achieve extraordinary things. Covers mindset, health, relationships, and career growth.',
     link: 'https://lewishowes.com/sogpodcast/',
+    episodeDuration: '40–90 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/07GQhOZboEZOE1ysnFLipT' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/the-school-of-greatness/id596047299' },
+    ],
   },
 
   // PODCASTS — Finance
