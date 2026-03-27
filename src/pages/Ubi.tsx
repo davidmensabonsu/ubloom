@@ -7,7 +7,7 @@ import { useUserStore } from '@/stores/userStore';
 import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import ubiAvatar from '@/assets/ubi-avatar.png';
+import ubiAvatar from '@/assets/ubi-avatar-cartoon.png';
 
 const presetPrompts = [
   { text: "I feel lost, help me find direction", icon: "🧭" },
