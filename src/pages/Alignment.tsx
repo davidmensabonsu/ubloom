@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
-import { Sparkles, Feather, BookOpen, ChevronDown, Search, X, Calendar, Trash2, Infinity, Heart } from 'lucide-react';
+import { Sparkles, Feather, BookOpen, ChevronDown, Search, X, Calendar, Trash2, Infinity, Heart, MessageCircle } from 'lucide-react';
 import ProfileButton from '@/components/ProfileButton';
 import BottomNav from '@/components/BottomNav';
 import MoodTrendsChart from '@/components/alignment/MoodTrendsChart';
@@ -32,10 +33,12 @@ const feelingOptions = [
 ];
 
 export default function Alignment() {
+  const navigate = useNavigate();
   const { profile, addJournalEntry, removeJournalEntry } = useUserStore();
   const { futureSelfMessage, loading: messageLoading } = useHomeMessages();
   const [entryToDelete, setEntryToDelete] = useState<string | null>(null);
   const [journalText, setJournalText] = useState('');
+  const [savedText, setSavedText] = useState('');
   const [saved, setSaved] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -93,6 +96,7 @@ export default function Alignment() {
 
   const handleSave = () => {
     if (journalText.trim()) {
+      setSavedText(journalText);
       addJournalEntry({
         content: journalText,
         date: new Date().toISOString(),
@@ -100,7 +104,11 @@ export default function Alignment() {
       setJournalText('');
     }
     setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    setTimeout(() => setSaved(false), 4000);
+  };
+
+  const handleTalkToUbi = () => {
+    navigate('/ubi', { state: { journalEntry: savedText } });
   };
 
   const formatEntryDate = (dateString: string) => {
@@ -332,6 +340,24 @@ export default function Alignment() {
             </>
           )}
         </motion.button>
+
+        {/* Talk to Ubi button */}
+        <AnimatePresence>
+          {saved && savedText && (
+            <motion.button
+              onClick={handleTalkToUbi}
+              className="soft-button w-full flex items-center justify-center gap-2 bg-primary/10 border border-primary/20 text-primary"
+              initial={{ opacity: 0, y: 10, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: 'auto' }}
+              exit={{ opacity: 0, y: -10, height: 0 }}
+              transition={{ duration: 0.3 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <MessageCircle size={18} />
+              <span>Talk to Ubi about this</span>
+            </motion.button>
+          )}
+        </AnimatePresence>
       </div>
 
       <BottomNav />
