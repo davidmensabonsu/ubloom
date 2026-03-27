@@ -1,12 +1,21 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface UbiMessage {
+  id?: string;
   role: 'user' | 'assistant';
   content: string;
   rating?: 'up' | 'down' | null;
+}
+
+export interface UbiConversation {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  preview?: string;
 }
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ubi-chat`;
@@ -61,28 +70,208 @@ function extractPrompts(content: string): { cleanContent: string; prompts: strin
   }
 }
 
+async function getCurrentUserId(): Promise<string | null> {
+  const { data: { user } } = await supabase.auth.getUser();
+  return user?.id || null;
+}
+
 export function useUbiChat() {
   const profile = useUserStore((s) => s.profile);
   const updateProfile = useUserStore((s) => s.updateProfile);
-  const [messages, setMessages] = useState<UbiMessage[]>(
-    () => (profile as any).ubiMessages || []
-  );
+  const [messages, setMessages] = useState<UbiMessage[]>([]);
+  const [conversations, setConversations] = useState<UbiConversation[]>([]);
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [suggestedPrompts, setSuggestedPrompts] = useState<string[]>([]);
   const usedPromptsRef = useRef<Set<string>>(new Set());
   const abortRef = useRef<AbortController | null>(null);
+  const migrationDoneRef = useRef(false);
 
-  const persistMessages = useCallback(
-    (msgs: UbiMessage[]) => {
-      const pruned = msgs.slice(-MAX_MESSAGES);
-      updateProfile({ ubiMessages: pruned } as any);
-    },
-    [updateProfile]
-  );
+  // Load conversations on mount + migrate old data
+  useEffect(() => {
+    (async () => {
+      const userId = await getCurrentUserId();
+      if (!userId) { setIsLoading(false); return; }
+
+      // Load conversations
+      const { data: convos } = await (supabase as any)
+        .from('ubi_conversations')
+        .select('id, title, created_at, updated_at')
+        .eq('user_id', userId)
+        .order('updated_at', { ascending: false });
+
+      if (convos && convos.length > 0) {
+        // Get preview for each (last message)
+        const withPreviews: UbiConversation[] = await Promise.all(
+          convos.map(async (c: any) => {
+            const { data: lastMsg } = await (supabase as any)
+              .from('ubi_messages')
+              .select('content')
+              .eq('conversation_id', c.id)
+              .order('created_at', { ascending: false })
+              .limit(1);
+            return {
+              ...c,
+              preview: lastMsg?.[0]?.content?.slice(0, 80) || '',
+            };
+          })
+        );
+        setConversations(withPreviews);
+
+        // Load latest conversation
+        const latest = withPreviews[0];
+        setCurrentConversationId(latest.id);
+        await loadMessagesForConversation(latest.id);
+      } else if (!migrationDoneRef.current) {
+        // Migrate old messages if any
+        migrationDoneRef.current = true;
+        const oldMessages = (profile as any).ubiMessages as UbiMessage[] | undefined;
+        if (oldMessages && oldMessages.length > 0) {
+          const { data: newConvo } = await (supabase as any)
+            .from('ubi_conversations')
+            .insert({ user_id: userId, title: generateTitle(oldMessages) })
+            .select('id')
+            .single();
+
+          if (newConvo) {
+            const rows = oldMessages.map((m) => ({
+              conversation_id: newConvo.id,
+              user_id: userId,
+              role: m.role,
+              content: m.content,
+              rating: m.rating || null,
+            }));
+            await (supabase as any).from('ubi_messages').insert(rows);
+            setCurrentConversationId(newConvo.id);
+            setMessages(oldMessages);
+            setConversations([{
+              id: newConvo.id,
+              title: generateTitle(oldMessages),
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+              preview: oldMessages[oldMessages.length - 1]?.content?.slice(0, 80) || '',
+            }]);
+          }
+        }
+      }
+      setIsLoading(false);
+    })();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  async function loadMessagesForConversation(convoId: string) {
+    const { data } = await (supabase as any)
+      .from('ubi_messages')
+      .select('id, role, content, rating, created_at')
+      .eq('conversation_id', convoId)
+      .order('created_at', { ascending: true });
+
+    if (data) {
+      setMessages(data.map((m: any) => ({
+        id: m.id,
+        role: m.role,
+        content: m.content,
+        rating: m.rating,
+      })));
+    } else {
+      setMessages([]);
+    }
+  }
+
+  function generateTitle(msgs: UbiMessage[]): string {
+    const firstUser = msgs.find((m) => m.role === 'user');
+    if (firstUser) return firstUser.content.slice(0, 40) + (firstUser.content.length > 40 ? '…' : '');
+    return 'New chat';
+  }
+
+  const loadConversation = useCallback(async (convoId: string) => {
+    setCurrentConversationId(convoId);
+    setSuggestedPrompts([]);
+    usedPromptsRef.current.clear();
+    await loadMessagesForConversation(convoId);
+  }, []);
+
+  const refreshConversations = useCallback(async () => {
+    const userId = await getCurrentUserId();
+    if (!userId) return;
+    const { data: convos } = await (supabase as any)
+      .from('ubi_conversations')
+      .select('id, title, created_at, updated_at')
+      .eq('user_id', userId)
+      .order('updated_at', { ascending: false });
+
+    if (convos) {
+      const withPreviews: UbiConversation[] = await Promise.all(
+        convos.map(async (c: any) => {
+          const { data: lastMsg } = await (supabase as any)
+            .from('ubi_messages')
+            .select('content')
+            .eq('conversation_id', c.id)
+            .order('created_at', { ascending: false })
+            .limit(1);
+          return { ...c, preview: lastMsg?.[0]?.content?.slice(0, 80) || '' };
+        })
+      );
+      setConversations(withPreviews);
+    }
+  }, []);
+
+  const startNewChat = useCallback(async () => {
+    setMessages([]);
+    setCurrentConversationId(null);
+    setSuggestedPrompts([]);
+    usedPromptsRef.current.clear();
+  }, []);
+
+  const deleteConversation = useCallback(async (convoId: string) => {
+    await (supabase as any).from('ubi_conversations').delete().eq('id', convoId);
+    setConversations((prev) => prev.filter((c) => c.id !== convoId));
+    if (currentConversationId === convoId) {
+      setMessages([]);
+      setCurrentConversationId(null);
+      setSuggestedPrompts([]);
+    }
+  }, [currentConversationId]);
+
+  const buildChatHistorySummary = useCallback((): string => {
+    if (conversations.length === 0) return '';
+    return conversations.slice(0, 10).map((c) =>
+      `- "${c.title}" (${new Date(c.updated_at).toLocaleDateString()}): ${c.preview || 'No preview'}`
+    ).join('\n');
+  }, [conversations]);
 
   const sendMessage = useCallback(
     async (input: string, options?: { hideUserMessage?: boolean }) => {
+      const userId = await getCurrentUserId();
+      if (!userId) return;
+
+      // Create conversation if needed
+      let convoId = currentConversationId;
+      if (!convoId) {
+        const title = options?.hideUserMessage ? 'New chat' : input.slice(0, 40) + (input.length > 40 ? '…' : '');
+        const { data: newConvo } = await (supabase as any)
+          .from('ubi_conversations')
+          .insert({ user_id: userId, title })
+          .select('id, title, created_at, updated_at')
+          .single();
+        if (!newConvo) return;
+        convoId = newConvo.id;
+        setCurrentConversationId(convoId);
+        setConversations((prev) => [{ ...newConvo, preview: '' }, ...prev]);
+      }
+
       const userMsg: UbiMessage = { role: 'user', content: input };
+
+      // Insert user message into DB
+      if (!options?.hideUserMessage) {
+        await (supabase as any).from('ubi_messages').insert({
+          conversation_id: convoId,
+          user_id: userId,
+          role: 'user',
+          content: input,
+        });
+      }
+
       const apiMessages = [...messages, userMsg];
       const displayMessages = options?.hideUserMessage ? [...messages] : apiMessages;
       setMessages(displayMessages);
@@ -90,6 +279,7 @@ export function useUbiChat() {
       setSuggestedPrompts([]);
 
       const userContext = buildUserContext(profile);
+      const chatHistory = buildChatHistorySummary();
       const controller = new AbortController();
       abortRef.current = controller;
 
@@ -105,6 +295,7 @@ export function useUbiChat() {
           body: JSON.stringify({
             messages: apiMessages.map((m) => ({ role: m.role, content: m.content })),
             userContext,
+            chatHistory,
           }),
           signal: controller.signal,
         });
@@ -114,7 +305,6 @@ export function useUbiChat() {
           const errorMsg: UbiMessage = { role: 'assistant', content: err.error || 'Something went wrong. Try again in a moment.' };
           const final = [...displayMessages, errorMsg];
           setMessages(final);
-          persistMessages(final);
           setIsStreaming(false);
           return;
         }
@@ -126,7 +316,6 @@ export function useUbiChat() {
 
         const upsert = (chunk: string) => {
           assistantSoFar += chunk;
-          // Strip prompts block from display but don't extract yet (still streaming)
           const displayContent = assistantSoFar.replace(PROMPTS_REGEX, '').trimEnd();
           setMessages((prev) => {
             const last = prev[prev.length - 1];
@@ -155,10 +344,7 @@ export function useUbiChat() {
             if (!line.startsWith('data: ')) continue;
 
             const jsonStr = line.slice(6).trim();
-            if (jsonStr === '[DONE]') {
-              streamDone = true;
-              break;
-            }
+            if (jsonStr === '[DONE]') { streamDone = true; break; }
 
             try {
               const parsed = JSON.parse(jsonStr);
@@ -188,43 +374,61 @@ export function useUbiChat() {
           }
         }
 
-        // Extract prompts from final content
+        // Extract prompts
         const { cleanContent, prompts } = extractPrompts(assistantSoFar);
-          const filtered = prompts.filter(p => !usedPromptsRef.current.has(p));
-          if (filtered.length > 0) {
-            setSuggestedPrompts(filtered);
-          }
+        const filtered = prompts.filter(p => !usedPromptsRef.current.has(p));
+        if (filtered.length > 0) setSuggestedPrompts(filtered);
 
-        // Persist with clean content
+        // Save assistant message to DB
+        await (supabase as any).from('ubi_messages').insert({
+          conversation_id: convoId,
+          user_id: userId,
+          role: 'assistant',
+          content: cleanContent,
+        });
+
+        // Update conversation timestamp
+        await (supabase as any).from('ubi_conversations')
+          .update({ updated_at: new Date().toISOString() })
+          .eq('id', convoId);
+
+        // Auto-title on first assistant response if title is 'New chat'
+        const convo = conversations.find(c => c.id === convoId);
+        if (convo?.title === 'New chat' && !options?.hideUserMessage) {
+          const firstUser = messages.find(m => m.role === 'user') || userMsg;
+          const newTitle = firstUser.content.slice(0, 40) + (firstUser.content.length > 40 ? '…' : '');
+          await (supabase as any).from('ubi_conversations').update({ title: newTitle }).eq('id', convoId);
+          setConversations(prev => prev.map(c => c.id === convoId ? { ...c, title: newTitle } : c));
+        }
+
+        // Update display with clean content
         setMessages((prev) => {
-          const cleaned = prev.map((m, i) =>
+          return prev.map((m, i) =>
             i === prev.length - 1 && m.role === 'assistant' ? { ...m, content: cleanContent } : m
           );
-          persistMessages(cleaned);
-          return cleaned;
         });
+
+        // Update conversation preview
+        setConversations(prev => prev.map(c =>
+          c.id === convoId ? { ...c, preview: cleanContent.slice(0, 80), updated_at: new Date().toISOString() } : c
+        ));
       } catch (e: any) {
         if (e.name !== 'AbortError') {
           console.error('Ubi chat error:', e);
           const errorMsg: UbiMessage = { role: 'assistant', content: "I couldn't connect right now. Try again in a moment 💛" };
-          const final = [...displayMessages, errorMsg];
-          setMessages(final);
-          persistMessages(final);
+          setMessages((prev) => [...prev, errorMsg]);
         }
       } finally {
         setIsStreaming(false);
         abortRef.current = null;
       }
     },
-    [messages, profile, persistMessages]
+    [messages, profile, currentConversationId, conversations, buildChatHistorySummary]
   );
 
-  const clearChat = useCallback(() => {
-    setMessages([]);
-    setSuggestedPrompts([]);
-    usedPromptsRef.current.clear();
-    persistMessages([]);
-  }, [persistMessages]);
+  const clearChat = useCallback(async () => {
+    await startNewChat();
+  }, [startNewChat]);
 
   const markPromptUsed = useCallback((prompt: string) => {
     usedPromptsRef.current.add(prompt);
@@ -238,59 +442,67 @@ export function useUbiChat() {
   const rateMessage = useCallback(
     async (index: number, rating: 'up' | 'down') => {
       setMessages((prev) => {
-        const updated = prev.map((m, i) =>
+        return prev.map((m, i) =>
           i === index ? { ...m, rating: m.rating === rating ? null : rating } : m
         );
-        persistMessages(updated);
-        return updated;
       });
 
-      // Persist to database
       const msg = messages[index];
       if (!msg || msg.role !== 'assistant') return;
 
       const isUnrating = msg.rating === rating;
-      const messageContent = msg.content;
+      const userId = await getCurrentUserId();
+      if (!userId) return;
 
-      // Find preceding user message for context
-      let context: string | null = null;
-      for (let i = index - 1; i >= 0; i--) {
-        if (messages[i].role === 'user') {
-          context = messages[i].content;
-          break;
-        }
+      // Update in ubi_messages table if we have the id
+      if (msg.id) {
+        await (supabase as any).from('ubi_messages')
+          .update({ rating: isUnrating ? null : rating })
+          .eq('id', msg.id);
       }
 
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        if (isUnrating) {
-          await (supabase as any).from('ubi_ratings')
-            .delete()
-            .eq('user_id', user.id)
-            .eq('message_content', messageContent);
-        } else {
-          // Delete any existing rating for this message, then insert new one
-          await (supabase as any).from('ubi_ratings')
-            .delete()
-            .eq('user_id', user.id)
-            .eq('message_content', messageContent);
-
-          await (supabase as any).from('ubi_ratings')
-            .insert({
-              user_id: user.id,
-              message_content: messageContent,
-              rating,
-              conversation_context: context,
-            });
+      // Also persist to ubi_ratings for analytics
+      if (isUnrating) {
+        await (supabase as any).from('ubi_ratings')
+          .delete()
+          .eq('user_id', userId)
+          .eq('message_content', msg.content);
+      } else {
+        let context: string | null = null;
+        for (let i = index - 1; i >= 0; i--) {
+          if (messages[i].role === 'user') { context = messages[i].content; break; }
         }
-      } catch (e) {
-        console.error('Failed to persist rating:', e);
+        await (supabase as any).from('ubi_ratings')
+          .delete()
+          .eq('user_id', userId)
+          .eq('message_content', msg.content);
+        await (supabase as any).from('ubi_ratings')
+          .insert({
+            user_id: userId,
+            message_content: msg.content,
+            rating,
+            conversation_context: context,
+          });
       }
     },
-    [messages, persistMessages]
+    [messages]
   );
 
-  return { messages, isStreaming, sendMessage, clearChat, stopStreaming, rateMessage, suggestedPrompts, markPromptUsed };
+  return {
+    messages,
+    isStreaming,
+    isLoading,
+    sendMessage,
+    clearChat,
+    stopStreaming,
+    rateMessage,
+    suggestedPrompts,
+    markPromptUsed,
+    conversations,
+    currentConversationId,
+    loadConversation,
+    startNewChat,
+    deleteConversation,
+    refreshConversations,
+  };
 }

@@ -10,9 +10,13 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { messages, userContext } = await req.json();
+    const { messages, userContext, chatHistory } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    const chatHistorySection = chatHistory
+      ? `\n\n## Past Conversations\nThe user has had previous chats with you. Here are recent conversation summaries:\n${chatHistory}\nIf the user references a past conversation, use this context naturally. Don't mention these unless relevant.`
+      : "";
 
     const systemPrompt = `You are Ubi — a trusted digital mentor, guide, and friend inside a self-growth app called uBloom. You speak like a close, caring friend. Warm but direct. No sugarcoating, no judgement.
 
@@ -23,7 +27,7 @@ serve(async (req) => {
 - Adapt your tone: gentle when they're struggling, energising when they're thriving
 
 ## User Context (use naturally, don't force references)
-${userContext ? JSON.stringify(userContext) : "No context available yet."}
+${userContext ? JSON.stringify(userContext) : "No context available yet."}${chatHistorySection}
 
 ## Response Guidelines
 - Be concise. Say more with less. **2-3 short paragraphs max.** Avoid walls of text.
@@ -75,12 +79,10 @@ ${userContext ? JSON.stringify(userContext) : "No context available yet."}
       });
     }
 
-    // We need to read the full stream, forward it, then append suggested prompts
     const { readable, writable } = new TransformStream();
     const writer = writable.getWriter();
     const encoder = new TextEncoder();
 
-    // Process in background
     (async () => {
       try {
         const reader = response.body!.getReader();
@@ -90,10 +92,8 @@ ${userContext ? JSON.stringify(userContext) : "No context available yet."}
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-          // Forward the chunk to client
           await writer.write(value);
 
-          // Also accumulate content for prompt generation
           const chunk = decoder.decode(value, { stream: true });
           for (const line of chunk.split("\n")) {
             if (!line.startsWith("data: ")) continue;
@@ -107,7 +107,6 @@ ${userContext ? JSON.stringify(userContext) : "No context available yet."}
           }
         }
 
-        // Now generate suggested prompts via a second non-streaming call
         try {
           const lastUserMsg = [...messages].reverse().find((m: any) => m.role === "user")?.content || "";
           const promptGenResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -151,7 +150,6 @@ Keep them casual, first person, as if the user is naturally responding.`,
           if (promptGenResponse.ok) {
             const promptData = await promptGenResponse.json();
             const raw = promptData.choices?.[0]?.message?.content || "[]";
-            // Parse and validate
             let prompts: string[];
             try {
               const parsed = JSON.parse(raw);
@@ -170,7 +168,6 @@ Keep them casual, first person, as if the user is naturally responding.`,
           console.error("Prompt generation failed (non-fatal):", e);
         }
 
-        // Send final DONE
         await writer.write(encoder.encode("data: [DONE]\n\n"));
       } catch (e) {
         console.error("Stream processing error:", e);
