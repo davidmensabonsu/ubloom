@@ -23,12 +23,12 @@ import ChooseAesthetic from "./pages/ChooseAesthetic";
 import Home from "./pages/Home";
 import Alignment from "./pages/Alignment";
 import Routine from "./pages/Routine";
-import Wonder from "./pages/Wonder2";
+import Wonder from "./pages/Wonder";
 import Moodboard from "./pages/Moodboard";
 import Ubi from "./pages/Ubi";
 import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
-import Wonder2Category from "./pages/Wonder2Category";
+import WonderCategory from "./pages/WonderCategory";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
