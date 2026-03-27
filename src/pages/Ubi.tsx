@@ -171,29 +171,37 @@ export default function Ubi() {
                   ) : (
                     <div className="space-y-1">
                       {filtered.map((convo) => (
-                        <button
-                          key={convo.id}
-                          onClick={() => handleSelectConversation(convo.id)}
-                          className={`w-full text-left px-3 py-3 rounded-xl transition-colors hover:bg-secondary/60 group ${
-                            convo.id === currentConversationId ? 'bg-secondary/80' : ''
-                          }`}
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-foreground truncate">{convo.title}</p>
-                              <p className="text-xs text-muted-foreground truncate mt-0.5">{convo.preview}</p>
-                              <p className="text-[10px] text-muted-foreground/60 mt-1">
-                                {new Date(convo.updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                              </p>
-                            </div>
-                            <button
-                              onClick={(e) => handleDeleteConversation(e, convo.id)}
-                              className="opacity-0 group-hover:opacity-100 p-1 rounded-full hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all shrink-0"
-                            >
-                              <X size={14} />
-                            </button>
+                        <div key={convo.id} className="relative overflow-hidden rounded-xl">
+                          {/* Delete background */}
+                          <div className="absolute inset-0 bg-destructive flex items-center justify-end pr-5 rounded-xl">
+                            <Trash2 size={18} className="text-destructive-foreground" />
                           </div>
-                        </button>
+                          {/* Swipeable foreground */}
+                          <motion.div
+                            drag="x"
+                            dragConstraints={{ left: -120, right: 0 }}
+                            dragElastic={0.1}
+                            onDragEnd={(_, info) => {
+                              if (info.offset.x < -80) {
+                                deleteConversation(convo.id);
+                              }
+                            }}
+                            className={`relative z-10 bg-background px-3 py-3 transition-colors hover:bg-secondary/60 cursor-grab active:cursor-grabbing ${
+                              convo.id === currentConversationId ? 'bg-secondary/80' : ''
+                            }`}
+                            onClick={() => handleSelectConversation(convo.id)}
+                          >
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-foreground truncate">{convo.title}</p>
+                                <p className="text-xs text-muted-foreground truncate mt-0.5">{convo.preview}</p>
+                                <p className="text-[10px] text-muted-foreground/60 mt-1">
+                                  {new Date(convo.updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                </p>
+                              </div>
+                            </div>
+                          </motion.div>
+                        </div>
                       ))}
                     </div>
                   );
