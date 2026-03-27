@@ -45,7 +45,7 @@ export default function Ubi() {
   useEffect(() => {
     if (messages.length === 0 && !welcomeSent.current && !isStreaming && !profile.ubiIntroSeen) {
       welcomeSent.current = true;
-      setProfile({ ubiIntroSeen: true });
+      updateProfile({ ubiIntroSeen: true });
       const dreamFeels = profile.dreamSelfFeels?.length ? profile.dreamSelfFeels.join(', ') : '';
       const identity = profile.identityStatement || '';
       const name = profile.currentFeeling ? `someone feeling ${profile.currentFeeling}` : '';
