@@ -170,7 +170,7 @@ export default function Ubi() {
                     onClick={() => handlePreset(prompt.text)}
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-secondary/60 hover:bg-secondary/90 border border-border/40 transition-colors text-left group"
                   >
-                    <span className="text-base shrink-0">{prompt.icon}</span>
+                    <img src={prompt.icon} alt="" className="w-5 h-5 object-contain shrink-0 clay-icon" />
                     <span className="flex-1 text-sm text-foreground/90">{prompt.text}</span>
                     <ChevronRight size={16} className="text-muted-foreground/50 group-hover:text-muted-foreground transition-colors shrink-0" />
                   </button>
