@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Bookmark, CheckCircle2 } from 'lucide-react';
+import { Bookmark, CheckCircle2, Clock } from 'lucide-react';
 import { typeLabels, categoryColors, type WonderResource } from '@/lib/wonderResources';
 import { resourceThumbnails } from '@/lib/resourceMedia';
 import { useUserStore } from '@/stores/userStore';
@@ -65,6 +65,13 @@ export default function ResourceCard({ resource, onTap, compact }: ResourceCardP
               <span>💊 {resource.dosage.amount}</span>
               <span className="text-muted-foreground">·</span>
               <span className="capitalize">{resource.dosage.timing.split(' ')[0]}</span>
+            </div>
+          )}
+
+          {resource.episodeDuration && (
+            <div className="flex items-center gap-1 mt-1.5 text-[10px] text-muted-foreground font-medium">
+              <Clock size={10} className="shrink-0" />
+              <span>{resource.episodeDuration} per episode</span>
             </div>
           )}
 

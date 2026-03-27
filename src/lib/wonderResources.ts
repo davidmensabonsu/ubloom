@@ -51,6 +51,11 @@ export interface VitaminDosage {
   notes?: string;
 }
 
+export interface PodcastListenLink {
+  platform: string;
+  url: string;
+}
+
 export interface WonderResource {
   id: string;
   title: string;
@@ -64,6 +69,8 @@ export interface WonderResource {
   link?: string;
   recipes?: Recipe[];
   dosage?: VitaminDosage;
+  episodeDuration?: string;
+  listenLinks?: PodcastListenLink[];
 }
 
 import sparklesIcon from '@/assets/icons/sparkles.png';
@@ -697,6 +704,12 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['career', 'confidence'],
     content: 'One of the most popular podcasts for personal growth. Steven Bartlett brings raw, honest conversations about success, failure, mental health, and what it takes to build a life you love. Perfect for commutes or wind-down time.',
     link: 'https://www.youtube.com/@TheDiaryOfACEO',
+    episodeDuration: '60–120 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/7iQXmUT7XGuZSzAMjoNWlX' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/gb/podcast/the-diary-of-a-ceo/id1291423644' },
+      { platform: 'YouTube', url: 'https://www.youtube.com/@TheDiaryOfACEO' },
+    ],
   },
   {
     id: 'pod-2',
@@ -709,6 +722,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['confidence', 'peace'],
     content: 'Mel Robbins breaks down the science of habits, motivation, and self-worth in a way that feels like talking to your smartest friend. Each episode gives you something actionable to try immediately.',
     link: 'https://www.melrobbins.com/podcast',
+    episodeDuration: '30–60 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/5bPMBApTgeIdm7gCPBrKOi' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/the-mel-robbins-podcast/id1646101002' },
+    ],
   },
   {
     id: 'pod-3',
@@ -721,6 +739,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['peace', 'healing'],
     content: 'Jay Shetty draws on his experience as a former monk to deliver deep conversations about finding your purpose, building meaningful relationships, and living with intention. Great for reflective mornings.',
     link: 'https://jayshetty.me/podcast/',
+    episodeDuration: '40–75 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/5EqqB52m2bsr4k1Ii7sStc' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/on-purpose-with-jay-shetty/id1450994021' },
+    ],
   },
   {
     id: 'pod-4',
@@ -733,6 +756,12 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['wellness', 'confidence'],
     content: 'Deep dives into sleep, stress, nutrition, exercise, and brain health backed by peer-reviewed research. Long-form episodes perfect for understanding how your body and mind actually work.',
     link: 'https://www.hubermanlab.com/podcast',
+    episodeDuration: '90–180 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/79CkJF3UJTHFV8Dse3Oy0P' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/huberman-lab/id1545953110' },
+      { platform: 'YouTube', url: 'https://www.youtube.com/@hubaboratorylab' },
+    ],
   },
   {
     id: 'pod-5',
@@ -745,6 +774,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['healing', 'peace'],
     content: 'Raw conversations about doing the hard things that make life beautiful. Topics range from addiction and anxiety to parenting and partnerships. You\'ll feel less alone after every episode.',
     link: 'https://momastery.com/blog/we-can-do-hard-things/',
+    episodeDuration: '30–60 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/2rNSMCAyEhOFsPvJGnDTwL' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/we-can-do-hard-things/id1564530722' },
+    ],
   },
   {
     id: 'pod-6',
@@ -757,6 +791,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['lifestyle', 'confidence'],
     content: 'Lauryn and Michael Bosstick bring an unfiltered take on entrepreneurship, beauty routines, health hacks, and relationships. Fun, fast-paced, and packed with practical tips.',
     link: 'https://www.theskinnyconfidential.com/podcast/',
+    episodeDuration: '45–75 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/3JAxz9SLyNPT0z99EqzGGR' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/the-skinny-confidential-him-her-podcast/id1049251533' },
+    ],
   },
   {
     id: 'pod-7',
@@ -769,6 +808,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['healing', 'peace'],
     content: 'A safe space exploring mental health topics that are often overlooked. Dr. Joy covers therapy basics, relationship dynamics, workplace stress, and self-care with cultural awareness and warmth.',
     link: 'https://therapyforblackgirls.com/podcast/',
+    episodeDuration: '30–50 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/6cfm28hJDE3RTjpfSPiV7P' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/therapy-for-black-girls/id1268706071' },
+    ],
   },
   {
     id: 'pod-8',
@@ -781,6 +825,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['career', 'confidence'],
     content: 'Inspiring conversations with people who have overcome challenges to achieve extraordinary things. Covers mindset, health, relationships, and career growth.',
     link: 'https://lewishowes.com/sogpodcast/',
+    episodeDuration: '40–90 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/07GQhOZboEZOE1ysnFLipT' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/the-school-of-greatness/id596047299' },
+    ],
   },
 
   // PODCASTS — Finance
@@ -795,6 +844,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['career', 'confidence'],
     content: 'Practical money advice without the jargon. Covers saving strategies, investing basics, career negotiations, and building a life you can actually afford.',
     link: 'https://thefinancialdiet.com/podcast/',
+    episodeDuration: '20–45 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/4KIiXOlvsh5VGqOMkGmWdN' },
+      { platform: 'YouTube', url: 'https://www.youtube.com/@ThefinancialDiet' },
+    ],
   },
   {
     id: 'pod-10',
@@ -807,6 +861,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['career', 'confidence'],
     content: 'From first investments to property goals, Victoria covers every financial milestone with clarity and encouragement. Perfect for women ready to take control of their money.',
     link: 'https://shesonthemoney.com.au/',
+    episodeDuration: '30–50 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/1MHGo5mWQSXz2pXQIDUNJX' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/au/podcast/shes-on-the-money/id1476827498' },
+    ],
   },
   {
     id: 'pod-11',
@@ -819,6 +878,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['career', 'confidence'],
     content: 'Real conversations about salary negotiation, investing, entrepreneurship, and navigating corporate spaces as a woman of colour. Honest, funny, and deeply useful.',
     link: 'https://brownambition.com/',
+    episodeDuration: '35–60 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/3A07Kj7lxLmAjqkYJFME3D' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/brown-ambition/id1358484189' },
+    ],
   },
 
   // PODCASTS — Creativity
@@ -833,6 +897,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['purpose', 'confidence'],
     content: 'Short, energising episodes on overcoming creative blocks, finding your unique voice, and turning your creativity into a sustainable practice. Perfect when you need a spark.',
     link: 'https://www.creativepeptalk.com/',
+    episodeDuration: '20–40 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/6ULJpJSEmmFpYqoNEWHx2K' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/creative-pep-talk/id929743897' },
+    ],
   },
   {
     id: 'pod-13',
@@ -845,6 +914,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['purpose', 'career'],
     content: 'Explores the intersection of creativity and productivity. Learn systems for generating better ideas, managing creative energy, and doing your best work consistently.',
     link: 'https://accidentalcreative.com/podcast/',
+    episodeDuration: '15–30 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/3bpFCz0ymcGRkIaEbkJNZr' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/the-accidental-creative/id94098101' },
+    ],
   },
 
   // PODCASTS — Spirituality
@@ -859,6 +933,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['purpose', 'inner-peace'],
     content: 'Deep, soul-nourishing conversations about meaning, faith, resilience, and personal transformation. Features guests like Eckhart Tolle, Brené Brown, and Thich Nhat Hanh.',
     link: 'https://www.oprah.com/own-super-soul-sunday',
+    episodeDuration: '30–60 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/63YGCe5k3TT5wQdJbcn3V3' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/oprahs-super-soul/id1264843400' },
+    ],
   },
   {
     id: 'pod-15',
@@ -871,6 +950,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['purpose', 'inner-peace'],
     content: 'Gentle, reflective episodes on journaling, vision boards, manifestation, and designing a life with intention. Perfect for quiet Sunday mornings.',
     link: 'https://www.lavendaire.com/podcast/',
+    episodeDuration: '15–30 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/5ZwJnVVfFEkHKFnViHq2Pi' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/the-lavendaire-lifestyle/id1104668318' },
+    ],
   },
   {
     id: 'pod-16',
@@ -883,6 +967,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['purpose', 'relationships'],
     content: 'Covers everything from human design to nervous system regulation to spiritual awakenings. A safe space for women exploring who they really are.',
     link: 'https://almost30podcast.com/',
+    episodeDuration: '45–75 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/1EzFMWEB2DakHlbdKF7OBK' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/almost-30/id1187639107' },
+    ],
   },
 
   // HYGIENE & SELF-CARE
