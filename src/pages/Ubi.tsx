@@ -134,7 +134,7 @@ export default function Ubi() {
             </div>
           </div>
           <div className="flex items-center gap-1">
-            <Sheet open={historyOpen} onOpenChange={setHistoryOpen}>
+            <Sheet open={historyOpen} onOpenChange={(open) => { setHistoryOpen(open); if (!open) setHistorySearch(''); }}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="text-muted-foreground" title="Chat history">
                   <History size={18} />
