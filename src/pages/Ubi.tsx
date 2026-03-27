@@ -172,9 +172,33 @@ export default function Ubi() {
         </div>
       </div>
 
-      {/* Input */}
-      <div className="fixed bottom-16 left-0 right-0 bg-background/90 backdrop-blur-md border-t border-border/50 px-4 py-3 z-10">
-        <div className="max-w-lg mx-auto flex items-end gap-2">
+      {/* Input area with prompts strip */}
+      <div className="fixed bottom-16 left-0 right-0 bg-background/90 backdrop-blur-md border-t border-border/50 z-10">
+        {/* Horizontal scrollable prompts */}
+        {!isStreaming && (() => {
+          const prompts = suggestedPrompts.length > 0
+            ? suggestedPrompts.map((text, i) => ({ text, icon: promptIcons[i % promptIcons.length] }))
+            : presetPrompts.slice(0, 6);
+          return prompts.length > 0 ? (
+            <div className="overflow-x-auto scrollbar-hide border-b border-border/30">
+              <div className="flex gap-2 px-4 py-2 max-w-lg mx-auto w-max min-w-full">
+                {prompts.map((prompt, i) => (
+                  <button
+                    key={`${prompt.text}-${i}`}
+                    onClick={() => handlePreset(prompt.text)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary/60 hover:bg-secondary/90 border border-border/40 transition-colors whitespace-nowrap shrink-0"
+                  >
+                    <img src={prompt.icon} alt="" className="w-4 h-4 object-contain shrink-0 clay-icon" />
+                    <span className="text-xs text-foreground/90">{prompt.text}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null;
+        })()}
+
+        {/* Input row */}
+        <div className="max-w-lg mx-auto flex items-end gap-2 px-4 py-3">
           <textarea
             ref={inputRef}
             value={input}
