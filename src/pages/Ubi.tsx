@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Trash2, Square, Sparkles } from 'lucide-react';
+import { Send, Trash2, Square, Sparkles, ChevronRight } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useUbiChat, UbiMessage } from '@/hooks/useUbiChat';
 import { useUserStore } from '@/stores/userStore';
@@ -9,12 +9,14 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const presetPrompts = [
-  "How am I really doing?",
-  "Help me find clarity right now",
-  "What patterns do you see in my mood?",
-  "I'm feeling stuck — what should I do?",
-  "Am I aligned with my dream self?",
-  "Give me something to focus on today",
+  { text: "I feel lost, help me find direction", icon: "🧭" },
+  { text: "How can I level up my mindset?", icon: "✨" },
+  { text: "What should I focus on today?", icon: "🌟" },
+  { text: "Be honest, am I wasting my time?", icon: "⏳" },
+  { text: "Help me figure out my purpose", icon: "💗" },
+  { text: "I want advice on building discipline", icon: "🚩" },
+  { text: "What patterns do you see in my mood?", icon: "🔍" },
+  { text: "Am I aligned with my dream self?", icon: "🦋" },
 ];
 
 export default function Ubi() {
@@ -107,28 +109,8 @@ export default function Ubi() {
       {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 pb-36 pt-4">
         <div className="max-w-lg mx-auto space-y-4">
-          {messages.length === 0 ? (
-            <div className="flex flex-col items-center pt-8">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                <Sparkles size={28} className="text-primary" />
-              </div>
-              <h2 className="text-lg font-semibold text-foreground mb-1">Hey, I'm Ubi 💛</h2>
-              <p className="text-sm text-muted-foreground text-center mb-6 max-w-xs">
-                I'm here to help you reflect, find clarity, and grow into the person you want to be. What's on your mind?
-              </p>
-              <div className="flex flex-wrap gap-2 justify-center">
-                {presetPrompts.map((prompt) => (
-                  <button
-                    key={prompt}
-                    onClick={() => handlePreset(prompt)}
-                    className="px-3 py-2 rounded-full text-sm bg-secondary/80 hover:bg-secondary text-secondary-foreground transition-colors border border-border/50"
-                  >
-                    {prompt}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : (
+          {/* Show messages if any */}
+          {messages.length > 0 && (
             <AnimatePresence initial={false}>
               {messages.map((msg, i) => (
                 <MessageBubble key={i} message={msg} />
@@ -160,6 +142,34 @@ export default function Ubi() {
                 </motion.div>
               )}
             </AnimatePresence>
+          )}
+
+          {/* Preset prompts — always visible when not streaming */}
+          {!isStreaming && (
+            <div className={messages.length > 0 ? 'pt-2' : 'pt-4'}>
+              {messages.length === 0 && (
+                <p className="text-xs text-muted-foreground text-center mb-3">
+                  Tap a prompt or type your own question
+                </p>
+              )}
+              <h3 className="text-sm font-semibold text-foreground/70 mb-2 px-1">Preset Tap Prompts</h3>
+              <div className="space-y-2">
+                {presetPrompts.map((prompt) => (
+                  <button
+                    key={prompt.text}
+                    onClick={() => handlePreset(prompt.text)}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-secondary/60 hover:bg-secondary/90 border border-border/40 transition-colors text-left group"
+                  >
+                    <span className="text-base shrink-0">{prompt.icon}</span>
+                    <span className="flex-1 text-sm text-foreground/90">{prompt.text}</span>
+                    <ChevronRight size={16} className="text-muted-foreground/50 group-hover:text-muted-foreground transition-colors shrink-0" />
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground text-center mt-4">
+                Ubi learns from your habits and check-ins to guide you better each day.
+              </p>
+            </div>
           )}
         </div>
       </div>
