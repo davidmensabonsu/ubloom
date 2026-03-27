@@ -32,7 +32,7 @@ const presetPrompts = [
 const promptIcons = [crystalBallIcon, sparklesIcon, starIcon, sunriseIcon, heartIcon, flameIcon, brainIcon, butterflyIcon];
 
 export default function Ubi() {
-  const { messages, isStreaming, sendMessage, clearChat, stopStreaming, rateMessage, suggestedPrompts } = useUbiChat();
+  const { messages, isStreaming, sendMessage, clearChat, stopStreaming, rateMessage, suggestedPrompts, markPromptUsed } = useUbiChat();
   const profile = useUserStore((s) => s.profile);
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -76,11 +76,10 @@ export default function Ubi() {
 
   const handlePreset = (prompt: string) => {
     if (isStreaming) return;
+    markPromptUsed(prompt);
     setInput(prompt);
-    // Focus the input field
     setTimeout(() => {
-      const inputEl = document.querySelector('input[type="text"]') as HTMLInputElement;
-      inputEl?.focus();
+      inputRef.current?.focus();
     }, 50);
   };
 
