@@ -9,12 +9,14 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const presetPrompts = [
-  "How am I really doing?",
-  "Help me find clarity right now",
-  "What patterns do you see in my mood?",
-  "I'm feeling stuck — what should I do?",
-  "Am I aligned with my dream self?",
-  "Give me something to focus on today",
+  { text: "I feel lost, help me find direction", icon: "🧭" },
+  { text: "How can I level up my mindset?", icon: "✨" },
+  { text: "What should I focus on today?", icon: "🌟" },
+  { text: "Be honest, am I wasting my time?", icon: "⏳" },
+  { text: "Help me figure out my purpose", icon: "💗" },
+  { text: "I want advice on building discipline", icon: "🚩" },
+  { text: "What patterns do you see in my mood?", icon: "🔍" },
+  { text: "Am I aligned with my dream self?", icon: "🦋" },
 ];
 
 export default function Ubi() {
