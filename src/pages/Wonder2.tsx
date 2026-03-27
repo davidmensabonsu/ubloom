@@ -42,6 +42,7 @@ type Tab = 'for-you' | 'popular';
 
 export default function Wonder2() {
   const [tab, setTab] = useState<Tab>('for-you');
+  const [search, setSearch] = useState('');
   const navigate = useNavigate();
   const savedIds = useUserStore((s) => s.profile.savedResources) || [];
   const { saveResource, unsaveResource } = useUserStore();
