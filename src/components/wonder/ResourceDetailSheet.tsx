@@ -392,10 +392,10 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
             ))}
           </div>
 
-          {/* Book purchase links */}
+          {/* Purchase / product links */}
           {bookLinks[resource.id] && (
             <div className="p-4 rounded-2xl bg-muted/50 space-y-2.5">
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{resource.type === 'vitamin' ? 'Where to buy' : 'Get this book'}</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{resource.type === 'vitamin' ? 'Where to buy' : resource.type === 'hygiene-tip' ? 'Recommended products' : 'Get this book'}</h4>
               <div className="space-y-2">
                 {bookLinks[resource.id].map((link) => (
                   <a

@@ -80,4 +80,46 @@ export const bookLinks: Record<string, BookLink[]> = {
     { label: 'Sports Research', url: 'https://www.amazon.com/dp/B01BQX7GLC', rating: 4.6, reviews: 41200, price: '$29.95' },
     { label: 'Garden of Life Collagen', url: 'https://www.amazon.com/dp/B01LQZ7IS4', rating: 4.5, reviews: 12700, price: '$22.99' },
   ],
+
+  // ── Hygiene & Self-Care ──
+  'hyg-1': [ // Morning Shower Routine
+    { label: 'Tree Hut Shea Sugar Scrub', url: 'https://www.amazon.com/dp/B001R2GF5K', topPick: true, rating: 4.7, reviews: 58200, price: '$8.99' },
+    { label: 'Salux Nylon Washcloth', url: 'https://www.amazon.com/dp/B007IAE5WY', rating: 4.6, reviews: 31400, price: '$6.50' },
+    { label: 'Bio-Oil Skincare Oil', url: 'https://www.amazon.com/dp/B004AI97MA', rating: 4.6, reviews: 42800, price: '$14.99' },
+  ],
+  'hyg-2': [ // Oral Care
+    { label: 'Oral-B iO Series 5', url: 'https://www.amazon.com/dp/B0B4NBJNTD', topPick: true, rating: 4.6, reviews: 24300, price: '$89.99' },
+    { label: 'Dr. Tung\'s Tongue Scraper', url: 'https://www.amazon.com/dp/B00064JGBO', rating: 4.6, reviews: 38700, price: '$7.99' },
+    { label: 'Crest 3D Whitestrips', url: 'https://www.amazon.com/dp/B00336EUTK', rating: 4.4, reviews: 67200, price: '$29.99' },
+  ],
+  'hyg-3': [ // Body Odour Prevention
+    { label: 'Native Deodorant', url: 'https://www.amazon.com/dp/B07B4X4JBL', topPick: true, rating: 4.4, reviews: 52100, price: '$12.99' },
+    { label: 'Lume Whole Body Deodorant', url: 'https://www.amazon.com/dp/B0BGFX1WPC', rating: 4.3, reviews: 28400, price: '$14.99' },
+    { label: 'Hibiclens Antiseptic Wash', url: 'https://www.amazon.com/dp/B00027CXLC', rating: 4.7, reviews: 19600, price: '$10.49' },
+  ],
+  'hyg-4': [ // Feminine Hygiene
+    { label: 'Honey Pot Wash', url: 'https://www.amazon.com/dp/B07DCWQ11J', topPick: true, rating: 4.5, reviews: 16800, price: '$9.99' },
+    { label: 'Saalt Menstrual Cup', url: 'https://www.amazon.com/dp/B07GRSKMQF', rating: 4.5, reviews: 14200, price: '$29.00' },
+    { label: 'Love Wellness pH Balancing Wash', url: 'https://www.amazon.com/dp/B08F1BC4VR', rating: 4.4, reviews: 8900, price: '$14.99' },
+  ],
+  'hyg-5': [ // Hair Wash Day
+    { label: 'Olaplex No.3 Hair Perfector', url: 'https://www.amazon.com/dp/B00SNM5US4', topPick: true, rating: 4.5, reviews: 71200, price: '$28.00' },
+    { label: 'Shea Moisture Shampoo', url: 'https://www.amazon.com/dp/B0038TVHRI', rating: 4.5, reviews: 43600, price: '$10.99' },
+    { label: 'Wet Brush Detangler', url: 'https://www.amazon.com/dp/B005LPN2E6', rating: 4.7, reviews: 89100, price: '$8.99' },
+  ],
+  'hyg-6': [ // Skincare Layering
+    { label: 'CeraVe Hydrating Cleanser', url: 'https://www.amazon.com/dp/B01MSSDEPK', topPick: true, rating: 4.7, reviews: 93400, price: '$15.99' },
+    { label: 'Paula\'s Choice BHA Exfoliant', url: 'https://www.amazon.com/dp/B00949CTQQ', rating: 4.5, reviews: 45200, price: '$32.00' },
+    { label: 'La Roche-Posay SPF 60', url: 'https://www.amazon.com/dp/B002CML1XE', rating: 4.6, reviews: 28700, price: '$33.50' },
+  ],
+  'hyg-7': [ // Hand & Nail Care
+    { label: 'CND SolarOil Cuticle Oil', url: 'https://www.amazon.com/dp/B001B2W930', topPick: true, rating: 4.7, reviews: 22300, price: '$8.50' },
+    { label: 'O\'Keeffe\'s Working Hands', url: 'https://www.amazon.com/dp/B00121UVU0', rating: 4.7, reviews: 112000, price: '$7.99' },
+    { label: 'Glass Nail File Set', url: 'https://www.amazon.com/dp/B07GN5W6ZS', rating: 4.6, reviews: 18400, price: '$6.99' },
+  ],
+  'hyg-8': [ // Foot Care
+    { label: 'O\'Keeffe\'s Healthy Feet', url: 'https://www.amazon.com/dp/B0002QB9NE', topPick: true, rating: 4.6, reviews: 67800, price: '$8.99' },
+    { label: 'Dr Teal\'s Epsom Salt Soak', url: 'https://www.amazon.com/dp/B001G7QMXM', rating: 4.7, reviews: 54300, price: '$5.97' },
+    { label: 'Rikans Pumice Stone', url: 'https://www.amazon.com/dp/B01MYPNP3N', rating: 4.5, reviews: 31200, price: '$6.99' },
+  ],
 };
