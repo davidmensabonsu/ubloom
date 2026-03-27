@@ -77,6 +77,12 @@ import thumbHygieneShower from '@/assets/wonder/thumb-hygiene-shower.jpg';
 import thumbHygieneSkincare from '@/assets/wonder/thumb-hygiene-skincare.jpg';
 import thumbHygieneNails from '@/assets/wonder/thumb-hygiene-nails.jpg';
 import thumbHygieneHair from '@/assets/wonder/thumb-hygiene-hair.jpg';
+import thumbHygieneFragrance from '@/assets/wonder/thumb-hygiene-fragrance.jpg';
+import thumbHygieneFacial from '@/assets/wonder/thumb-hygiene-facial.jpg';
+import thumbHygieneExfoliation from '@/assets/wonder/thumb-hygiene-exfoliation.jpg';
+import thumbHygieneShaving from '@/assets/wonder/thumb-hygiene-shaving.jpg';
+import thumbHygieneBedtime from '@/assets/wonder/thumb-hygiene-bedtime.jpg';
+import thumbHygieneLips from '@/assets/wonder/thumb-hygiene-lips.jpg';
 
 import fwTonedArms from '@/assets/wonder/fw-toned-arms.jpg';
 import fwPushup from '@/assets/wonder/fw-pushup.jpg';
