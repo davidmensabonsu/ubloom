@@ -121,12 +121,14 @@ ${userContext ? JSON.stringify(userContext) : "No context available yet."}
               messages: [
                 {
                   role: "system",
-                  content: `You generate suggested follow-up prompts for a mentoring chat app. Return ONLY a JSON array of 5-6 short prompt strings (max 50 chars each). Include:
-- 3-4 contextual follow-ups that dig deeper into what was just discussed
-- 2 new topic starters from themes like: discipline, mood patterns, purpose, dream self, confidence, relationships, productivity, gratitude, boundaries, self-worth
+                  content: `You generate suggested follow-up prompts for a mentoring chat app. Return ONLY a JSON array of 5-6 short prompt strings (max 50 chars each).
 
-Keep them casual, conversational, and in first person as if the user is saying them. No quotes around the array items beyond the JSON.
-Example: ["Tell me more about that","How do I stay consistent?","What's blocking me right now?","Help me set a goal","Am I being too hard on myself?"]`,
+All prompts should feel like natural next things the user would say to continue THIS conversation. They should dig deeper, ask for clarification, share a reaction, or explore a related angle of what was just discussed. Think of how a real person would respond — not change the subject.
+
+Good examples: "Can you give me an example?", "What if I keep failing at that?", "How do I actually start?", "That hits hard, say more", "What would my dream self do here?"
+Bad examples: "Help me with productivity", "Tell me about gratitude" (these are topic changes, not conversation continuations)
+
+Keep them casual, conversational, and in first person as if the user is saying them.`,
                 },
                 {
                   role: "user",
