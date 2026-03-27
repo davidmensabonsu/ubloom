@@ -142,9 +142,20 @@ export default function Ubi() {
                   <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
                     <Sparkles size={14} className="text-primary" />
                   </div>
-                  <div className="space-y-2 pt-1">
-                    <Skeleton className="h-4 w-48" />
-                    <Skeleton className="h-4 w-32" />
+                  <div className="bg-secondary/80 rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-1.5">
+                    {[0, 1, 2].map((i) => (
+                      <motion.span
+                        key={i}
+                        className="w-2 h-2 rounded-full bg-muted-foreground/50"
+                        animate={{ y: [0, -6, 0] }}
+                        transition={{
+                          duration: 0.6,
+                          repeat: Infinity,
+                          delay: i * 0.15,
+                          ease: 'easeInOut',
+                        }}
+                      />
+                    ))}
                   </div>
                 </motion.div>
               )}
