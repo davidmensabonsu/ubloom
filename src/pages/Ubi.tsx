@@ -39,7 +39,7 @@ export default function Ubi() {
 
       const welcomePrompt = `[SYSTEM: The user just opened the Ubi chat for the first time. Send a warm, personalised welcome message. Introduce yourself as Ubi — their personal mentor and guide inside uBloom. Reference their dream self vision if available. Keep it short (2-3 paragraphs), warm, and end by inviting them to share what's on their mind. ${contextHint} ${name ? `They described themselves as ${name}.` : ''}]`;
 
-      sendMessage(welcomePrompt);
+      sendMessage(welcomePrompt, { hideUserMessage: true });
     }
   }, []);  // eslint-disable-line react-hooks/exhaustive-deps
 
