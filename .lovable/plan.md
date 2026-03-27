@@ -1,36 +1,57 @@
 
 
-## Dynamic Preset Prompts for Ubi Chat
+## Store Ubi Message Ratings in the Database
 
-### What Changes
+### Overview
+Create a new `ubi_ratings` table to persist thumbs up/down ratings, and update the rating logic to write to the database in addition to local state.
 
-After each Ubi response, the preset prompt buttons will show a mix of **contextual follow-ups** (responding to what Ubi just said) and **new topic starters** (for switching conversation direction). Always 5-6 buttons visible.
+### Database Migration
 
-### How It Works
+New table `ubi_ratings`:
+```sql
+CREATE TABLE public.ubi_ratings (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  message_content text NOT NULL,
+  rating text NOT NULL CHECK (rating IN ('up', 'down')),
+  conversation_context text, -- the user message that preceded this response
+  created_at timestamptz NOT NULL DEFAULT now()
+);
 
-**1. Edge function generates suggested prompts** (`supabase/functions/ubi-chat/index.ts`)
+ALTER TABLE public.ubi_ratings ENABLE ROW LEVEL SECURITY;
 
-After the main streaming response completes, a separate non-streaming AI call generates 5-6 suggested follow-up prompts as a JSON array. These are appended to the streamed response as a special delimiter block (e.g. `\n<!--PROMPTS:["...", "..."]-->`) so the client can parse them out.
+-- Users can insert their own ratings
+CREATE POLICY "Users can insert ratings" ON public.ubi_ratings
+  FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
 
-The prompt instructs the AI to return:
-- 3-4 contextual follow-ups that naturally continue or dig deeper into what Ubi just discussed
-- 2 new topic starters drawn from a pool of conversation themes (discipline, mood patterns, purpose, dream self, etc.)
+-- Users can view their own ratings
+CREATE POLICY "Users can view own ratings" ON public.ubi_ratings
+  FOR SELECT TO authenticated USING (auth.uid() = user_id);
 
-**2. Client parses and displays dynamic prompts** (`src/pages/Ubi.tsx`, `src/hooks/useUbiChat.ts`)
+-- Users can update their own ratings (for toggling)
+CREATE POLICY "Users can update own ratings" ON public.ubi_ratings
+  FOR UPDATE TO authenticated USING (auth.uid() = user_id);
 
-- `useUbiChat` extracts the `<!--PROMPTS:...-->` block from the final assistant message content, strips it from the displayed text, and exposes a `suggestedPrompts` state array.
-- The preset prompts section renders `suggestedPrompts` when available (after a conversation has started), falling back to the existing static presets for the initial empty state.
-- Each dynamic prompt gets a random icon from the existing icon set for visual variety.
+-- Users can delete their own ratings (for un-rating)
+CREATE POLICY "Users can delete own ratings" ON public.ubi_ratings
+  FOR DELETE TO authenticated USING (auth.uid() = user_id);
+```
 
-**3. Static presets remain for empty state** (`src/pages/Ubi.tsx`)
+### Code Changes
 
-The current 8 static presets stay as the initial prompt grid shown before any messages exist. Once the conversation starts, dynamic prompts take over.
+**`src/hooks/useUbiChat.ts`** — Update `rateMessage` to:
+1. Continue toggling rating in local state as it does now
+2. Additionally upsert/delete from `ubi_ratings` table using the Supabase client
+3. Include the preceding user message as `conversation_context` for analysis context
+4. Use the authenticated user's ID from the auth hook
 
-### Files to Change
+**`src/pages/Ubi.tsx`** — No changes needed; it already calls `rateMessage` from the hook.
 
-| File | Change |
-|------|--------|
-| `supabase/functions/ubi-chat/index.ts` | After streaming the main response, make a second non-streaming AI call to generate 5-6 suggested prompts as JSON. Append them as a parseable delimiter to the stream. |
-| `src/hooks/useUbiChat.ts` | Parse the `<!--PROMPTS:...-->` block from assistant messages, strip it from displayed content, expose `suggestedPrompts` state. |
-| `src/pages/Ubi.tsx` | Use `suggestedPrompts` from the hook when available; fall back to static presets on empty state. Assign random icons from existing icon pool. Reduce displayed count to 5-6. |
+### Technical Details
+
+- Ratings are stored per-message-content rather than by index, so they survive chat clears
+- When a user un-rates (toggles off), the row is deleted from the database
+- When a user changes rating direction, the existing row is updated
+- The `conversation_context` field stores the user message that prompted the rated response, giving analysts the full Q&A pair
+- Auth user ID comes from `supabase.auth.getUser()` or the existing `useAuth` hook
 
