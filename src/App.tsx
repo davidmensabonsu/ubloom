@@ -28,6 +28,7 @@ import Moodboard from "./pages/Moodboard";
 import Ubi from "./pages/Ubi";
 import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
+import Wonder2 from "./pages/Wonder2";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
