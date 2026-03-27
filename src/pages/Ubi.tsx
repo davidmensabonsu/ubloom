@@ -122,8 +122,8 @@ export default function Ubi() {
                   animate={{ opacity: 1 }}
                   className="flex gap-2 items-start"
                 >
-                  <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-                    <Sparkles size={14} className="text-primary" />
+                  <div className="w-7 h-7 rounded-full overflow-hidden border border-primary/20 shrink-0 mt-0.5">
+                    <img src={ubiAvatar} alt="Ubi" className="w-full h-full object-cover" />
                   </div>
                   <div className="bg-secondary/80 rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-1.5">
                     {[0, 1, 2].map((i) => (
@@ -225,8 +225,8 @@ function MessageBubble({ message }: { message: UbiMessage }) {
       className={`flex gap-2 items-start ${isUser ? 'flex-row-reverse' : ''}`}
     >
       {!isUser && (
-        <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-          <Sparkles size={14} className="text-primary" />
+        <div className="w-7 h-7 rounded-full overflow-hidden border border-primary/20 shrink-0 mt-0.5">
+          <img src={ubiAvatar} alt="Ubi" className="w-full h-full object-cover" />
         </div>
       )}
       <div
