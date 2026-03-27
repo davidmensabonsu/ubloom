@@ -122,4 +122,34 @@ export const bookLinks: Record<string, BookLink[]> = {
     { label: 'Dr Teal\'s Epsom Salt Soak', url: 'https://www.amazon.com/dp/B001G7QMXM', rating: 4.7, reviews: 54300, price: '$5.97' },
     { label: 'Rikans Pumice Stone', url: 'https://www.amazon.com/dp/B01MYPNP3N', rating: 4.5, reviews: 31200, price: '$6.99' },
   ],
+  'hyg-9': [ // Fragrance Layering
+    { label: 'Sol de Janeiro Brazilian Bum Bum Cream', url: 'https://www.amazon.com/dp/B01EINM9PY', topPick: true, rating: 4.6, reviews: 34200, price: '$48.00' },
+    { label: 'Moroccanoil Body Oil', url: 'https://www.amazon.com/dp/B07BTWGGMF', rating: 4.5, reviews: 8900, price: '$48.00' },
+    { label: 'Dossier Floral Perfume', url: 'https://www.amazon.com/dp/B09QSZ8Y3K', rating: 4.3, reviews: 12400, price: '$29.00' },
+  ],
+  'hyg-10': [ // At-Home Facial
+    { label: 'COSRX Snail Mucin Essence', url: 'https://www.amazon.com/dp/B00PBX3L7K', topPick: true, rating: 4.6, reviews: 67300, price: '$12.99' },
+    { label: 'Aztec Secret Clay Mask', url: 'https://www.amazon.com/dp/B0014P8L9W', rating: 4.6, reviews: 98700, price: '$9.99' },
+    { label: 'BAIMEI Jade Roller & Gua Sha', url: 'https://www.amazon.com/dp/B07GN5W6ZS', rating: 4.4, reviews: 42100, price: '$8.99' },
+  ],
+  'hyg-11': [ // Body Exfoliation
+    { label: 'Tree Hut Shea Sugar Scrub', url: 'https://www.amazon.com/dp/B001R2GF5K', topPick: true, rating: 4.7, reviews: 58200, price: '$8.99' },
+    { label: 'Pursonic Dry Brush', url: 'https://www.amazon.com/dp/B01B5IT400', rating: 4.5, reviews: 22800, price: '$7.99' },
+    { label: 'Palmer\'s Cocoa Butter Body Oil', url: 'https://www.amazon.com/dp/B001G7PKT8', rating: 4.7, reviews: 31600, price: '$6.49' },
+  ],
+  'hyg-12': [ // Smooth Shaving
+    { label: 'Billie Razor Starter Kit', url: 'https://www.amazon.com/dp/B0BVTZP4WR', topPick: true, rating: 4.5, reviews: 14200, price: '$10.00' },
+    { label: 'EOS Shea Better Shave Cream', url: 'https://www.amazon.com/dp/B07FMDJQKL', rating: 4.6, reviews: 28300, price: '$4.49' },
+    { label: 'Tend Skin Solution', url: 'https://www.amazon.com/dp/B001ECQ7G4', rating: 4.4, reviews: 19800, price: '$18.00' },
+  ],
+  'hyg-13': [ // Bedtime Ritual
+    { label: 'SLIP Silk Pillowcase', url: 'https://www.amazon.com/dp/B00LH7MBCS', topPick: true, rating: 4.6, reviews: 16800, price: '$89.00' },
+    { label: 'This Works Deep Sleep Pillow Spray', url: 'https://www.amazon.com/dp/B003TH5R30', rating: 4.4, reviews: 23400, price: '$29.00' },
+    { label: 'Laneige Lip Sleeping Mask', url: 'https://www.amazon.com/dp/B07QBFGH9J', rating: 4.7, reviews: 72100, price: '$24.00' },
+  ],
+  'hyg-14': [ // Lip Care
+    { label: 'Laneige Lip Sleeping Mask', url: 'https://www.amazon.com/dp/B07QBFGH9J', topPick: true, rating: 4.7, reviews: 72100, price: '$24.00' },
+    { label: 'e.l.f. Lip Exfoliator', url: 'https://www.amazon.com/dp/B01N34WRJC', rating: 4.4, reviews: 18900, price: '$5.00' },
+    { label: 'Aquaphor Lip Repair', url: 'https://www.amazon.com/dp/B006IB5T4W', rating: 4.7, reviews: 45600, price: '$4.49' },
+  ],
 };
