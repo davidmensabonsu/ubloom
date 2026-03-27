@@ -170,7 +170,7 @@ export default function Ubi() {
                     </p>
                   ) : (
                     <div className="space-y-1">
-                      {conversations.map((convo) => (
+                      {filtered.map((convo) => (
                         <button
                           key={convo.id}
                           onClick={() => handleSelectConversation(convo.id)}
