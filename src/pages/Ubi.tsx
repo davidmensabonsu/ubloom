@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Trash2, Square, Sparkles } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useUbiChat, UbiMessage } from '@/hooks/useUbiChat';
+import { useUserStore } from '@/stores/userStore';
 import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -18,9 +19,29 @@ const presetPrompts = [
 
 export default function Ubi() {
   const { messages, isStreaming, sendMessage, clearChat, stopStreaming } = useUbiChat();
+  const profile = useUserStore((s) => s.profile);
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const welcomeSent = useRef(false);
+
+  // Auto-send welcome message on first open (no messages yet)
+  useEffect(() => {
+    if (messages.length === 0 && !welcomeSent.current && !isStreaming) {
+      welcomeSent.current = true;
+      const dreamFeels = profile.dreamSelfFeels?.length ? profile.dreamSelfFeels.join(', ') : '';
+      const identity = profile.identityStatement || '';
+      const name = profile.currentFeeling ? `someone feeling ${profile.currentFeeling}` : '';
+
+      let contextHint = '';
+      if (identity) contextHint = `Their identity statement is: "${identity}".`;
+      else if (dreamFeels) contextHint = `They want their dream self to feel: ${dreamFeels}.`;
+
+      const welcomePrompt = `[SYSTEM: The user just opened the Ubi chat for the first time. Send a warm, personalised welcome message. Introduce yourself as Ubi — their personal mentor and guide inside uBloom. Reference their dream self vision if available. Keep it short (2-3 paragraphs), warm, and end by inviting them to share what's on their mind. ${contextHint} ${name ? `They described themselves as ${name}.` : ''}]`;
+
+      sendMessage(welcomePrompt);
+    }
+  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (scrollRef.current) {
