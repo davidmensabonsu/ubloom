@@ -1,7 +1,7 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Clock, Dumbbell, Flame, Star, Target, Wrench, Heart } from 'lucide-react';
 import type { FitnessWorkout } from '@/lib/wonderResources';
-import { fitnessThumbnails, fitnessFormIllustrations } from '@/lib/resourceMedia';
+import { fitnessThumbnails } from '@/lib/resourceMedia';
 
 interface FitnessDetailSheetProps {
   workout: FitnessWorkout | null;
@@ -108,23 +108,6 @@ export default function FitnessDetailSheet({ workout, open, onOpenChange }: Fitn
             ))}
           </ul>
         </div>
-
-        {/* Form illustration */}
-        {fitnessFormIllustrations[workout.id] && (
-          <div className="mb-5">
-            <h3 className="text-sm font-semibold text-foreground mb-3">Proper Form</h3>
-            <div className="bg-muted/30 rounded-2xl p-4 flex items-center justify-center">
-              <img
-                src={fitnessFormIllustrations[workout.id]}
-                alt={`${workout.name} form illustration`}
-                className="w-full max-w-xs h-auto object-contain"
-                loading="lazy"
-                width={640}
-                height={512}
-              />
-            </div>
-          </div>
-        )}
 
         {/* Steps */}
         <div>

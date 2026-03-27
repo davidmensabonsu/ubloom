@@ -90,32 +90,6 @@ import fwJumpRope from '@/assets/wonder/fw-jump-rope.jpg';
 import fwPowerWalk from '@/assets/wonder/fw-power-walk.jpg';
 import fwStairClimber from '@/assets/wonder/fw-stair-climber.jpg';
 
-// Fitness form illustrations (2D gym-style diagrams)
-import formFw1 from '@/assets/wonder/form-fw-1.jpg';
-import formFw2 from '@/assets/wonder/form-fw-2.jpg';
-import formFw3 from '@/assets/wonder/form-fw-3.jpg';
-import formFw4 from '@/assets/wonder/form-fw-4.jpg';
-import formFw5 from '@/assets/wonder/form-fw-5.jpg';
-import formFw6 from '@/assets/wonder/form-fw-6.jpg';
-import formFw7 from '@/assets/wonder/form-fw-7.jpg';
-import formFw8 from '@/assets/wonder/form-fw-8.jpg';
-import formFw9 from '@/assets/wonder/form-fw-9.jpg';
-import formFw10 from '@/assets/wonder/form-fw-10.jpg';
-import formFw11 from '@/assets/wonder/form-fw-11.jpg';
-import formFw12 from '@/assets/wonder/form-fw-12.jpg';
-import formFw13 from '@/assets/wonder/form-fw-13.jpg';
-import formFw14 from '@/assets/wonder/form-fw-14.jpg';
-import formFw15 from '@/assets/wonder/form-fw-15.jpg';
-import formFw16 from '@/assets/wonder/form-fw-16.jpg';
-import formFw17 from '@/assets/wonder/form-fw-17.jpg';
-import formFw18 from '@/assets/wonder/form-fw-18.jpg';
-import formFw19 from '@/assets/wonder/form-fw-19.jpg';
-import formFw20 from '@/assets/wonder/form-fw-20.jpg';
-import formFw21 from '@/assets/wonder/form-fw-21.jpg';
-import formFw22 from '@/assets/wonder/form-fw-22.jpg';
-import formFw23 from '@/assets/wonder/form-fw-23.jpg';
-import formFw24 from '@/assets/wonder/form-fw-24.jpg';
-
 // Videos (CDN asset pointers)
 import videoMorningStretch from '@/assets/wonder/video-morning-stretch.mp4.asset.json';
 import videoPilates from '@/assets/wonder/video-pilates.mp4.asset.json';
@@ -249,33 +223,7 @@ export const fitnessThumbnails: Record<string, string> = {
   'fw-24': fwStairClimber,
 };
 
-/** Fitness form illustration diagrams (gym-equipment style) */
-export const fitnessFormIllustrations: Record<string, string> = {
-  'fw-1': formFw1,
-  'fw-2': formFw2,
-  'fw-3': formFw3,
-  'fw-4': formFw4,
-  'fw-5': formFw5,
-  'fw-6': formFw6,
-  'fw-7': formFw7,
-  'fw-8': formFw8,
-  'fw-9': formFw9,
-  'fw-10': formFw10,
-  'fw-11': formFw11,
-  'fw-12': formFw12,
-  'fw-13': formFw13,
-  'fw-14': formFw14,
-  'fw-15': formFw15,
-  'fw-16': formFw16,
-  'fw-17': formFw17,
-  'fw-18': formFw18,
-  'fw-19': formFw19,
-  'fw-20': formFw20,
-  'fw-21': formFw21,
-  'fw-22': formFw22,
-  'fw-23': formFw23,
-  'fw-24': formFw24,
-};
+/** AI-generated demo videos for exercise / video-type resources */
 export const resourceVideos: Record<string, string> = {
   'fit-1': videoMorningStretch.url,
   'fit-3': videoPilates.url,
