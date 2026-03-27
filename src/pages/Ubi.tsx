@@ -77,11 +77,9 @@ export default function Ubi() {
     const journalEntry = (location.state as any)?.journalEntry;
     if (journalEntry && typeof journalEntry === 'string') {
       journalHandled.current = true;
-      // Clear the state so refresh doesn't re-trigger
       navigate(location.pathname, { replace: true, state: {} });
       startNewChat();
-      const contextMessage = `[SYSTEM: The user just wrote this in their private journal on the Reflect page and wants to talk about it. Read their entry carefully and respond with empathy, insight, and gentle guidance. Don't just summarise what they wrote — add value. Ask a thoughtful follow-up question.]\n\nHere's what I wrote in my journal:\n\n${journalEntry}`;
-      sendMessage(contextMessage, { hideUserMessage: true, visibleText: journalEntry });
+      sendMessage(`I just wrote this in my journal and I'd like to talk about it:\n\n${journalEntry}`);
     }
   }, [isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
