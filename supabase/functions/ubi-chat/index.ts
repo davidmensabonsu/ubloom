@@ -123,12 +123,21 @@ ${userContext ? JSON.stringify(userContext) : "No context available yet."}
                   role: "system",
                   content: `You generate suggested follow-up prompts for a mentoring chat app. Return ONLY a JSON array of 5-6 short prompt strings (max 50 chars each).
 
-All prompts should feel like natural next things the user would say to continue THIS conversation. They should dig deeper, ask for clarification, share a reaction, or explore a related angle of what was just discussed. Think of how a real person would respond — not change the subject.
+Read the mentor's reply carefully. Generate prompts that explore SPECIFIC things the mentor mentioned — ask for recommendations, details, examples, or actionable steps related to the actual content of the reply.
 
-Good examples: "Can you give me an example?", "What if I keep failing at that?", "How do I actually start?", "That hits hard, say more", "What would my dream self do here?"
-Bad examples: "Help me with productivity", "Tell me about gratitude" (these are topic changes, not conversation continuations)
+For example, if the mentor mentioned listening to lofi music to focus:
+  GOOD: "What are the best lofi songs to listen to?"
+  BAD: "Can you tell me more about that?"
 
-Keep them casual, conversational, and in first person as if the user is saying them.`,
+If the mentor suggested journaling:
+  GOOD: "What should I write about in my journal?"
+  BAD: "How do I actually start?"
+
+Mix of prompt types:
+- 3-4 that dig into specific details/recommendations from the reply
+- 1-2 that explore the emotional or personal angle of what was discussed
+
+Keep them casual, first person, as if the user is naturally responding.`,
                 },
                 {
                   role: "user",
