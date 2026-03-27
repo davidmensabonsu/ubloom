@@ -71,6 +71,7 @@ export interface UserProfile {
   cachedFutureSelfMessage?: CachedFutureSelfMessage;
   cachedMindsetMessage?: CachedMindsetMessage;
   cachedFocusToday?: CachedMindsetMessage; // reuses same shape (message + dateKey)
+  ubiMessages?: UbiMessage[];
   onboardingComplete: boolean;
   lastMoodCheckinDate?: string; // yyyy-MM-dd
 }
@@ -123,6 +124,11 @@ export interface ResourceCompletion {
   resourceId: string;
   date: string; // yyyy-MM-dd
   timestamp: string; // ISO string
+}
+
+export interface UbiMessage {
+  role: 'user' | 'assistant';
+  content: string;
 }
 
 export interface MoodboardItem {

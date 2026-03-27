@@ -10,7 +10,7 @@ export interface UbiMessage {
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ubi-chat`;
 const MAX_MESSAGES = 50;
 
-function buildUserContext(profile: ReturnType<typeof useUserStore>['profile']) {
+function buildUserContext(profile: ReturnType<typeof useUserStore.getState>['profile']) {
   const today = getLocalDateStr();
 
   // Recent moods (last 14 days)

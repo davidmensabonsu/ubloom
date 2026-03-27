@@ -25,6 +25,7 @@ import Alignment from "./pages/Alignment";
 import Routine from "./pages/Routine";
 import Wonder from "./pages/Wonder";
 import Moodboard from "./pages/Moodboard";
+import Ubi from "./pages/Ubi";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
@@ -70,7 +71,7 @@ function MoodCheckinGate() {
   );
 }
 
-const routeOrder = ['/', '/auth', '/reset-password', '/onboarding', '/dream-life', '/choose-aesthetic', '/home', '/alignment', '/routine', '/wonder', '/moodboard', '/profile'];
+const routeOrder = ['/', '/auth', '/reset-password', '/onboarding', '/dream-life', '/choose-aesthetic', '/home', '/alignment', '/routine', '/wonder', '/ubi', '/moodboard', '/profile'];
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -99,6 +100,7 @@ function AnimatedRoutes() {
           <Route path="/alignment" element={<ProtectedRoute><PageTransition direction={direction}><Alignment /></PageTransition></ProtectedRoute>} />
           <Route path="/routine" element={<ProtectedRoute><PageTransition direction={direction}><Routine /></PageTransition></ProtectedRoute>} />
           <Route path="/wonder" element={<ProtectedRoute><PageTransition direction={direction}><Wonder /></PageTransition></ProtectedRoute>} />
+          <Route path="/ubi" element={<ProtectedRoute><PageTransition direction={direction}><Ubi /></PageTransition></ProtectedRoute>} />
           <Route path="/moodboard" element={<ProtectedRoute><PageTransition direction={direction}><Moodboard /></PageTransition></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><PageTransition direction={direction}><Profile /></PageTransition></ProtectedRoute>} />
           <Route path="*" element={<PageTransition direction={direction}><NotFound /></PageTransition>} />
