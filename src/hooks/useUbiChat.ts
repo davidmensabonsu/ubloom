@@ -188,7 +188,7 @@ export function useUbiChat() {
         if (e.name !== 'AbortError') {
           console.error('Ubi chat error:', e);
           const errorMsg: UbiMessage = { role: 'assistant', content: "I couldn't connect right now. Try again in a moment 💛" };
-          const final = [...newMessages, errorMsg];
+          const final = [...displayMessages, errorMsg];
           setMessages(final);
           persistMessages(final);
         }
