@@ -148,9 +148,26 @@ export default function Ubi() {
                     New Chat
                   </Button>
                 </SheetHeader>
+                <div className="relative mb-2">
+                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="text"
+                    value={historySearch}
+                    onChange={(e) => setHistorySearch(e.target.value)}
+                    placeholder="Search conversations..."
+                    className="w-full pl-8 pr-3 py-2 rounded-xl border border-input bg-secondary/50 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                </div>
                 <div className="overflow-y-auto flex-1 -mx-2">
-                  {conversations.length === 0 ? (
-                    <p className="text-sm text-muted-foreground text-center py-8">No conversations yet</p>
+                  {(() => {
+                    const q = historySearch.toLowerCase().trim();
+                    const filtered = q
+                      ? conversations.filter(c => c.title.toLowerCase().includes(q) || c.preview?.toLowerCase().includes(q))
+                      : conversations;
+                    return filtered.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-8">
+                      {conversations.length === 0 ? 'No conversations yet' : 'No matches found'}
+                    </p>
                   ) : (
                     <div className="space-y-1">
                       {conversations.map((convo) => (
