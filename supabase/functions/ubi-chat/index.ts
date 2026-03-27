@@ -160,7 +160,8 @@ Keep them casual, first person, as if the user is naturally responding.`,
             }
 
             if (prompts.length > 0) {
-              const promptBlock = `\n\ndata: {"choices":[{"delta":{"content":"<!--PROMPTS:${JSON.stringify(prompts)}-->"}}]}\n\n`;
+              const promptContent = `<!--PROMPTS:${JSON.stringify(prompts)}-->`;
+              const promptBlock = `\n\ndata: ${JSON.stringify({ choices: [{ delta: { content: promptContent } }] })}\n\n`;
               await writer.write(encoder.encode(promptBlock));
             }
           }
