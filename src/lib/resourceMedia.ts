@@ -23,6 +23,16 @@ import bookAlchemist from '@/assets/wonder/book-alchemist.jpg';
 import bookRichDad from '@/assets/wonder/book-rich-dad.jpg';
 import bookPowerOfNow from '@/assets/wonder/book-power-of-now.jpg';
 import bookLeanIn from '@/assets/wonder/book-lean-in.jpg';
+import bookBigMagic from '@/assets/wonder/book-big-magic.jpg';
+import bookFourAgreements from '@/assets/wonder/book-four-agreements.jpg';
+import book5amClub from '@/assets/wonder/book-5am-club.jpg';
+import bookBoundaries from '@/assets/wonder/book-boundaries.jpg';
+import bookWolves from '@/assets/wonder/book-wolves.jpg';
+import bookSubtleArt from '@/assets/wonder/book-subtle-art.jpg';
+import bookYearOfYes from '@/assets/wonder/book-year-of-yes.jpg';
+import bookTheSecret from '@/assets/wonder/book-the-secret.jpg';
+import bookFeminists from '@/assets/wonder/book-feminists.jpg';
+import bookFallApart from '@/assets/wonder/book-fall-apart.jpg';
 
 // Thumbnails
 import thumbMountain from '@/assets/wonder/thumb-mountain-meditation.jpg';
