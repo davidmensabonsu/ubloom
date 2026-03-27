@@ -42,6 +42,7 @@ type Tab = 'for-you' | 'popular';
 
 export default function Wonder2() {
   const [tab, setTab] = useState<Tab>('for-you');
+  const [search, setSearch] = useState('');
   const navigate = useNavigate();
   const savedIds = useUserStore((s) => s.profile.savedResources) || [];
   const { saveResource, unsaveResource } = useUserStore();
@@ -65,6 +66,11 @@ export default function Wonder2() {
     if (savedSet.has(r.id)) savedCounts['fitness'] = (savedCounts['fitness'] || 0) + 1;
   }
 
+  const query = search.toLowerCase().trim();
+  const filteredCards = query
+    ? categoryCards.filter(c => c.label.toLowerCase().includes(query) || c.subtitle.toLowerCase().includes(query))
+    : categoryCards;
+
   return (
     <div className="min-h-screen pb-24" style={{ backgroundColor: 'hsl(var(--background))' }}>
       {/* Search bar */}
@@ -72,7 +78,13 @@ export default function Wonder2() {
         <div className="flex items-center gap-2">
           <div className="flex-1 flex items-center gap-3 rounded-full border border-border/40 bg-card/60 backdrop-blur-sm px-4 py-3">
             <Search size={18} className="text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Search ideas...</span>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search ideas..."
+              className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
+            />
             <div className="ml-auto flex gap-1.5">
               <button
                 onClick={() => setTab('for-you')}
@@ -125,7 +137,7 @@ export default function Wonder2() {
 
         {/* Masonry grid */}
         <div className="columns-2 gap-3 space-y-3">
-          {categoryCards.map((card, i) => (
+          {filteredCards.map((card, i) => (
             <motion.div
               key={card.key}
               initial={{ opacity: 0, y: 16 }}
