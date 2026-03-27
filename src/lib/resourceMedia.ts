@@ -238,6 +238,12 @@ export const resourceThumbnails: Record<string, string> = {
   'hyg-6': thumbHygieneSkincare,
   'hyg-7': thumbHygieneNails,
   'hyg-8': thumbHygieneShower,
+  'hyg-9': thumbHygieneFragrance,
+  'hyg-10': thumbHygieneFacial,
+  'hyg-11': thumbHygieneExfoliation,
+  'hyg-12': thumbHygieneShaving,
+  'hyg-13': thumbHygieneBedtime,
+  'hyg-14': thumbHygieneLips,
 };
 
 /** Fitness workout thumbnails */
