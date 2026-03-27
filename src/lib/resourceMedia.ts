@@ -68,6 +68,9 @@ import thumbPodcast1 from '@/assets/wonder/thumb-podcast-1.jpg';
 import thumbPodcast2 from '@/assets/wonder/thumb-podcast-2.jpg';
 import thumbPodcast3 from '@/assets/wonder/thumb-podcast-3.jpg';
 import thumbPodcast4 from '@/assets/wonder/thumb-podcast-4.jpg';
+import thumbPodcastFinance from '@/assets/wonder/thumb-podcast-finance.jpg';
+import thumbPodcastCreativity from '@/assets/wonder/thumb-podcast-creativity.jpg';
+import thumbPodcastSpiritual from '@/assets/wonder/thumb-podcast-spiritual.jpg';
 
 // Hygiene thumbnails
 import thumbHygieneShower from '@/assets/wonder/thumb-hygiene-shower.jpg';
@@ -212,6 +215,14 @@ export const resourceThumbnails: Record<string, string> = {
   'pod-6': thumbPodcast2,
   'pod-7': thumbPodcast3,
   'pod-8': thumbPodcast4,
+  'pod-9': thumbPodcastFinance,
+  'pod-10': thumbPodcastFinance,
+  'pod-11': thumbPodcastFinance,
+  'pod-12': thumbPodcastCreativity,
+  'pod-13': thumbPodcastCreativity,
+  'pod-14': thumbPodcastSpiritual,
+  'pod-15': thumbPodcastSpiritual,
+  'pod-16': thumbPodcastSpiritual,
   // Hygiene
   'hyg-1': thumbHygieneShower,
   'hyg-2': thumbHygieneSkincare,
