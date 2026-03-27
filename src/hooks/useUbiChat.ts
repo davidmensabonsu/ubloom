@@ -96,7 +96,7 @@ export function useUbiChat() {
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
           body: JSON.stringify({
-            messages: newMessages.map((m) => ({ role: m.role, content: m.content })),
+            messages: apiMessages.map((m) => ({ role: m.role, content: m.content })),
             userContext,
           }),
           signal: controller.signal,
@@ -105,7 +105,7 @@ export function useUbiChat() {
         if (!resp.ok) {
           const err = await resp.json().catch(() => ({ error: 'Something went wrong' }));
           const errorMsg: UbiMessage = { role: 'assistant', content: err.error || 'Something went wrong. Try again in a moment.' };
-          const final = [...newMessages, errorMsg];
+          const final = [...displayMessages, errorMsg];
           setMessages(final);
           persistMessages(final);
           setIsStreaming(false);
