@@ -12,7 +12,7 @@ import HygieneSection from '@/components/wonder/HygieneSection';
 import BooksSection from '@/components/wonder/BooksSection';
 import WonderStreak from '@/components/wonder/WonderStreak';
 import RecentlyPracticed from '@/components/wonder/RecentlyPracticed';
-import SavedResources from '@/components/wonder/SavedResources';
+
 import FoodRecipesSection from '@/components/wonder/FoodRecipesSection';
 import { wonderResources, wonderCategories, type WonderResource, type WonderCategory } from '@/lib/wonderResources';
 
@@ -72,9 +72,6 @@ export default function Wonder() {
 
         {/* Recently Practiced */}
         <RecentlyPracticed onSelectResource={handleSelectResource} />
-
-        {/* Saved for Later */}
-        <SavedResources onSelectResource={handleSelectResource} />
 
         {/* Explore Library */}
         <motion.div
