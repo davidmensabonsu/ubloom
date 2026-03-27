@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Trash2, Square, Plus, History, ThumbsUp, ThumbsDown, ArrowLeft, X, Search } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -46,6 +47,9 @@ export default function Ubi() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const welcomeSent = useRef(false);
+  const journalHandled = useRef(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // Auto-send welcome message only once ever
   useEffect(() => {
@@ -64,6 +68,18 @@ export default function Ubi() {
       const welcomePrompt = `[SYSTEM: The user just opened the Ubi chat for the first time. Send a warm, personalised welcome. Introduce yourself as Ubi — their mentor inside uBloom. Reference their dream self vision if available. Keep it to 2 short paragraphs max. End by inviting them to share what's on their mind. ${contextHint} ${name ? `They described themselves as ${name}.` : ''}]`;
 
       sendMessage(welcomePrompt, { hideUserMessage: true });
+    }
+  }, [isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Handle journal entry passed from Reflect page
+  useEffect(() => {
+    if (isLoading || journalHandled.current) return;
+    const journalEntry = (location.state as any)?.journalEntry;
+    if (journalEntry && typeof journalEntry === 'string') {
+      journalHandled.current = true;
+      navigate(location.pathname, { replace: true, state: {} });
+      startNewChat();
+      sendMessage(`I just wrote this in my journal and I'd like to talk about it:\n\n${journalEntry}`);
     }
   }, [isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
