@@ -75,7 +75,100 @@ ${userContext ? JSON.stringify(userContext) : "No context available yet."}
       });
     }
 
-    return new Response(response.body, {
+    // We need to read the full stream, forward it, then append suggested prompts
+    const { readable, writable } = new TransformStream();
+    const writer = writable.getWriter();
+    const encoder = new TextEncoder();
+
+    // Process in background
+    (async () => {
+      try {
+        const reader = response.body!.getReader();
+        const decoder = new TextDecoder();
+        let fullContent = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          // Forward the chunk to client
+          await writer.write(value);
+
+          // Also accumulate content for prompt generation
+          const chunk = decoder.decode(value, { stream: true });
+          for (const line of chunk.split("\n")) {
+            if (!line.startsWith("data: ")) continue;
+            const jsonStr = line.slice(6).trim();
+            if (jsonStr === "[DONE]") continue;
+            try {
+              const parsed = JSON.parse(jsonStr);
+              const content = parsed.choices?.[0]?.delta?.content;
+              if (content) fullContent += content;
+            } catch { /* ignore */ }
+          }
+        }
+
+        // Now generate suggested prompts via a second non-streaming call
+        try {
+          const lastUserMsg = [...messages].reverse().find((m: any) => m.role === "user")?.content || "";
+          const promptGenResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${LOVABLE_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "google/gemini-2.5-flash-lite",
+              messages: [
+                {
+                  role: "system",
+                  content: `You generate suggested follow-up prompts for a mentoring chat app. Return ONLY a JSON array of 5-6 short prompt strings (max 50 chars each). Include:
+- 3-4 contextual follow-ups that dig deeper into what was just discussed
+- 2 new topic starters from themes like: discipline, mood patterns, purpose, dream self, confidence, relationships, productivity, gratitude, boundaries, self-worth
+
+Keep them casual, conversational, and in first person as if the user is saying them. No quotes around the array items beyond the JSON.
+Example: ["Tell me more about that","How do I stay consistent?","What's blocking me right now?","Help me set a goal","Am I being too hard on myself?"]`,
+                },
+                {
+                  role: "user",
+                  content: `The user said: "${lastUserMsg.slice(0, 200)}"\n\nThe mentor replied: "${fullContent.slice(0, 500)}"\n\nGenerate 5-6 suggested follow-up prompts.`,
+                },
+              ],
+              response_format: { type: "json_object" },
+            }),
+          });
+
+          if (promptGenResponse.ok) {
+            const promptData = await promptGenResponse.json();
+            const raw = promptData.choices?.[0]?.message?.content || "[]";
+            // Parse and validate
+            let prompts: string[];
+            try {
+              const parsed = JSON.parse(raw);
+              prompts = Array.isArray(parsed) ? parsed : (parsed.prompts || parsed.suggestions || Object.values(parsed).find(Array.isArray) || []);
+              prompts = prompts.filter((p: any) => typeof p === "string").slice(0, 6);
+            } catch {
+              prompts = [];
+            }
+
+            if (prompts.length > 0) {
+              const promptBlock = `\n\ndata: {"choices":[{"delta":{"content":"<!--PROMPTS:${JSON.stringify(prompts)}-->"}}]}\n\n`;
+              await writer.write(encoder.encode(promptBlock));
+            }
+          }
+        } catch (e) {
+          console.error("Prompt generation failed (non-fatal):", e);
+        }
+
+        // Send final DONE
+        await writer.write(encoder.encode("data: [DONE]\n\n"));
+      } catch (e) {
+        console.error("Stream processing error:", e);
+      } finally {
+        await writer.close();
+      }
+    })();
+
+    return new Response(readable, {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (e) {
