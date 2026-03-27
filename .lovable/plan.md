@@ -1,67 +1,31 @@
 
 
-## Replace Dream Life Page with Ubi — Personal AI Mentor Chat
+## Refine Ubi's System Prompt for Better Tone & Brevity
 
-### Overview
-Remove the DreamLife page from the main navigation and replace it with **Ubi**, a streaming AI chat experience that acts as a personalised digital mentor. Ubi uses all stored user data (mood, habits, journal, onboarding answers, dream self) to deliver contextual, actionable guidance. The DreamLife page remains accessible only during onboarding.
+### Problem
+Three issues with Ubi's current responses:
+1. **Too verbose** — 3-5 paragraphs feels overwhelming, especially as an opening
+2. **Mismatched openers** — says things like "I hear you" before the user has shared anything
+3. **Premature follow-ups** — asks "how did that task feel?" before the user has done it
 
-### User Experience
-- Bottom nav "Dream" tab becomes **"Ubi"** with a chat bubble icon
-- Full-screen chat interface with streaming responses (ChatGPT-style)
-- Preset prompt chips at the top for guided reflection (e.g., "How am I really doing?", "Help me find clarity", "What patterns do you see?")
-- Free-text input always available at the bottom
-- Each Ubi response contains: an **insight** (pattern/observation), a **direct observation** (referencing user data), and a **clear action** (specific instruction)
-- Conversation history persists in the user store (pruned to last 50 messages)
-- Markdown rendering for rich responses
+All three stem from the system prompt instructions in the edge function.
 
-### Technical Approach
+### Changes
 
-**1. New edge function: `supabase/functions/ubi-chat/index.ts`**
-- Accepts `{ messages, userContext }` where `userContext` is a summary of the user's stored data
-- Streams responses via SSE using the Lovable AI Gateway (`google/gemini-3-flash-preview`)
-- System prompt instructs Ubi to be a trusted mentor who references the user's mood history, habit completion rates, journal themes, onboarding answers, and dream self vision
-- Handles 429/402 errors gracefully
+**File: `supabase/functions/ubi-chat/index.ts`** — Rewrite the system prompt:
 
-**2. New page: `src/pages/Ubi.tsx`**
-- Streaming chat UI with message list and input bar
-- On mount, builds `userContext` from the Zustand store (recent moods, habit completion %, journal themes, struggles, dream self, identity statement)
-- Preset prompt chips rendered above the message list when conversation is empty
-- Messages rendered with `react-markdown` for rich formatting
-- Auto-scroll to latest message
+1. **Condense response length**: Change "3-5 paragraphs" to "2-3 short paragraphs max". Add rule: "Be concise. Say more with less. Avoid walls of text."
 
-**3. New hook: `src/hooks/useUbiChat.ts`**
-- Manages message state, streaming logic, and conversation history
-- Builds user context payload from `useUserStore`
-- Handles SSE parsing with token-by-token streaming
-- Persists conversation in store (capped at 50 messages)
+2. **Fix contextual awareness**: Add rules:
+   - "NEVER use phrases like 'I hear you', 'I see you', or 'I feel that' unless the user has actually shared something in the conversation first."
+   - "Match your opener to the conversation state — if it's the first message or a preset prompt, respond directly to the topic without pretending you've been listening."
 
-**4. Update store: `src/stores/userStore.ts`**
-- Add `ubiMessages: UbiMessage[]` to `UserProfile`
-- Add `setUbiMessages` and `addUbiMessage` actions
+3. **Fix premature task follow-ups**: Add rule:
+   - "When suggesting an action, do NOT immediately ask how it went or how it felt. The user hasn't done it yet. Instead, encourage them to try it and come back to share."
 
-**5. Update routing: `src/App.tsx`**
-- Replace `/dream-life` route with `/ubi` (keep `/dream-life` for onboarding flow only)
-- Add Ubi as a protected route
+4. **Soften the data reference requirement**: Change "NEVER give generic advice. Always tie it back to THEIR data" to "Personalise using their goals and vision when relevant, but don't force data references into every sentence. Let it feel natural."
 
-**6. Update navigation: `src/components/BottomNav.tsx`**
-- Replace the Moodboard "Dream" tab with **"Ubi"** pointing to `/ubi` with a `MessageCircle` icon
-- Move Moodboard access elsewhere (e.g., Profile page or keep as a standalone route accessible from Home)
+5. **Simplify response structure**: Change the rigid 3-element structure (Insight + Direct Observation + Clear Action) to a softer guideline: "Naturally weave in a reflection and a concrete action when appropriate — but keep it conversational, not formulaic."
 
-**7. Preset prompts**
-- "How am I really doing?"
-- "Help me find clarity right now"
-- "What patterns do you see in my mood?"
-- "I'm feeling stuck — what should I do?"
-- "Am I aligned with my dream self?"
-- "Give me something to focus on today"
-
-### Files to create
-- `supabase/functions/ubi-chat/index.ts`
-- `src/pages/Ubi.tsx`
-- `src/hooks/useUbiChat.ts`
-
-### Files to modify
-- `src/stores/userStore.ts` — add `ubiMessages` field and actions
-- `src/components/BottomNav.tsx` — replace Dream tab with Ubi
-- `src/App.tsx` — add `/ubi` route, keep `/dream-life` for onboarding only
+**File: `src/pages/Ubi.tsx`** — Update the welcome prompt to reinforce brevity: add "Keep it to 2 short paragraphs max."
 
