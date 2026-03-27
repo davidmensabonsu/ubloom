@@ -206,7 +206,7 @@ export default function Alignment() {
             {saved && savedText && (
               <motion.button
                 onClick={handleTalkToUbi}
-                className="soft-button w-full flex items-center justify-center gap-2 bg-gradient-to-r from-primary/15 to-accent/15 border-2 border-primary/30 text-primary font-medium shadow-sm"
+                className="soft-button w-full flex items-center justify-center gap-2 bg-gradient-to-r from-primary/15 to-accent/15 border-2 border-primary/30 text-foreground font-medium shadow-sm"
                 initial={{ opacity: 0, y: 10, height: 0 }}
                 animate={{ opacity: 1, y: 0, height: 'auto' }}
                 exit={{ opacity: 0, y: -10, height: 0 }}
