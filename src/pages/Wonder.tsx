@@ -7,6 +7,7 @@ import RecommendedSection from '@/components/wonder/RecommendedSection';
 import FitnessSection from '@/components/wonder/FitnessSection';
 import ResourceCard from '@/components/wonder/ResourceCard';
 import ResourceDetailSheet from '@/components/wonder/ResourceDetailSheet';
+import PodcastsSection from '@/components/wonder/PodcastsSection';
 import WonderStreak from '@/components/wonder/WonderStreak';
 import RecentlyPracticed from '@/components/wonder/RecentlyPracticed';
 import FoodRecipesSection from '@/components/wonder/FoodRecipesSection';
@@ -123,7 +124,8 @@ export default function Wonder() {
             <FoodRecipesSection />
           ) : activeCategory === 'fitness' ? (
             <FitnessSection />
-          ) : (
+          ) : activeCategory === 'podcasts' ? (
+            <PodcastsSection />
             <>
               <div className="grid grid-cols-2 gap-3">
                 {visibleResources.map((resource, i) => (
