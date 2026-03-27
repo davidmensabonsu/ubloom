@@ -7,6 +7,7 @@ import { useUserStore } from '@/stores/userStore';
 import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import ubiAvatar from '@/assets/ubi-avatar.png';
 
 const presetPrompts = [
   { text: "I feel lost, help me find direction", icon: "🧭" },
@@ -83,9 +84,9 @@ export default function Ubi() {
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border/50 px-4 py-3">
         <div className="flex items-center justify-between max-w-lg mx-auto">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-              <Sparkles size={16} className="text-primary" />
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/30 shadow-sm">
+              <img src={ubiAvatar} alt="Ubi" className="w-full h-full object-cover" />
             </div>
             <div>
               <h1 className="text-base font-semibold text-foreground">Ubi</h1>
