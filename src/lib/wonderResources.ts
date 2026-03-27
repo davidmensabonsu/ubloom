@@ -1,5 +1,5 @@
-export type WonderCategory = 'mindset' | 'wellness' | 'fitness' | 'nutrition' | 'vitamins' | 'lifestyle' | 'calm' | 'books';
-export type WonderType = 'book' | 'video' | 'technique' | 'nutrition-tip' | 'vitamin';
+export type WonderCategory = 'mindset' | 'wellness' | 'fitness' | 'nutrition' | 'vitamins' | 'lifestyle' | 'calm' | 'books' | 'podcasts' | 'hygiene';
+export type WonderType = 'book' | 'video' | 'technique' | 'nutrition-tip' | 'vitamin' | 'podcast' | 'hygiene-tip';
 
 export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
 export type FitnessType = 'upper-body' | 'lower-body' | 'core' | 'stretches-yoga' | 'full-body' | 'cardio';
@@ -75,6 +75,8 @@ import yogaIcon from '@/assets/icons/yoga.png';
 import bookIcon from '@/assets/icons/book.png';
 import movieIcon from '@/assets/icons/movie.png';
 import pillIcon from '@/assets/icons/pill.png';
+import headphonesIcon from '@/assets/icons/headphones.png';
+import bathIcon from '@/assets/icons/bath.png';
 
 export const categoryColors: Record<WonderCategory, string> = {
   mindset: '280 70% 60%',
@@ -85,6 +87,8 @@ export const categoryColors: Record<WonderCategory, string> = {
   lifestyle: '320 65% 58%',
   calm: '210 60% 55%',
   books: '35 80% 50%',
+  podcasts: '260 65% 58%',
+  hygiene: '180 55% 50%',
 };
 
 export const wonderCategories: { key: WonderCategory; label: string; icon: string }[] = [
@@ -94,7 +98,9 @@ export const wonderCategories: { key: WonderCategory; label: string; icon: strin
   { key: 'nutrition', label: 'Food & Recipes', icon: saladIcon },
   { key: 'vitamins', label: 'Vitamins & Supplements', icon: pillIcon },
   { key: 'books', label: 'Books', icon: bookIcon },
+  { key: 'podcasts', label: 'Podcasts', icon: headphonesIcon },
   { key: 'lifestyle', label: 'Lifestyle & Habits', icon: butterflyIcon },
+  { key: 'hygiene', label: 'Hygiene & Self-Care', icon: bathIcon },
   { key: 'calm', label: 'Calm & Nervous System', icon: yogaIcon },
 ];
 
@@ -104,6 +110,8 @@ export const typeLabels: Record<WonderType, { label: string; icon: string }> = {
   technique: { label: 'Technique', icon: yogaIcon },
   'nutrition-tip': { label: 'Nutrition Tip', icon: saladIcon },
   vitamin: { label: 'Wellness Tip', icon: pillIcon },
+  podcast: { label: 'Podcast', icon: headphonesIcon },
+  'hygiene-tip': { label: 'Self-Care Tip', icon: bathIcon },
 };
 
 export const wonderResources: WonderResource[] = [
