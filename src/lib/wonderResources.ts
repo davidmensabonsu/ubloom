@@ -51,6 +51,11 @@ export interface VitaminDosage {
   notes?: string;
 }
 
+export interface PodcastListenLink {
+  platform: string;
+  url: string;
+}
+
 export interface WonderResource {
   id: string;
   title: string;
@@ -64,6 +69,8 @@ export interface WonderResource {
   link?: string;
   recipes?: Recipe[];
   dosage?: VitaminDosage;
+  episodeDuration?: string;
+  listenLinks?: PodcastListenLink[];
 }
 
 import sparklesIcon from '@/assets/icons/sparkles.png';
