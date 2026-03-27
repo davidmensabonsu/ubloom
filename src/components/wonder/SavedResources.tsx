@@ -12,6 +12,25 @@ interface SavedResourcesProps {
 
 export default function SavedResources({ onSelectResource }: SavedResourcesProps) {
   const { savedResources = [] } = useUserStore((s) => s.profile);
+  const unsaveResource = useUserStore((s) => s.unsaveResource);
+  const [removing, setRemoving] = useState<string | null>(null);
+  const longPressTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+
+  const handleLongPressStart = useCallback((id: string) => {
+    longPressTimers.current[id] = setTimeout(() => {
+      setRemoving(id);
+    }, 500);
+  }, []);
+
+  const handleLongPressEnd = useCallback((id: string) => {
+    clearTimeout(longPressTimers.current[id]);
+  }, []);
+
+  const handleRemove = useCallback((id: string, title: string) => {
+    unsaveResource(id);
+    setRemoving(null);
+    toast('Removed from saved', { description: title });
+  }, [unsaveResource]);
 
   const saved = useMemo(() => {
     if (!savedResources.length) return [];
