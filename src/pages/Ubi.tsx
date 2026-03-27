@@ -164,71 +164,41 @@ export default function Ubi() {
             </AnimatePresence>
           )}
 
-          {/* Prompts — dynamic after conversation, static on empty state */}
-          {!isStreaming && (
-            <div className={messages.length > 0 ? 'pt-2' : 'pt-4'}>
-              {messages.length === 0 && (
-                <p className="text-xs text-muted-foreground text-center mb-3">
-                  Tap a prompt or type your own question
-                </p>
-              )}
-              {messages.length === 0 ? (
-                <>
-                  <h3 className="text-sm font-semibold text-foreground/70 mb-2 px-1">Suggested Prompts</h3>
-                  <div className="space-y-2">
-                    {presetPrompts.slice(0, 6).map((prompt) => (
-                      <button
-                        key={prompt.text}
-                        onClick={() => handlePreset(prompt.text)}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-secondary/60 hover:bg-secondary/90 border border-border/40 transition-colors text-left group"
-                      >
-                        <img src={prompt.icon} alt="" className="w-5 h-5 object-contain shrink-0 clay-icon" />
-                        <span className="flex-1 text-sm text-foreground/90">{prompt.text}</span>
-                        <ChevronRight size={16} className="text-muted-foreground/50 group-hover:text-muted-foreground transition-colors shrink-0" />
-                      </button>
-                    ))}
-                  </div>
-                </>
-              ) : suggestedPrompts.length > 0 ? (
-                <div className="space-y-2">
-                  {suggestedPrompts.map((prompt, i) => (
-                    <button
-                      key={`${prompt}-${i}`}
-                      onClick={() => handlePreset(prompt)}
-                      className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-secondary/60 hover:bg-secondary/90 border border-border/40 transition-colors text-left group"
-                    >
-                      <img src={promptIcons[i % promptIcons.length]} alt="" className="w-5 h-5 object-contain shrink-0 clay-icon" />
-                      <span className="flex-1 text-sm text-foreground/90">{prompt}</span>
-                      <ChevronRight size={16} className="text-muted-foreground/50 group-hover:text-muted-foreground transition-colors shrink-0" />
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {presetPrompts.slice(0, 6).map((prompt) => (
-                    <button
-                      key={prompt.text}
-                      onClick={() => handlePreset(prompt.text)}
-                      className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-secondary/60 hover:bg-secondary/90 border border-border/40 transition-colors text-left group"
-                    >
-                      <img src={prompt.icon} alt="" className="w-5 h-5 object-contain shrink-0 clay-icon" />
-                      <span className="flex-1 text-sm text-foreground/90">{prompt.text}</span>
-                      <ChevronRight size={16} className="text-muted-foreground/50 group-hover:text-muted-foreground transition-colors shrink-0" />
-                    </button>
-                  ))}
-                </div>
-              )}
-              <p className="text-xs text-muted-foreground text-center mt-4">
-                Ubi learns from your habits and check-ins to guide you better each day.
-              </p>
-            </div>
+          {messages.length === 0 && (
+            <p className="text-xs text-muted-foreground text-center mt-8">
+              Tap a prompt or type your own question to get started
+            </p>
           )}
         </div>
       </div>
 
-      {/* Input */}
-      <div className="fixed bottom-16 left-0 right-0 bg-background/90 backdrop-blur-md border-t border-border/50 px-4 py-3 z-10">
-        <div className="max-w-lg mx-auto flex items-end gap-2">
+      {/* Input area with prompts strip */}
+      <div className="fixed bottom-16 left-0 right-0 bg-background/90 backdrop-blur-md border-t border-border/50 z-10">
+        {/* Horizontal scrollable prompts */}
+        {!isStreaming && (() => {
+          const prompts = suggestedPrompts.length > 0
+            ? suggestedPrompts.map((text, i) => ({ text, icon: promptIcons[i % promptIcons.length] }))
+            : presetPrompts.slice(0, 6);
+          return prompts.length > 0 ? (
+            <div className="overflow-x-auto scrollbar-hide border-b border-border/30">
+              <div className="flex gap-2 px-4 py-2 max-w-lg mx-auto w-max min-w-full">
+                {prompts.map((prompt, i) => (
+                  <button
+                    key={`${prompt.text}-${i}`}
+                    onClick={() => handlePreset(prompt.text)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary/60 hover:bg-secondary/90 border border-border/40 transition-colors whitespace-nowrap shrink-0"
+                  >
+                    <img src={prompt.icon} alt="" className="w-4 h-4 object-contain shrink-0 clay-icon" />
+                    <span className="text-xs text-foreground/90">{prompt.text}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null;
+        })()}
+
+        {/* Input row */}
+        <div className="max-w-lg mx-auto flex items-end gap-2 px-4 py-3">
           <textarea
             ref={inputRef}
             value={input}
