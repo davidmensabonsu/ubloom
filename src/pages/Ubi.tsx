@@ -29,8 +29,10 @@ const presetPrompts = [
   { text: "Am I aligned with my dream self?", icon: butterflyIcon },
 ];
 
+const promptIcons = [crystalBallIcon, sparklesIcon, starIcon, sunriseIcon, heartIcon, flameIcon, brainIcon, butterflyIcon];
+
 export default function Ubi() {
-  const { messages, isStreaming, sendMessage, clearChat, stopStreaming, rateMessage } = useUbiChat();
+  const { messages, isStreaming, sendMessage, clearChat, stopStreaming, rateMessage, suggestedPrompts } = useUbiChat();
   const profile = useUserStore((s) => s.profile);
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
