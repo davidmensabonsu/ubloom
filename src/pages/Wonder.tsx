@@ -8,15 +8,15 @@ import { useUserStore } from '@/stores/userStore';
 import { wonderResources, mealRecipes, fitnessWorkouts } from '@/lib/wonderResources';
 
 import booksBanner from '@/assets/wonder/book-imperfection.jpg';
-import fitnessImg from '@/assets/wonder2/fitness.jpg';
-import skincareImg from '@/assets/wonder2/skincare.jpg';
-import podcastImg from '@/assets/wonder2/podcast.jpg';
-import mindsetImg from '@/assets/wonder2/mindset.jpg';
-import wellnessImg from '@/assets/wonder2/wellness.jpg';
-import nutritionImg from '@/assets/wonder2/nutrition.jpg';
-import calmImg from '@/assets/wonder2/calm.jpg';
-import vitaminsImg from '@/assets/wonder2/vitamins.jpg';
-import lifestyleImg from '@/assets/wonder2/lifestyle.jpg';
+import fitnessImg from '@/assets/wonder/fitness.jpg';
+import skincareImg from '@/assets/wonder/skincare.jpg';
+import podcastImg from '@/assets/wonder/podcast.jpg';
+import mindsetImg from '@/assets/wonder/mindset.jpg';
+import wellnessImg from '@/assets/wonder/wellness.jpg';
+import nutritionImg from '@/assets/wonder/nutrition.jpg';
+import calmImg from '@/assets/wonder/calm.jpg';
+import vitaminsImg from '@/assets/wonder/vitamins.jpg';
+import lifestyleImg from '@/assets/wonder/lifestyle.jpg';
 
 interface CategoryCard {
   key: string;
