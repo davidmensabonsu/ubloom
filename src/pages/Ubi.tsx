@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Trash2, Square, Sparkles, ChevronRight, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Send, Trash2, Square, Plus, History, ThumbsUp, ThumbsDown, ArrowLeft, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { useUbiChat, UbiMessage } from '@/hooks/useUbiChat';
+import { useUbiChat, UbiMessage, UbiConversation } from '@/hooks/useUbiChat';
 import { useUserStore } from '@/stores/userStore';
 import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import ubiAvatar from '@/assets/ubi-avatar-cartoon.png';
 
 import crystalBallIcon from '@/assets/icons/crystal-ball.png';
@@ -32,18 +32,23 @@ const presetPrompts = [
 const promptIcons = [crystalBallIcon, sparklesIcon, starIcon, sunriseIcon, heartIcon, flameIcon, brainIcon, butterflyIcon];
 
 export default function Ubi() {
-  const { messages, isStreaming, sendMessage, clearChat, stopStreaming, rateMessage, suggestedPrompts, markPromptUsed } = useUbiChat();
+  const {
+    messages, isStreaming, isLoading, sendMessage, clearChat, stopStreaming,
+    rateMessage, suggestedPrompts, markPromptUsed,
+    conversations, currentConversationId, loadConversation, startNewChat, deleteConversation
+  } = useUbiChat();
   const profile = useUserStore((s) => s.profile);
+  const updateProfile = useUserStore((s) => s.updateProfile);
   const [input, setInput] = useState('');
+  const [historyOpen, setHistoryOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const welcomeSent = useRef(false);
 
-  const updateProfile = useUserStore((s) => s.updateProfile);
-
-  // Auto-send welcome message only once ever (persisted flag)
+  // Auto-send welcome message only once ever
   useEffect(() => {
-    if (messages.length === 0 && !welcomeSent.current && !isStreaming && !profile.ubiIntroSeen) {
+    if (isLoading) return;
+    if (messages.length === 0 && !currentConversationId && !welcomeSent.current && !isStreaming && !profile.ubiIntroSeen) {
       welcomeSent.current = true;
       updateProfile({ ubiIntroSeen: true });
       const dreamFeels = profile.dreamSelfFeels?.length ? profile.dreamSelfFeels.join(', ') : '';
@@ -58,7 +63,7 @@ export default function Ubi() {
 
       sendMessage(welcomePrompt, { hideUserMessage: true });
     }
-  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -98,6 +103,21 @@ export default function Ubi() {
     el.style.height = Math.min(el.scrollHeight, 120) + 'px';
   };
 
+  const handleNewChat = () => {
+    startNewChat();
+    setHistoryOpen(false);
+  };
+
+  const handleSelectConversation = (convoId: string) => {
+    loadConversation(convoId);
+    setHistoryOpen(false);
+  };
+
+  const handleDeleteConversation = (e: React.MouseEvent, convoId: string) => {
+    e.stopPropagation();
+    deleteConversation(convoId);
+  };
+
   return (
     <div className="min-h-screen gradient-background flex flex-col">
       {/* Header */}
@@ -112,62 +132,125 @@ export default function Ubi() {
               <p className="text-xs text-muted-foreground">Your personal mentor</p>
             </div>
           </div>
-          {messages.length > 0 && (
+          <div className="flex items-center gap-1">
+            <Sheet open={historyOpen} onOpenChange={setHistoryOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="text-muted-foreground" title="Chat history">
+                  <History size={18} />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="bottom" className="h-[70vh] rounded-t-2xl">
+                <SheetHeader className="flex flex-row items-center justify-between pb-2">
+                  <SheetTitle className="text-base">Chat History</SheetTitle>
+                  <Button size="sm" variant="outline" className="gap-1.5 rounded-full" onClick={handleNewChat}>
+                    <Plus size={14} />
+                    New Chat
+                  </Button>
+                </SheetHeader>
+                <div className="overflow-y-auto flex-1 -mx-2">
+                  {conversations.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-8">No conversations yet</p>
+                  ) : (
+                    <div className="space-y-1">
+                      {conversations.map((convo) => (
+                        <button
+                          key={convo.id}
+                          onClick={() => handleSelectConversation(convo.id)}
+                          className={`w-full text-left px-3 py-3 rounded-xl transition-colors hover:bg-secondary/60 group ${
+                            convo.id === currentConversationId ? 'bg-secondary/80' : ''
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground truncate">{convo.title}</p>
+                              <p className="text-xs text-muted-foreground truncate mt-0.5">{convo.preview}</p>
+                              <p className="text-[10px] text-muted-foreground/60 mt-1">
+                                {new Date(convo.updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                              </p>
+                            </div>
+                            <button
+                              onClick={(e) => handleDeleteConversation(e, convo.id)}
+                              className="opacity-0 group-hover:opacity-100 p-1 rounded-full hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all shrink-0"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
             <Button
               variant="ghost"
               size="icon"
-              onClick={clearChat}
-              className="text-muted-foreground hover:text-destructive"
-              title="Clear chat"
+              onClick={handleNewChat}
+              className="text-muted-foreground"
+              title="New chat"
             >
-              <Trash2 size={18} />
+              <Plus size={18} />
             </Button>
-          )}
+          </div>
         </div>
       </div>
 
       {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 pb-36 pt-4">
         <div className="max-w-lg mx-auto space-y-4">
-          {/* Show messages if any */}
-          {messages.length > 0 && (
-            <AnimatePresence initial={false}>
-              {messages.map((msg, i) => (
-                <MessageBubble key={i} message={msg} index={i} onRate={rateMessage} />
-              ))}
-              {isStreaming && messages[messages.length - 1]?.role !== 'assistant' && (
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="flex items-center gap-2 text-muted-foreground text-sm">
                 <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex gap-2 items-start"
-                >
-                  <div className="w-7 h-7 rounded-full overflow-hidden border border-primary/20 shrink-0 mt-0.5">
-                    <img src={ubiAvatar} alt="Ubi" className="w-full h-full object-cover" />
-                  </div>
-                  <div className="bg-secondary/80 rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-1.5">
-                    {[0, 1, 2].map((i) => (
-                      <motion.span
-                        key={i}
-                        className="w-2 h-2 rounded-full bg-muted-foreground/50"
-                        animate={{ y: [0, -6, 0] }}
-                        transition={{
-                          duration: 0.6,
-                          repeat: Infinity,
-                          delay: i * 0.15,
-                          ease: 'easeInOut',
-                        }}
-                      />
-                    ))}
-                  </div>
-                </motion.div>
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                  className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full"
+                />
+                Loading...
+              </div>
+            </div>
+          ) : (
+            <>
+              {messages.length > 0 && (
+                <AnimatePresence initial={false}>
+                  {messages.map((msg, i) => (
+                    <MessageBubble key={i} message={msg} index={i} onRate={rateMessage} />
+                  ))}
+                  {isStreaming && messages[messages.length - 1]?.role !== 'assistant' && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="flex gap-2 items-start"
+                    >
+                      <div className="w-7 h-7 rounded-full overflow-hidden border border-primary/20 shrink-0 mt-0.5">
+                        <img src={ubiAvatar} alt="Ubi" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="bg-secondary/80 rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-1.5">
+                        {[0, 1, 2].map((i) => (
+                          <motion.span
+                            key={i}
+                            className="w-2 h-2 rounded-full bg-muted-foreground/50"
+                            animate={{ y: [0, -6, 0] }}
+                            transition={{
+                              duration: 0.6,
+                              repeat: Infinity,
+                              delay: i * 0.15,
+                              ease: 'easeInOut',
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               )}
-            </AnimatePresence>
-          )}
 
-          {messages.length === 0 && (
-            <p className="text-xs text-muted-foreground text-center mt-8">
-              Tap a prompt or type your own question to get started
-            </p>
+              {messages.length === 0 && (
+                <p className="text-xs text-muted-foreground text-center mt-8">
+                  Tap a prompt or type your own question to get started
+                </p>
+              )}
+            </>
           )}
         </div>
       </div>
