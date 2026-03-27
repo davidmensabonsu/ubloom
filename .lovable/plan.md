@@ -1,44 +1,41 @@
 
 
-## Refine Wonder 2 — Pinterest Layout with Category Detail Pages
+## Improve Ubi Suggested Prompts — Conversation Flow
 
-### Overview
-Transform Wonder 2 into a proper Pinterest-style discovery hub where each card represents a real Wonder category. Tapping a card navigates to a dedicated detail page showing that category's resources, with a back button to return.
+### Problem
+Current prompts are generic conversation-continuers ("Can you give me an example?"). They should be **specific to what Ubi actually said** — e.g., if Ubi mentions lofi music for focus, a prompt should be "What are the best lofi songs to listen to?"
 
-### Architecture
+### Change
+Update the system prompt in the prompt-generation call inside `supabase/functions/ubi-chat/index.ts` (lines 123-131) to instruct the model to generate **content-specific** follow-ups that explore concrete details, recommendations, or actionable next steps mentioned in Ubi's response — not just meta-conversation prompts.
 
-```text
-/wonder2          →  Pinterest masonry grid (main hub)
-/wonder2/:category →  Category detail page (resources list)
+### Updated Prompt Instructions
+
+```
+You generate suggested follow-up prompts for a mentoring chat app.
+Return ONLY a JSON array of 5-6 short prompt strings (max 50 chars each).
+
+Read the mentor's reply carefully. Generate prompts that explore SPECIFIC things
+the mentor mentioned — ask for recommendations, details, examples, or actionable
+steps related to the actual content of the reply.
+
+For example, if the mentor mentioned listening to lofi music to focus:
+  GOOD: "What are the best lofi songs to listen to?"
+  BAD: "Can you tell me more about that?"
+
+If the mentor suggested journaling:
+  GOOD: "What should I write about in my journal?"
+  BAD: "How do I actually start?"
+
+Mix of prompt types:
+- 3-4 that dig into specific details/recommendations from the reply
+- 1-2 that explore the emotional or personal angle of what was discussed
+
+Keep them casual, first person, as if the user is naturally responding.
 ```
 
-### Changes
-
-**1. New file: `src/pages/Wonder2Category.tsx`**
-- A detail page that receives the category from the URL param
-- Shows a back arrow + category title header
-- Renders the appropriate existing section component based on category (reuses `FitnessSection`, `BooksSection`, `PodcastsSection`, `HygieneSection`, `FoodRecipesSection`, `CategoryGridSection`)
-- Includes `BottomNav`
-
-**2. Rewrite `src/pages/Wonder2.tsx`**
-- Map each masonry card to a real `wonderCategories` entry (Fitness, Books, Skincare/Hygiene, Podcasts, Mindset, Wellness, Nutrition, Calm, Vitamins, Lifestyle)
-- Each card uses its category thumbnail image and clicking navigates to `/wonder2/{category-key}`
-- Keep the Pinterest masonry aesthetic: alternating tall (aspect-[3/4]) and square cards, circle-category groups, and the featured banner
-- Use `useNavigate` for card taps
-- Keep the search bar with For You / Popular tabs, heart save toggle using the existing `useUserStore` saved resources
-
-**3. Generate additional thumbnail images**
-- Create ~5 more category thumbnail images (for categories not yet covered like mindset, wellness, nutrition, calm, vitamins) using AI image generation
-
-**4. Update `src/App.tsx`**
-- Add route `/wonder2/:category` pointing to `Wonder2Category`
-
-### Technical Details
+### Files
 
 | File | Change |
 |------|--------|
-| `src/pages/Wonder2.tsx` | Replace hardcoded cards with category-mapped masonry cards; `useNavigate` on tap |
-| `src/pages/Wonder2Category.tsx` | New page — URL param determines which section component to render; back button via `useNavigate(-1)` |
-| `src/App.tsx` | Add `/wonder2/:category` route |
-| `src/assets/wonder2/` | Generate additional category thumbnails |
+| `supabase/functions/ubi-chat/index.ts` | Update system prompt for prompt generation (lines 123-131) |
 
