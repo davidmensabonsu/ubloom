@@ -1,7 +1,7 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Clock, Dumbbell, Flame, Star, Target, Wrench, Heart } from 'lucide-react';
 import type { FitnessWorkout } from '@/lib/wonderResources';
-import { fitnessThumbnails } from '@/lib/resourceMedia';
+import { fitnessThumbnails, fitnessFormIllustrations } from '@/lib/resourceMedia';
 
 interface FitnessDetailSheetProps {
   workout: FitnessWorkout | null;
