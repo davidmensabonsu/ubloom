@@ -118,7 +118,7 @@ export default function Wonder2() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           className="relative rounded-2xl overflow-hidden bg-card border border-border/30 cursor-pointer"
-          onClick={() => navigate('/wonder2/books')}
+          onClick={() => navigate('/wonder/books')}
         >
           <div className="flex items-center">
             <div className="flex-1 p-5 space-y-3">
@@ -144,7 +144,7 @@ export default function Wonder2() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 + i * 0.04 }}
               className="break-inside-avoid rounded-2xl overflow-hidden bg-card border border-border/30 relative cursor-pointer"
-              onClick={() => navigate(`/wonder2/${card.key}`)}
+              onClick={() => navigate(`/wonder/${card.key}`)}
             >
               <img
                 src={card.image}
