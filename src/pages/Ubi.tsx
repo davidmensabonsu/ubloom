@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Trash2, Square, Sparkles, ChevronRight } from 'lucide-react';
+import { Send, Trash2, Square, Sparkles, ChevronRight, ThumbsUp, ThumbsDown } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useUbiChat, UbiMessage } from '@/hooks/useUbiChat';
 import { useUserStore } from '@/stores/userStore';
@@ -30,7 +30,7 @@ const presetPrompts = [
 ];
 
 export default function Ubi() {
-  const { messages, isStreaming, sendMessage, clearChat, stopStreaming } = useUbiChat();
+  const { messages, isStreaming, sendMessage, clearChat, stopStreaming, rateMessage } = useUbiChat();
   const profile = useUserStore((s) => s.profile);
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -123,7 +123,7 @@ export default function Ubi() {
           {messages.length > 0 && (
             <AnimatePresence initial={false}>
               {messages.map((msg, i) => (
-                <MessageBubble key={i} message={msg} />
+                <MessageBubble key={i} message={msg} index={i} onRate={rateMessage} />
               ))}
               {isStreaming && messages[messages.length - 1]?.role !== 'assistant' && (
                 <motion.div
@@ -223,7 +223,7 @@ export default function Ubi() {
   );
 }
 
-function MessageBubble({ message }: { message: UbiMessage }) {
+function MessageBubble({ message, index, onRate }: { message: UbiMessage; index: number; onRate: (index: number, rating: 'up' | 'down') => void }) {
   const isUser = message.role === 'user';
 
   return (
@@ -238,18 +238,44 @@ function MessageBubble({ message }: { message: UbiMessage }) {
           <img src={ubiAvatar} alt="Ubi" className="w-full h-full object-cover" />
         </div>
       )}
-      <div
-        className={`rounded-2xl px-4 py-2.5 max-w-[85%] text-sm ${
-          isUser
-            ? 'bg-primary text-primary-foreground rounded-br-md'
-            : 'bg-secondary/80 text-foreground rounded-bl-md'
-        }`}
-      >
-        {isUser ? (
-          <p className="whitespace-pre-wrap">{message.content}</p>
-        ) : (
-          <div className="prose prose-sm dark:prose-invert max-w-none [&>p]:mb-2 [&>p:last-child]:mb-0 [&>ul]:mb-2 [&>ol]:mb-2">
-            <ReactMarkdown>{message.content}</ReactMarkdown>
+      <div className="flex flex-col max-w-[85%]">
+        <div
+          className={`rounded-2xl px-4 py-2.5 text-sm ${
+            isUser
+              ? 'bg-primary text-primary-foreground rounded-br-md'
+              : 'bg-secondary/80 text-foreground rounded-bl-md'
+          }`}
+        >
+          {isUser ? (
+            <p className="whitespace-pre-wrap">{message.content}</p>
+          ) : (
+            <div className="prose prose-sm dark:prose-invert max-w-none [&>p]:mb-2 [&>p:last-child]:mb-0 [&>ul]:mb-2 [&>ol]:mb-2">
+              <ReactMarkdown>{message.content}</ReactMarkdown>
+            </div>
+          )}
+        </div>
+        {!isUser && (
+          <div className="flex items-center gap-1 mt-1 ml-1">
+            <button
+              onClick={() => onRate(index, 'up')}
+              className={`p-1 rounded-full transition-colors ${
+                message.rating === 'up'
+                  ? 'text-primary bg-primary/10'
+                  : 'text-muted-foreground/40 hover:text-muted-foreground'
+              }`}
+            >
+              <ThumbsUp size={13} />
+            </button>
+            <button
+              onClick={() => onRate(index, 'down')}
+              className={`p-1 rounded-full transition-colors ${
+                message.rating === 'down'
+                  ? 'text-destructive bg-destructive/10'
+                  : 'text-muted-foreground/40 hover:text-muted-foreground'
+              }`}
+            >
+              <ThumbsDown size={13} />
+            </button>
           </div>
         )}
       </div>
