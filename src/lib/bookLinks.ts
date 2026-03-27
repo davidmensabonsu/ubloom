@@ -70,6 +70,56 @@ export const bookLinks: Record<string, BookLink[]> = {
     { label: 'Amazon', url: 'https://www.amazon.com/dp/0385349947' },
   ],
 
+  'book-7': [ // Big Magic
+    { label: 'Apple Books', url: 'https://books.apple.com/us/book/big-magic/id963232741' },
+    { label: 'Audible', url: 'https://www.audible.com/pd/Big-Magic-Audiobook/B00U1K4LWO' },
+    { label: 'Amazon', url: 'https://www.amazon.com/dp/1594634726' },
+  ],
+  'book-8': [ // The Four Agreements
+    { label: 'Apple Books', url: 'https://books.apple.com/us/book/the-four-agreements/id420553469' },
+    { label: 'Audible', url: 'https://www.audible.com/pd/The-Four-Agreements-Audiobook/B002VA9HYI' },
+    { label: 'Amazon', url: 'https://www.amazon.com/dp/1878424319' },
+  ],
+  'book-9': [ // The 5 AM Club
+    { label: 'Apple Books', url: 'https://books.apple.com/us/book/the-5-am-club/id1363530083' },
+    { label: 'Audible', url: 'https://www.audible.com/pd/The-5-AM-Club-Audiobook/B07GWHZ3G1' },
+    { label: 'Amazon', url: 'https://www.amazon.com/dp/1443456624' },
+  ],
+  'book-10': [ // Boundaries
+    { label: 'Apple Books', url: 'https://books.apple.com/us/book/boundaries/id391891819' },
+    { label: 'Audible', url: 'https://www.audible.com/pd/Boundaries-Audiobook/B002V0GCAU' },
+    { label: 'Amazon', url: 'https://www.amazon.com/dp/0310351804' },
+  ],
+  'book-11': [ // Women Who Run with the Wolves
+    { label: 'Apple Books', url: 'https://books.apple.com/us/book/women-who-run-with-the-wolves/id420063991' },
+    { label: 'Audible', url: 'https://www.audible.com/pd/Women-Who-Run-with-the-Wolves-Audiobook/B002UUKRGE' },
+    { label: 'Amazon', url: 'https://www.amazon.com/dp/0345409876' },
+  ],
+  'book-12': [ // The Subtle Art of Not Giving a F*ck
+    { label: 'Apple Books', url: 'https://books.apple.com/us/book/the-subtle-art-of-not-giving-a-f-ck/id1066482658' },
+    { label: 'Audible', url: 'https://www.audible.com/pd/The-Subtle-Art-of-Not-Giving-a-F-ck-Audiobook/B01I28NFEE' },
+    { label: 'Amazon', url: 'https://www.amazon.com/dp/0062457713' },
+  ],
+  'book-13': [ // Year of Yes
+    { label: 'Apple Books', url: 'https://books.apple.com/us/book/year-of-yes/id1023702770' },
+    { label: 'Audible', url: 'https://www.audible.com/pd/Year-of-Yes-Audiobook/B016XPFMRI' },
+    { label: 'Amazon', url: 'https://www.amazon.com/dp/1476777128' },
+  ],
+  'book-14': [ // The Secret
+    { label: 'Apple Books', url: 'https://books.apple.com/us/book/the-secret/id349012704' },
+    { label: 'Audible', url: 'https://www.audible.com/pd/The-Secret-Audiobook/B002V1BQJQ' },
+    { label: 'Amazon', url: 'https://www.amazon.com/dp/1582701709' },
+  ],
+  'book-15': [ // We Should All Be Feminists
+    { label: 'Apple Books', url: 'https://books.apple.com/us/book/we-should-all-be-feminists/id810551852' },
+    { label: 'Amazon', url: 'https://www.amazon.com/dp/110191176X' },
+  ],
+  'book-16': [ // When Things Fall Apart
+    { label: 'Apple Books', url: 'https://books.apple.com/us/book/when-things-fall-apart/id420063995' },
+    { label: 'Audible', url: 'https://www.audible.com/pd/When-Things-Fall-Apart-Audiobook/B002V0K28C' },
+    { label: 'Amazon', url: 'https://www.amazon.com/dp/1611803438' },
+  ],
+
   // ── Vitamins & Supplements ──
   'nutr-2': [ // Magnesium
     { label: 'Doctor\'s Best', url: 'https://www.amazon.com/dp/B000BD0RT0', topPick: true, rating: 4.7, reviews: 89400, price: '$9.99' },

@@ -23,6 +23,16 @@ import bookAlchemist from '@/assets/wonder/book-alchemist.jpg';
 import bookRichDad from '@/assets/wonder/book-rich-dad.jpg';
 import bookPowerOfNow from '@/assets/wonder/book-power-of-now.jpg';
 import bookLeanIn from '@/assets/wonder/book-lean-in.jpg';
+import bookBigMagic from '@/assets/wonder/book-big-magic.jpg';
+import bookFourAgreements from '@/assets/wonder/book-four-agreements.jpg';
+import book5amClub from '@/assets/wonder/book-5am-club.jpg';
+import bookBoundaries from '@/assets/wonder/book-boundaries.jpg';
+import bookWolves from '@/assets/wonder/book-wolves.jpg';
+import bookSubtleArt from '@/assets/wonder/book-subtle-art.jpg';
+import bookYearOfYes from '@/assets/wonder/book-year-of-yes.jpg';
+import bookTheSecret from '@/assets/wonder/book-the-secret.jpg';
+import bookFeminists from '@/assets/wonder/book-feminists.jpg';
+import bookFallApart from '@/assets/wonder/book-fall-apart.jpg';
 
 // Thumbnails
 import thumbMountain from '@/assets/wonder/thumb-mountain-meditation.jpg';
@@ -151,6 +161,16 @@ export const resourceImages: Record<string, string> = {
   'book-4': bookRichDad,
   'book-5': bookPowerOfNow,
   'book-6': bookLeanIn,
+  'book-7': bookBigMagic,
+  'book-8': bookFourAgreements,
+  'book-9': book5amClub,
+  'book-10': bookBoundaries,
+  'book-11': bookWolves,
+  'book-12': bookSubtleArt,
+  'book-13': bookYearOfYes,
+  'book-14': bookTheSecret,
+  'book-15': bookFeminists,
+  'book-16': bookFallApart,
 };
 
 /** Thumbnail images for resource cards in the grid */
@@ -211,6 +231,16 @@ export const resourceThumbnails: Record<string, string> = {
   'book-4': bookRichDad,
   'book-5': bookPowerOfNow,
   'book-6': bookLeanIn,
+  'book-7': bookBigMagic,
+  'book-8': bookFourAgreements,
+  'book-9': book5amClub,
+  'book-10': bookBoundaries,
+  'book-11': bookWolves,
+  'book-12': bookSubtleArt,
+  'book-13': bookYearOfYes,
+  'book-14': bookTheSecret,
+  'book-15': bookFeminists,
+  'book-16': bookFallApart,
   'calm-6': thumbProgressiveRelaxation,
   'calm-7': thumbJournalingCalm,
   'calm-8': videoNervousReset.url,
