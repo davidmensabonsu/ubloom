@@ -167,14 +167,14 @@ function getStaticMindset(todayKey: string): string {
 }
 
 const staticFocusMessages = [
-  "Do one small thing today that your future self would thank you for.",
-  "Spend 10 minutes on that thing you keep putting off.",
-  "Say no to one thing that drains your energy today.",
-  "Reach out to someone you've been meaning to connect with.",
-  "Move your body for at least 15 minutes — walk, stretch, dance.",
-  "Write down three things you're grateful for before bed tonight.",
-  "Set one boundary today, even a small one.",
-  "Put your phone down for an hour and be fully present.",
+  "Open your notes app right now and write down 3 things you want this week — not someday, this week.",
+  "Pick one task you've been avoiding and spend just 10 minutes on it before lunch. Set a timer.",
+  "Before you go to bed tonight, lay out everything you need for tomorrow morning. Remove the friction.",
+  "Send that message you've been drafting in your head. Don't overthink it — just hit send.",
+  "Take a 15-minute walk after your next meal — no phone, no music. Just walk and breathe.",
+  "Write down one thing you're proud of from this week and stick it where you'll see it tomorrow.",
+  "Say no to one thing today that you'd normally say yes to out of guilt. Practice the boundary.",
+  "Set a 20-minute timer and clean or organize one small space in your home. Start with your desk or nightstand.",
 ];
 
 function getStaticFocus(todayKey: string): string {
