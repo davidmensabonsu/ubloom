@@ -1,40 +1,28 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, ChevronUp } from 'lucide-react';
 import ProfileButton from '@/components/ProfileButton';
 import BottomNav from '@/components/BottomNav';
 import RecommendedSection from '@/components/wonder/RecommendedSection';
 import FitnessSection from '@/components/wonder/FitnessSection';
-import ResourceCard from '@/components/wonder/ResourceCard';
 import ResourceDetailSheet from '@/components/wonder/ResourceDetailSheet';
 import PodcastsSection from '@/components/wonder/PodcastsSection';
 import HygieneSection from '@/components/wonder/HygieneSection';
 import BooksSection from '@/components/wonder/BooksSection';
 import WonderStreak from '@/components/wonder/WonderStreak';
 import RecentlyPracticed from '@/components/wonder/RecentlyPracticed';
-
 import FoodRecipesSection from '@/components/wonder/FoodRecipesSection';
+import CategoryGridSection from '@/components/wonder/CategoryGridSection';
 import { wonderResources, wonderCategories, type WonderResource, type WonderCategory } from '@/lib/wonderResources';
-
-const INITIAL_SHOW = 8;
 
 export default function Wonder() {
   const [selectedResource, setSelectedResource] = useState<WonderResource | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<WonderCategory | 'all' | 'for-you'>('for-you');
-  const [showAll, setShowAll] = useState(false);
 
   const handleSelectResource = (resource: WonderResource) => {
     setSelectedResource(resource);
     setSheetOpen(true);
   };
-
-  const filteredResources = activeCategory === 'all' || activeCategory === 'for-you'
-    ? wonderResources
-    : wonderResources.filter((r) => r.category === activeCategory);
-
-  const visibleResources = showAll ? filteredResources : filteredResources.slice(0, INITIAL_SHOW);
-  const hasMore = filteredResources.length > INITIAL_SHOW;
 
   return (
     <div className="min-h-screen gradient-background pb-24">
@@ -82,10 +70,10 @@ export default function Wonder() {
         >
           <h2 className="font-display text-xl font-semibold text-foreground">Explore</h2>
 
-          {/* Category Pills — "For You" is the first tab */}
+          {/* Category Pills */}
           <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
             <button
-              onClick={() => { setActiveCategory('for-you'); setShowAll(false); }}
+              onClick={() => setActiveCategory('for-you')}
               className={`shrink-0 px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${
                 activeCategory === 'for-you'
                   ? 'bg-primary/15 text-foreground ring-1 ring-primary/50'
@@ -95,7 +83,7 @@ export default function Wonder() {
               ✨ For You
             </button>
             <button
-              onClick={() => { setActiveCategory('all'); setShowAll(false); }}
+              onClick={() => setActiveCategory('all')}
               className={`shrink-0 px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${
                 activeCategory === 'all'
                   ? 'bg-primary/15 text-foreground ring-1 ring-primary/50'
@@ -107,7 +95,7 @@ export default function Wonder() {
             {wonderCategories.map((cat) => (
               <button
                 key={cat.key}
-                onClick={() => { setActiveCategory(cat.key); setShowAll(false); }}
+                onClick={() => setActiveCategory(cat.key)}
                 className={`shrink-0 px-5 py-2.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
                   activeCategory === cat.key
                     ? 'bg-primary/15 text-foreground ring-1 ring-primary/50'
@@ -120,7 +108,7 @@ export default function Wonder() {
             ))}
           </div>
 
-          {/* Content — either For You recommendations, Food & Recipes, or category grid */}
+          {/* Content */}
           {activeCategory === 'for-you' ? (
             <RecommendedSection onSelectResource={handleSelectResource} />
           ) : activeCategory === 'nutrition' ? (
@@ -134,37 +122,10 @@ export default function Wonder() {
           ) : activeCategory === 'hygiene' ? (
             <HygieneSection />
           ) : (
-            <>
-              <div className="grid grid-cols-2 gap-3">
-                {visibleResources.map((resource, i) => (
-                  <motion.div
-                    key={resource.id}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: Math.min(i * 0.03, 0.2) }}
-                  >
-                    <ResourceCard
-                      resource={resource}
-                      onTap={() => handleSelectResource(resource)}
-                      compact
-                    />
-                  </motion.div>
-                ))}
-              </div>
-
-              {hasMore && (
-                <button
-                  onClick={() => setShowAll(!showAll)}
-                  className="flex items-center gap-1 mx-auto text-xs text-primary font-medium hover:underline py-2"
-                >
-                  {showAll ? (
-                    <>Show less <ChevronUp size={14} /></>
-                  ) : (
-                    <>Show all ({filteredResources.length}) <ChevronDown size={14} /></>
-                  )}
-                </button>
-              )}
-            </>
+            <CategoryGridSection
+              category={activeCategory}
+              onSelectResource={handleSelectResource}
+            />
           )}
         </motion.div>
       </div>
