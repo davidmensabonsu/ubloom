@@ -704,6 +704,12 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['career', 'confidence'],
     content: 'One of the most popular podcasts for personal growth. Steven Bartlett brings raw, honest conversations about success, failure, mental health, and what it takes to build a life you love. Perfect for commutes or wind-down time.',
     link: 'https://www.youtube.com/@TheDiaryOfACEO',
+    episodeDuration: '60–120 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/7iQXmUT7XGuZSzAMjoNWlX' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/gb/podcast/the-diary-of-a-ceo/id1291423644' },
+      { platform: 'YouTube', url: 'https://www.youtube.com/@TheDiaryOfACEO' },
+    ],
   },
   {
     id: 'pod-2',
@@ -716,6 +722,11 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['confidence', 'peace'],
     content: 'Mel Robbins breaks down the science of habits, motivation, and self-worth in a way that feels like talking to your smartest friend. Each episode gives you something actionable to try immediately.',
     link: 'https://www.melrobbins.com/podcast',
+    episodeDuration: '30–60 min',
+    listenLinks: [
+      { platform: 'Spotify', url: 'https://open.spotify.com/show/5bPMBApTgeIdm7gCPBrKOi' },
+      { platform: 'Apple Podcasts', url: 'https://podcasts.apple.com/us/podcast/the-mel-robbins-podcast/id1646101002' },
+    ],
   },
   {
     id: 'pod-3',
