@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { getLocalDateStr } from '@/lib/dateUtils';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface UbiMessage {
   role: 'user' | 'assistant';
@@ -227,7 +228,7 @@ export function useUbiChat() {
   }, []);
 
   const rateMessage = useCallback(
-    (index: number, rating: 'up' | 'down') => {
+    async (index: number, rating: 'up' | 'down') => {
       setMessages((prev) => {
         const updated = prev.map((m, i) =>
           i === index ? { ...m, rating: m.rating === rating ? null : rating } : m
@@ -235,8 +236,52 @@ export function useUbiChat() {
         persistMessages(updated);
         return updated;
       });
+
+      // Persist to database
+      const msg = messages[index];
+      if (!msg || msg.role !== 'assistant') return;
+
+      const isUnrating = msg.rating === rating;
+      const messageContent = msg.content;
+
+      // Find preceding user message for context
+      let context: string | null = null;
+      for (let i = index - 1; i >= 0; i--) {
+        if (messages[i].role === 'user') {
+          context = messages[i].content;
+          break;
+        }
+      }
+
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        if (isUnrating) {
+          await (supabase as any).from('ubi_ratings')
+            .delete()
+            .eq('user_id', user.id)
+            .eq('message_content', messageContent);
+        } else {
+          // Delete any existing rating for this message, then insert new one
+          await (supabase as any).from('ubi_ratings')
+            .delete()
+            .eq('user_id', user.id)
+            .eq('message_content', messageContent);
+
+          await (supabase as any).from('ubi_ratings')
+            .insert({
+              user_id: user.id,
+              message_content: messageContent,
+              rating,
+              conversation_context: context,
+            });
+        }
+      } catch (e) {
+        console.error('Failed to persist rating:', e);
+      }
     },
-    [persistMessages]
+    [messages, persistMessages]
   );
 
   return { messages, isStreaming, sendMessage, clearChat, stopStreaming, rateMessage, suggestedPrompts };
