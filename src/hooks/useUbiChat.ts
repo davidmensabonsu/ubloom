@@ -10,17 +10,14 @@ export interface UbiMessage {
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ubi-chat`;
 const MAX_MESSAGES = 50;
+const PROMPTS_REGEX = /<!--PROMPTS:(.*?)-->/;
 
 function buildUserContext(profile: ReturnType<typeof useUserStore.getState>['profile']) {
   const today = getLocalDateStr();
-
-  // Recent moods (last 14 days)
   const recentMoods = (profile.moodHistory || []).slice(0, 14).map((m) => ({
     date: m.date,
     moods: m.moods,
   }));
-
-  // Habit completion rate (last 7 days)
   const last7 = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - i);
@@ -31,14 +28,8 @@ function buildUserContext(profile: ReturnType<typeof useUserStore.getState>['pro
     (c) => last7.includes(c.date) && c.completed
   ).length;
   const habitCompletionRate = totalHabits > 0 ? Math.round((completedHabits / totalHabits) * 100) : 0;
-
-  // Recent journal themes
   const recentJournal = (profile.journalEntries || []).slice(0, 5).map((j) => j.content.slice(0, 200));
-
-  // Today's mood
-  const todayMood = (profile.moodHistory || []).find((m) =>
-    m.date.startsWith(today)
-  );
+  const todayMood = (profile.moodHistory || []).find((m) => m.date.startsWith(today));
 
   return {
     currentFeeling: profile.currentFeeling,
@@ -57,6 +48,18 @@ function buildUserContext(profile: ReturnType<typeof useUserStore.getState>['pro
   };
 }
 
+function extractPrompts(content: string): { cleanContent: string; prompts: string[] } {
+  const match = content.match(PROMPTS_REGEX);
+  if (!match) return { cleanContent: content, prompts: [] };
+  try {
+    const prompts = JSON.parse(match[1]);
+    const cleanContent = content.replace(PROMPTS_REGEX, '').trimEnd();
+    return { cleanContent, prompts: Array.isArray(prompts) ? prompts.filter((p: any) => typeof p === 'string') : [] };
+  } catch {
+    return { cleanContent: content.replace(PROMPTS_REGEX, '').trimEnd(), prompts: [] };
+  }
+}
+
 export function useUbiChat() {
   const profile = useUserStore((s) => s.profile);
   const updateProfile = useUserStore((s) => s.updateProfile);
@@ -64,6 +67,7 @@ export function useUbiChat() {
     () => (profile as any).ubiMessages || []
   );
   const [isStreaming, setIsStreaming] = useState(false);
+  const [suggestedPrompts, setSuggestedPrompts] = useState<string[]>([]);
   const abortRef = useRef<AbortController | null>(null);
 
   const persistMessages = useCallback(
@@ -78,10 +82,10 @@ export function useUbiChat() {
     async (input: string, options?: { hideUserMessage?: boolean }) => {
       const userMsg: UbiMessage = { role: 'user', content: input };
       const apiMessages = [...messages, userMsg];
-      // If hideUserMessage, don't show the user bubble (used for welcome prompt)
       const displayMessages = options?.hideUserMessage ? [...messages] : apiMessages;
       setMessages(displayMessages);
       setIsStreaming(true);
+      setSuggestedPrompts([]);
 
       const userContext = buildUserContext(profile);
       const controller = new AbortController();
@@ -120,14 +124,16 @@ export function useUbiChat() {
 
         const upsert = (chunk: string) => {
           assistantSoFar += chunk;
+          // Strip prompts block from display but don't extract yet (still streaming)
+          const displayContent = assistantSoFar.replace(PROMPTS_REGEX, '').trimEnd();
           setMessages((prev) => {
             const last = prev[prev.length - 1];
             if (last?.role === 'assistant') {
               return prev.map((m, i) =>
-                i === prev.length - 1 ? { ...m, content: assistantSoFar } : m
+                i === prev.length - 1 ? { ...m, content: displayContent } : m
               );
             }
-            return [...prev, { role: 'assistant', content: assistantSoFar }];
+            return [...prev, { role: 'assistant', content: displayContent }];
           });
         };
 
@@ -180,10 +186,19 @@ export function useUbiChat() {
           }
         }
 
-        // Persist final
+        // Extract prompts from final content
+        const { cleanContent, prompts } = extractPrompts(assistantSoFar);
+        if (prompts.length > 0) {
+          setSuggestedPrompts(prompts);
+        }
+
+        // Persist with clean content
         setMessages((prev) => {
-          persistMessages(prev);
-          return prev;
+          const cleaned = prev.map((m, i) =>
+            i === prev.length - 1 && m.role === 'assistant' ? { ...m, content: cleanContent } : m
+          );
+          persistMessages(cleaned);
+          return cleaned;
         });
       } catch (e: any) {
         if (e.name !== 'AbortError') {
@@ -203,6 +218,7 @@ export function useUbiChat() {
 
   const clearChat = useCallback(() => {
     setMessages([]);
+    setSuggestedPrompts([]);
     persistMessages([]);
   }, [persistMessages]);
 
@@ -223,5 +239,5 @@ export function useUbiChat() {
     [persistMessages]
   );
 
-  return { messages, isStreaming, sendMessage, clearChat, stopStreaming, rateMessage };
+  return { messages, isStreaming, sendMessage, clearChat, stopStreaming, rateMessage, suggestedPrompts };
 }
