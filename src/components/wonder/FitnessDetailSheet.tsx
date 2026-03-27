@@ -44,11 +44,16 @@ export default function FitnessDetailSheet({ workout, open, onOpenChange }: Fitn
         <p className="text-sm text-muted-foreground leading-relaxed mb-4">{workout.description}</p>
 
         {/* Quick stats */}
-        <div className="grid grid-cols-3 gap-3 mb-5">
+        <div className="grid grid-cols-4 gap-2 mb-5">
           <div className="bg-muted/40 rounded-xl p-3 text-center space-y-1">
             <Clock size={16} className="mx-auto text-primary" />
             <div className="text-xs font-semibold text-foreground">{workout.duration}</div>
             <div className="text-[10px] text-muted-foreground">Duration</div>
+          </div>
+          <div className="bg-muted/40 rounded-xl p-3 text-center space-y-1">
+            <Flame size={16} className="mx-auto text-primary" />
+            <div className="text-xs font-semibold text-foreground">~{workout.calories}</div>
+            <div className="text-[10px] text-muted-foreground">Calories</div>
           </div>
           <div className="bg-muted/40 rounded-xl p-3 text-center space-y-1">
             <Dumbbell size={16} className="mx-auto text-primary" />
