@@ -137,7 +137,7 @@ export default function Wonder2() {
 
         {/* Masonry grid */}
         <div className="columns-2 gap-3 space-y-3">
-          {categoryCards.map((card, i) => (
+          {filteredCards.map((card, i) => (
             <motion.div
               key={card.key}
               initial={{ opacity: 0, y: 16 }}
