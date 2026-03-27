@@ -1,9 +1,10 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Trash2, Square, Plus, History, ThumbsUp, ThumbsDown, ArrowLeft, X, Search } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useUbiChat, UbiMessage, UbiConversation } from '@/hooks/useUbiChat';
 import { useUserStore } from '@/stores/userStore';
+import { getLocalDateStr } from '@/lib/dateUtils';
 import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
