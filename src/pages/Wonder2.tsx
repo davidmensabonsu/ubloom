@@ -78,7 +78,13 @@ export default function Wonder2() {
         <div className="flex items-center gap-2">
           <div className="flex-1 flex items-center gap-3 rounded-full border border-border/40 bg-card/60 backdrop-blur-sm px-4 py-3">
             <Search size={18} className="text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Search ideas...</span>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search ideas..."
+              className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
+            />
             <div className="ml-auto flex gap-1.5">
               <button
                 onClick={() => setTab('for-you')}
