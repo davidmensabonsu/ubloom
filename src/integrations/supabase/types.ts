@@ -44,6 +44,33 @@ export type Database = {
         }
         Relationships: []
       }
+      ubi_ratings: {
+        Row: {
+          conversation_context: string | null
+          created_at: string
+          id: string
+          message_content: string
+          rating: string
+          user_id: string
+        }
+        Insert: {
+          conversation_context?: string | null
+          created_at?: string
+          id?: string
+          message_content: string
+          rating: string
+          user_id: string
+        }
+        Update: {
+          conversation_context?: string | null
+          created_at?: string
+          id?: string
+          message_content?: string
+          rating?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_data: {
         Row: {
           created_at: string
