@@ -29,7 +29,6 @@ import Ubi from "./pages/Ubi";
 import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
 import Wonder2Category from "./pages/Wonder2Category";
-import Wonder2Category from "./pages/Wonder2Category";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
