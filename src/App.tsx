@@ -54,7 +54,7 @@ function MoodCheckinGate() {
   const { profile } = useUserStore();
   const location = useLocation();
 
-  const mainRoutes = ['/home', '/alignment', '/routine', '/wonder', '/moodboard', '/profile'];
+  const mainRoutes = ['/home', '/alignment', '/routine', '/wonder', '/ubi', '/moodboard', '/profile'];
   const isMainRoute = mainRoutes.includes(location.pathname);
 
   const shouldShow =
