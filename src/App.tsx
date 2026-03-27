@@ -106,6 +106,7 @@ function AnimatedRoutes() {
           <Route path="/moodboard" element={<ProtectedRoute><PageTransition direction={direction}><Moodboard /></PageTransition></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><PageTransition direction={direction}><Profile /></PageTransition></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute><PageTransition direction={direction}><AdminDashboard /></PageTransition></ProtectedRoute>} />
+          <Route path="/wonder2" element={<ProtectedRoute><PageTransition direction={direction}><Wonder2 /></PageTransition></ProtectedRoute>} />
           <Route path="*" element={<PageTransition direction={direction}><NotFound /></PageTransition>} />
         </Routes>
       </AnimatePresence>
