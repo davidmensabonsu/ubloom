@@ -9,6 +9,7 @@ import ResourceCard from '@/components/wonder/ResourceCard';
 import ResourceDetailSheet from '@/components/wonder/ResourceDetailSheet';
 import PodcastsSection from '@/components/wonder/PodcastsSection';
 import HygieneSection from '@/components/wonder/HygieneSection';
+import BooksSection from '@/components/wonder/BooksSection';
 import WonderStreak from '@/components/wonder/WonderStreak';
 import RecentlyPracticed from '@/components/wonder/RecentlyPracticed';
 import FoodRecipesSection from '@/components/wonder/FoodRecipesSection';
@@ -127,6 +128,8 @@ export default function Wonder() {
             <FitnessSection />
           ) : activeCategory === 'podcasts' ? (
             <PodcastsSection />
+          ) : activeCategory === 'books' ? (
+            <BooksSection />
           ) : activeCategory === 'hygiene' ? (
             <HygieneSection />
           ) : (
