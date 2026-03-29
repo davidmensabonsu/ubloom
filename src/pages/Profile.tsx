@@ -431,7 +431,7 @@ export default function Profile() {
         >
           <button
             onClick={() => navigate('/society')}
-            className="w-full rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98] bg-gradient-to-r from-primary/20 via-primary/15 to-primary/25 border border-primary/20 shadow-md shadow-primary/10"
+            className="w-full rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98] bg-gradient-to-r from-primary/40 via-primary/20 to-primary/45 border border-primary/30 shadow-lg shadow-primary/20 ring-1 ring-primary/10"
           >
              <img src={ubloomLogo} alt="uBloom" className="w-10 h-10 object-contain clay-icon" />
             <div className="flex-1">
