@@ -77,6 +77,7 @@ export interface UserProfile {
   dailyCheckinState?: string; // disconnected/off-track/grounded/aligned/elevated
   ubiIntroSeen?: boolean;
   healthData?: HealthData;
+  healthHistory?: HealthHistoryEntry[];
 }
 
 export interface HealthData {
@@ -86,6 +87,15 @@ export interface HealthData {
   recoveryLevel?: number; // 1-10
   activityMinutes?: number; // minutes
   lastUpdated?: string; // ISO date
+}
+
+export interface HealthHistoryEntry {
+  date: string; // yyyy-MM-dd
+  sleepHours?: number;
+  stressLevel?: number;
+  recoveryLevel?: number;
+  activityMinutes?: number;
+  cycle?: string;
 }
 
 export interface JournalEntry {
