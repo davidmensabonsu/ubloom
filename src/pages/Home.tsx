@@ -1,11 +1,9 @@
 import { motion } from 'framer-motion';
-import { useUserStore } from '@/stores/userStore';
 import { Heart, Sun, Moon, Cloud, Target } from 'lucide-react';
 import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/BottomNav';
 import WeeklyMoodSummary from '@/components/home/WeeklyMoodSummary';
-
 import logo from '@/assets/logo.png';
 import { quickActionIcons } from '@/lib/moodIcons';
 import ProfileButton from '@/components/ProfileButton';
@@ -20,140 +18,147 @@ const timeGreetings = () => {
 
 export default function Home() {
   const { futureSelfMessage, mindsetMessage, focusToday, loading } = useHomeMessages();
-  const { profile } = useUserStore();
   const greeting = timeGreetings();
   const GreetingIcon = greeting.icon;
 
   const todayFormatted = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
   });
 
   return (
-    <div className="min-h-screen gradient-background pb-24">
-      {/* Header */}
-      <div className="px-5 pt-12 pb-6">
-        <div className="flex items-center justify-between my-0 py-0 mb-0 mr-0">
+    <div className="h-[100dvh] flex flex-col gradient-background overflow-hidden md:overflow-auto">
+      {/* Header — compact */}
+      <div className="px-5 pt-10 pb-2 shrink-0">
+        <div className="flex items-center justify-between">
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-2 text-muted-foreground">
-            
-            <GreetingIcon size={18} />
-            <span className="text-sm">{todayFormatted}</span>
+            className="flex items-center gap-2 text-muted-foreground"
+          >
+            <GreetingIcon size={16} />
+            <span className="text-xs">{todayFormatted}</span>
           </motion.div>
           <div className="flex items-center gap-2">
             <ProfileButton />
             <motion.img
               alt="ubloom"
-              className="h-12 w-12 object-contain clay-icon"
+              className="h-10 w-10 object-contain clay-icon"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.15 }}
-              src={logo} />
-            
+              src={logo}
+            />
           </div>
         </div>
         <motion.h1
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="page-title">
-          
+          className="text-2xl font-display font-medium tracking-tight text-foreground mt-1"
+        >
           {greeting.text}, beautiful
         </motion.h1>
       </div>
 
-      {/* Main content */}
-      <div className="px-5 space-y-5">
+      {/* Main content — fills remaining space */}
+      <div className="flex-1 min-h-0 px-5 pb-20 flex flex-col gap-3">
         {/* Weekly Mood Summary */}
         <WeeklyMoodSummary />
 
         {/* Future Self Message */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="glass-card rounded-3xl p-5">
-          
-          <h2 className="section-title mb-3 flex items-center gap-2">
-            <Heart size={18} className="text-primary" />
+          className="glass-card rounded-2xl p-4"
+        >
+          <h2 className="text-base font-display font-semibold tracking-tight text-foreground mb-1.5 flex items-center gap-2">
+            <Heart size={16} className="text-primary" />
             From your future self
           </h2>
-          {loading ?
-          <div className="space-y-2">
-              <Skeleton className="h-5 w-full" />
-              <Skeleton className="h-5 w-4/5" />
-            </div> :
-
-          <p className="font-display text-lg leading-relaxed text-foreground/90 italic">
-              "{futureSelfMessage}"
-            </p>
-          }
-        </motion.div>
-
-        {/* Today's Mindset */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="glass-card rounded-3xl p-5">
-          
-          <h2 className="section-title mb-3 flex items-center gap-2">
-            <Heart size={18} className="text-primary" />
-            Today's Mindset
-          </h2>
-          {loading ? <Skeleton className="h-5 w-3/4" /> : <p className="text-foreground/80">{mindsetMessage}</p>}
-        </motion.div>
-
-        {/* Your Focus Today */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
-          className="glass-card rounded-3xl p-5 border border-primary/20">
-          
-          <h2 className="section-title mb-3 flex items-center gap-2">
-            <Target size={18} className="text-primary" />
-            Your focus today
-          </h2>
           {loading ? (
-            <div className="space-y-2">
-              <Skeleton className="h-5 w-full" />
-              <Skeleton className="h-5 w-3/5" />
+            <div className="space-y-1.5">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-4/5" />
             </div>
           ) : (
-            <p className="font-medium text-foreground/90 text-base leading-relaxed">{focusToday}</p>
+            <p className="font-display text-sm leading-relaxed text-foreground/90 italic line-clamp-3">
+              "{futureSelfMessage}"
+            </p>
           )}
         </motion.div>
 
-        {/* Quick Actions */}
+        {/* Mindset + Focus — side by side */}
+        <div className="grid grid-cols-2 gap-3">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="glass-card rounded-2xl p-3"
+          >
+            <h2 className="text-xs font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-1.5">
+              <Heart size={14} className="text-primary" />
+              Mindset
+            </h2>
+            {loading ? (
+              <Skeleton className="h-4 w-3/4" />
+            ) : (
+              <p className="text-xs text-foreground/80 leading-relaxed line-clamp-3">
+                {mindsetMessage}
+              </p>
+            )}
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35 }}
+            className="glass-card rounded-2xl p-3 border border-primary/20"
+          >
+            <h2 className="text-xs font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-1.5">
+              <Target size={14} className="text-primary" />
+              Focus
+            </h2>
+            {loading ? (
+              <Skeleton className="h-4 w-3/4" />
+            ) : (
+              <p className="text-xs font-medium text-foreground/90 leading-relaxed line-clamp-3">
+                {focusToday}
+              </p>
+            )}
+          </motion.div>
+        </div>
+
+        {/* Quick Actions — pushed to bottom */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="grid grid-cols-2 gap-4">
-          
-          <QuickAction icon={quickActionIcons.journal} title="Journal" subtitle="What's on your heart?" href="/alignment" />
-          <QuickAction icon={quickActionIcons.routine} title="Routine" subtitle="Your daily glow" href="/routine" />
-          <QuickAction icon={quickActionIcons.goals} title="Goals" subtitle="Your vision" href="/goals" />
-          <QuickAction icon={quickActionIcons.moodboard} title="Moodboard" subtitle="Manifest & dream" href="/moodboard" />
+          className="grid grid-cols-4 gap-2 mt-auto"
+        >
+          <QuickAction icon={quickActionIcons.journal} title="Journal" href="/alignment" />
+          <QuickAction icon={quickActionIcons.routine} title="Routine" href="/routine" />
+          <QuickAction icon={quickActionIcons.goals} title="Goals" href="/goals" />
+          <QuickAction icon={quickActionIcons.moodboard} title="Moodboard" href="/moodboard" />
         </motion.div>
-
       </div>
 
       <BottomNav />
-    </div>);
-
+    </div>
+  );
 }
 
-function QuickAction({ icon, title, subtitle, href }: {icon: string;title: string;subtitle: string;href: string;}) {
+function QuickAction({ icon, title, href }: { icon: string; title: string; href: string }) {
   return (
-    <motion.a href={href} className="glass-card rounded-2xl p-4 flex flex-col items-start" whileTap={{ scale: 0.97 }}>
-      <img src={icon} alt="" className="w-8 h-8 object-contain mb-2" style={{ filter: 'none' }} />
-      <span className="font-medium text-foreground">{title}</span>
-      <span className="text-xs text-muted-foreground">{subtitle}</span>
-    </motion.a>);
-
+    <motion.a
+      href={href}
+      className="glass-card rounded-xl p-3 flex flex-col items-center gap-1.5"
+      whileTap={{ scale: 0.97 }}
+    >
+      <img src={icon} alt="" className="w-7 h-7 object-contain" style={{ filter: 'none' }} />
+      <span className="text-xs font-medium text-foreground">{title}</span>
+    </motion.a>
+  );
 }
