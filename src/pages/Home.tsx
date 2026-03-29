@@ -5,7 +5,7 @@ import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/BottomNav';
 import WeeklyMoodSummary from '@/components/home/WeeklyMoodSummary';
-import BeautyAffirmations from '@/components/home/BeautyAffirmations';
+
 import logo from '@/assets/logo.png';
 import { quickActionIcons } from '@/lib/moodIcons';
 import ProfileButton from '@/components/ProfileButton';
@@ -141,24 +141,6 @@ export default function Home() {
           <QuickAction icon={quickActionIcons.moodboard} title="Moodboard" subtitle="Manifest & dream" href="/moodboard" />
         </motion.div>
 
-        {/* Beauty Affirmations */}
-        <BeautyAffirmations />
-
-        {/* Recent Journal */}
-        {profile.journalEntries.length > 0 &&
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="glass-card rounded-3xl p-5">
-          
-            <h2 className="section-title mb-3">Recent Reflection</h2>
-            <p className="text-foreground/70 text-sm line-clamp-3">{profile.journalEntries[0].content}</p>
-            <p className="text-xs text-muted-foreground mt-2">
-              {new Date(profile.journalEntries[0].date).toLocaleDateString()}
-            </p>
-          </motion.div>
-        }
       </div>
 
       <BottomNav />
