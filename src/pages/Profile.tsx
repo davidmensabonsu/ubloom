@@ -359,26 +359,7 @@ export default function Profile() {
           </div>
         </motion.div>
 
-        {/* uBloom Society */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.24 }}
-        >
-          <button
-            onClick={() => navigate('/society')}
-            className="w-full glass-card rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98]"
-          >
-             <img src={ubloomLogo} alt="uBloom" className="w-10 h-10 object-contain clay-icon" />
-            <div className="flex-1">
-              <span className="font-medium text-foreground">uBloom Society</span>
-              <p className="text-xs text-muted-foreground">Connect · Grow · Bloom</p>
-            </div>
-            <span className="text-[10px] font-medium px-2.5 py-1 rounded-full bg-primary/10 text-primary">
-              Coming Soon
-            </span>
-          </button>
-        </motion.div>
+        {/* Theme Picker is next, Society follows after */}
 
         {/* Theme Picker */}
         <motion.div
