@@ -439,7 +439,7 @@ export default function Profile() {
               <p className="text-xs text-foreground/60">Connect · Grow · Bloom</p>
             </div>
             <span className="text-[10px] font-medium px-2.5 py-1 rounded-full bg-white/50 text-pink-600 backdrop-blur-sm">
-              ✨ Coming Soon
+              Coming Soon
             </span>
           </button>
         </motion.div>
