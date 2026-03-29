@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Compass, Calendar, Sparkles, Heart } from 'lucide-react';
+import { Home, Compass, Calendar, Search, Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ubloomLogo from '@/assets/ubloom-flower.png';
 
@@ -8,7 +8,7 @@ const navItems = [
   { path: '/routine', icon: Calendar, label: 'Routine' },
   { path: '/ubi', icon: Heart, label: 'Ubi', isCenter: true },
   { path: '/alignment', icon: Compass, label: 'Reflect' },
-  { path: '/wonder', icon: Sparkles, label: 'Wander' },
+  { path: '/wonder', icon: Search, label: 'Wander' },
 ];
 
 export default function BottomNav() {
