@@ -69,7 +69,15 @@ export default function DailyMoodCheckin() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-background px-6 overflow-y-auto"
+      className="fixed inset-0 z-[200] flex flex-col items-center justify-center px-6 overflow-y-auto"
+      style={{
+        background: `
+          radial-gradient(ellipse 80% 60% at 50% 0%, hsl(var(--glow) / 0.5) 0%, transparent 60%),
+          radial-gradient(ellipse 60% 50% at 80% 100%, hsl(var(--primary) / 0.08) 0%, transparent 50%),
+          radial-gradient(ellipse 50% 40% at 10% 80%, hsl(var(--accent) / 0.12) 0%, transparent 50%),
+          hsl(var(--background))
+        `,
+      }}
     >
       <AnimatePresence mode="wait">
         {!selected ? (
