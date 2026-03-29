@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart, Users, Sparkles, Star } from 'lucide-react';
+import ubloomLogo from '@/assets/ubloom-flower.png';
 
 export default function Society() {
   const navigate = useNavigate();
@@ -32,9 +33,7 @@ export default function Society() {
           transition={{ delay: 0.1 }}
           className="mt-8 mb-8"
         >
-          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-            <Users size={28} className="text-primary" />
-          </div>
+          <img src={ubloomLogo} alt="uBloom" className="w-20 h-20 object-contain mx-auto mb-4 clay-icon drop-shadow-lg" />
           <h1 className="text-3xl font-display font-semibold text-foreground tracking-tight">
             uBloom Society
           </h1>
