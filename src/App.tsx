@@ -89,27 +89,28 @@ function AnimatedRoutes() {
   
   return (
     <>
-      <MoodCheckinGate />
-      <AnimatePresence mode="wait" initial={false}>
-        <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<PageTransition direction={direction}><Welcome /></PageTransition>} />
-          <Route path="/auth" element={<PageTransition direction={direction}><Auth /></PageTransition>} />
-          <Route path="/reset-password" element={<PageTransition direction={direction}><ResetPassword /></PageTransition>} />
-          <Route path="/onboarding" element={<ProtectedRoute><PageTransition direction={direction}><Onboarding /></PageTransition></ProtectedRoute>} />
-          <Route path="/dream-life" element={<ProtectedRoute><PageTransition direction={direction}><DreamLife /></PageTransition></ProtectedRoute>} />
-          <Route path="/choose-aesthetic" element={<ProtectedRoute><PageTransition direction={direction}><ChooseAesthetic /></PageTransition></ProtectedRoute>} />
-          <Route path="/home" element={<ProtectedRoute><PageTransition direction={direction}><Home /></PageTransition></ProtectedRoute>} />
-          <Route path="/alignment" element={<ProtectedRoute><PageTransition direction={direction}><Alignment /></PageTransition></ProtectedRoute>} />
-          <Route path="/routine" element={<ProtectedRoute><PageTransition direction={direction}><Routine /></PageTransition></ProtectedRoute>} />
-          <Route path="/wonder" element={<ProtectedRoute><PageTransition direction={direction}><Wonder /></PageTransition></ProtectedRoute>} />
-          <Route path="/ubi" element={<ProtectedRoute><PageTransition direction={direction}><Ubi /></PageTransition></ProtectedRoute>} />
-          <Route path="/moodboard" element={<ProtectedRoute><PageTransition direction={direction}><Moodboard /></PageTransition></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><PageTransition direction={direction}><Profile /></PageTransition></ProtectedRoute>} />
-          <Route path="/admin" element={<ProtectedRoute><PageTransition direction={direction}><AdminDashboard /></PageTransition></ProtectedRoute>} />
-          <Route path="/wonder/:category" element={<ProtectedRoute><PageTransition direction={direction}><WonderCategory /></PageTransition></ProtectedRoute>} />
-          <Route path="*" element={<PageTransition direction={direction}><NotFound /></PageTransition>} />
-        </Routes>
-      </AnimatePresence>
+      <MoodCheckinGate>
+        <AnimatePresence mode="wait" initial={false}>
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<PageTransition direction={direction}><Welcome /></PageTransition>} />
+            <Route path="/auth" element={<PageTransition direction={direction}><Auth /></PageTransition>} />
+            <Route path="/reset-password" element={<PageTransition direction={direction}><ResetPassword /></PageTransition>} />
+            <Route path="/onboarding" element={<ProtectedRoute><PageTransition direction={direction}><Onboarding /></PageTransition></ProtectedRoute>} />
+            <Route path="/dream-life" element={<ProtectedRoute><PageTransition direction={direction}><DreamLife /></PageTransition></ProtectedRoute>} />
+            <Route path="/choose-aesthetic" element={<ProtectedRoute><PageTransition direction={direction}><ChooseAesthetic /></PageTransition></ProtectedRoute>} />
+            <Route path="/home" element={<ProtectedRoute><PageTransition direction={direction}><Home /></PageTransition></ProtectedRoute>} />
+            <Route path="/alignment" element={<ProtectedRoute><PageTransition direction={direction}><Alignment /></PageTransition></ProtectedRoute>} />
+            <Route path="/routine" element={<ProtectedRoute><PageTransition direction={direction}><Routine /></PageTransition></ProtectedRoute>} />
+            <Route path="/wonder" element={<ProtectedRoute><PageTransition direction={direction}><Wonder /></PageTransition></ProtectedRoute>} />
+            <Route path="/ubi" element={<ProtectedRoute><PageTransition direction={direction}><Ubi /></PageTransition></ProtectedRoute>} />
+            <Route path="/moodboard" element={<ProtectedRoute><PageTransition direction={direction}><Moodboard /></PageTransition></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><PageTransition direction={direction}><Profile /></PageTransition></ProtectedRoute>} />
+            <Route path="/admin" element={<ProtectedRoute><PageTransition direction={direction}><AdminDashboard /></PageTransition></ProtectedRoute>} />
+            <Route path="/wonder/:category" element={<ProtectedRoute><PageTransition direction={direction}><WonderCategory /></PageTransition></ProtectedRoute>} />
+            <Route path="*" element={<PageTransition direction={direction}><NotFound /></PageTransition>} />
+          </Routes>
+        </AnimatePresence>
+      </MoodCheckinGate>
     </>
   );
 }

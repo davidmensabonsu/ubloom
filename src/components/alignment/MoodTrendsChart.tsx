@@ -23,10 +23,9 @@ const feelingCategories: Record<string, { label: string; icon: string; color: st
   lonely: { label: 'Lonely', icon: feelingIcons.lonely, color: 'hsl(var(--chart-3))' },
   numb: { label: 'Numb', icon: feelingIcons.numb, color: 'hsl(var(--chart-2))' },
   hopeful: { label: 'Hopeful', icon: feelingIcons.hopeful, color: 'hsl(var(--chart-1))' },
-  // Daily check-in states
+  // Daily check-in states (grounded already mapped above)
   disconnected: { label: 'Disconnected', icon: feelingIcons.disconnected, color: 'hsl(var(--chart-2))' },
   'off-track': { label: 'Off track', icon: feelingIcons['off-track'], color: 'hsl(var(--chart-5))' },
-  grounded: { label: 'Grounded', icon: feelingIcons.grounded, color: 'hsl(var(--chart-3))' },
   aligned: { label: 'Aligned', icon: feelingIcons.aligned, color: 'hsl(var(--chart-1))' },
   elevated: { label: 'Elevated', icon: feelingIcons.elevated, color: 'hsl(var(--chart-4))' },
 };
