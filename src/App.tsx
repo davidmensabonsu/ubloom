@@ -23,12 +23,12 @@ import ChooseAesthetic from "./pages/ChooseAesthetic";
 import Home from "./pages/Home";
 import Alignment from "./pages/Alignment";
 import Routine from "./pages/Routine";
-import Wonder from "./pages/Wonder";
+import Wander from "./pages/Wander";
 import Moodboard from "./pages/Moodboard";
 import Ubi from "./pages/Ubi";
 import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
-import WonderCategory from "./pages/WonderCategory";
+import WanderCategory from "./pages/WanderCategory";
 import Health from "./pages/Health";
 import Society from "./pages/Society";
 import NotFound from "./pages/NotFound";
@@ -58,7 +58,7 @@ function MoodCheckinGate({ children }: { children: React.ReactNode }) {
   const { profile } = useUserStore();
   const location = useLocation();
 
-  const mainRoutes = ['/home', '/alignment', '/routine', '/wonder', '/ubi', '/moodboard', '/profile'];
+  const mainRoutes = ['/home', '/alignment', '/routine', '/wander', '/ubi', '/moodboard', '/profile'];
   const isMainRoute = mainRoutes.includes(location.pathname);
 
   const needsCheckin =
@@ -75,7 +75,7 @@ function MoodCheckinGate({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-const routeOrder = ['/', '/auth', '/reset-password', '/onboarding', '/dream-life', '/choose-aesthetic', '/home', '/alignment', '/routine', '/wonder', '/ubi', '/moodboard', '/profile'];
+const routeOrder = ['/', '/auth', '/reset-password', '/onboarding', '/dream-life', '/choose-aesthetic', '/home', '/alignment', '/routine', '/wander', '/ubi', '/moodboard', '/profile'];
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -103,12 +103,12 @@ function AnimatedRoutes() {
             <Route path="/home" element={<ProtectedRoute><PageTransition direction={direction}><Home /></PageTransition></ProtectedRoute>} />
             <Route path="/alignment" element={<ProtectedRoute><PageTransition direction={direction}><Alignment /></PageTransition></ProtectedRoute>} />
             <Route path="/routine" element={<ProtectedRoute><PageTransition direction={direction}><Routine /></PageTransition></ProtectedRoute>} />
-            <Route path="/wonder" element={<ProtectedRoute><PageTransition direction={direction}><Wonder /></PageTransition></ProtectedRoute>} />
+            <Route path="/wander" element={<ProtectedRoute><PageTransition direction={direction}><Wander /></PageTransition></ProtectedRoute>} />
             <Route path="/ubi" element={<ProtectedRoute><PageTransition direction={direction}><Ubi /></PageTransition></ProtectedRoute>} />
             <Route path="/moodboard" element={<ProtectedRoute><PageTransition direction={direction}><Moodboard /></PageTransition></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><PageTransition direction={direction}><Profile /></PageTransition></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute><PageTransition direction={direction}><AdminDashboard /></PageTransition></ProtectedRoute>} />
-            <Route path="/wonder/:category" element={<ProtectedRoute><PageTransition direction={direction}><WonderCategory /></PageTransition></ProtectedRoute>} />
+            <Route path="/wander/:category" element={<ProtectedRoute><PageTransition direction={direction}><WanderCategory /></PageTransition></ProtectedRoute>} />
             <Route path="/health" element={<ProtectedRoute><PageTransition direction={direction}><Health /></PageTransition></ProtectedRoute>} />
             <Route path="/society" element={<ProtectedRoute><PageTransition direction={direction}><Society /></PageTransition></ProtectedRoute>} />
             <Route path="*" element={<PageTransition direction={direction}><NotFound /></PageTransition>} />
