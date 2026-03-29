@@ -47,6 +47,11 @@ export const feelingIcons: Record<string, string> = {
   lonely: wiltedRoseIcon,
   numb: cloudIcon,
   hopeful: sunriseIcon,
+  // Daily check-in states (grounded already mapped above)
+  disconnected: cloudIcon,
+  'off-track': spiralIcon,
+  aligned: starIcon,
+  elevated: sparklesIcon,
 };
 
 // Onboarding step icons
