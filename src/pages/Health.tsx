@@ -1,12 +1,14 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Check, X } from 'lucide-react';
+import { ArrowLeft, Check, X, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import ProfileButton from '@/components/ProfileButton';
 import BottomNav from '@/components/BottomNav';
-import { useUserStore, HealthData } from '@/stores/userStore';
+import { useUserStore, HealthData, HealthHistoryEntry } from '@/stores/userStore';
 import { supabase } from '@/integrations/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getLocalDateStr } from '@/lib/dateUtils';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 import moonIcon from '@/assets/icons/moon.png';
 import bedIcon from '@/assets/icons/bed.png';
@@ -15,6 +17,7 @@ import leafIcon from '@/assets/icons/leaf.png';
 import runningIcon from '@/assets/icons/running.png';
 import sparklesIcon from '@/assets/icons/sparkles.png';
 import crystalBallIcon from '@/assets/icons/crystal-ball.png';
+import sunriseIcon from '@/assets/icons/sunrise.png';
 
 const cycleOptions = ['Menstrual', 'Follicular', 'Ovulation', 'Luteal', 'N/A'];
 
@@ -38,6 +41,13 @@ const healthCards: CardConfig[] = [
   { label: 'Mood Patterns', icon: sparklesIcon, key: 'mood', type: 'mood' },
 ];
 
+const trendMetrics = [
+  { key: 'sleepHours', label: 'Sleep', color: 'hsl(var(--primary))' },
+  { key: 'stressLevel', label: 'Stress', color: 'hsl(var(--destructive, 0 84% 60%))' },
+  { key: 'recoveryLevel', label: 'Recovery', color: 'hsl(142 71% 45%)' },
+  { key: 'activityMinutes', label: 'Activity', color: 'hsl(217 91% 60%)' },
+];
+
 function HealthCard({ card, value, moodSummary, onSave }: {
   card: CardConfig;
   value: string | number | undefined;
@@ -54,10 +64,7 @@ function HealthCard({ card, value, moodSummary, onSave }: {
       : 'Not tracked yet';
 
   const handleTap = () => {
-    if (card.type === 'mood') return; // mood is read-only
-    if (card.type === 'cycle') {
-      // Cycle shows options inline, handled separately
-    }
+    if (card.type === 'mood') return;
     setInputValue(value !== undefined ? String(value) : '');
     setEditing(true);
   };
@@ -154,10 +161,95 @@ function HealthCard({ card, value, moodSummary, onSave }: {
   );
 }
 
+function WeeklyTrendsChart({ history }: { history: HealthHistoryEntry[] }) {
+  const [activeMetric, setActiveMetric] = useState('sleepHours');
+
+  const chartData = useMemo(() => {
+    const sorted = [...history].sort((a, b) => a.date.localeCompare(b.date)).slice(-7);
+    return sorted.map((entry) => ({
+      day: new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short' }),
+      value: (entry as any)[activeMetric] ?? null,
+    })).filter(d => d.value !== null);
+  }, [history, activeMetric]);
+
+  const currentMetric = trendMetrics.find(m => m.key === activeMetric)!;
+
+  if (history.length < 2) {
+    return (
+      <div className="glass-card rounded-2xl p-5 text-center">
+        <p className="text-sm text-muted-foreground">Log health data for at least 2 days to see trends</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="glass-card rounded-2xl p-4">
+      {/* Metric selector pills */}
+      <div className="flex gap-2 mb-4 overflow-x-auto pb-1 scrollbar-hide">
+        {trendMetrics.map((metric) => (
+          <button
+            key={metric.key}
+            onClick={() => setActiveMetric(metric.key)}
+            className={`text-xs px-3 py-1.5 rounded-full whitespace-nowrap transition-colors ${
+              activeMetric === metric.key
+                ? 'bg-primary/20 text-primary font-medium'
+                : 'bg-muted/50 text-muted-foreground'
+            }`}
+          >
+            {metric.label}
+          </button>
+        ))}
+      </div>
+
+      {chartData.length < 2 ? (
+        <p className="text-xs text-muted-foreground text-center py-6">
+          Not enough {currentMetric.label.toLowerCase()} data yet
+        </p>
+      ) : (
+        <ResponsiveContainer width="100%" height={160}>
+          <LineChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+            <XAxis
+              dataKey="day"
+              tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+              axisLine={false}
+              tickLine={false}
+            />
+            <YAxis
+              tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+              axisLine={false}
+              tickLine={false}
+            />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: 'hsl(var(--card))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: '12px',
+                fontSize: '12px',
+              }}
+              labelStyle={{ color: 'hsl(var(--foreground))' }}
+            />
+            <Line
+              type="monotone"
+              dataKey="value"
+              stroke={currentMetric.color}
+              strokeWidth={2.5}
+              dot={{ r: 4, fill: currentMetric.color }}
+              activeDot={{ r: 6 }}
+              name={currentMetric.label}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      )}
+    </div>
+  );
+}
+
 export default function Health() {
   const navigate = useNavigate();
   const { profile, updateProfile } = useUserStore();
   const healthData = profile.healthData || {};
+  const healthHistory = profile.healthHistory || [];
   const [insights, setInsights] = useState<string[]>([]);
   const [loadingInsights, setLoadingInsights] = useState(true);
 
@@ -175,12 +267,32 @@ export default function Health() {
   })();
 
   const handleSaveCard = (key: string, value: string | number) => {
+    const today = getLocalDateStr();
+    const updatedHealthData = {
+      ...healthData,
+      [key]: value,
+      lastUpdated: new Date().toISOString(),
+    };
+
+    // Update or create today's history entry
+    const existingHistory = [...healthHistory];
+    const todayIdx = existingHistory.findIndex(e => e.date === today);
+    const todayEntry: HealthHistoryEntry = todayIdx >= 0
+      ? { ...existingHistory[todayIdx], [key]: value }
+      : { date: today, [key]: value };
+
+    if (todayIdx >= 0) {
+      existingHistory[todayIdx] = todayEntry;
+    } else {
+      existingHistory.push(todayEntry);
+    }
+
+    // Keep only last 90 days
+    const pruned = existingHistory.slice(-90);
+
     updateProfile({
-      healthData: {
-        ...healthData,
-        [key]: value,
-        lastUpdated: new Date().toISOString(),
-      },
+      healthData: updatedHealthData,
+      healthHistory: pruned,
     });
   };
 
@@ -227,6 +339,7 @@ export default function Health() {
       </div>
 
       <div className="px-5 space-y-6">
+        {/* Health Data Cards */}
         <div className="grid grid-cols-2 gap-3">
           {healthCards.map((card, i) => (
             <HealthCard
@@ -238,6 +351,15 @@ export default function Health() {
             />
           ))}
         </div>
+
+        {/* Weekly Trends */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <div className="flex items-center gap-2 mb-3">
+            <img src={sunriseIcon} alt="Trends" className="w-6 h-6 object-contain clay-icon" />
+            <h2 className="section-title">Weekly Trends</h2>
+          </div>
+          <WeeklyTrendsChart history={healthHistory} />
+        </motion.div>
 
         {/* Ubi Insights */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
