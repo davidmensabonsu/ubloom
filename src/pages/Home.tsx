@@ -98,7 +98,7 @@ export default function Home() {
             transition={{ delay: 0.3 }}
             className="glass-card rounded-2xl p-3"
           >
-            <h2 className="text-xs font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-1.5">
+            <h2 className="text-sm font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-1.5">
               <Heart size={14} className="text-primary" />
               Mindset
             </h2>
@@ -117,7 +117,7 @@ export default function Home() {
             transition={{ delay: 0.35 }}
             className="glass-card rounded-2xl p-3 border border-primary/20"
           >
-            <h2 className="text-xs font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-1.5">
+            <h2 className="text-sm font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-1.5">
               <Target size={14} className="text-primary" />
               Focus
             </h2>
