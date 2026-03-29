@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.ubi-chat]
 verify_jwt = false
+
+[functions.health-insights]
+verify_jwt = false

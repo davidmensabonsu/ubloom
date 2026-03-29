@@ -12,6 +12,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { feelingIcons } from '@/lib/moodIcons';
+import heartIcon from '@/assets/icons/heart.png';
 
 const feelingOptions = [
   { value: 'calm', label: 'Calm' },
@@ -139,6 +140,18 @@ export default function Alignment() {
           <p className="subtle-text">A quiet moment before your day unfolds</p>
           <MoodStreak moodHistory={profile.moodHistory} />
         </motion.div>
+
+        <motion.button
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          onClick={() => navigate('/health')}
+          className="mt-3 flex items-center gap-2 glass-card rounded-2xl px-4 py-3 w-full hover:bg-primary/5 transition-colors"
+        >
+          <img src={heartIcon} alt="Health" className="w-6 h-6 object-contain clay-icon" />
+          <span className="text-sm font-medium text-foreground">Health</span>
+          <span className="text-xs text-muted-foreground ml-auto">View insights →</span>
+        </motion.button>
       </div>
 
       <div className="px-5 space-y-6">
