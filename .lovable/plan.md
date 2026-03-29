@@ -1,64 +1,51 @@
 
 
-## Full-Screen Daily Check-In Redesign
+## Health Page — Design & Implementation Plan
 
 ### Overview
-Replace the current modal-based mood check-in (16 feeling pills) with a full-screen page showing 5 alignment states as large cards. After tapping one, show a personalized response, then navigate to Home. Store the selection for Ubi context and mood tracking.
+A new `/health` page accessible from the Reflect page, showing health data cards and AI-powered Ubi Insights. Consistent with the app's soft, minimal aesthetic using existing clay icons.
 
-### The 5 States
-| State | Icon asset | Response message |
-|-------|-----------|-----------------|
-| Disconnected | `cloud.png` | "It's okay to feel distant sometimes. Today is a chance to gently reconnect with yourself — one small moment at a time." |
-| Off track | `spiral.png` | "You're aware of where you are, and that awareness is powerful. Let today be about one small step back toward you." |
-| Grounded | `plant.png` | "You're rooted and steady — what a beautiful place to be. Let's build on this energy today." |
-| Aligned | `star.png` | "You're in sync with who you're becoming. Trust this feeling and let it guide your choices today." |
-| Elevated | `sparkles.png` | "You're radiating. This energy is magnetic — carry it with you and let it touch everything you do today." |
+### Navigation
+- Add a "Health" button/link on the Reflect page (Alignment.tsx) near the top, navigating to `/health`
+- Add `/health` route in App.tsx as a protected route
 
-### Architecture
+### Health Page Layout
 
-```text
-User opens app → MoodCheckinGate checks lastMoodCheckinDate
-  ↓ (not checked in today)
-Full-screen DailyMoodCheckin page (replaces current modal)
-  ↓ (user taps a state)
-Show response message with fade animation
-  ↓ (2s auto-advance or tap)
-Navigate to /home
-  ↓
-Store: addMoodEntry([selectedState]), set lastMoodCheckinDate
-Also store: dailyCheckinState for Ubi context
-```
+**Header**: Page title "Health" with back arrow to Reflect, plus ProfileButton
 
-### Changes
+**6 Data Cards** in a 2-column grid, each with a clay icon, label, and placeholder value:
 
-**1. `src/components/DailyMoodCheckin.tsx`** — Complete rewrite
-- Full-screen page with `gradient-background` (not a modal overlay)
-- uBloom logo at top
-- "How are you feeling today?" heading in serif font
-- 5 large rounded cards in a vertical list, each with icon + label
-- On tap: store selection, show response message with fade-in
-- After 2s or tap: call `updateProfile({ lastMoodCheckinDate })` and navigate to `/home`
-- Map the 5 states to mood values for `addMoodEntry` so they feed into the mood trends chart
+| Card | Icon Asset | Placeholder |
+|------|-----------|-------------|
+| Cycle Phase | `moon.png` | "Not tracked yet" |
+| Sleep | `bed.png` | "Not tracked yet" |
+| Stress | `brain.png` | "Not tracked yet" |
+| Recovery | `leaf.png` | "Not tracked yet" |
+| Activity | `running.png` | "Not tracked yet" |
+| Mood Patterns | `sparkles.png` | Pulls from existing mood data |
 
-**2. `src/stores/userStore.ts`**
-- Add `dailyCheckinState?: string` to `UserProfile` — stores today's selected state (disconnected/off-track/grounded/aligned/elevated)
-- This gets picked up by `buildUserContext` in useUbiChat
+Each card is a soft rounded container with the themed background, icon, label, and data/placeholder text.
 
-**3. `src/hooks/useUbiChat.ts`** — `buildUserContext`
-- Add `dailyCheckinState` to the context object sent to Ubi, so responses are personalized to the user's current state
+**Ubi Insights Section** — Below the cards, a distinct section titled "Ubi Insights" with the crystal ball icon. Calls a new edge function (`health-insights`) that takes the user's health context (mood history, check-in state, journal entries) and returns 3-4 warm, personalized recommendations covering:
+- Energy-based guidance
+- Cycle-based recommendations
+- Behavioral patterns
+- Daily adjustments
 
-**4. `src/App.tsx`** — `MoodCheckinGate`
-- Change from rendering as a modal overlay (`AnimatePresence` with fixed positioning) to rendering as a full-screen blocking component that prevents the underlying route from showing
-- When check-in is needed, render `DailyMoodCheckin` instead of the route content
+Insights render as a list of soft cards with brief, supportive text. Shows a loading skeleton while generating.
 
-**5. `src/lib/moodIcons.ts`**
-- Add the 5 new check-in state entries to `feelingIcons` map so the mood trends chart can display them: `disconnected → cloud`, `off-track → spiral`, `grounded → plant`, `aligned → star`, `elevated → sparkles`
+### Files Changed
 
-**6. `src/components/alignment/MoodTrendsChart.tsx`**
-- Add the 5 new states to `feelingCategories` so they appear in trend data
+| File | Change |
+|------|--------|
+| `src/pages/Health.tsx` | New page component with health cards grid and Ubi Insights section |
+| `src/pages/Alignment.tsx` | Add navigation button to `/health` |
+| `src/App.tsx` | Add `/health` protected route, import Health page |
+| `supabase/functions/health-insights/index.ts` | New edge function calling Lovable AI to generate personalized health insights from user context |
 
-### Detail Notes
-- The existing `addMoodEntry` stores moods as string arrays in `moodHistory` — the check-in will call `addMoodEntry([selectedState])` so it integrates with the existing mood trends system
-- No skip button — the 5 options are simple enough that users should always pick one
-- The response message screen uses `motion` fade-in with a "Tap to continue" hint below
+### Edge Function Details
+- Uses `google/gemini-3-flash-preview` via Lovable AI gateway
+- Non-streaming (invoke pattern) — returns JSON array of insight objects
+- System prompt emphasizes warm, supportive tone — not clinical
+- Takes mood history, daily check-in state, and journal entries as context
 
