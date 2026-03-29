@@ -85,8 +85,8 @@ export const goalCategoryIcons: Record<string, string> = {
 export const quickActionIcons: Record<string, string> = {
   journal: pencilIcon,
   routine: sparklesIcon,
-  goals: trophyIcon,
-  moodboard: cameraIcon,
+  ubi: crystalBallIcon,
+  wonder: butterflyIcon,
 };
 
 // Shared icon component helper - renders an img tag for a mood icon
