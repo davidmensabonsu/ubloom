@@ -7,7 +7,7 @@ import { useUserStore } from '@/stores/userStore';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { Check, Camera, LogOut, Trash2, Pencil, BookOpen, Target, Lock, KeyRound, Sparkles, Eye, EyeOff } from 'lucide-react';
+import { Check, Camera, LogOut, Trash2, Pencil, BookOpen, Target, Lock, KeyRound, Sparkles, Eye, EyeOff, Users } from 'lucide-react';
 import flameIcon from '@/assets/icons/flame.png';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -356,6 +356,29 @@ export default function Profile() {
               <p className="text-xs text-muted-foreground">Current streak</p>
             </div>
           </div>
+        </motion.div>
+
+        {/* uBloom Society */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.24 }}
+        >
+          <button
+            onClick={() => navigate('/society')}
+            className="w-full glass-card rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98]"
+          >
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <Users size={18} className="text-primary" />
+            </div>
+            <div className="flex-1">
+              <span className="font-medium text-foreground">uBloom Society</span>
+              <p className="text-xs text-muted-foreground">Connect · Grow · Bloom</p>
+            </div>
+            <span className="text-[10px] font-medium px-2.5 py-1 rounded-full bg-primary/10 text-primary">
+              Coming Soon
+            </span>
+          </button>
         </motion.div>
 
         {/* Theme Picker */}

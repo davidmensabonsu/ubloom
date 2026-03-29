@@ -30,6 +30,7 @@ import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
 import WonderCategory from "./pages/WonderCategory";
 import Health from "./pages/Health";
+import Society from "./pages/Society";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -109,6 +110,7 @@ function AnimatedRoutes() {
             <Route path="/admin" element={<ProtectedRoute><PageTransition direction={direction}><AdminDashboard /></PageTransition></ProtectedRoute>} />
             <Route path="/wonder/:category" element={<ProtectedRoute><PageTransition direction={direction}><WonderCategory /></PageTransition></ProtectedRoute>} />
             <Route path="/health" element={<ProtectedRoute><PageTransition direction={direction}><Health /></PageTransition></ProtectedRoute>} />
+            <Route path="/society" element={<ProtectedRoute><PageTransition direction={direction}><Society /></PageTransition></ProtectedRoute>} />
             <Route path="*" element={<PageTransition direction={direction}><NotFound /></PageTransition>} />
           </Routes>
         </AnimatePresence>
