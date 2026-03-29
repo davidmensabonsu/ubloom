@@ -50,7 +50,7 @@ function ThemeManager() {
 }
 
 // Daily mood check-in gate
-function MoodCheckinGate() {
+function MoodCheckinGate({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const cloudSyncLoaded = useCloudSyncStatus();
   const { profile } = useUserStore();
@@ -59,18 +59,18 @@ function MoodCheckinGate() {
   const mainRoutes = ['/home', '/alignment', '/routine', '/wonder', '/ubi', '/moodboard', '/profile'];
   const isMainRoute = mainRoutes.includes(location.pathname);
 
-  const shouldShow =
+  const needsCheckin =
     user &&
     cloudSyncLoaded &&
     profile.onboardingComplete &&
     isMainRoute &&
     profile.lastMoodCheckinDate !== getLocalDateStr();
 
-  return (
-    <AnimatePresence>
-      {shouldShow && <DailyMoodCheckin />}
-    </AnimatePresence>
-  );
+  if (needsCheckin) {
+    return <DailyMoodCheckin />;
+  }
+
+  return <>{children}</>;
 }
 
 const routeOrder = ['/', '/auth', '/reset-password', '/onboarding', '/dream-life', '/choose-aesthetic', '/home', '/alignment', '/routine', '/wonder', '/ubi', '/moodboard', '/profile'];

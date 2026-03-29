@@ -55,6 +55,7 @@ function buildUserContext(profile: ReturnType<typeof useUserStore.getState>['pro
     coreHabits: (profile.coreHabits || []).map((h) => h.title),
     recentJournalSnippets: recentJournal,
     lastMoodCheckinDate: profile.lastMoodCheckinDate,
+    dailyCheckinState: profile.dailyCheckinState,
   };
 }
 

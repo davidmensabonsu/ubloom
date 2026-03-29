@@ -1,51 +1,67 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useUserStore } from '@/stores/userStore';
-import { Heart, ChevronDown, X } from 'lucide-react';
-import { feelingIcons } from '@/lib/moodIcons';
+import { useNavigate } from 'react-router-dom';
 import { getLocalDateStr } from '@/lib/dateUtils';
+import cloudIcon from '@/assets/icons/cloud.png';
+import spiralIcon from '@/assets/icons/spiral.png';
+import plantIcon from '@/assets/icons/plant.png';
+import starIcon from '@/assets/icons/star.png';
+import sparklesIcon from '@/assets/icons/sparkles.png';
 
-const feelingOptions = [
-  { value: 'calm', label: 'Calm' },
-  { value: 'energized', label: 'Energized' },
-  { value: 'grateful', label: 'Grateful' },
-  { value: 'creative', label: 'Creative' },
-  { value: 'peaceful', label: 'Peaceful' },
-  { value: 'confident', label: 'Confident' },
-  { value: 'grounded', label: 'Grounded' },
-  { value: 'joyful', label: 'Joyful' },
-  { value: 'anxious', label: 'Anxious' },
-  { value: 'sad', label: 'Sad' },
-  { value: 'overwhelmed', label: 'Overwhelmed' },
-  { value: 'frustrated', label: 'Frustrated' },
-  { value: 'tired', label: 'Tired' },
-  { value: 'lonely', label: 'Lonely' },
-  { value: 'numb', label: 'Numb' },
-  { value: 'hopeful', label: 'Hopeful' },
+const checkinStates = [
+  {
+    value: 'disconnected',
+    label: 'Disconnected',
+    icon: cloudIcon,
+    response: "It's okay to feel distant sometimes. Today is a chance to gently reconnect with yourself — one small moment at a time.",
+  },
+  {
+    value: 'off-track',
+    label: 'Off track',
+    icon: spiralIcon,
+    response: "You're aware of where you are, and that awareness is powerful. Let today be about one small step back toward you.",
+  },
+  {
+    value: 'grounded',
+    label: 'Grounded',
+    icon: plantIcon,
+    response: "You're rooted and steady — what a beautiful place to be. Let's build on this energy today.",
+  },
+  {
+    value: 'aligned',
+    label: 'Aligned',
+    icon: starIcon,
+    response: "You're in sync with who you're becoming. Trust this feeling and let it guide your choices today.",
+  },
+  {
+    value: 'elevated',
+    label: 'Elevated',
+    icon: sparklesIcon,
+    response: "You're radiating. This energy is magnetic — carry it with you and let it touch everything you do today.",
+  },
 ];
 
 export default function DailyMoodCheckin() {
   const { addMoodEntry, updateProfile } = useUserStore();
-  const [selectedFeelings, setSelectedFeelings] = useState<string[]>([]);
-  const [expanded, setExpanded] = useState(false);
+  const navigate = useNavigate();
+  const [selected, setSelected] = useState<typeof checkinStates[0] | null>(null);
 
-  const toggleFeeling = (value: string) => {
-    if (selectedFeelings.includes(value)) {
-      setSelectedFeelings(selectedFeelings.filter((f) => f !== value));
-    } else if (selectedFeelings.length < 3) {
-      setSelectedFeelings([...selectedFeelings, value]);
-    }
+  const handleSelect = (state: typeof checkinStates[0]) => {
+    setSelected(state);
+    addMoodEntry([state.value]);
+    updateProfile({
+      lastMoodCheckinDate: getLocalDateStr(),
+      dailyCheckinState: state.value,
+    });
+
+    setTimeout(() => {
+      navigate('/home', { replace: true });
+    }, 2500);
   };
 
-  const handleConfirm = () => {
-    if (selectedFeelings.length > 0) {
-      addMoodEntry(selectedFeelings);
-    }
-    updateProfile({ lastMoodCheckinDate: getLocalDateStr() });
-  };
-
-  const handleSkip = () => {
-    updateProfile({ lastMoodCheckinDate: getLocalDateStr() });
+  const handleContinue = () => {
+    navigate('/home', { replace: true });
   };
 
   return (
@@ -53,105 +69,98 @@ export default function DailyMoodCheckin() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm px-5"
+      className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-background px-6 overflow-y-auto"
     >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="w-full max-w-md glass-card rounded-3xl p-6 relative"
-      >
-        {/* Skip button */}
-        <button
-          onClick={handleSkip}
-          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <X size={20} />
-        </button>
-
-        <div className="flex items-center gap-2 mb-2">
-          <Heart size={20} className="text-primary" />
-          <h2 className="section-title text-lg">How are you feeling today?</h2>
-        </div>
-        <p className="text-sm text-muted-foreground mb-5">Choose up to 3</p>
-
-        <div className="flex flex-wrap gap-2">
-          {feelingOptions.slice(0, 8).map((feeling) => (
-            <motion.button
-              key={feeling.value}
-              onClick={() => toggleFeeling(feeling.value)}
-              className={`mood-pill ${selectedFeelings.includes(feeling.value) ? 'selected' : ''}`}
-              whileTap={{ scale: 0.95 }}
+      <AnimatePresence mode="wait">
+        {!selected ? (
+          <motion.div
+            key="options"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="w-full max-w-md flex flex-col items-center py-8"
+          >
+            {/* Logo */}
+            <motion.p
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-lg font-semibold tracking-wide text-primary mb-6"
             >
-              <img
-                src={feelingIcons[feeling.value]}
-                alt=""
-                className="w-5 h-5 object-contain"
-                style={{ filter: 'saturate(1.6) contrast(1.1)' }}
-              />
-              <span>{feeling.label}</span>
-            </motion.button>
-          ))}
-          <AnimatePresence>
-            {(expanded ||
-              selectedFeelings.some((f) =>
-                feelingOptions.slice(8).map((o) => o.value).includes(f)
-              )) &&
-              feelingOptions.slice(8).map((feeling) => (
+              uBloom
+            </motion.p>
+
+            {/* Heading */}
+            <motion.h1
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-2xl font-serif text-foreground text-center mb-8"
+            >
+              How are you feeling today?
+            </motion.h1>
+
+            {/* 5 State Cards */}
+            <div className="w-full flex flex-col gap-3">
+              {checkinStates.map((state, i) => (
                 <motion.button
-                  key={feeling.value}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  onClick={() => toggleFeeling(feeling.value)}
-                  className={`mood-pill ${selectedFeelings.includes(feeling.value) ? 'selected' : ''}`}
-                  whileTap={{ scale: 0.95 }}
+                  key={state.value}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 + i * 0.07 }}
+                  onClick={() => handleSelect(state)}
+                  className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl bg-card border border-border/50 hover:border-primary/30 hover:bg-primary/5 transition-all active:scale-[0.98]"
+                  whileTap={{ scale: 0.97 }}
                 >
                   <img
-                    src={feelingIcons[feeling.value]}
+                    src={state.icon}
                     alt=""
-                    className="w-5 h-5 object-contain"
-                    style={{ filter: 'saturate(1.6) contrast(1.1)' }}
+                    className="w-10 h-10 object-contain clay-icon"
                   />
-                  <span>{feeling.label}</span>
+                  <span className="text-base font-medium text-foreground">
+                    {state.label}
+                  </span>
                 </motion.button>
               ))}
-          </AnimatePresence>
-        </div>
-
-        <div className="flex items-center justify-between mt-4">
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="response"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="w-full max-w-md flex flex-col items-center text-center px-4"
+            onClick={handleContinue}
           >
-            <motion.div animate={{ rotate: expanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
-              <ChevronDown size={14} />
-            </motion.div>
-            {expanded ? 'Show less' : 'Show more'}
-          </button>
-
-          <button
-            onClick={handleSkip}
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Skip for today
-          </button>
-        </div>
-
-        {selectedFeelings.length > 0 && (
-          <motion.button
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            onClick={handleConfirm}
-            className="soft-button w-full mt-5 flex items-center justify-center gap-2"
-            whileTap={{ scale: 0.98 }}
-          >
-            <span>Confirm ({selectedFeelings.length}/3)</span>
-            <Heart size={16} className="fill-current" />
-          </motion.button>
+            <motion.img
+              src={selected.icon}
+              alt=""
+              className="w-16 h-16 object-contain clay-icon mb-6"
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.1 }}
+            />
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-lg font-serif text-foreground leading-relaxed mb-8"
+            >
+              {selected.response}
+            </motion.p>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              transition={{ delay: 0.6 }}
+              className="text-xs text-muted-foreground"
+            >
+              Tap to continue
+            </motion.p>
+          </motion.div>
         )}
-      </motion.div>
+      </AnimatePresence>
     </motion.div>
   );
 }
