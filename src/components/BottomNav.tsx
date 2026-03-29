@@ -8,7 +8,7 @@ const navItems = [
   { path: '/routine', icon: Calendar, label: 'Routine' },
   { path: '/ubi', icon: Heart, label: 'Ubi', isCenter: true },
   { path: '/alignment', icon: Compass, label: 'Reflect' },
-  { path: '/wonder', icon: Search, label: 'Wander' },
+  { path: '/wander', icon: Search, label: 'Wander' },
 ];
 
 export default function BottomNav() {
