@@ -431,18 +431,14 @@ export default function Profile() {
         >
           <button
             onClick={() => navigate('/society')}
-            className="w-full rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98] relative overflow-hidden bg-gradient-to-r from-primary/25 via-primary/10 to-primary/30 border border-primary/25 shadow-lg shadow-primary/15"
+            className="w-full rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98] bg-gradient-to-r from-primary/20 via-primary/15 to-primary/25 border border-primary/20 shadow-md shadow-primary/10"
           >
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,hsl(var(--primary)/0.15)_1px,transparent_1px),radial-gradient(circle_at_70%_60%,hsl(var(--primary)/0.12)_1px,transparent_1px),radial-gradient(circle_at_40%_80%,hsl(var(--primary)/0.1)_1px,transparent_1px),radial-gradient(circle_at_80%_20%,hsl(var(--primary)/0.18)_1px,transparent_1px)] animate-pulse" />
-            <div className="absolute top-2 right-12 w-1 h-1 rounded-full bg-primary/40 animate-ping" />
-            <div className="absolute bottom-3 left-16 w-1.5 h-1.5 rounded-full bg-primary/30 animate-ping [animation-delay:0.5s]" />
-            <div className="absolute top-4 left-1/2 w-1 h-1 rounded-full bg-primary/35 animate-ping [animation-delay:1s]" />
-             <img src={ubloomLogo} alt="uBloom" className="w-10 h-10 object-contain clay-icon relative z-10" />
-            <div className="flex-1 relative z-10">
+             <img src={ubloomLogo} alt="uBloom" className="w-10 h-10 object-contain clay-icon" />
+            <div className="flex-1">
               <span className="font-medium text-foreground">uBloom Society</span>
               <p className="text-xs text-foreground/60">Connect · Grow · Bloom</p>
             </div>
-            <span className="text-[10px] font-medium px-2.5 py-1 rounded-full bg-primary/15 text-primary backdrop-blur-sm border border-primary/20 relative z-10">
+            <span className="text-[10px] font-medium px-2.5 py-1 rounded-full bg-background/50 text-primary backdrop-blur-sm">
               Coming Soon
             </span>
           </button>
