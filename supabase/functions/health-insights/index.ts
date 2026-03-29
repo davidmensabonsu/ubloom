@@ -33,6 +33,8 @@ Return a JSON object with an "insights" array of exactly 4 strings. Each insight
 
 Daily check-in state: ${context.dailyCheckinState || "not checked in today"}
 
+Health data logged: ${JSON.stringify(context.healthData || {})}
+
 Recent mood entries (last 14 days): ${JSON.stringify(context.moodHistory || [])}
 
 Recent journal excerpts: ${JSON.stringify(context.recentJournals || [])}

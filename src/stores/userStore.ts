@@ -76,6 +76,16 @@ export interface UserProfile {
   lastMoodCheckinDate?: string; // yyyy-MM-dd
   dailyCheckinState?: string; // disconnected/off-track/grounded/aligned/elevated
   ubiIntroSeen?: boolean;
+  healthData?: HealthData;
+}
+
+export interface HealthData {
+  cycle?: string;       // e.g. "Follicular", "Luteal"
+  sleepHours?: number;  // e.g. 7.5
+  stressLevel?: number; // 1-10
+  recoveryLevel?: number; // 1-10
+  activityMinutes?: number; // minutes
+  lastUpdated?: string; // ISO date
 }
 
 export interface JournalEntry {
