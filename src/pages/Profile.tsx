@@ -433,7 +433,9 @@ export default function Profile() {
             onClick={() => navigate('/society')}
             className="w-full rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98] bg-gradient-to-r from-primary/40 via-primary/20 to-primary/45 border border-primary/30 shadow-lg shadow-primary/20 ring-1 ring-primary/10"
           >
-             <img src={ubloomLogo} alt="uBloom" className="w-10 h-10 object-contain drop-shadow-md" />
+             <div className="w-10 h-10 rounded-full bg-background/70 flex items-center justify-center">
+               <img src={ubloomLogo} alt="uBloom" className="w-7 h-7 object-contain drop-shadow-md" />
+             </div>
             <div className="flex-1">
               <span className="font-medium text-foreground">uBloom Society</span>
               <p className="text-xs text-foreground/60">Connect · Grow · Bloom</p>
