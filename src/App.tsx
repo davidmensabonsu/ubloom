@@ -29,6 +29,7 @@ import Ubi from "./pages/Ubi";
 import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
 import WonderCategory from "./pages/WonderCategory";
+import Health from "./pages/Health";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -107,6 +108,7 @@ function AnimatedRoutes() {
             <Route path="/profile" element={<ProtectedRoute><PageTransition direction={direction}><Profile /></PageTransition></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute><PageTransition direction={direction}><AdminDashboard /></PageTransition></ProtectedRoute>} />
             <Route path="/wonder/:category" element={<ProtectedRoute><PageTransition direction={direction}><WonderCategory /></PageTransition></ProtectedRoute>} />
+            <Route path="/health" element={<ProtectedRoute><PageTransition direction={direction}><Health /></PageTransition></ProtectedRoute>} />
             <Route path="*" element={<PageTransition direction={direction}><NotFound /></PageTransition>} />
           </Routes>
         </AnimatePresence>
