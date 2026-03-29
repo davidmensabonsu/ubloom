@@ -141,7 +141,7 @@ export default function Home() {
           <QuickAction icon={quickActionIcons.journal} title="Journal" href="/alignment" />
           <QuickAction icon={quickActionIcons.routine} title="Routine" href="/routine" />
           <QuickAction icon={quickActionIcons.ubi} title="Ubi" href="/ubi" />
-          <QuickAction icon={quickActionIcons.wonder} title="Wonder" href="/wonder" />
+          <QuickAction icon={quickActionIcons.wonder} title="Wander" href="/wonder" />
         </motion.div>
       </div>
 
