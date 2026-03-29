@@ -431,14 +431,14 @@ export default function Profile() {
         >
           <button
             onClick={() => navigate('/society')}
-            className="w-full rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98] bg-gradient-to-r from-pink-200/80 via-rose-200/70 to-pink-300/60 border border-pink-300/30 shadow-md shadow-pink-200/20"
+            className="w-full rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98] bg-gradient-to-r from-primary/20 via-primary/15 to-primary/25 border border-primary/20 shadow-md shadow-primary/10"
           >
              <img src={ubloomLogo} alt="uBloom" className="w-10 h-10 object-contain clay-icon" />
             <div className="flex-1">
               <span className="font-medium text-foreground">uBloom Society</span>
               <p className="text-xs text-foreground/60">Connect · Grow · Bloom</p>
             </div>
-            <span className="text-[10px] font-medium px-2.5 py-1 rounded-full bg-white/50 text-pink-600 backdrop-blur-sm">
+            <span className="text-[10px] font-medium px-2.5 py-1 rounded-full bg-background/50 text-primary backdrop-blur-sm">
               Coming Soon
             </span>
           </button>
