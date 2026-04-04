@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
 import ProfileButton from '@/components/ProfileButton';
 import { useUserStore } from '@/stores/userStore';
-import { wonderResources, mealRecipes, fitnessWorkouts } from '@/lib/wonderResources';
+import { wonderResources, mealRecipes, fitnessWorkouts, typeLabels } from '@/lib/wonderResources';
 
 import booksBanner from '@/assets/wonder/book-imperfection.jpg';
 import fitnessImg from '@/assets/wonder/fitness.jpg';
