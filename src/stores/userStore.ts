@@ -81,11 +81,17 @@ export interface UserProfile {
   cycleData?: CycleData;
 }
 
+export interface PeriodLogEntry {
+  date: string; // yyyy-MM-dd
+  cycleLength?: number; // days since previous period start
+}
+
 export interface CycleData {
   lastPeriodStart: string;
   cycleLength: number;
   periodLength: number;
   setupComplete: boolean;
+  periodHistory?: PeriodLogEntry[];
 }
 
 export interface HealthData {

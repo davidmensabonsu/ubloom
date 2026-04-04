@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Settings, Droplets } from 'lucide-react';
+import { ArrowLeft, Settings, Droplets, CalendarDays, ChevronDown, ChevronUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import ProfileButton from '@/components/ProfileButton';
@@ -25,6 +25,7 @@ export default function Health() {
   const cycleData = profile.cycleData;
   const [showSetup, setShowSetup] = useState(false);
   const [showPeriodConfirm, setShowPeriodConfirm] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [insights, setInsights] = useState<string[]>([]);
   const [loadingInsights, setLoadingInsights] = useState(true);
 
@@ -137,8 +138,16 @@ export default function Health() {
                     className="rounded-full bg-destructive/90 hover:bg-destructive text-destructive-foreground"
                     onClick={() => {
                       const today = getLocalDateStr();
+                      const history = cycleData.periodHistory || [];
+                      const prevStart = cycleData.lastPeriodStart;
+                      const daysSinceLast = Math.round((new Date(today).getTime() - new Date(prevStart).getTime()) / (1000 * 60 * 60 * 24));
+                      const newEntry = { date: today, cycleLength: daysSinceLast > 0 ? daysSinceLast : undefined };
                       updateProfile({
-                        cycleData: { ...cycleData, lastPeriodStart: today },
+                        cycleData: {
+                          ...cycleData,
+                          lastPeriodStart: today,
+                          periodHistory: [newEntry, ...history].slice(0, 24),
+                        },
                       });
                       setShowPeriodConfirm(false);
                       toast.success('Period logged — your predictions have been updated');
@@ -151,6 +160,57 @@ export default function Health() {
             </AnimatePresence>
           )}
         </motion.div>
+
+        {/* Period History */}
+        {(cycleData.periodHistory?.length ?? 0) > 0 && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+            <button
+              onClick={() => setShowHistory(!showHistory)}
+              className="flex items-center gap-2 mb-3 w-full"
+            >
+              <CalendarDays size={18} className="text-muted-foreground" />
+              <h2 className="section-title flex-1 text-left">Period History</h2>
+              {showHistory ? <ChevronUp size={16} className="text-muted-foreground" /> : <ChevronDown size={16} className="text-muted-foreground" />}
+            </button>
+            <AnimatePresence>
+              {showHistory && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="overflow-hidden space-y-2"
+                >
+                  {cycleData.periodHistory!.map((entry, i) => {
+                    const dateObj = new Date(entry.date + 'T00:00:00');
+                    const formatted = dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+                    return (
+                      <div key={i} className="glass-card rounded-xl px-4 py-3 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Droplets size={14} className="text-destructive/70" />
+                          <span className="text-sm text-foreground">{formatted}</span>
+                        </div>
+                        {entry.cycleLength && entry.cycleLength > 0 && (
+                          <span className="text-xs text-muted-foreground">{entry.cycleLength}-day cycle</span>
+                        )}
+                      </div>
+                    );
+                  })}
+                  {cycleData.periodHistory!.length >= 2 && (() => {
+                    const lengths = cycleData.periodHistory!.filter(e => e.cycleLength && e.cycleLength > 0).map(e => e.cycleLength!);
+                    if (lengths.length === 0) return null;
+                    const avg = Math.round(lengths.reduce((a, b) => a + b, 0) / lengths.length);
+                    return (
+                      <div className="glass-card rounded-xl px-4 py-3 text-center">
+                        <span className="text-xs text-muted-foreground">Average cycle length: </span>
+                        <span className="text-sm font-semibold text-foreground">{avg} days</span>
+                      </div>
+                    );
+                  })()}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        )}
 
         {/* Today's Insight */}
         <CycleInsightCard phase={currentPhase} />
