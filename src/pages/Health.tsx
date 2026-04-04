@@ -142,15 +142,27 @@ export default function Health() {
                       const prevStart = cycleData.lastPeriodStart;
                       const daysSinceLast = Math.round((new Date(today).getTime() - new Date(prevStart).getTime()) / (1000 * 60 * 60 * 24));
                       const newEntry = { date: today, cycleLength: daysSinceLast > 0 ? daysSinceLast : undefined };
+                      const updatedHistory = [newEntry, ...history].slice(0, 24);
+
+                      // Calculate rolling average from entries with valid cycle lengths
+                      const validLengths = updatedHistory.filter(e => e.cycleLength && e.cycleLength > 14 && e.cycleLength < 50).map(e => e.cycleLength!);
+                      const newCycleLength = validLengths.length >= 2
+                        ? Math.round(validLengths.reduce((a, b) => a + b, 0) / validLengths.length)
+                        : cycleData.cycleLength;
+
                       updateProfile({
                         cycleData: {
                           ...cycleData,
                           lastPeriodStart: today,
-                          periodHistory: [newEntry, ...history].slice(0, 24),
+                          cycleLength: newCycleLength,
+                          periodHistory: updatedHistory,
                         },
                       });
                       setShowPeriodConfirm(false);
-                      toast.success('Period logged — your predictions have been updated');
+                      const msg = newCycleLength !== cycleData.cycleLength
+                        ? `Period logged — cycle length updated to ${newCycleLength} days`
+                        : 'Period logged — your predictions have been updated';
+                      toast.success(msg);
                     }}
                   >
                     Confirm
