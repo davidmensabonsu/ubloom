@@ -120,10 +120,7 @@ export function useUbiChat() {
         );
         setConversations(withPreviews);
 
-        // Load latest conversation
-        const latest = withPreviews[0];
-        setCurrentConversationId(latest.id);
-        await loadMessagesForConversation(latest.id);
+        // Don't auto-load latest — always start with a fresh chat
       } else if (!migrationDoneRef.current) {
         // Migrate old messages if any
         migrationDoneRef.current = true;
