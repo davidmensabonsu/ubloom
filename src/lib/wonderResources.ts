@@ -571,17 +571,6 @@ export const wonderResources: WonderResource[] = [
     content: 'For the first 60 minutes after waking, don\'t check your phone. Stretch, make tea, journal, or simply be. You\'ll notice a dramatic shift in how your day feels.',
   },
   {
-    id: 'life-5',
-    title: 'Gratitude Before Sleep',
-    description: 'Name three things you\'re grateful for before closing your eyes.',
-    category: 'lifestyle',
-    type: 'technique',
-    tags: ['gratitude', 'peace', 'sleep'],
-    emotionalTone: 'warm',
-    goalAlignment: ['peace', 'joy'],
-    content: 'Every night before sleep, think of or write down three things you\'re grateful for. They can be tiny. The warmth of your blanket. A kind word. The sunset. Let gratitude be your last thought.',
-  },
-  {
     id: 'life-6',
     title: 'Capsule Wardrobe Guide',
     description: 'Simplify your wardrobe to feel polished without the stress.',
