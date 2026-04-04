@@ -5,17 +5,22 @@ import { fitnessWorkouts, type FitnessWorkout, type FitnessType } from '@/lib/wo
 import { useUserStore } from '@/stores/userStore';
 import FitnessWorkoutCard from './FitnessWorkoutCard';
 import FitnessDetailSheet from './FitnessDetailSheet';
+import heartIcon from '@/assets/icons/heart.png';
+import dumbbellIcon from '@/assets/icons/dumbbell.png';
+import runningIcon from '@/assets/icons/running.png';
+import flameIcon from '@/assets/icons/flame.png';
+import yogaIcon from '@/assets/icons/yoga.png';
 
 type TabKey = FitnessType | 'saved';
 
-const fitnessTabs: { key: TabKey; label: string; emoji: string }[] = [
-  { key: 'saved', label: 'Saved', emoji: '💾' },
-  { key: 'upper-body', label: 'Upper Body', emoji: '💪' },
-  { key: 'lower-body', label: 'Lower Body', emoji: '🦵' },
-  { key: 'core', label: 'Core', emoji: '🔥' },
-  { key: 'full-body', label: 'Full Body', emoji: '🏋️‍♀️' },
-  { key: 'cardio', label: 'Cardio', emoji: '🫀' },
-  { key: 'stretches-yoga', label: 'Stretches & Yoga', emoji: '🧘‍♀️' },
+const fitnessTabs: { key: TabKey; label: string; icon: string }[] = [
+  { key: 'saved', label: 'Saved', icon: heartIcon },
+  { key: 'upper-body', label: 'Upper Body', icon: dumbbellIcon },
+  { key: 'lower-body', label: 'Lower Body', icon: runningIcon },
+  { key: 'core', label: 'Core', icon: flameIcon },
+  { key: 'full-body', label: 'Full Body', icon: dumbbellIcon },
+  { key: 'cardio', label: 'Cardio', icon: runningIcon },
+  { key: 'stretches-yoga', label: 'Stretches & Yoga', icon: yogaIcon },
 ];
 
 export default function FitnessSection() {
