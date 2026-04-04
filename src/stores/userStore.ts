@@ -549,6 +549,17 @@ export const useUserStore = create<UserStore>()(
           },
         })),
 
+      viewResource: (resourceId) =>
+        set((state) => {
+          const existing = (state.profile.recentlyViewedResources || []).filter((id) => id !== resourceId);
+          return {
+            profile: {
+              ...state.profile,
+              recentlyViewedResources: [resourceId, ...existing].slice(0, 20),
+            },
+          };
+        }),
+
       // Custom tasks
       addCustomTask: (task) =>
         set((state) => ({
