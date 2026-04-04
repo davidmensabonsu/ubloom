@@ -45,9 +45,18 @@ type Tab = 'for-you' | 'popular';
 export default function Wonder2() {
   const [tab, setTab] = useState<Tab>('for-you');
   const [search, setSearch] = useState('');
+  const [selectedResource, setSelectedResource] = useState<WonderResource | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const navigate = useNavigate();
   const savedIds = useUserStore((s) => s.profile.savedResources) || [];
+  const recentlyViewedIds = useUserStore((s) => s.profile.recentlyViewedResources) || [];
   const { saveResource, unsaveResource } = useUserStore();
+
+  // Resolve recently viewed resource objects (max 6 shown)
+  const recentResources = recentlyViewedIds
+    .map((id) => wonderResources.find((r) => r.id === id))
+    .filter(Boolean)
+    .slice(0, 6) as WonderResource[];
 
   const savedSet = new Set(savedIds);
 
