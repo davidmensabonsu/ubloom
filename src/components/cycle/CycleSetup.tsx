@@ -3,47 +3,90 @@ import { useState } from 'react';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/stores/userStore';
-import { format } from 'date-fns';
+import { format, differenceInYears } from 'date-fns';
 
 import blossomIcon from '@/assets/icons/blossom.png';
 
 interface CycleSetupProps {
-  initialData?: { lastPeriodStart?: string; cycleLength?: number; periodLength?: number };
+  initialData?: { lastPeriodStart?: string; cycleLength?: number; periodLength?: number; dateOfBirth?: string };
   onComplete: () => void;
 }
 
+const TOTAL_STEPS = 4;
+
 export default function CycleSetup({ initialData, onComplete }: CycleSetupProps) {
-  const { updateProfile } = useUserStore();
+  const { updateProfile, profile } = useUserStore();
   const [step, setStep] = useState(0);
+  const [dateOfBirth, setDateOfBirth] = useState<Date | undefined>(
+    initialData?.dateOfBirth ? new Date(initialData.dateOfBirth + 'T00:00:00') : undefined
+  );
   const [lastPeriodDate, setLastPeriodDate] = useState<Date | undefined>(
     initialData?.lastPeriodStart ? new Date(initialData.lastPeriodStart + 'T00:00:00') : undefined
   );
   const [cycleLength, setCycleLength] = useState(initialData?.cycleLength ?? 28);
   const [periodLength, setPeriodLength] = useState(initialData?.periodLength ?? 5);
 
-  const cycleLengthOptions = Array.from({ length: 15 }, (_, i) => i + 21); // 21-35
-  const periodLengthOptions = Array.from({ length: 6 }, (_, i) => i + 3); // 3-8
+  const cycleLengthOptions = Array.from({ length: 15 }, (_, i) => i + 21);
+  const periodLengthOptions = Array.from({ length: 6 }, (_, i) => i + 3);
+
+  const age = dateOfBirth ? differenceInYears(new Date(), dateOfBirth) : null;
+
+  const formatDate = (d: Date) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  };
 
   const handleSubmit = () => {
     if (!lastPeriodDate) return;
-    const year = lastPeriodDate.getFullYear();
-    const month = String(lastPeriodDate.getMonth() + 1).padStart(2, '0');
-    const day = String(lastPeriodDate.getDate()).padStart(2, '0');
-
     updateProfile({
       cycleData: {
-        lastPeriodStart: `${year}-${month}-${day}`,
+        ...profile.cycleData,
+        lastPeriodStart: formatDate(lastPeriodDate),
         cycleLength,
         periodLength,
         setupComplete: true,
+        dateOfBirth: dateOfBirth ? formatDate(dateOfBirth) : profile.cycleData?.dateOfBirth,
       },
     });
     onComplete();
   };
 
   const steps = [
-    // Step 1: Date picker
-    <motion.div key="step-0" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="flex flex-col items-center gap-6 w-full">
+    // Step 0: Date of birth
+    <motion.div key="step-dob" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="flex flex-col items-center gap-6 w-full">
+      <h2 className="text-xl font-display font-semibold text-foreground text-center">What's your date of birth?</h2>
+      <p className="text-sm text-muted-foreground text-center">This helps us personalise your experience</p>
+      <div className="glass-card rounded-2xl p-2">
+        <Calendar
+          mode="single"
+          selected={dateOfBirth}
+          onSelect={setDateOfBirth}
+          disabled={(date) => date > new Date() || date < new Date('1940-01-01')}
+          defaultMonth={dateOfBirth || new Date(2000, 0)}
+          fromYear={1940}
+          toYear={new Date().getFullYear()}
+          captionLayout="dropdown-buttons"
+          className={cn("p-3 pointer-events-auto")}
+        />
+      </div>
+      {age !== null && age >= 0 && (
+        <p className="text-sm text-foreground/70">
+          You're <span className="font-semibold text-foreground">{age}</span> years old
+        </p>
+      )}
+      <button
+        onClick={() => dateOfBirth && setStep(1)}
+        disabled={!dateOfBirth}
+        className="w-full max-w-xs py-3 rounded-2xl bg-primary text-primary-foreground font-medium text-sm transition-opacity disabled:opacity-40"
+      >
+        Continue
+      </button>
+    </motion.div>,
+
+    // Step 1: Last period date
+    <motion.div key="step-period" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="flex flex-col items-center gap-6 w-full">
       <h2 className="text-xl font-display font-semibold text-foreground text-center">When did your last period start?</h2>
       <p className="text-sm text-muted-foreground text-center">This helps us calculate your current phase</p>
       <div className="glass-card rounded-2xl p-2">
@@ -56,7 +99,7 @@ export default function CycleSetup({ initialData, onComplete }: CycleSetupProps)
         />
       </div>
       <button
-        onClick={() => lastPeriodDate && setStep(1)}
+        onClick={() => lastPeriodDate && setStep(2)}
         disabled={!lastPeriodDate}
         className="w-full max-w-xs py-3 rounded-2xl bg-primary text-primary-foreground font-medium text-sm transition-opacity disabled:opacity-40"
       >
@@ -65,7 +108,7 @@ export default function CycleSetup({ initialData, onComplete }: CycleSetupProps)
     </motion.div>,
 
     // Step 2: Cycle length
-    <motion.div key="step-1" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="flex flex-col items-center gap-6 w-full">
+    <motion.div key="step-cycle" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="flex flex-col items-center gap-6 w-full">
       <h2 className="text-xl font-display font-semibold text-foreground text-center">How long is your average cycle?</h2>
       <p className="text-sm text-muted-foreground text-center">Most cycles are between 21 and 35 days</p>
       <div className="flex flex-wrap justify-center gap-2 max-w-sm">
@@ -85,13 +128,13 @@ export default function CycleSetup({ initialData, onComplete }: CycleSetupProps)
         ))}
       </div>
       <p className="text-xs text-muted-foreground">{cycleLength} days</p>
-      <button onClick={() => setStep(2)} className="w-full max-w-xs py-3 rounded-2xl bg-primary text-primary-foreground font-medium text-sm">
+      <button onClick={() => setStep(3)} className="w-full max-w-xs py-3 rounded-2xl bg-primary text-primary-foreground font-medium text-sm">
         Continue
       </button>
     </motion.div>,
 
     // Step 3: Period length
-    <motion.div key="step-2" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="flex flex-col items-center gap-6 w-full">
+    <motion.div key="step-period-len" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="flex flex-col items-center gap-6 w-full">
       <h2 className="text-xl font-display font-semibold text-foreground text-center">How long does your period usually last?</h2>
       <p className="text-sm text-muted-foreground text-center">Select the number of days</p>
       <div className="flex gap-3">
@@ -122,12 +165,12 @@ export default function CycleSetup({ initialData, onComplete }: CycleSetupProps)
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center mb-8">
         <img src={blossomIcon} alt="" className="w-12 h-12 clay-icon mb-3" />
         <h1 className="text-2xl font-display font-bold text-foreground">Cycle Tracker</h1>
-        <p className="text-xs text-muted-foreground mt-1">Step {step + 1} of 3</p>
+        <p className="text-xs text-muted-foreground mt-1">Step {step + 1} of {TOTAL_STEPS}</p>
       </motion.div>
 
       {/* Progress dots */}
       <div className="flex gap-2 mb-8">
-        {[0, 1, 2].map((i) => (
+        {Array.from({ length: TOTAL_STEPS }, (_, i) => (
           <div key={i} className={cn("w-2 h-2 rounded-full transition-all", i <= step ? "bg-primary scale-110" : "bg-muted")} />
         ))}
       </div>
