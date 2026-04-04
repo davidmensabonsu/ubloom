@@ -58,7 +58,7 @@ export default function FoodRecipesSection() {
                 : 'bg-muted/60 text-muted-foreground hover:bg-muted'
             }`}
           >
-            {tab.emoji} {tab.label}
+            <img src={tab.icon} alt="" className="w-4 h-4 object-contain clay-icon" /> {tab.label}
             {tab.key === 'saved' && savedCount > 0 && (
               <span className="ml-0.5 text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-full font-semibold">
                 {savedCount}
