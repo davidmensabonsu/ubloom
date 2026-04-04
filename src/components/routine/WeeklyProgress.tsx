@@ -95,7 +95,8 @@ export default function WeeklyProgress() {
         (c) => c.date === dateStr && c.completed && allTrackableIds.has(c.habitId)
       );
 
-      const expectedTotal = coreHabits.length + getCustomTaskCountForDate(dateStr, dayOfWeek);
+      const scheduledCount = coreHabits.filter(h => isHabitScheduledForDate(h, dateStr)).length;
+      const expectedTotal = scheduledCount + getCustomTaskCountForDate(dateStr, dayOfWeek);
       const effectiveTotal = Math.max(expectedTotal, dayCompletions.length);
       const completionRate = effectiveTotal > 0 ? dayCompletions.length / effectiveTotal : 0;
 
