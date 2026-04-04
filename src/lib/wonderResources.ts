@@ -809,17 +809,6 @@ export const wonderResources: WonderResource[] = [
     content: 'Lie on your back and swing your legs up against a wall. Rest here for 5-10 minutes. This simple inversion lowers heart rate, reduces swelling, and calms the nervous system.',
   },
   {
-    id: 'calm-7',
-    title: 'Journaling for Release',
-    description: 'Write without editing to let go of what weighs on you.',
-    category: 'calm',
-    type: 'technique',
-    tags: ['healing', 'release', 'clarity'],
-    emotionalTone: 'gentle',
-    goalAlignment: ['peace', 'healing'],
-    content: 'Set a timer for 10 minutes. Write without stopping, editing, or censoring. Don\'t worry about grammar or making sense. Just let whatever is inside come out onto the page. Then close the journal.',
-  },
-  {
     id: 'calm-8',
     title: 'Nervous System Reset',
     description: 'A 10-minute guided practice to shift from fight-or-flight to rest-and-digest.',
