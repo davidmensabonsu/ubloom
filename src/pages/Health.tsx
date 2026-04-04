@@ -65,7 +65,7 @@ export default function Health() {
   if (!setupComplete || showSetup) {
     return (
       <CycleSetup
-        initialData={cycleData ? { lastPeriodStart: cycleData.lastPeriodStart, cycleLength: cycleData.cycleLength, periodLength: cycleData.periodLength } : undefined}
+        initialData={cycleData ? { lastPeriodStart: cycleData.lastPeriodStart, cycleLength: cycleData.cycleLength, periodLength: cycleData.periodLength, dateOfBirth: cycleData.dateOfBirth } : undefined}
         onComplete={() => setShowSetup(false)}
       />
     );

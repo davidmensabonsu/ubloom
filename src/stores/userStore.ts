@@ -92,6 +92,7 @@ export interface CycleData {
   periodLength: number;
   setupComplete: boolean;
   periodHistory?: PeriodLogEntry[];
+  dateOfBirth?: string; // yyyy-MM-dd
 }
 
 export interface HealthData {
