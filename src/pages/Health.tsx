@@ -1,5 +1,5 @@
-import { motion } from 'framer-motion';
-import { ArrowLeft, Settings } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, Settings, Droplets } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import ProfileButton from '@/components/ProfileButton';
@@ -7,7 +7,10 @@ import BottomNav from '@/components/BottomNav';
 import { useUserStore } from '@/stores/userStore';
 import { supabase } from '@/integrations/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 import { getCurrentCycleDay, getCurrentPhase, getFormattedNextPeriod } from '@/lib/cycleUtils';
+import { getLocalDateStr } from '@/lib/dateUtils';
+import { toast } from 'sonner';
 
 import CycleSetup from '@/components/cycle/CycleSetup';
 import CycleWheel from '@/components/cycle/CycleWheel';
