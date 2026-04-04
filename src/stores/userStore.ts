@@ -207,6 +207,7 @@ interface UserStore {
   markResourceUsed: (id: string) => void;
   unmarkResourceUsed: (id: string) => void;
   logResourceCompletion: (resourceId: string) => void;
+  viewResource: (resourceId: string) => void;
   completeOnboarding: () => void;
   resetProfile: () => void;
   // Core habits
