@@ -124,6 +124,35 @@ export default function Wonder2() {
       </div>
 
       <div className="px-4 space-y-4">
+        {/* Recently Viewed */}
+        {recentResources.length > 0 && !query && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-2.5"
+          >
+            <div className="flex items-center gap-1.5">
+              <Clock size={14} className="text-muted-foreground" />
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Recently Viewed</h3>
+            </div>
+            <div className="flex gap-2.5 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide">
+              {recentResources.map((r) => (
+                <button
+                  key={r.id}
+                  onClick={() => { setSelectedResource(r); setSheetOpen(true); }}
+                  className="shrink-0 w-36 rounded-xl bg-card border border-border/30 p-3 text-left space-y-1 hover:bg-muted/30 transition-colors"
+                >
+                  <div className="flex items-center gap-1.5">
+                    <img src={typeLabels[r.type].icon} alt="" className="w-4 h-4 object-contain clay-icon" />
+                    <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider truncate">{typeLabels[r.type].label}</span>
+                  </div>
+                  <p className="text-xs font-semibold text-foreground leading-tight line-clamp-2">{r.title}</p>
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
         {/* Books banner */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -181,6 +210,12 @@ export default function Wonder2() {
           ))}
         </div>
       </div>
+
+      <ResourceDetailSheet
+        resource={selectedResource}
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+      />
 
       <BottomNav />
     </div>
