@@ -269,6 +269,7 @@ const initialProfile: UserProfile = {
    savedResources: [],
    savedRecipes: [],
    usedResources: [],
+   recentlyViewedResources: [],
   resourceCompletions: [],
   moodboardItems: [],
   onboardingComplete: false,
