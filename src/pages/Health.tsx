@@ -103,6 +103,55 @@ export default function Health() {
           nextPeriod={nextPeriod}
         />
 
+        {/* Log Period Button */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="flex justify-center">
+          {!showPeriodConfirm ? (
+            <Button
+              variant="outline"
+              className="rounded-full gap-2 border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive"
+              onClick={() => setShowPeriodConfirm(true)}
+            >
+              <Droplets size={16} />
+              Log period start
+            </Button>
+          ) : (
+            <AnimatePresence>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="glass-card rounded-2xl p-4 w-full text-center space-y-3"
+              >
+                <p className="text-sm text-foreground/80">Mark today as the start of your period?</p>
+                <div className="flex gap-3 justify-center">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="rounded-full"
+                    onClick={() => setShowPeriodConfirm(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="rounded-full bg-destructive/90 hover:bg-destructive text-destructive-foreground"
+                    onClick={() => {
+                      const today = getLocalDateStr();
+                      updateProfile({
+                        cycleData: { ...cycleData, lastPeriodStart: today },
+                      });
+                      setShowPeriodConfirm(false);
+                      toast.success('Period logged — your predictions have been updated');
+                    }}
+                  >
+                    Confirm
+                  </Button>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          )}
+        </motion.div>
+
         {/* Today's Insight */}
         <CycleInsightCard phase={currentPhase} />
 
