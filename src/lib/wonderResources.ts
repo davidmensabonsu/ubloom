@@ -187,17 +187,6 @@ export const wonderResources: WonderResource[] = [
     goalAlignment: ['discipline', 'growth'],
   },
   {
-    id: 'mind-7',
-    title: 'Future Self Journaling',
-    description: 'Write a letter from your dream self to your present self.',
-    category: 'mindset',
-    type: 'technique',
-    tags: ['vision', 'clarity', 'motivation'],
-    emotionalTone: 'inspiring',
-    goalAlignment: ['confidence', 'growth'],
-    content: 'Imagine it\'s one year from now. You\'ve become the version of yourself you dream about. Write a letter from her to you — what does she want you to know? What did she do to get here?',
-  },
-  {
     id: 'mind-8',
     title: 'The Power of Vulnerability',
     description: 'Brené Brown\'s iconic talk on courage, worthiness, and connection.',
