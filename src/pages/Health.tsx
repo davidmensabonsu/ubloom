@@ -138,8 +138,16 @@ export default function Health() {
                     className="rounded-full bg-destructive/90 hover:bg-destructive text-destructive-foreground"
                     onClick={() => {
                       const today = getLocalDateStr();
+                      const history = cycleData.periodHistory || [];
+                      const prevStart = cycleData.lastPeriodStart;
+                      const daysSinceLast = Math.round((new Date(today).getTime() - new Date(prevStart).getTime()) / (1000 * 60 * 60 * 24));
+                      const newEntry = { date: today, cycleLength: daysSinceLast > 0 ? daysSinceLast : undefined };
                       updateProfile({
-                        cycleData: { ...cycleData, lastPeriodStart: today },
+                        cycleData: {
+                          ...cycleData,
+                          lastPeriodStart: today,
+                          periodHistory: [newEntry, ...history].slice(0, 24),
+                        },
                       });
                       setShowPeriodConfirm(false);
                       toast.success('Period logged — your predictions have been updated');
