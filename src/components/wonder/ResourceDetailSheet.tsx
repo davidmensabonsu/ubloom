@@ -245,7 +245,7 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
               </div>
               {resource.dosage.withFood && (
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <img src="/src/assets/icons/salad.png" alt="" className="w-4 h-4 object-contain clay-icon" /> Take with food
+                  <img src={saladIcon} alt="" className="w-4 h-4 object-contain clay-icon" /> Take with food
                 </div>
               )}
               {resource.dosage.notes && (
