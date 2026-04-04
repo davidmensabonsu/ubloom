@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Heart } from 'lucide-react';
+import { Search, Heart, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
 import ProfileButton from '@/components/ProfileButton';
+import ResourceDetailSheet from '@/components/wonder/ResourceDetailSheet';
 import { useUserStore } from '@/stores/userStore';
-import { wonderResources, mealRecipes, fitnessWorkouts } from '@/lib/wonderResources';
+import { wonderResources, mealRecipes, fitnessWorkouts, typeLabels } from '@/lib/wonderResources';
+import type { WonderResource } from '@/lib/wonderResources';
 
 import booksBanner from '@/assets/wonder/book-imperfection.jpg';
 import fitnessImg from '@/assets/wonder/fitness.jpg';
@@ -43,9 +45,18 @@ type Tab = 'for-you' | 'popular';
 export default function Wonder2() {
   const [tab, setTab] = useState<Tab>('for-you');
   const [search, setSearch] = useState('');
+  const [selectedResource, setSelectedResource] = useState<WonderResource | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const navigate = useNavigate();
   const savedIds = useUserStore((s) => s.profile.savedResources) || [];
+  const recentlyViewedIds = useUserStore((s) => s.profile.recentlyViewedResources) || [];
   const { saveResource, unsaveResource } = useUserStore();
+
+  // Resolve recently viewed resource objects (max 6 shown)
+  const recentResources = recentlyViewedIds
+    .map((id) => wonderResources.find((r) => r.id === id))
+    .filter(Boolean)
+    .slice(0, 6) as WonderResource[];
 
   const savedSet = new Set(savedIds);
 
@@ -113,6 +124,35 @@ export default function Wonder2() {
       </div>
 
       <div className="px-4 space-y-4">
+        {/* Recently Viewed */}
+        {recentResources.length > 0 && !query && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-2.5"
+          >
+            <div className="flex items-center gap-1.5">
+              <Clock size={14} className="text-muted-foreground" />
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Recently Viewed</h3>
+            </div>
+            <div className="flex gap-2.5 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide">
+              {recentResources.map((r) => (
+                <button
+                  key={r.id}
+                  onClick={() => { setSelectedResource(r); setSheetOpen(true); }}
+                  className="shrink-0 w-36 rounded-xl bg-card border border-border/30 p-3 text-left space-y-1 hover:bg-muted/30 transition-colors"
+                >
+                  <div className="flex items-center gap-1.5">
+                    <img src={typeLabels[r.type].icon} alt="" className="w-4 h-4 object-contain clay-icon" />
+                    <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider truncate">{typeLabels[r.type].label}</span>
+                  </div>
+                  <p className="text-xs font-semibold text-foreground leading-tight line-clamp-2">{r.title}</p>
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
         {/* Books banner */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -170,6 +210,12 @@ export default function Wonder2() {
           ))}
         </div>
       </div>
+
+      <ResourceDetailSheet
+        resource={selectedResource}
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+      />
 
       <BottomNav />
     </div>

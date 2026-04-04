@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Bookmark, BookmarkCheck, CheckCircle2, Circle, Clock, ExternalLink, Heart, HeartOff } from 'lucide-react';
@@ -192,7 +193,17 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
 }
 
 export default function ResourceDetailSheet({ resource, open, onOpenChange }: ResourceDetailSheetProps) {
-  const { profile, saveResource, unsaveResource, saveRecipe, unsaveRecipe, markResourceUsed, unmarkResourceUsed, logResourceCompletion } = useUserStore();
+  const { profile, saveResource, unsaveResource, saveRecipe, unsaveRecipe, markResourceUsed, unmarkResourceUsed, logResourceCompletion, viewResource } = useUserStore();
+
+  // Track view when sheet opens with a resource
+  const [lastViewedId, setLastViewedId] = useState<string | null>(null);
+  if (open && resource && resource.id !== lastViewedId) {
+    setLastViewedId(resource.id);
+    viewResource(resource.id);
+  }
+  if (!open && lastViewedId) {
+    setLastViewedId(null);
+  }
 
   if (!resource) return null;
 

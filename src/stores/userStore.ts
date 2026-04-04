@@ -66,6 +66,7 @@ export interface UserProfile {
   savedResources: string[];
   savedRecipes: string[]; // "resourceId::recipeIndex"
   usedResources: string[];
+  recentlyViewedResources: string[]; // ordered, most recent first, max 20
   resourceCompletions: ResourceCompletion[];
   moodboardItems: MoodboardItem[];
   cachedFutureSelfMessage?: CachedFutureSelfMessage;
@@ -206,6 +207,7 @@ interface UserStore {
   markResourceUsed: (id: string) => void;
   unmarkResourceUsed: (id: string) => void;
   logResourceCompletion: (resourceId: string) => void;
+  viewResource: (resourceId: string) => void;
   completeOnboarding: () => void;
   resetProfile: () => void;
   // Core habits
@@ -267,6 +269,7 @@ const initialProfile: UserProfile = {
    savedResources: [],
    savedRecipes: [],
    usedResources: [],
+   recentlyViewedResources: [],
   resourceCompletions: [],
   moodboardItems: [],
   onboardingComplete: false,
@@ -545,6 +548,17 @@ export const useUserStore = create<UserStore>()(
             ],
           },
         })),
+
+      viewResource: (resourceId) =>
+        set((state) => {
+          const existing = (state.profile.recentlyViewedResources || []).filter((id) => id !== resourceId);
+          return {
+            profile: {
+              ...state.profile,
+              recentlyViewedResources: [resourceId, ...existing].slice(0, 20),
+            },
+          };
+        }),
 
       // Custom tasks
       addCustomTask: (task) =>
