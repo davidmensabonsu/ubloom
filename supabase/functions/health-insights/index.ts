@@ -13,33 +13,34 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
-    const systemPrompt = `You are Ubi, a warm and supportive wellness companion inside the uBloom app. The user has a Health page showing their mood patterns, energy, and wellbeing data. Based on the context provided, generate exactly 4 personalized wellness insights.
+    const cyclePhase = context.cyclePhase || "unknown";
+    const cycleDay = context.cycleDay || "unknown";
+
+    const systemPrompt = `You are Ubi, a warm and supportive wellness companion inside the uBloom app. The user has a Cycle Tracker page. Based on their current cycle phase and recent mood/wellness data, generate exactly 3 personalised recommendations.
+
+The user is currently in their ${cyclePhase} phase (day ${cycleDay} of their cycle).
 
 Your tone should be:
 - Warm, gentle, and encouraging — like a caring friend, not a doctor
-- Personal and specific to their patterns, not generic
+- Reference their cycle phase naturally and conversationally, not clinically
 - Actionable with small, doable suggestions
 - Never clinical, diagnostic, or prescriptive
 
-Cover these areas across your 4 insights:
-1. Energy-based guidance (based on their recent moods and check-in state)
-2. Behavioral patterns you notice (from journal entries and mood trends)
-3. A gentle daily adjustment suggestion
-4. An encouraging observation about their self-awareness
+Cover these areas across your 3 insights:
+1. A movement or body-care suggestion appropriate for their current phase
+2. A mindset, energy, or productivity observation tied to their phase and recent mood
+3. An encouraging self-care reminder that connects their cycle to their overall wellbeing journey
 
-Return a JSON object with an "insights" array of exactly 4 strings. Each insight should be 1-2 sentences.`;
+Return a JSON object with an "insights" array of exactly 3 strings. Each insight should be 1-2 sentences.`;
 
     const userPrompt = `Here is the user's recent wellness context:
 
+Cycle phase: ${cyclePhase} (day ${cycleDay})
 Daily check-in state: ${context.dailyCheckinState || "not checked in today"}
-
-Health data logged: ${JSON.stringify(context.healthData || {})}
-
 Recent mood entries (last 14 days): ${JSON.stringify(context.moodHistory || [])}
-
 Recent journal excerpts: ${JSON.stringify(context.recentJournals || [])}
 
-Generate 4 personalized wellness insights based on this data.`;
+Generate 3 personalised cycle-aware wellness insights.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -58,15 +59,15 @@ Generate 4 personalized wellness insights based on this data.`;
             type: "function",
             function: {
               name: "return_insights",
-              description: "Return personalized health insights",
+              description: "Return personalized cycle-aware insights",
               parameters: {
                 type: "object",
                 properties: {
                   insights: {
                     type: "array",
                     items: { type: "string" },
-                    minItems: 4,
-                    maxItems: 4,
+                    minItems: 3,
+                    maxItems: 3,
                   },
                 },
                 required: ["insights"],
@@ -102,7 +103,7 @@ Generate 4 personalized wellness insights based on this data.`;
   } catch (e) {
     console.error("health-insights error:", e);
     return new Response(
-      JSON.stringify({ insights: ["Take a moment to breathe deeply and check in with how your body feels right now."] }),
+      JSON.stringify({ insights: ["Listen to your body today — even small acts of care can shift your energy."] }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

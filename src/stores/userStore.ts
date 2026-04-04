@@ -78,19 +78,27 @@ export interface UserProfile {
   ubiIntroSeen?: boolean;
   healthData?: HealthData;
   healthHistory?: HealthHistoryEntry[];
+  cycleData?: CycleData;
+}
+
+export interface CycleData {
+  lastPeriodStart: string;
+  cycleLength: number;
+  periodLength: number;
+  setupComplete: boolean;
 }
 
 export interface HealthData {
-  cycle?: string;       // e.g. "Follicular", "Luteal"
-  sleepHours?: number;  // e.g. 7.5
-  stressLevel?: number; // 1-10
-  recoveryLevel?: number; // 1-10
-  activityMinutes?: number; // minutes
-  lastUpdated?: string; // ISO date
+  cycle?: string;
+  sleepHours?: number;
+  stressLevel?: number;
+  recoveryLevel?: number;
+  activityMinutes?: number;
+  lastUpdated?: string;
 }
 
 export interface HealthHistoryEntry {
-  date: string; // yyyy-MM-dd
+  date: string;
   sleepHours?: number;
   stressLevel?: number;
   recoveryLevel?: number;
