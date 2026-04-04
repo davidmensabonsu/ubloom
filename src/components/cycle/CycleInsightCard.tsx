@@ -14,7 +14,7 @@ export default function CycleInsightCard({ phase }: { phase: CyclePhase }) {
     <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="glass-card rounded-2xl p-5">
       <div className="flex items-center gap-2 mb-3">
         <img src={icons[iconKey]} alt={phase} className="w-6 h-6 clay-icon" />
-        <h3 className="font-display font-semibold text-sm text-foreground">Today's Cycle Insight</h3>
+        <h3 className="font-display font-semibold text-foreground text-base">Today's Cycle Insight</h3>
       </div>
       <p className="text-sm text-foreground/85 leading-relaxed">{getPhaseInsight(phase)}</p>
     </motion.div>
