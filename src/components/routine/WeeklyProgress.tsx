@@ -47,7 +47,8 @@ export default function WeeklyProgress() {
       ).length;
 
       const dayOfWeek = date.getDay();
-      const expectedTotal = coreHabits.length + getCustomTaskCountForDate(dateStr, dayOfWeek);
+      const scheduledHabitsCount = coreHabits.filter(h => isHabitScheduledForDate(h, dateStr)).length;
+      const expectedTotal = scheduledHabitsCount + getCustomTaskCountForDate(dateStr, dayOfWeek);
       const totalHabits = isToday
         ? expectedTotal
         : Math.max(expectedTotal, completedHabits);
