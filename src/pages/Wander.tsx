@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Heart } from 'lucide-react';
+import { Search, Heart, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
+import ProfileButton from '@/components/ProfileButton';
+import ResourceDetailSheet from '@/components/wonder/ResourceDetailSheet';
+import type { WonderResource } from '@/lib/wonderResources';
 import ProfileButton from '@/components/ProfileButton';
 import { useUserStore } from '@/stores/userStore';
 import { wonderResources, mealRecipes, fitnessWorkouts, typeLabels } from '@/lib/wonderResources';
