@@ -124,8 +124,6 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
       return <SimpleTimer duration={3600} label="Phone-free" doneMessage="One hour reclaimed ✨" onComplete={onComplete} />;
     case 'calm-6':
       return <SimpleTimer duration={300} label="Legs up the wall" doneMessage="Rest complete ✨" onComplete={onComplete} />;
-    case 'calm-7':
-      return <SimpleTimer duration={600} label="Free write" doneMessage="Release complete ✨" onComplete={onComplete} />;
     case 'well-2':
       return <SimpleTimer duration={60} label="Cold splash" doneMessage="Refreshed! 💦" onComplete={onComplete} />;
     case 'well-6':
