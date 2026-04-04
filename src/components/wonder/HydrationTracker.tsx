@@ -13,7 +13,7 @@ export default function HydrationTracker({ onComplete }: { onComplete?: () => vo
   return (
     <div className="flex flex-col items-center gap-4 py-4">
       <p className="text-xs uppercase tracking-widest text-muted-foreground font-medium">
-        {isDone ? 'Goal reached! 💧' : 'Tap a glass to log water'}
+        {isDone ? 'Goal reached!' : 'Tap a glass to log water'}
       </p>
 
       {/* Glass grid */}

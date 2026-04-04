@@ -5,15 +5,20 @@ import { mealRecipes, type MealRecipe, type MealType } from '@/lib/wonderResourc
 import { useUserStore } from '@/stores/userStore';
 import MealRecipeCard from './MealRecipeCard';
 import RecipeDetailSheet from './RecipeDetailSheet';
+import heartIcon from '@/assets/icons/heart.png';
+import sunriseIcon from '@/assets/icons/sunrise.png';
+import sunIcon from '@/assets/icons/sun.png';
+import moonIcon from '@/assets/icons/moon.png';
+import fruitIcon from '@/assets/icons/fruit.png';
 
 type TabKey = MealType | 'saved';
 
-const mealTabs: { key: TabKey; label: string; emoji: string }[] = [
-  { key: 'saved', label: 'Saved', emoji: '💾' },
-  { key: 'breakfast', label: 'Breakfast', emoji: '🌅' },
-  { key: 'lunch', label: 'Lunch', emoji: '☀️' },
-  { key: 'dinner', label: 'Dinner', emoji: '🌙' },
-  { key: 'snack', label: 'Snacks', emoji: '🍎' },
+const mealTabs: { key: TabKey; label: string; icon: string }[] = [
+  { key: 'saved', label: 'Saved', icon: heartIcon },
+  { key: 'breakfast', label: 'Breakfast', icon: sunriseIcon },
+  { key: 'lunch', label: 'Lunch', icon: sunIcon },
+  { key: 'dinner', label: 'Dinner', icon: moonIcon },
+  { key: 'snack', label: 'Snacks', icon: fruitIcon },
 ];
 
 export default function FoodRecipesSection() {

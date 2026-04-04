@@ -72,7 +72,7 @@ export default function GroundingExercise({ onComplete }: { onComplete?: () => v
 
         {isDone && (
           <motion.div key="done" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center space-y-3">
-            <p className="text-lg font-display font-semibold text-foreground">You're grounded ✨</p>
+            <p className="text-lg font-display font-semibold text-foreground">You're grounded</p>
             <p className="text-sm text-muted-foreground">Notice how your body feels right now.</p>
             <Button size="sm" variant="ghost" className="rounded-xl gap-1" onClick={() => setStep(-1)}>
               <RotateCcw size={14} /> Try again

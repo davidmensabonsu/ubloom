@@ -59,7 +59,7 @@ export default function CategoryGridSection({ category, onSelectResource }: Cate
               : 'bg-muted/60 text-muted-foreground hover:bg-muted'
           }`}
         >
-          💾 Saved
+          Saved
           {savedCount > 0 && (
             <span className="ml-0.5 text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-full font-semibold">
               {savedCount}

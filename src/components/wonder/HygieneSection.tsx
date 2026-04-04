@@ -8,7 +8,7 @@ import ResourceDetailSheet from './ResourceDetailSheet';
 
 const hygieneTopics = [
   { key: 'all', label: 'All' },
-  { key: 'saved', label: '💾 Saved' },
+  { key: 'saved', label: 'Saved' },
   { key: 'body', label: 'Body' },
   { key: 'skin', label: 'Skin & Face' },
   { key: 'hair', label: 'Hair' },

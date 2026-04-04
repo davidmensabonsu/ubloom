@@ -44,7 +44,7 @@ export default function FitnessWorkoutCard({ workout, onTap }: FitnessWorkoutCar
 
         {/* Calories badge */}
         <span className="text-[10px] font-medium inline-block px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-          🔥 ~{workout.calories} kcal
+          ~{workout.calories} kcal
         </span>
 
         <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">

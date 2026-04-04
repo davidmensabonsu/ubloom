@@ -68,7 +68,7 @@ export default function BodyScanGuide({ onComplete }: { onComplete?: () => void 
             )}
             {isDone && (
               <motion.div key="done" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
-                <p className="text-sm font-semibold text-foreground">Scan complete ✨</p>
+                <p className="text-sm font-semibold text-foreground">Scan complete</p>
                 <p className="text-xs text-muted-foreground">Rest here for a moment. Notice how your body feels as a whole.</p>
                 <Button size="sm" variant="ghost" className="rounded-xl gap-1" onClick={() => setStep(-1)}>
                   <RotateCcw size={14} /> Restart

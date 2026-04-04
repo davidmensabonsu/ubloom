@@ -13,7 +13,7 @@ interface SimpleTimerProps {
   onComplete?: () => void;
 }
 
-export default function SimpleTimer({ duration, label = 'Timer', doneMessage = 'Well done ✨', color, onComplete }: SimpleTimerProps) {
+export default function SimpleTimer({ duration, label = 'Timer', doneMessage = 'Well done', color, onComplete }: SimpleTimerProps) {
   const [remaining, setRemaining] = useState(duration);
   const [isRunning, setIsRunning] = useState(false);
   const [isDone, setIsDone] = useState(false);
