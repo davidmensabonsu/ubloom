@@ -78,6 +78,7 @@ export interface UserProfile {
   ubiIntroSeen?: boolean;
   healthData?: HealthData;
   healthHistory?: HealthHistoryEntry[];
+  cycleData?: CycleData;
 }
 
 export interface HealthData {
