@@ -11,7 +11,7 @@ import BodyScanGuide from './BodyScanGuide';
 import StepByStepGuide from './StepByStepGuide';
 import SimpleTimer from './SimpleTimer';
 import HydrationTracker from './HydrationTracker';
-import JournalPrompt from './JournalPrompt';
+
 
 interface ResourceDetailSheetProps {
   resource: WonderResource | null;
@@ -124,8 +124,6 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
       return <SimpleTimer duration={3600} label="Phone-free" doneMessage="One hour reclaimed ✨" onComplete={onComplete} />;
     case 'calm-6':
       return <SimpleTimer duration={300} label="Legs up the wall" doneMessage="Rest complete ✨" onComplete={onComplete} />;
-    case 'calm-7':
-      return <SimpleTimer duration={600} label="Free write" doneMessage="Release complete ✨" onComplete={onComplete} />;
     case 'well-2':
       return <SimpleTimer duration={60} label="Cold splash" doneMessage="Refreshed! 💦" onComplete={onComplete} />;
     case 'well-6':
@@ -133,49 +131,6 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
     // HYDRATION
     case 'nutr-6':
       return <HydrationTracker onComplete={onComplete} />;
-    // JOURNAL PROMPTS
-    case 'life-5':
-      return (
-        <JournalPrompt
-          prompts={[
-            'Name something small that made you smile today.',
-            'What\'s something you\'re grateful for about yourself?',
-            'What\'s one kind thing someone did for you recently?',
-          ]}
-          placeholder="I'm grateful for..."
-          doneMessage="Sweet dreams ✨"
-          maxEntries={3}
-          onComplete={onComplete}
-        />
-      );
-    case 'mind-5':
-      return (
-        <JournalPrompt
-          prompts={[
-            'Write down a belief you hold about yourself that hurts.',
-            'Ask yourself: "Is this actually true? Where did this come from?"',
-            'Now write a kinder, truer version of that belief.',
-          ]}
-          placeholder="Write freely..."
-          doneMessage="A kinder story, written ✨"
-          maxEntries={3}
-          onComplete={onComplete}
-        />
-      );
-    case 'mind-7':
-      return (
-        <JournalPrompt
-          prompts={[
-            'Imagine it\'s one year from now. Where are you? What does your day look like?',
-            'What does your future self want you to know right now?',
-            'What\'s one thing she did to get where she is?',
-          ]}
-          placeholder="Dear present me..."
-          doneMessage="Your future self is proud of you ✨"
-          maxEntries={3}
-          onComplete={onComplete}
-        />
-      );
     // STEP-BY-STEP for remaining nutrition tips
     case 'nutr-1':
       return (
