@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { getCurrentCycleDay, getCurrentPhase, getFormattedNextPeriod } from '@/lib/cycleUtils';
+import { differenceInYears } from 'date-fns';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import { toast } from 'sonner';
 
@@ -90,7 +91,7 @@ export default function Health() {
           Cycle Tracker
         </motion.h1>
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.05 }} className="subtle-text">
-          In sync with your rhythm
+          In sync with your rhythm{cycleData?.dateOfBirth ? ` · Age ${differenceInYears(new Date(), new Date(cycleData.dateOfBirth + 'T00:00:00'))}` : ''}
         </motion.p>
       </div>
 
