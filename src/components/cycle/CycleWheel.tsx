@@ -115,6 +115,9 @@ export default function CycleWheel({ currentDay, currentPhase, cycleLength, peri
       <p className="text-sm text-muted-foreground mt-3">
         Next period predicted: <span className="text-foreground font-medium">{nextPeriod}</span>
       </p>
+      <p className="text-xs text-muted-foreground mt-1">
+        Based on a <span className="text-foreground/80 font-medium">{cycleLength}-day</span> cycle
+      </p>
     </motion.div>
   );
 }
