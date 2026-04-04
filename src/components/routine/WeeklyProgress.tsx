@@ -4,6 +4,7 @@ import { useUserStore } from '@/stores/userStore';
 import { TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import flameImg from '@/assets/icons/flame.png';
 import { format, subDays, startOfDay, addDays } from 'date-fns';
+import { isHabitScheduledForDate } from '@/components/routine/FrequencyPicker';
 import DayDetailSheet from './DayDetailSheet';
 import ubloomLogo from '@/assets/ubloom-flower.png';
 
@@ -46,7 +47,8 @@ export default function WeeklyProgress() {
       ).length;
 
       const dayOfWeek = date.getDay();
-      const expectedTotal = coreHabits.length + getCustomTaskCountForDate(dateStr, dayOfWeek);
+      const scheduledHabitsCount = coreHabits.filter(h => isHabitScheduledForDate(h, dateStr)).length;
+      const expectedTotal = scheduledHabitsCount + getCustomTaskCountForDate(dateStr, dayOfWeek);
       const totalHabits = isToday
         ? expectedTotal
         : Math.max(expectedTotal, completedHabits);
@@ -93,7 +95,8 @@ export default function WeeklyProgress() {
         (c) => c.date === dateStr && c.completed && allTrackableIds.has(c.habitId)
       );
 
-      const expectedTotal = coreHabits.length + getCustomTaskCountForDate(dateStr, dayOfWeek);
+      const scheduledCount = coreHabits.filter(h => isHabitScheduledForDate(h, dateStr)).length;
+      const expectedTotal = scheduledCount + getCustomTaskCountForDate(dateStr, dayOfWeek);
       const effectiveTotal = Math.max(expectedTotal, dayCompletions.length);
       const completionRate = effectiveTotal > 0 ? dayCompletions.length / effectiveTotal : 0;
 
