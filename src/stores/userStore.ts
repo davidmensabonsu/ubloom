@@ -66,6 +66,7 @@ export interface UserProfile {
   savedResources: string[];
   savedRecipes: string[]; // "resourceId::recipeIndex"
   usedResources: string[];
+  recentlyViewedResources: string[]; // ordered, most recent first, max 20
   resourceCompletions: ResourceCompletion[];
   moodboardItems: MoodboardItem[];
   cachedFutureSelfMessage?: CachedFutureSelfMessage;
