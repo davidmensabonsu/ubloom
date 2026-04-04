@@ -1,51 +1,27 @@
 
 
-## Health Page — Design & Implementation Plan
+## Always Open a New Chat on Ubi Page
 
-### Overview
-A new `/health` page accessible from the Reflect page, showing health data cards and AI-powered Ubi Insights. Consistent with the app's soft, minimal aesthetic using existing clay icons.
+### Problem
+When navigating to the Ubi page, it loads the most recent conversation. The desired behavior is to always start with a fresh, empty chat.
 
-### Navigation
-- Add a "Health" button/link on the Reflect page (Alignment.tsx) near the top, navigating to `/health`
-- Add `/health` route in App.tsx as a protected route
+### Changes
 
-### Health Page Layout
+**`src/hooks/useUbiChat.ts`** (lines ~122-126):
+- After loading conversations list, instead of auto-loading the latest conversation, start with an empty state (no `currentConversationId`, empty `messages`)
+- The user can still access previous chats via the History sheet
 
-**Header**: Page title "Health" with back arrow to Reflect, plus ProfileButton
+Specifically, replace:
+```ts
+// Load latest conversation
+const latest = withPreviews[0];
+setCurrentConversationId(latest.id);
+await loadMessagesForConversation(latest.id);
+```
+with just setting `isLoading` to false, leaving messages empty and `currentConversationId` as null — effectively a new chat state.
 
-**6 Data Cards** in a 2-column grid, each with a clay icon, label, and placeholder value:
-
-| Card | Icon Asset | Placeholder |
-|------|-----------|-------------|
-| Cycle Phase | `moon.png` | "Not tracked yet" |
-| Sleep | `bed.png` | "Not tracked yet" |
-| Stress | `brain.png` | "Not tracked yet" |
-| Recovery | `leaf.png` | "Not tracked yet" |
-| Activity | `running.png` | "Not tracked yet" |
-| Mood Patterns | `sparkles.png` | Pulls from existing mood data |
-
-Each card is a soft rounded container with the themed background, icon, label, and data/placeholder text.
-
-**Ubi Insights Section** — Below the cards, a distinct section titled "Ubi Insights" with the crystal ball icon. Calls a new edge function (`health-insights`) that takes the user's health context (mood history, check-in state, journal entries) and returns 3-4 warm, personalized recommendations covering:
-- Energy-based guidance
-- Cycle-based recommendations
-- Behavioral patterns
-- Daily adjustments
-
-Insights render as a list of soft cards with brief, supportive text. Shows a loading skeleton while generating.
-
-### Files Changed
-
-| File | Change |
-|------|--------|
-| `src/pages/Health.tsx` | New page component with health cards grid and Ubi Insights section |
-| `src/pages/Alignment.tsx` | Add navigation button to `/health` |
-| `src/App.tsx` | Add `/health` protected route, import Health page |
-| `supabase/functions/health-insights/index.ts` | New edge function calling Lovable AI to generate personalized health insights from user context |
-
-### Edge Function Details
-- Uses `google/gemini-3-flash-preview` via Lovable AI gateway
-- Non-streaming (invoke pattern) — returns JSON array of insight objects
-- System prompt emphasizes warm, supportive tone — not clinical
-- Takes mood history, daily check-in state, and journal entries as context
+### Result
+- Opening Ubi always shows a fresh chat with preset prompts
+- Previous conversations remain accessible via the History button
+- Single file change, minimal impact
 
