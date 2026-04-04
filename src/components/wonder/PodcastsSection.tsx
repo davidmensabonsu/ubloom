@@ -8,7 +8,7 @@ import ResourceDetailSheet from './ResourceDetailSheet';
 
 const podcastTopics = [
   { key: 'all', label: 'All' },
-  { key: 'saved', label: '🎧 Saved' },
+  { key: 'saved', label: 'Saved' },
   { key: 'mindset', label: 'Mindset' },
   { key: 'finance', label: 'Finance' },
   { key: 'creativity', label: 'Creativity' },

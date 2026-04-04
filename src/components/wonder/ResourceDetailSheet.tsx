@@ -12,6 +12,7 @@ import BodyScanGuide from './BodyScanGuide';
 import StepByStepGuide from './StepByStepGuide';
 import SimpleTimer from './SimpleTimer';
 import HydrationTracker from './HydrationTracker';
+import saladIcon from '@/assets/icons/salad.png';
 
 
 interface ResourceDetailSheetProps {
@@ -114,21 +115,21 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
       );
     // TIMERS
     case 'mind-1':
-      return <SimpleTimer duration={300} label="Mountain meditation" doneMessage="You are the mountain ✨" onComplete={onComplete} />;
+      return <SimpleTimer duration={300} label="Mountain meditation" doneMessage="You are the mountain" onComplete={onComplete} />;
     case 'fit-2':
-      return <SimpleTimer duration={1200} label="Mindful walk" doneMessage="Beautiful walk ✨" onComplete={onComplete} />;
+      return <SimpleTimer duration={1200} label="Mindful walk" doneMessage="Beautiful walk" onComplete={onComplete} />;
     case 'fit-4':
-      return <SimpleTimer duration={210} label="Dance it out" doneMessage="You danced! 💃" onComplete={onComplete} />;
+      return <SimpleTimer duration={210} label="Dance it out" doneMessage="You danced!" onComplete={onComplete} />;
     case 'life-1':
-      return <SimpleTimer duration={300} label="Tidy time" doneMessage="Space cleared ✨" onComplete={onComplete} />;
+      return <SimpleTimer duration={300} label="Tidy time" doneMessage="Space cleared" onComplete={onComplete} />;
     case 'life-4':
-      return <SimpleTimer duration={3600} label="Phone-free" doneMessage="One hour reclaimed ✨" onComplete={onComplete} />;
+      return <SimpleTimer duration={3600} label="Phone-free" doneMessage="One hour reclaimed" onComplete={onComplete} />;
     case 'calm-6':
-      return <SimpleTimer duration={300} label="Legs up the wall" doneMessage="Rest complete ✨" onComplete={onComplete} />;
+      return <SimpleTimer duration={300} label="Legs up the wall" doneMessage="Rest complete" onComplete={onComplete} />;
     case 'well-2':
-      return <SimpleTimer duration={60} label="Cold splash" doneMessage="Refreshed! 💦" onComplete={onComplete} />;
+      return <SimpleTimer duration={60} label="Cold splash" doneMessage="Refreshed!" onComplete={onComplete} />;
     case 'well-6':
-      return <SimpleTimer duration={3600} label="Digital sunset" doneMessage="Screens off ✨" onComplete={onComplete} />;
+      return <SimpleTimer duration={3600} label="Digital sunset" doneMessage="Screens off" onComplete={onComplete} />;
     // HYDRATION
     case 'nutr-6':
       return <HydrationTracker onComplete={onComplete} />;
@@ -244,7 +245,7 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
               </div>
               {resource.dosage.withFood && (
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <span className="text-primary">🍽</span> Take with food
+                  <img src={saladIcon} alt="" className="w-4 h-4 object-contain clay-icon" /> Take with food
                 </div>
               )}
               {resource.dosage.notes && (

@@ -9,7 +9,7 @@ import ResourceDetailSheet from './ResourceDetailSheet';
 
 const bookTopics = [
   { key: 'all', label: 'All' },
-  { key: 'reading-list', label: '📚 My List' },
+  { key: 'reading-list', label: 'My List' },
   { key: 'mindset', label: 'Mindset' },
   { key: 'wellness', label: 'Wellness' },
   { key: 'spirituality', label: 'Spirituality' },

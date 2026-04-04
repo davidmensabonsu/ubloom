@@ -62,7 +62,7 @@ export default function ResourceCard({ resource, onTap, compact }: ResourceCardP
 
           {resource.dosage && (
             <div className="flex items-center gap-1.5 mt-1.5 text-[10px] text-primary font-medium">
-              <span>💊 {resource.dosage.amount}</span>
+              <span>{resource.dosage.amount}</span>
               <span className="text-muted-foreground">·</span>
               <span className="capitalize">{resource.dosage.timing.split(' ')[0]}</span>
             </div>

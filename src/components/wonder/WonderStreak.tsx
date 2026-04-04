@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useUserStore } from '@/stores/userStore';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import { wonderResources } from '@/lib/wonderResources';
+import flameIcon from '@/assets/icons/flame.png';
 
 export default function WonderStreak() {
   const { resourceCompletions = [] } = useUserStore((s) => s.profile);
@@ -67,7 +68,7 @@ export default function WonderStreak() {
       {/* Stats row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-2xl">🔥</span>
+          <img src={flameIcon} alt="" className="w-7 h-7 object-contain" />
           <div>
             <p className="text-lg font-display font-bold text-foreground leading-tight">
               {stats.streak} day{stats.streak !== 1 ? 's' : ''}

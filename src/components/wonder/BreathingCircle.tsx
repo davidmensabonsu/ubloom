@@ -19,7 +19,7 @@ const PHASE_LABELS: Record<Phase, string> = {
   hold: 'Hold',
   exhale: 'Breathe out',
   idle: 'Ready',
-  done: 'Well done ✨',
+  done: 'Well done',
 };
 
 const PHASE_COLORS: Record<Phase, string> = {
