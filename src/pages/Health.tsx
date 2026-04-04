@@ -25,6 +25,7 @@ export default function Health() {
   const cycleData = profile.cycleData;
   const [showSetup, setShowSetup] = useState(false);
   const [showPeriodConfirm, setShowPeriodConfirm] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [insights, setInsights] = useState<string[]>([]);
   const [loadingInsights, setLoadingInsights] = useState(true);
 
