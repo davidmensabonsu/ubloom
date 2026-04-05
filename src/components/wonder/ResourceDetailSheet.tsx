@@ -258,13 +258,13 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange, book
             </div>
           )}
 
-          {/* Static image (books, food, vitamins) */}
-          {resourceImages[resource.id] && (
+          {/* Static image (food, vitamins — skip books, they use dynamic covers) */}
+          {resourceImages[resource.id] && resource.type !== 'book' && (
             <div className="rounded-2xl overflow-hidden">
               <img
                 src={resourceImages[resource.id]}
                 alt={resource.title}
-                className={`w-full object-cover ${resource.type === 'book' ? 'max-h-64 object-top' : 'max-h-48'}`}
+                className="w-full object-cover max-h-48"
                 loading="lazy"
               />
             </div>
