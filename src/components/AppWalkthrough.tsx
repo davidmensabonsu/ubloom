@@ -111,13 +111,21 @@ export default function AppWalkthrough() {
 
             {/* Icon + Title */}
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <motion.div
+                className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center"
+                animate={{ scale: [1, 1.15, 1] }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              >
                 <Icon size={20} className="text-primary" />
-              </div>
-              <div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: 12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.15, duration: 0.4 }}
+              >
                 <p className="text-xs text-muted-foreground uppercase tracking-wider">{step.title}</p>
                 <h2 className="font-display text-lg font-semibold text-foreground">{step.headline}</h2>
-              </div>
+              </motion.div>
             </div>
 
             {/* Description */}
