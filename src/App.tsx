@@ -11,6 +11,7 @@ import { CloudSyncProvider, useCloudSyncStatus } from "@/hooks/useCloudSync";
 import { AnimatePresence } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
 import DailyMoodCheckin from "@/components/DailyMoodCheckin";
+import AppWalkthrough from "@/components/AppWalkthrough";
 import { getLocalDateStr } from "@/lib/dateUtils";
 
 // Pages
@@ -61,10 +62,19 @@ function MoodCheckinGate({ children }: { children: React.ReactNode }) {
   const mainRoutes = ['/home', '/alignment', '/routine', '/wander', '/ubi', '/moodboard', '/profile'];
   const isMainRoute = mainRoutes.includes(location.pathname);
 
+  // Show walkthrough overlay on top of page content for first-time users
+  const needsWalkthrough =
+    user &&
+    cloudSyncLoaded &&
+    profile.onboardingComplete &&
+    !profile.walkthroughComplete &&
+    isMainRoute;
+
   const needsCheckin =
     user &&
     cloudSyncLoaded &&
     profile.onboardingComplete &&
+    !needsWalkthrough &&
     isMainRoute &&
     profile.lastMoodCheckinDate !== getLocalDateStr();
 
@@ -72,7 +82,12 @@ function MoodCheckinGate({ children }: { children: React.ReactNode }) {
     return <DailyMoodCheckin />;
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      {needsWalkthrough && <AppWalkthrough />}
+    </>
+  );
 }
 
 const routeOrder = ['/', '/auth', '/reset-password', '/onboarding', '/dream-life', '/choose-aesthetic', '/home', '/alignment', '/routine', '/wander', '/ubi', '/moodboard', '/profile'];

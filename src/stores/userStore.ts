@@ -80,6 +80,7 @@ export interface UserProfile {
   healthData?: HealthData;
   healthHistory?: HealthHistoryEntry[];
   cycleData?: CycleData;
+  walkthroughComplete?: boolean;
 }
 
 export interface PeriodLogEntry {
