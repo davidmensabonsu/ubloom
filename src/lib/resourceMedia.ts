@@ -183,7 +183,7 @@ export const resourceThumbnails: Record<string, string> = {
   'mind-5': thumbJournal,
   'mind-6': bookAtomic,
   'mind-7': thumbReframing,
-  'mind-8': videoVulnerability.url,
+  // mind-8 (Power of Vulnerability) — no static image, uses dynamic content
   // Wellness
   'well-1': thumbDryBrush,
   'well-2': thumbColdSplash,
@@ -330,5 +330,5 @@ export const resourceVideos: Record<string, string> = {
   'fit-5': videoYoga.url,
   'fit-6': videoStrength.url,
   'calm-8': videoNervousReset.url,
-  'mind-8': videoVulnerability.url,
+  
 };
