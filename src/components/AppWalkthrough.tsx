@@ -86,10 +86,10 @@ export default function AppWalkthrough() {
       <AnimatePresence mode="wait">
         <motion.div
           key={currentStep}
-          initial={{ opacity: 0, y: 60 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -30 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          initial={{ opacity: 0, y: 80, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -30, scale: 0.97 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 24, mass: 0.8 }}
           className="relative z-10 w-full max-w-md mx-4 mb-24 pointer-events-auto"
         >
           <div className="glass-card rounded-3xl p-6 shadow-2xl border border-primary/20">
@@ -111,19 +111,32 @@ export default function AppWalkthrough() {
 
             {/* Icon + Title */}
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <motion.div
+                className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center"
+                animate={{ scale: [1, 1.15, 1] }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              >
                 <Icon size={20} className="text-primary" />
-              </div>
-              <div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: 12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.15, duration: 0.4 }}
+              >
                 <p className="text-xs text-muted-foreground uppercase tracking-wider">{step.title}</p>
                 <h2 className="font-display text-lg font-semibold text-foreground">{step.headline}</h2>
-              </div>
+              </motion.div>
             </div>
 
             {/* Description */}
-            <p className="text-sm text-foreground/75 leading-relaxed mb-5">
+            <motion.p
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25, duration: 0.4 }}
+              className="text-sm text-foreground/75 leading-relaxed mb-5"
+            >
               {step.description}
-            </p>
+            </motion.p>
 
             {/* Buttons */}
             <div className="flex items-center gap-3">
