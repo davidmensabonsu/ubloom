@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { feelingIcons } from '@/lib/moodIcons';
 import heartIcon from '@/assets/icons/heart.png';
+import JournalPrompts from '@/components/alignment/JournalPrompts';
 
 const feelingOptions = [
   { value: 'calm', label: 'Calm' },
