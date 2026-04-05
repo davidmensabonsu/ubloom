@@ -54,13 +54,16 @@ export default function Moodboard() {
 
       if (uploadError) throw uploadError;
 
-      const { data: urlData } = supabase.storage
+      const { data: signedData } = await supabase.storage
         .from('vision-images')
-        .getPublicUrl(path);
+        .createSignedUrl(path, 31536000); // 1 year
+
+      const signedUrl = signedData?.signedUrl;
+      if (!signedUrl) throw new Error('Failed to get signed URL');
 
       addMoodboardItem({
         type: 'image',
-        content: urlData.publicUrl,
+        content: signedUrl,
         board: selectedBoard === 'All' ? BOARDS[0] : selectedBoard,
       });
 
