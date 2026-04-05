@@ -3,7 +3,7 @@ import { Heart, Sun, Moon, Cloud, Target } from 'lucide-react';
 import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/BottomNav';
-import WeeklyMoodSummary from '@/components/home/WeeklyMoodSummary';
+
 import logo from '@/assets/logo.png';
 import { quickActionIcons } from '@/lib/moodIcons';
 import ProfileButton from '@/components/ProfileButton';
