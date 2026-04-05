@@ -71,6 +71,7 @@ export interface WonderResource {
   dosage?: VitaminDosage;
   episodeDuration?: string;
   listenLinks?: PodcastListenLink[];
+  embedUrl?: string;
 }
 
 import sparklesIcon from '@/assets/icons/sparkles.png';
