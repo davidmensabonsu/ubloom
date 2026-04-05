@@ -129,9 +129,12 @@ export default function DreamLife() {
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
+      const { data: signedData } = await supabase.storage
         .from('vision-images')
-        .getPublicUrl(filePath);
+        .createSignedUrl(filePath, 31536000); // 1 year
+
+      const signedUrl = signedData?.signedUrl;
+      if (!signedUrl) throw new Error('Failed to get signed URL');
 
       setCategoryImages({
         ...categoryImages,

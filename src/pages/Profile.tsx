@@ -161,11 +161,16 @@ export default function Profile() {
       return;
     }
 
-    const { data: urlData } = supabase.storage
+    const { data: signedData } = await supabase.storage
       .from('vision-images')
-      .getPublicUrl(path);
+      .createSignedUrl(path, 31536000); // 1 year
 
-    const publicUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+    const imageUrl = signedData?.signedUrl;
+    if (!imageUrl) {
+      toast({ title: 'Failed to get image URL', variant: 'destructive' });
+      setIsUploading(false);
+      return;
+    }
 
     await supabase
       .from('profiles')
