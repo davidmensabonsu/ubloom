@@ -363,6 +363,19 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange, book
             ))}
           </div>
 
+          {/* Ubi podcast "why this is for you" insight */}
+          {resource.type === 'podcast' && podcastInsightReason && (
+            <div className="bg-primary/5 rounded-2xl p-4 border border-primary/10">
+              <div className="flex items-start gap-2.5">
+                <span className="text-base mt-0.5">✨</span>
+                <div>
+                  <p className="text-xs font-semibold text-foreground mb-1">Why this is for you</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed italic">{podcastInsightReason}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Ubi podcast episode recommendation */}
           {resource.type === 'podcast' && (
             <UbiPodcastInsight resource={resource} />
