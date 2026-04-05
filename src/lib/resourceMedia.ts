@@ -330,5 +330,5 @@ export const resourceVideos: Record<string, string> = {
   'fit-5': videoYoga.url,
   'fit-6': videoStrength.url,
   'calm-8': videoNervousReset.url,
-  'mind-8': videoVulnerability.url,
+  
 };
