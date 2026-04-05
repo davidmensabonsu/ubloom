@@ -11,6 +11,7 @@ import { CloudSyncProvider, useCloudSyncStatus } from "@/hooks/useCloudSync";
 import { AnimatePresence } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
 import DailyMoodCheckin from "@/components/DailyMoodCheckin";
+import AppWalkthrough from "@/components/AppWalkthrough";
 import { getLocalDateStr } from "@/lib/dateUtils";
 
 // Pages
