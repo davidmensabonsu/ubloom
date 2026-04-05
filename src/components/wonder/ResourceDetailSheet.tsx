@@ -19,6 +19,7 @@ interface ResourceDetailSheetProps {
   resource: WonderResource | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  podcastArtwork?: string | null;
 }
 
 /** Map resource IDs to interactive visual components */
