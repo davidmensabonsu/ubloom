@@ -19,6 +19,7 @@ interface ResourceDetailSheetProps {
   resource: WonderResource | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  podcastArtwork?: string | null;
 }
 
 /** Map resource IDs to interactive visual components */
@@ -193,7 +194,7 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
   }
 }
 
-export default function ResourceDetailSheet({ resource, open, onOpenChange }: ResourceDetailSheetProps) {
+export default function ResourceDetailSheet({ resource, open, onOpenChange, podcastArtwork }: ResourceDetailSheetProps) {
   const { profile, saveResource, unsaveResource, saveRecipe, unsaveRecipe, markResourceUsed, unmarkResourceUsed, logResourceCompletion, viewResource } = useUserStore();
 
   // Track view when sheet opens with a resource
@@ -254,8 +255,20 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
             </div>
           )}
 
+          {/* Podcast artwork from Apple Podcasts API */}
+          {podcastArtwork && (
+            <div className="rounded-2xl overflow-hidden">
+              <img
+                src={podcastArtwork}
+                alt={resource.title}
+                className="w-full max-h-64 object-cover"
+                loading="lazy"
+              />
+            </div>
+          )}
+
           {/* Static image (books, food, vitamins) */}
-          {resourceImages[resource.id] && (
+          {!podcastArtwork && resourceImages[resource.id] && (
             <div className="rounded-2xl overflow-hidden">
               <img
                 src={resourceImages[resource.id]}
