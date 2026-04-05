@@ -29,10 +29,17 @@ Deno.serve(async (req) => {
 
           if (data.items && data.items.length > 0) {
             const imageLinks = data.items[0].volumeInfo?.imageLinks;
-            // Prefer higher quality, fall back to thumbnail
-            const cover = imageLinks?.extraLarge || imageLinks?.large || imageLinks?.medium || imageLinks?.small || imageLinks?.thumbnail;
-            // Google Books returns http URLs — upgrade to https
-            results[term] = cover ? cover.replace('http://', 'https://') : null;
+            const rawUrl = imageLinks?.extraLarge || imageLinks?.large || imageLinks?.medium || imageLinks?.small || imageLinks?.thumbnail;
+            if (rawUrl) {
+              // Upgrade to https, remove edge-curl param, and request high-res via zoom=3
+              let hq = rawUrl.replace('http://', 'https://');
+              hq = hq.replace(/&edge=curl/gi, '');
+              hq = hq.replace(/zoom=\d/, 'zoom=3');
+              if (!hq.includes('zoom=')) hq += '&zoom=3';
+              results[term] = hq;
+            } else {
+              results[term] = null;
+            }
           } else {
             results[term] = null;
           }
