@@ -86,10 +86,10 @@ export default function AppWalkthrough() {
       <AnimatePresence mode="wait">
         <motion.div
           key={currentStep}
-          initial={{ opacity: 0, y: 60 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -30 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          initial={{ opacity: 0, y: 80, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -30, scale: 0.97 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 24, mass: 0.8 }}
           className="relative z-10 w-full max-w-md mx-4 mb-24 pointer-events-auto"
         >
           <div className="glass-card rounded-3xl p-6 shadow-2xl border border-primary/20">
