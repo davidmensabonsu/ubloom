@@ -4,7 +4,6 @@ import { Bookmark, BookOpen, Sparkles } from 'lucide-react';
 import { wonderResources, type WonderResource } from '@/lib/wonderResources';
 import { useUserStore } from '@/stores/userStore';
 import { typeLabels, categoryColors } from '@/lib/wonderResources';
-import { useBookArtwork } from '@/hooks/useBookArtwork';
 import { supabase } from '@/integrations/supabase/client';
 import ResourceDetailSheet from './ResourceDetailSheet';
 
@@ -150,9 +149,7 @@ export default function BooksSection() {
   const allBooks = wonderResources.filter((r) => r.category === 'books');
   const savedIds = profile.savedResources || [];
 
-  // Book artwork
-  const bookTitles = useMemo(() => allBooks.map((b) => b.title), [allBooks]);
-  const { artworks } = useBookArtwork(bookTitles);
+  // Book covers are now hardcoded in wonderResources.ts — no API call needed
 
   // For You recommendations
   const [forYouRecs, setForYouRecs] = useState<{ id: string; reason: string }[]>([]);
@@ -310,7 +307,7 @@ export default function BooksSection() {
                   onTap={() => handleSelect(resource, reasonMap[resource.id])}
                   isSaved={savedIds.includes(resource.id)}
                   onToggleSave={(e) => handleToggleSave(e, resource.id)}
-                  coverUrl={artworks[resource.title]}
+                  coverUrl={resource.coverUrl}
                   reason={activeTopic === 'for-you' ? reasonMap[resource.id] : undefined}
                 />
               </motion.div>

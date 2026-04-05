@@ -72,6 +72,7 @@ export interface WonderResource {
   episodeDuration?: string;
   listenLinks?: PodcastListenLink[];
   embedUrl?: string;
+  coverUrl?: string;
 }
 
 import sparklesIcon from '@/assets/icons/sparkles.png';
@@ -144,6 +145,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['confidence', 'empowerment', 'self-worth'],
     emotionalTone: 'empowering',
     goalAlignment: ['confidence', 'self-worth'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/7436635-L.jpg',
   },
   {
     id: 'mind-3',
@@ -165,6 +167,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['self-worth', 'vulnerability', 'peace'],
     emotionalTone: 'gentle',
     goalAlignment: ['peace', 'self-worth'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/7237826-L.jpg',
   },
   {
     id: 'mind-5',
@@ -186,6 +189,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['discipline', 'growth', 'consistency'],
     emotionalTone: 'motivating',
     goalAlignment: ['discipline', 'growth'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/12539702-L.jpg',
   },
   {
     id: 'mind-8',
@@ -242,6 +246,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['healing', 'body-awareness', 'peace'],
     emotionalTone: 'deep',
     goalAlignment: ['peace', 'healing'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/8315367-L.jpg',
   },
   {
     id: 'well-5',
@@ -560,6 +565,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['peace', 'intention', 'simplicity'],
     emotionalTone: 'calm',
     goalAlignment: ['peace', 'simplicity'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/13801603-L.jpg',
   },
   {
     id: 'life-4',
@@ -627,6 +633,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['peace', 'freedom', 'awareness'],
     emotionalTone: 'liberating',
     goalAlignment: ['peace', 'freedom'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/10630553-L.jpg',
   },
   {
     id: 'book-1',
@@ -637,6 +644,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['self-help', 'confidence', 'empowerment', 'resilience'],
     emotionalTone: 'empowering',
     goalAlignment: ['confidence', 'self-worth'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/8800288-L.jpg',
   },
   {
     id: 'book-2',
@@ -647,6 +655,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['business', 'finance', 'ambition', 'strategy', 'mindset'],
     emotionalTone: 'driven',
     goalAlignment: ['ambition', 'discipline'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/14542536-L.jpg',
   },
   {
     id: 'book-3',
@@ -657,6 +666,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['spirituality', 'purpose', 'intuition', 'journey'],
     emotionalTone: 'inspiring',
     goalAlignment: ['purpose', 'peace'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/7463992-L.jpg',
   },
   {
     id: 'book-4',
@@ -667,6 +677,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['business', 'finance', 'career', 'strategy'],
     emotionalTone: 'practical',
     goalAlignment: ['ambition', 'discipline'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/8315603-L.jpg',
   },
   {
     id: 'book-5',
@@ -677,6 +688,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['spirituality', 'awareness', 'peace', 'freedom', 'purpose'],
     emotionalTone: 'calm',
     goalAlignment: ['peace', 'freedom'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/551262-L.jpg',
   },
   {
     id: 'book-6',
@@ -687,6 +699,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['business', 'leadership', 'career', 'empowerment', 'ambition'],
     emotionalTone: 'empowering',
     goalAlignment: ['confidence', 'ambition'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/7254305-L.jpg',
   },
   {
     id: 'book-7',
@@ -697,6 +710,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['mindset', 'confidence', 'growth', 'self-help'],
     emotionalTone: 'inspiring',
     goalAlignment: ['confidence', 'creativity'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/480539-L.jpg',
   },
   {
     id: 'book-8',
@@ -707,6 +721,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['spirituality', 'awareness', 'freedom', 'purpose'],
     emotionalTone: 'liberating',
     goalAlignment: ['peace', 'freedom'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/924521-L.jpg',
   },
   {
     id: 'book-9',
@@ -717,6 +732,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['mindset', 'discipline', 'productivity', 'motivation', 'habits'],
     emotionalTone: 'driven',
     goalAlignment: ['discipline', 'growth'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/10326643-L.jpg',
   },
   {
     id: 'book-10',
@@ -727,6 +743,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['self-help', 'boundaries', 'wellness', 'resilience', 'empowerment'],
     emotionalTone: 'empowering',
     goalAlignment: ['confidence', 'peace'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/8227168-L.jpg',
   },
   {
     id: 'book-11',
@@ -737,6 +754,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['spirituality', 'intuition', 'purpose', 'self-help', 'empowerment'],
     emotionalTone: 'fierce',
     goalAlignment: ['confidence', 'freedom'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/207915-L.jpg',
   },
   {
     id: 'book-12',
@@ -747,6 +765,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['mindset', 'self-help', 'resilience', 'confidence'],
     emotionalTone: 'bold',
     goalAlignment: ['confidence', 'peace'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/8231990-L.jpg',
   },
   {
     id: 'book-13',
@@ -757,6 +776,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['self-help', 'confidence', 'empowerment', 'growth', 'mindset'],
     emotionalTone: 'joyful',
     goalAlignment: ['confidence', 'ambition'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/10691214-L.jpg',
   },
   {
     id: 'book-14',
@@ -767,6 +787,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['spirituality', 'purpose', 'intuition', 'mindset'],
     emotionalTone: 'mystical',
     goalAlignment: ['purpose', 'ambition'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/8239401-L.jpg',
   },
   {
     id: 'book-15',
@@ -777,6 +798,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['self-help', 'empowerment', 'business', 'leadership'],
     emotionalTone: 'empowering',
     goalAlignment: ['confidence', 'purpose'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/11324542-L.jpg',
   },
   {
     id: 'book-16',
@@ -787,6 +809,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['spirituality', 'wellness', 'peace', 'awareness', 'resilience'],
     emotionalTone: 'gentle',
     goalAlignment: ['peace', 'healing'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/817114-L.jpg',
   },
   {
     id: 'calm-5',
