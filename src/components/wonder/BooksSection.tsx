@@ -4,7 +4,6 @@ import { Bookmark, BookOpen, Sparkles } from 'lucide-react';
 import { wonderResources, type WonderResource } from '@/lib/wonderResources';
 import { useUserStore } from '@/stores/userStore';
 import { typeLabels, categoryColors } from '@/lib/wonderResources';
-import { useBookArtwork } from '@/hooks/useBookArtwork';
 import { supabase } from '@/integrations/supabase/client';
 import ResourceDetailSheet from './ResourceDetailSheet';
 
