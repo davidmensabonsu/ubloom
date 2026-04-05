@@ -22,6 +22,7 @@ interface ResourceDetailSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   bookInsightReason?: string;
+  podcastInsightReason?: string;
 }
 
 /** Map resource IDs to interactive visual components */
@@ -196,7 +197,7 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
   }
 }
 
-export default function ResourceDetailSheet({ resource, open, onOpenChange, bookInsightReason }: ResourceDetailSheetProps) {
+export default function ResourceDetailSheet({ resource, open, onOpenChange, bookInsightReason, podcastInsightReason }: ResourceDetailSheetProps) {
   const { profile, saveResource, unsaveResource, saveRecipe, unsaveRecipe, markResourceUsed, unmarkResourceUsed, logResourceCompletion, viewResource } = useUserStore();
 
   // Track view when sheet opens with a resource
@@ -361,6 +362,19 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange, book
               </span>
             ))}
           </div>
+
+          {/* Ubi podcast "why this is for you" insight */}
+          {resource.type === 'podcast' && podcastInsightReason && (
+            <div className="bg-primary/5 rounded-2xl p-4 border border-primary/10">
+              <div className="flex items-start gap-2.5">
+                <span className="text-base mt-0.5">✨</span>
+                <div>
+                  <p className="text-xs font-semibold text-foreground mb-1">Why this is for you</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed italic">{podcastInsightReason}</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Ubi podcast episode recommendation */}
           {resource.type === 'podcast' && (
