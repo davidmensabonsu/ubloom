@@ -12,6 +12,7 @@ import BodyScanGuide from './BodyScanGuide';
 import StepByStepGuide from './StepByStepGuide';
 import SimpleTimer from './SimpleTimer';
 import HydrationTracker from './HydrationTracker';
+import UbiPodcastInsight from './UbiPodcastInsight';
 import saladIcon from '@/assets/icons/salad.png';
 
 
@@ -358,6 +359,11 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
               </span>
             ))}
           </div>
+
+          {/* Ubi podcast episode recommendation */}
+          {resource.type === 'podcast' && (
+            <UbiPodcastInsight resource={resource} />
+          )}
 
           {/* Podcast listen links */}
           {resource.listenLinks && resource.listenLinks.length > 0 && (
