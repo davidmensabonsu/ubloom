@@ -22,6 +22,7 @@ interface ResourceDetailSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   bookInsightReason?: string;
+  podcastInsightReason?: string;
 }
 
 /** Map resource IDs to interactive visual components */
