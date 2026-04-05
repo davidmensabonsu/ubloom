@@ -10,9 +10,13 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { podcastTitle, podcastDescription, podcastTags, userContext } = await req.json();
+    const { podcastTitle, podcastDescription, podcastTags, userContext, listenedEpisodes } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    const listenedSection = listenedEpisodes && listenedEpisodes.length > 0
+      ? `\n\n## Already Listened\nThe user has already listened to these suggested episodes/topics from this podcast:\n${listenedEpisodes.map((e: string) => `- ${e}`).join("\n")}\n\nDo NOT recommend any of these again. Suggest something completely different that would also resonate with them.`
+      : "";
 
     const systemPrompt = `You are Ubi — a warm, insightful digital mentor inside a self-growth app called uBloom. The user is viewing a podcast and you want to recommend a specific episode or topic from that podcast that would resonate with them personally.
 
@@ -20,7 +24,7 @@ serve(async (req) => {
 Given a podcast and the user's current context (mood, goals, struggles), suggest ONE specific episode topic or theme from this podcast that would be most valuable to them right now. Be specific — mention an episode name/number if you know it, or describe the exact topic they should search for.
 
 ## User Context
-${userContext ? JSON.stringify(userContext) : "No context available yet."}
+${userContext ? JSON.stringify(userContext) : "No context available yet."}${listenedSection}
 
 ## Response Guidelines
 - Keep it to 2-3 sentences max
