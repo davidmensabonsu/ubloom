@@ -179,7 +179,8 @@ export default function Alignment() {
             <Feather size={18} className="text-primary" />
             <h2 className="section-title">Private Journal</h2>
           </div>
-          <p className="text-sm text-muted-foreground mb-4">What's on your heart right now?</p>
+          <p className="text-sm text-muted-foreground mb-3">What's on your heart right now?</p>
+          <JournalPrompts onSelect={(prompt) => setJournalText((prev) => prev ? prev + '\n\n' + prompt : prompt)} />
           <textarea
             value={journalText}
             onChange={(e) => setJournalText(e.target.value)}
