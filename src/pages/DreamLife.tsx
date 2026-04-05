@@ -138,7 +138,7 @@ export default function DreamLife() {
 
       setCategoryImages({
         ...categoryImages,
-        [category.id]: publicUrl,
+        [category.id]: signedUrl,
       });
     } catch (err) {
       console.error('Image upload failed:', err);

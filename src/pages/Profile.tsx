@@ -174,10 +174,10 @@ export default function Profile() {
 
     await supabase
       .from('profiles')
-      .update({ avatar_url: publicUrl })
+      .update({ avatar_url: imageUrl })
       .eq('user_id', user.id);
 
-    setAvatarUrl(publicUrl);
+    setAvatarUrl(imageUrl);
     setIsUploading(false);
     toast({ title: 'Avatar updated ✨' });
   };

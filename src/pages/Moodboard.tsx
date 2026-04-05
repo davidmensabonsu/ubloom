@@ -63,7 +63,7 @@ export default function Moodboard() {
 
       addMoodboardItem({
         type: 'image',
-        content: urlData.publicUrl,
+        content: signedUrl,
         board: selectedBoard === 'All' ? BOARDS[0] : selectedBoard,
       });
 
