@@ -48,7 +48,7 @@ const aesthetics = [
 export default function Profile() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
-  const { profile, setAesthetic, resetProfile } = useUserStore();
+  const { profile, setAesthetic, resetProfile, updateProfile } = useUserStore();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -510,6 +510,17 @@ export default function Profile() {
           transition={{ delay: 0.4 }}
           className="space-y-3"
         >
+          {/* Replay walkthrough */}
+          <button
+            onClick={() => { updateProfile({ walkthroughComplete: false }); navigate('/home'); }}
+            className="w-full glass-card rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98]"
+          >
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <Sparkles size={18} className="text-primary" />
+            </div>
+            <span className="font-medium text-foreground">Replay walkthrough</span>
+          </button>
+
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <button className="w-full glass-card rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98]">
