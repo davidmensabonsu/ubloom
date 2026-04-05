@@ -255,8 +255,20 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange, podc
             </div>
           )}
 
+          {/* Podcast artwork from Apple Podcasts API */}
+          {podcastArtwork && (
+            <div className="rounded-2xl overflow-hidden">
+              <img
+                src={podcastArtwork}
+                alt={resource.title}
+                className="w-full max-h-64 object-cover"
+                loading="lazy"
+              />
+            </div>
+          )}
+
           {/* Static image (books, food, vitamins) */}
-          {resourceImages[resource.id] && (
+          {!podcastArtwork && resourceImages[resource.id] && (
             <div className="rounded-2xl overflow-hidden">
               <img
                 src={resourceImages[resource.id]}
