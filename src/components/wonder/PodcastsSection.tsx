@@ -36,6 +36,10 @@ export default function PodcastsSection() {
   const allPodcasts = wonderResources.filter((r) => r.category === 'podcasts');
   const savedIds = profile.savedResources || [];
 
+  // Fetch Apple Podcasts artwork
+  const podcastTitles = useMemo(() => allPodcasts.map((p) => p.title), [allPodcasts]);
+  const { artworks, loading: artworkLoading } = usePodcastArtwork(podcastTitles);
+
   const filtered = activeTopic === 'saved'
     ? allPodcasts.filter((r) => savedIds.includes(r.id))
     : activeTopic === 'all'
