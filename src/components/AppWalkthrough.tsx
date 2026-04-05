@@ -129,9 +129,14 @@ export default function AppWalkthrough() {
             </div>
 
             {/* Description */}
-            <p className="text-sm text-foreground/75 leading-relaxed mb-5">
+            <motion.p
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25, duration: 0.4 }}
+              className="text-sm text-foreground/75 leading-relaxed mb-5"
+            >
               {step.description}
-            </p>
+            </motion.p>
 
             {/* Buttons */}
             <div className="flex items-center gap-3">
