@@ -149,9 +149,7 @@ export default function BooksSection() {
   const allBooks = wonderResources.filter((r) => r.category === 'books');
   const savedIds = profile.savedResources || [];
 
-  // Book artwork
-  const bookTitles = useMemo(() => allBooks.map((b) => b.title), [allBooks]);
-  const { artworks } = useBookArtwork(bookTitles);
+  // Book covers are now hardcoded in wonderResources.ts — no API call needed
 
   // For You recommendations
   const [forYouRecs, setForYouRecs] = useState<{ id: string; reason: string }[]>([]);
