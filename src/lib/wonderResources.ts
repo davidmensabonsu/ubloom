@@ -189,6 +189,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['discipline', 'growth', 'consistency'],
     emotionalTone: 'motivating',
     goalAlignment: ['discipline', 'growth'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/12539702-L.jpg',
   },
   {
     id: 'mind-8',
