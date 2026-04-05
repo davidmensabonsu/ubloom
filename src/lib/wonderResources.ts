@@ -72,6 +72,7 @@ export interface WonderResource {
   episodeDuration?: string;
   listenLinks?: PodcastListenLink[];
   embedUrl?: string;
+  coverUrl?: string;
 }
 
 import sparklesIcon from '@/assets/icons/sparkles.png';
