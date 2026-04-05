@@ -145,6 +145,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['confidence', 'empowerment', 'self-worth'],
     emotionalTone: 'empowering',
     goalAlignment: ['confidence', 'self-worth'],
+    coverUrl: 'https://covers.openlibrary.org/b/id/7436635-L.jpg',
   },
   {
     id: 'mind-3',
