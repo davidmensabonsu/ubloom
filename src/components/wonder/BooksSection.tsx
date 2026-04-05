@@ -307,7 +307,7 @@ export default function BooksSection() {
                   onTap={() => handleSelect(resource, reasonMap[resource.id])}
                   isSaved={savedIds.includes(resource.id)}
                   onToggleSave={(e) => handleToggleSave(e, resource.id)}
-                  coverUrl={artworks[resource.title]}
+                  coverUrl={resource.coverUrl}
                   reason={activeTopic === 'for-you' ? reasonMap[resource.id] : undefined}
                 />
               </motion.div>
