@@ -62,7 +62,7 @@ function MoodCheckinGate({ children }: { children: React.ReactNode }) {
   const mainRoutes = ['/home', '/alignment', '/routine', '/wander', '/ubi', '/moodboard', '/profile'];
   const isMainRoute = mainRoutes.includes(location.pathname);
 
-  // Show walkthrough before mood check-in for first-time users
+  // Show walkthrough overlay on top of page content for first-time users
   const needsWalkthrough =
     user &&
     cloudSyncLoaded &&
@@ -70,14 +70,11 @@ function MoodCheckinGate({ children }: { children: React.ReactNode }) {
     !profile.walkthroughComplete &&
     isMainRoute;
 
-  if (needsWalkthrough) {
-    return <AppWalkthrough />;
-  }
-
   const needsCheckin =
     user &&
     cloudSyncLoaded &&
     profile.onboardingComplete &&
+    !needsWalkthrough &&
     isMainRoute &&
     profile.lastMoodCheckinDate !== getLocalDateStr();
 
@@ -85,7 +82,12 @@ function MoodCheckinGate({ children }: { children: React.ReactNode }) {
     return <DailyMoodCheckin />;
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      {needsWalkthrough && <AppWalkthrough />}
+    </>
+  );
 }
 
 const routeOrder = ['/', '/auth', '/reset-password', '/onboarding', '/dream-life', '/choose-aesthetic', '/home', '/alignment', '/routine', '/wander', '/ubi', '/moodboard', '/profile'];
