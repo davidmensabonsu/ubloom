@@ -13,6 +13,7 @@ import StepByStepGuide from './StepByStepGuide';
 import SimpleTimer from './SimpleTimer';
 import HydrationTracker from './HydrationTracker';
 import UbiPodcastInsight from './UbiPodcastInsight';
+import UbiBookInsight from './UbiBookInsight';
 import saladIcon from '@/assets/icons/salad.png';
 
 
@@ -20,6 +21,7 @@ interface ResourceDetailSheetProps {
   resource: WonderResource | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  bookInsightReason?: string;
 }
 
 /** Map resource IDs to interactive visual components */
