@@ -12,6 +12,7 @@ import BodyScanGuide from './BodyScanGuide';
 import StepByStepGuide from './StepByStepGuide';
 import SimpleTimer from './SimpleTimer';
 import HydrationTracker from './HydrationTracker';
+import UbiPodcastInsight from './UbiPodcastInsight';
 import saladIcon from '@/assets/icons/salad.png';
 
 
