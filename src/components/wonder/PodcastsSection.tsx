@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bookmark, Headphones } from 'lucide-react';
 import { wonderResources, type WonderResource } from '@/lib/wonderResources';
 import { useUserStore } from '@/stores/userStore';
+import { usePodcastArtwork } from '@/hooks/usePodcastArtwork';
 import ResourceCard from './ResourceCard';
 import ResourceDetailSheet from './ResourceDetailSheet';
 
