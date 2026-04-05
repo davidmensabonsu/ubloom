@@ -62,6 +62,18 @@ function MoodCheckinGate({ children }: { children: React.ReactNode }) {
   const mainRoutes = ['/home', '/alignment', '/routine', '/wander', '/ubi', '/moodboard', '/profile'];
   const isMainRoute = mainRoutes.includes(location.pathname);
 
+  // Show walkthrough before mood check-in for first-time users
+  const needsWalkthrough =
+    user &&
+    cloudSyncLoaded &&
+    profile.onboardingComplete &&
+    !profile.walkthroughComplete &&
+    isMainRoute;
+
+  if (needsWalkthrough) {
+    return <AppWalkthrough />;
+  }
+
   const needsCheckin =
     user &&
     cloudSyncLoaded &&
