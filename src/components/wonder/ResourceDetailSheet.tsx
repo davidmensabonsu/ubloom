@@ -270,8 +270,21 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange, book
             </div>
           )}
 
+          {/* Embedded video (e.g. YouTube) */}
+          {resource.embedUrl && (
+            <div className="rounded-2xl overflow-hidden aspect-video">
+              <iframe
+                src={resource.embedUrl}
+                title={resource.title}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          )}
+
           {/* AI-generated demo video */}
-          {resourceVideos[resource.id] && (
+          {!resource.embedUrl && resourceVideos[resource.id] && (
             <div className="rounded-2xl overflow-hidden">
               <video
                 src={resourceVideos[resource.id]}
