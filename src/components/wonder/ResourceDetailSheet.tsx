@@ -13,6 +13,7 @@ import StepByStepGuide from './StepByStepGuide';
 import SimpleTimer from './SimpleTimer';
 import HydrationTracker from './HydrationTracker';
 import UbiPodcastInsight from './UbiPodcastInsight';
+import UbiBookInsight from './UbiBookInsight';
 import saladIcon from '@/assets/icons/salad.png';
 
 
@@ -20,6 +21,7 @@ interface ResourceDetailSheetProps {
   resource: WonderResource | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  bookInsightReason?: string;
 }
 
 /** Map resource IDs to interactive visual components */
@@ -194,7 +196,7 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
   }
 }
 
-export default function ResourceDetailSheet({ resource, open, onOpenChange }: ResourceDetailSheetProps) {
+export default function ResourceDetailSheet({ resource, open, onOpenChange, bookInsightReason }: ResourceDetailSheetProps) {
   const { profile, saveResource, unsaveResource, saveRecipe, unsaveRecipe, markResourceUsed, unmarkResourceUsed, logResourceCompletion, viewResource } = useUserStore();
 
   // Track view when sheet opens with a resource
@@ -363,6 +365,11 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
           {/* Ubi podcast episode recommendation */}
           {resource.type === 'podcast' && (
             <UbiPodcastInsight resource={resource} />
+          )}
+
+          {/* Ubi book insight */}
+          {resource.type === 'book' && bookInsightReason && (
+            <UbiBookInsight reason={bookInsightReason} />
           )}
 
           {/* Podcast listen links */}
