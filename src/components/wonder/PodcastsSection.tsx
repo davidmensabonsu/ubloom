@@ -176,7 +176,6 @@ export default function PodcastsSection() {
         resource={selectedResource}
         open={sheetOpen}
         onOpenChange={setSheetOpen}
-        podcastArtwork={selectedResource ? artworks[selectedResource.title] : null}
       />
     </div>
   );
