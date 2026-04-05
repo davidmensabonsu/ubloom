@@ -360,6 +360,11 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange }: Re
             ))}
           </div>
 
+          {/* Ubi podcast episode recommendation */}
+          {resource.type === 'podcast' && (
+            <UbiPodcastInsight resource={resource} />
+          )}
+
           {/* Podcast listen links */}
           {resource.listenLinks && resource.listenLinks.length > 0 && (
             <div className="p-4 rounded-2xl bg-muted/50 space-y-2.5">
