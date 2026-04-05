@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bookmark, BookOpen } from 'lucide-react';
+import { Bookmark, BookOpen, Sparkles } from 'lucide-react';
 import { wonderResources, type WonderResource } from '@/lib/wonderResources';
 import { useUserStore } from '@/stores/userStore';
-import { resourceThumbnails } from '@/lib/resourceMedia';
 import { typeLabels, categoryColors } from '@/lib/wonderResources';
+import { useBookArtwork } from '@/hooks/useBookArtwork';
+import { supabase } from '@/integrations/supabase/client';
 import ResourceDetailSheet from './ResourceDetailSheet';
 
 const bookTopics = [
   { key: 'all', label: 'All' },
+  { key: 'for-you', label: 'For You' },
   { key: 'reading-list', label: 'My List' },
   { key: 'mindset', label: 'Mindset' },
   { key: 'wellness', label: 'Wellness' },
@@ -27,20 +29,52 @@ const topicTagMap: Record<string, string[]> = {
   business: ['business', 'finance', 'leadership', 'career', 'ambition', 'strategy', 'productivity'],
 };
 
+const FOR_YOU_CACHE_KEY = 'book-for-you-cache';
+const FOR_YOU_CACHE_TTL = 24 * 60 * 60 * 1000;
+
+interface ForYouCache {
+  recommendations: { id: string; reason: string }[];
+  timestamp: number;
+}
+
+function getForYouCache(): ForYouCache | null {
+  try {
+    const raw = localStorage.getItem(FOR_YOU_CACHE_KEY);
+    if (!raw) return null;
+    const entry: ForYouCache = JSON.parse(raw);
+    if (Date.now() - entry.timestamp > FOR_YOU_CACHE_TTL) {
+      localStorage.removeItem(FOR_YOU_CACHE_KEY);
+      return null;
+    }
+    return entry;
+  } catch {
+    return null;
+  }
+}
+
+function setForYouCache(recommendations: { id: string; reason: string }[]) {
+  try {
+    localStorage.setItem(FOR_YOU_CACHE_KEY, JSON.stringify({ recommendations, timestamp: Date.now() }));
+  } catch {}
+}
+
 function BookCard({
   resource,
   onTap,
   isSaved,
   onToggleSave,
+  coverUrl,
+  reason,
 }: {
   resource: WonderResource;
   onTap: () => void;
   isSaved: boolean;
   onToggleSave: (e: React.MouseEvent) => void;
+  coverUrl?: string | null;
+  reason?: string;
 }) {
   const typeInfo = typeLabels[resource.type];
   const color = categoryColors[resource.category];
-  const thumbnail = resourceThumbnails[resource.id];
 
   return (
     <motion.div
@@ -48,10 +82,10 @@ function BookCard({
       whileTap={{ scale: 0.97 }}
     >
       <button onClick={onTap} className="w-full text-left">
-        {thumbnail && (
-          <div className="w-full aspect-[4/3] overflow-hidden relative">
+        {coverUrl && (
+          <div className="w-full aspect-[3/4] overflow-hidden relative bg-muted/50">
             <img
-              src={thumbnail}
+              src={coverUrl}
               alt={resource.title}
               className="w-full h-full object-cover"
               loading="lazy"
@@ -74,13 +108,18 @@ function BookCard({
               {resource.title}
             </h4>
           </div>
-          <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
-            {resource.description}
-          </p>
+          {reason ? (
+            <p className="text-xs text-primary/80 mt-1 line-clamp-2 leading-relaxed italic">
+              {reason}
+            </p>
+          ) : (
+            <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
+              {resource.description}
+            </p>
+          )}
         </div>
       </button>
 
-      {/* Bookmark button */}
       <button
         onClick={onToggleSave}
         className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-background"
@@ -97,22 +136,80 @@ function BookCard({
 export default function BooksSection() {
   const [activeTopic, setActiveTopic] = useState<TopicKey>('all');
   const [selectedResource, setSelectedResource] = useState<WonderResource | null>(null);
+  const [selectedReason, setSelectedReason] = useState<string | undefined>();
   const [sheetOpen, setSheetOpen] = useState(false);
   const { profile, saveResource, unsaveResource } = useUserStore();
 
   const allBooks = wonderResources.filter((r) => r.category === 'books');
   const savedIds = profile.savedResources || [];
 
+  // Book artwork
+  const bookTitles = useMemo(() => allBooks.map((b) => b.title), [allBooks]);
+  const { artworks } = useBookArtwork(bookTitles);
+
+  // For You recommendations
+  const [forYouRecs, setForYouRecs] = useState<{ id: string; reason: string }[]>([]);
+  const [forYouLoading, setForYouLoading] = useState(false);
+
+  const fetchForYou = useCallback(async () => {
+    const cached = getForYouCache();
+    if (cached) {
+      setForYouRecs(cached.recommendations);
+      return;
+    }
+
+    setForYouLoading(true);
+    try {
+      const resourceIds = allBooks.map((r) => ({ id: r.id, title: r.title, tags: r.tags }));
+      const { data, error } = await supabase.functions.invoke('wonder-recommendations', {
+        body: {
+          struggles: profile.struggles,
+          dreamSelfFeels: profile.dreamSelfFeels,
+          wantsMoreOf: profile.wantsMoreOf,
+          identityStatement: profile.identityStatement,
+          recentMoods: profile.moodHistory?.slice(-5).map((m) => m.moods).flat(),
+          habitCategories: [],
+          resourceIds,
+        },
+      });
+
+      if (!error && data?.recommendations) {
+        setForYouRecs(data.recommendations);
+        setForYouCache(data.recommendations);
+      }
+    } catch (e) {
+      console.error('For You recommendations error:', e);
+    } finally {
+      setForYouLoading(false);
+    }
+  }, [allBooks, profile]);
+
+  useEffect(() => {
+    if (activeTopic === 'for-you' && forYouRecs.length === 0 && !forYouLoading) {
+      fetchForYou();
+    }
+  }, [activeTopic]);
+
+  // Reason map for For You books
+  const reasonMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    forYouRecs.forEach((r) => { map[r.id] = r.reason; });
+    return map;
+  }, [forYouRecs]);
+
   const filtered = activeTopic === 'reading-list'
     ? allBooks.filter((r) => savedIds.includes(r.id))
-    : activeTopic === 'all'
-      ? allBooks
-      : allBooks.filter((r) =>
-          r.tags.some((t) => topicTagMap[activeTopic]?.includes(t))
-        );
+    : activeTopic === 'for-you'
+      ? allBooks.filter((r) => forYouRecs.some((rec) => rec.id === r.id))
+      : activeTopic === 'all'
+        ? allBooks
+        : allBooks.filter((r) =>
+            r.tags.some((t) => topicTagMap[activeTopic]?.includes(t))
+          );
 
-  const handleSelect = (r: WonderResource) => {
+  const handleSelect = (r: WonderResource, reason?: string) => {
     setSelectedResource(r);
+    setSelectedReason(reason);
     setSheetOpen(true);
   };
 
@@ -140,6 +237,7 @@ export default function BooksSection() {
                 : 'bg-muted/60 text-muted-foreground hover:bg-muted'
             }`}
           >
+            {topic.key === 'for-you' && <Sparkles size={12} className="text-primary" />}
             {topic.label}
             {topic.key === 'reading-list' && readingListCount > 0 && (
               <span className="ml-0.5 text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-full font-semibold">
@@ -151,7 +249,26 @@ export default function BooksSection() {
       </div>
 
       <AnimatePresence mode="wait">
-        {activeTopic === 'reading-list' && filtered.length === 0 ? (
+        {activeTopic === 'for-you' && forYouLoading ? (
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="grid grid-cols-2 gap-3"
+          >
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="rounded-2xl bg-muted/30 overflow-hidden animate-pulse">
+                <div className="w-full aspect-[3/4] bg-muted/50" />
+                <div className="p-3 space-y-2">
+                  <div className="h-3 bg-muted/50 rounded-full w-16" />
+                  <div className="h-4 bg-muted/50 rounded-full w-full" />
+                  <div className="h-3 bg-muted/50 rounded-full w-4/5" />
+                </div>
+              </div>
+            ))}
+          </motion.div>
+        ) : activeTopic === 'reading-list' && filtered.length === 0 ? (
           <motion.div
             key="empty-list"
             initial={{ opacity: 0, y: 8 }}
@@ -183,9 +300,11 @@ export default function BooksSection() {
               >
                 <BookCard
                   resource={resource}
-                  onTap={() => handleSelect(resource)}
+                  onTap={() => handleSelect(resource, reasonMap[resource.id])}
                   isSaved={savedIds.includes(resource.id)}
                   onToggleSave={(e) => handleToggleSave(e, resource.id)}
+                  coverUrl={artworks[resource.title]}
+                  reason={activeTopic === 'for-you' ? reasonMap[resource.id] : undefined}
                 />
               </motion.div>
             ))}
@@ -193,7 +312,11 @@ export default function BooksSection() {
         )}
       </AnimatePresence>
 
-      {activeTopic !== 'reading-list' && filtered.length === 0 && (
+      {activeTopic === 'for-you' && !forYouLoading && filtered.length === 0 && forYouRecs.length === 0 && (
+        <p className="text-sm text-muted-foreground text-center py-6">Complete your profile to get personalised recommendations.</p>
+      )}
+
+      {activeTopic !== 'reading-list' && activeTopic !== 'for-you' && filtered.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">No books in this category yet.</p>
       )}
 
@@ -201,6 +324,7 @@ export default function BooksSection() {
         resource={selectedResource}
         open={sheetOpen}
         onOpenChange={setSheetOpen}
+        bookInsightReason={selectedReason}
       />
     </div>
   );
