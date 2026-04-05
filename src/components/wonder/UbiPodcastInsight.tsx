@@ -26,7 +26,7 @@ export default function UbiPodcastInsight({ resource }: UbiPodcastInsightProps) 
         wantsMoreOf: profile.wantsMoreOf,
         dreamSelfFeels: profile.dreamSelfFeels,
         identityStatement: profile.identityStatement,
-        recentMood: profile.moodHistory?.slice(-3).map((m) => m.mood),
+        recentMood: profile.moodHistory?.slice(-3).map((m) => m.moods),
         dailyState: profile.dailyCheckinState,
       };
 
