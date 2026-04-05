@@ -196,6 +196,7 @@ export const wonderResources: WonderResource[] = [
     tags: ['vulnerability', 'courage', 'connection'],
     emotionalTone: 'warm',
     goalAlignment: ['self-worth', 'peace'],
+    embedUrl: 'https://www.youtube.com/embed/iCvmsMzlF7o',
   },
 
   // WELLNESS & BODY
