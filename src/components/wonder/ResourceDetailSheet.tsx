@@ -194,7 +194,7 @@ function ResourceVisual({ resourceId, onComplete }: { resourceId: string; onComp
   }
 }
 
-export default function ResourceDetailSheet({ resource, open, onOpenChange }: ResourceDetailSheetProps) {
+export default function ResourceDetailSheet({ resource, open, onOpenChange, podcastArtwork }: ResourceDetailSheetProps) {
   const { profile, saveResource, unsaveResource, saveRecipe, unsaveRecipe, markResourceUsed, unmarkResourceUsed, logResourceCompletion, viewResource } = useUserStore();
 
   // Track view when sheet opens with a resource
