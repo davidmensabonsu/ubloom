@@ -64,8 +64,6 @@ export default function Home() {
 
       {/* Main content — fills remaining space */}
       <div className="flex-1 min-h-0 px-5 pb-20 flex flex-col gap-3">
-        {/* Weekly Mood Summary */}
-        <WeeklyMoodSummary />
 
         {/* Future Self Message */}
         <motion.div
