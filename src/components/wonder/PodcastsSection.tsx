@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bookmark, Headphones } from 'lucide-react';
 import { wonderResources, type WonderResource } from '@/lib/wonderResources';
 import { useUserStore } from '@/stores/userStore';
+import { usePodcastArtwork } from '@/hooks/usePodcastArtwork';
 import ResourceCard from './ResourceCard';
 import ResourceDetailSheet from './ResourceDetailSheet';
 
@@ -34,6 +35,10 @@ export default function PodcastsSection() {
 
   const allPodcasts = wonderResources.filter((r) => r.category === 'podcasts');
   const savedIds = profile.savedResources || [];
+
+  // Fetch Apple Podcasts artwork
+  const podcastTitles = useMemo(() => allPodcasts.map((p) => p.title), [allPodcasts]);
+  const { artworks, loading: artworkLoading } = usePodcastArtwork(podcastTitles);
 
   const filtered = activeTopic === 'saved'
     ? allPodcasts.filter((r) => savedIds.includes(r.id))
@@ -102,30 +107,63 @@ export default function PodcastsSection() {
             exit={{ opacity: 0 }}
             className="grid grid-cols-2 gap-3"
           >
-            {filtered.map((resource, i) => (
-              <motion.div
-                key={resource.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: Math.min(i * 0.03, 0.2) }}
-                className="relative"
-              >
-                <ResourceCard
-                  resource={resource}
-                  onTap={() => handleSelect(resource)}
-                  compact
-                />
-                <button
-                  onClick={(e) => handleToggleSave(e, resource.id)}
-                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-background z-10"
+            {filtered.map((resource, i) => {
+              const artwork = artworks[resource.title];
+              return (
+                <motion.div
+                  key={resource.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: Math.min(i * 0.03, 0.2) }}
+                  className="relative"
                 >
-                  <Bookmark
-                    size={14}
-                    className={savedIds.includes(resource.id) ? 'text-primary fill-primary' : 'text-muted-foreground'}
-                  />
-                </button>
-              </motion.div>
-            ))}
+                  {artwork ? (
+                    <motion.button
+                      onClick={() => handleSelect(resource)}
+                      className="w-full text-left rounded-2xl bg-muted/30 hover:bg-muted/50 transition-colors relative overflow-hidden"
+                      whileTap={{ scale: 0.97 }}
+                    >
+                      <div className="w-full aspect-square overflow-hidden">
+                        <img
+                          src={artwork}
+                          alt={resource.title}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className="p-3">
+                        <h4 className="text-sm font-semibold text-foreground leading-snug line-clamp-2">
+                          {resource.title}
+                        </h4>
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
+                          {resource.description}
+                        </p>
+                        {resource.episodeDuration && (
+                          <p className="text-[10px] text-muted-foreground mt-1.5 font-medium">
+                            {resource.episodeDuration} per episode
+                          </p>
+                        )}
+                      </div>
+                    </motion.button>
+                  ) : (
+                    <ResourceCard
+                      resource={resource}
+                      onTap={() => handleSelect(resource)}
+                      compact
+                    />
+                  )}
+                  <button
+                    onClick={(e) => handleToggleSave(e, resource.id)}
+                    className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-background z-10"
+                  >
+                    <Bookmark
+                      size={14}
+                      className={savedIds.includes(resource.id) ? 'text-primary fill-primary' : 'text-muted-foreground'}
+                    />
+                  </button>
+                </motion.div>
+              );
+            })}
           </motion.div>
         )}
       </AnimatePresence>
