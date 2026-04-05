@@ -4,6 +4,37 @@ import { supabase } from '@/integrations/supabase/client';
 import { useUserStore } from '@/stores/userStore';
 import type { WonderResource } from '@/lib/wonderResources';
 
+const CACHE_KEY = 'ubi-podcast-recs';
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+
+interface CacheEntry {
+  recommendation: string;
+  timestamp: number;
+}
+
+function getCache(): Record<string, CacheEntry> {
+  try {
+    return JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+function getCached(resourceId: string): string | null {
+  const cache = getCache();
+  const entry = cache[resourceId];
+  if (entry && Date.now() - entry.timestamp < CACHE_TTL) {
+    return entry.recommendation;
+  }
+  return null;
+}
+
+function setCache(resourceId: string, recommendation: string) {
+  const cache = getCache();
+  cache[resourceId] = { recommendation, timestamp: Date.now() };
+  localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+}
+
 interface UbiPodcastInsightProps {
   resource: WonderResource;
 }
@@ -14,7 +45,15 @@ export default function UbiPodcastInsight({ resource }: UbiPodcastInsightProps) 
   const [error, setError] = useState(false);
   const { profile } = useUserStore();
 
-  const fetchRecommendation = async () => {
+  const fetchRecommendation = async (skipCache = false) => {
+    if (!skipCache) {
+      const cached = getCached(resource.id);
+      if (cached) {
+        setRecommendation(cached);
+        return;
+      }
+    }
+
     setLoading(true);
     setError(false);
     setRecommendation(null);
@@ -42,6 +81,7 @@ export default function UbiPodcastInsight({ resource }: UbiPodcastInsightProps) 
       if (fnError) throw fnError;
       if (data?.recommendation) {
         setRecommendation(data.recommendation);
+        setCache(resource.id, data.recommendation);
       } else {
         setError(true);
       }
@@ -70,7 +110,7 @@ export default function UbiPodcastInsight({ resource }: UbiPodcastInsightProps) 
         </div>
         {recommendation && (
           <button
-            onClick={fetchRecommendation}
+            onClick={() => fetchRecommendation(true)}
             disabled={loading}
             className="p-1 rounded-full hover:bg-primary/10 transition-colors"
           >
