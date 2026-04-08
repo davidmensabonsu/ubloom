@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { track } from '@/hooks/useAnalytics';
 import { motion } from 'framer-motion';
 import { Search, Heart, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
