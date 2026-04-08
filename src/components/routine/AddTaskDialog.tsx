@@ -102,7 +102,7 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
                         }`}
                         title={opt.label}
                       >
-                        <div className="icon-3d">
+                        <div>
                           {renderTaskIcon(opt, 20)}
                         </div>
                       </button>
