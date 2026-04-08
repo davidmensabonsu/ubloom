@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { track } from '@/hooks/useAnalytics';
 import { Plus, Image, Quote, Loader2 } from 'lucide-react';
 import ProfileButton from '@/components/ProfileButton';
 import { toast } from 'sonner';
