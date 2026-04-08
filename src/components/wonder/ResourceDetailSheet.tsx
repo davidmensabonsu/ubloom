@@ -15,6 +15,7 @@ import HydrationTracker from './HydrationTracker';
 import UbiPodcastInsight from './UbiPodcastInsight';
 import UbiBookInsight from './UbiBookInsight';
 import saladIcon from '@/assets/icons/salad.png';
+import { track } from '@/hooks/useAnalytics';
 
 
 interface ResourceDetailSheetProps {
@@ -205,6 +206,7 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange, book
   if (open && resource && resource.id !== lastViewedId) {
     setLastViewedId(resource.id);
     viewResource(resource.id);
+    track('resource_viewed', { resourceId: resource.id, category: resource.category });
   }
   if (!open && lastViewedId) {
     setLastViewedId(null);

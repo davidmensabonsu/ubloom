@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ubloomFlower from '@/assets/ubloom-flower.png';
+import { track } from '@/hooks/useAnalytics';
 
 
 const onboardingSteps = [
@@ -149,9 +150,12 @@ export default function Onboarding() {
       setAnswers({ ...answers, [step.id]: textValue });
     }
 
+    track('onboarding_step', { step: step.id, stepIndex: currentStep });
+
     if (currentStep < onboardingSteps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
+      track('onboarding_complete', { aesthetic: answers.identity, struggles: answers.struggles });
       updateProfile({
         currentFeeling: answers.feeling as string,
         struggles: answers.struggles as string[],

@@ -12,6 +12,7 @@ import { AnimatePresence } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
 import DailyMoodCheckin from "@/components/DailyMoodCheckin";
 import AppWalkthrough from "@/components/AppWalkthrough";
+import PageViewTracker from "@/components/PageViewTracker";
 import { getLocalDateStr } from "@/lib/dateUtils";
 
 // Pages
@@ -106,6 +107,7 @@ function AnimatedRoutes() {
   
   return (
     <>
+      <PageViewTracker />
       <MoodCheckinGate>
         <AnimatePresence mode="wait" initial={false}>
           <Routes location={location} key={location.pathname}>
