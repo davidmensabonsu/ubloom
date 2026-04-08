@@ -1,57 +1,27 @@
 
 
-## Plan: Book Cover Artwork + "For You" Sub-tab with Ubi Insights
+## Plan: Add Optional Specific Time to Habits
 
-### What We're Building
+### Approach
 
-1. **Real book cover images** fetched dynamically via Google Books API (free, no key required), similar to how podcasts use Apple Podcasts artwork
-2. **"For You" tab inside the Books section** — AI-personalized book recommendations with Ubi insights explaining why each book suits the user
-3. Remove the existing top-level "For You" tab from the main Wander page (moved into each category instead)
+The cleanest way is to add an **optional** `scheduledTime` field (e.g. `"08:30"`) to each habit. This keeps the existing Morning/Midday/Evening grouping as the primary organizer, but lets users optionally pin a specific time within that group. Habits with a time set would display it as a subtle label, and sort earlier-to-later within their time-of-day section.
 
-### Technical Steps
+### What Changes
 
-**1. Create `useBookArtwork` hook** (`src/hooks/useBookArtwork.ts`)
-- Mirror the `usePodcastArtwork` pattern
-- Create an edge function `supabase/functions/book-artwork/index.ts` that calls the Google Books API (`https://www.googleapis.com/books/v1/volumes?q=...`) to fetch cover thumbnails
-- Cache results in localStorage with a 7-day TTL, same as podcasts
+**1. Data model** — Add `scheduledTime?: string` (HH:mm format) to the `CoreHabit` interface in `userStore.ts`.
 
-**2. Create `UbiBookInsight` component** (`src/components/wonder/UbiBookInsight.tsx`)
-- Similar to `UbiPodcastInsight` but tailored for books
-- Shows "Why this book is for you" based on user profile (struggles, goals, mood)
-- Uses the existing `wonder-recommendations` edge function (which already handles books) or a new lightweight `book-recommendation` edge function
-- Cached in localStorage with 24h TTL
+**2. Add Task dialog** — Add an optional time picker input below the time-of-day selector. A small clock button toggles a native `<input type="time">` field. Leaving it blank means no specific time (current behavior).
 
-**3. Update `BooksSection.tsx`**
-- Add a "For You" tab as the first filter option (after "All")
-- When "For You" is active, fetch AI recommendations filtered to books only, and display each with its Ubi insight reason
-- Use `useBookArtwork` to display real cover images on all book cards (replacing the current generic thumbnails)
+**3. Edit Habit dialog** — Same time picker added to `EditHabitDialog.tsx` so users can set/change/remove the time on existing habits.
 
-**4. Update `ResourceDetailSheet.tsx`**
-- When viewing a book from the "For You" tab, show the Ubi insight (why this book was recommended) in the detail sheet, similar to podcast insights
+**4. CoreHabitsSection display** — Within each Morning/Midday/Evening group, habits with a `scheduledTime` sort chronologically, followed by habits without one. The time displays as a small muted label (e.g. "8:30 AM") next to the habit title.
 
-### Architecture
+### Files to Edit
 
-```text
-BooksSection
-  ├── Filter tabs: All | For You | My List | Mindset | ...
-  ├── useBookArtwork(titles) → real covers
-  ├── [For You tab active]:
-  │     └── wonder-recommendations edge fn (filtered to books)
-  │         → 6 books with "reason" strings
-  │         → Each card shows cover + reason quote
-  └── BookCard (updated to show real cover art)
-
-ResourceDetailSheet
-  └── [type === 'book' from For You] → UbiBookInsight
-```
-
-### Files to Create/Edit
-
-| File | Action |
+| File | Change |
 |------|--------|
-| `supabase/functions/book-artwork/index.ts` | Create — Google Books API proxy |
-| `src/hooks/useBookArtwork.ts` | Create — fetch + cache book covers |
-| `src/components/wonder/UbiBookInsight.tsx` | Create — personalized book insight |
-| `src/components/wonder/BooksSection.tsx` | Edit — add "For You" tab, integrate covers + insights |
-| `src/components/wonder/ResourceDetailSheet.tsx` | Edit — show UbiBookInsight for books |
+| `src/stores/userStore.ts` | Add `scheduledTime?: string` to `CoreHabit` |
+| `src/components/routine/AddTaskDialog.tsx` | Add optional time picker input |
+| `src/components/routine/EditHabitDialog.tsx` | Add optional time picker input |
+| `src/components/routine/CoreHabitsSection.tsx` | Display time label, sort by time within groups |
 
