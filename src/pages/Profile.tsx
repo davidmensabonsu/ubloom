@@ -7,7 +7,8 @@ import { useUserStore } from '@/stores/userStore';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { Check, Camera, LogOut, Trash2, Pencil, BookOpen, Target, Lock, KeyRound, Sparkles, Eye, EyeOff } from 'lucide-react';
+import { Check, Camera, LogOut, Trash2, Pencil, BookOpen, Target, Lock, KeyRound, Sparkles, Eye, EyeOff, Shield } from 'lucide-react';
+import { useAdminCheck } from '@/hooks/useAdminCheck';
 import ubloomLogo from '@/assets/ubloom-flower.png';
 import flameIcon from '@/assets/icons/flame.png';
 import { useToast } from '@/hooks/use-toast';
@@ -49,6 +50,7 @@ export default function Profile() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { profile, setAesthetic, resetProfile, updateProfile } = useUserStore();
+  const { isAdmin } = useAdminCheck();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -520,6 +522,22 @@ export default function Profile() {
             </div>
             <span className="font-medium text-foreground">Replay walkthrough</span>
           </button>
+
+          {isAdmin && (
+            <button
+              onClick={() => navigate('/admin')}
+              className="w-full glass-card rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98]"
+            >
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <Shield size={18} className="text-primary" />
+              </div>
+              <div>
+                <span className="font-medium text-foreground">Admin Dashboard</span>
+                <p className="text-xs text-muted-foreground">Analytics & insights</p>
+              </div>
+            </button>
+          )}
+
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
