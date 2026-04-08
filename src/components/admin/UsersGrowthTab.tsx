@@ -162,6 +162,9 @@ export default function UsersGrowthTab({ events, userData }: Props) {
         </CardContent>
       </Card>
 
+      {/* Cohort Retention */}
+      <CohortAnalysis events={events} />
+
       {/* Demographics Section */}
       <div>
         <h3 className="text-sm font-semibold text-foreground mb-3">Demographics ({stats.totalOnboarding} users with onboarding data)</h3>
