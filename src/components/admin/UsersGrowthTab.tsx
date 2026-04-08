@@ -4,6 +4,7 @@ import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
 } from 'recharts';
+import CohortAnalysis from './CohortAnalysis';
 
 interface AnalyticsEvent {
   id: string;
@@ -160,6 +161,9 @@ export default function UsersGrowthTab({ events, userData }: Props) {
           )}
         </CardContent>
       </Card>
+
+      {/* Cohort Retention */}
+      <CohortAnalysis events={events} />
 
       {/* Demographics Section */}
       <div>
