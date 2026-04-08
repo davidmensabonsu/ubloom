@@ -4,6 +4,7 @@ import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
 } from 'recharts';
+import CohortAnalysis from './CohortAnalysis';
 
 interface AnalyticsEvent {
   id: string;
