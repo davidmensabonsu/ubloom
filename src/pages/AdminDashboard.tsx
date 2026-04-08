@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAdminCheck } from '@/hooks/useAdminCheck';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ThumbsUp, ThumbsDown, TrendingUp, BarChart3, ArrowLeft, Shield } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, TrendingUp, BarChart3, ArrowLeft, Shield, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
