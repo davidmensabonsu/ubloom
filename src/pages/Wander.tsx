@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { track } from '@/hooks/useAnalytics';
 import { motion } from 'framer-motion';
 import { Search, Heart, Clock } from 'lucide-react';
@@ -55,6 +55,15 @@ export default function Wonder2() {
 
   useEffect(() => { track('feature_used', { feature: 'wander' }); }, []);
 
+  // Debounced search tracking
+  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const trackSearch = useCallback((q: string) => {
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => {
+      if (q.trim()) track('wander_search', { query: q.trim() });
+    }, 800);
+  }, []);
+
   // Resolve recently viewed resource objects (max 6 shown)
   const recentResources = recentlyViewedIds
     .map((id) => wonderResources.find((r) => r.id === id))
@@ -65,7 +74,9 @@ export default function Wonder2() {
 
   const toggleSave = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
+    const action = savedSet.has(id) ? 'unsave' : 'save';
     savedSet.has(id) ? unsaveResource(id) : saveResource(id);
+    track('wander_save_toggle', { resourceId: id, action });
   };
 
   // Count saved per category
@@ -95,13 +106,13 @@ export default function Wonder2() {
             <input
               type="text"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => { setSearch(e.target.value); trackSearch(e.target.value); }}
               placeholder="Search ideas..."
               className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
             />
             <div className="ml-auto flex gap-1.5">
               <button
-                onClick={() => setTab('for-you')}
+                onClick={() => { setTab('for-you'); track('wander_tab_switch', { tab: 'for-you' }); }}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors ${
                   tab === 'for-you'
                     ? 'bg-primary/15 text-foreground ring-1 ring-primary/40'
@@ -111,7 +122,7 @@ export default function Wonder2() {
                 For you
               </button>
               <button
-                onClick={() => setTab('popular')}
+                onClick={() => { setTab('popular'); track('wander_tab_switch', { tab: 'popular' }); }}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors ${
                   tab === 'popular'
                     ? 'bg-primary/15 text-foreground ring-1 ring-primary/40'
@@ -187,7 +198,7 @@ export default function Wonder2() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 + i * 0.04 }}
               className="break-inside-avoid rounded-2xl overflow-hidden bg-card border border-border/30 relative cursor-pointer"
-              onClick={() => navigate(`/wander/${card.key}`)}
+              onClick={() => { track('wander_category_tap', { category: card.key }); navigate(`/wander/${card.key}`); }}
             >
               <img
                 src={card.image}
