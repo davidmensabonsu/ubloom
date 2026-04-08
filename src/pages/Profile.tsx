@@ -50,6 +50,7 @@ export default function Profile() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { profile, setAesthetic, resetProfile, updateProfile } = useUserStore();
+  const { isAdmin } = useAdminCheck();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
