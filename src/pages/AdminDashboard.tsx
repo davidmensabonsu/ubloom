@@ -38,7 +38,10 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (adminLoading) return;
-    if (!isAdmin) return;
+    if (!isAdmin) {
+      setLoading(false);
+      return;
+    }
 
     const fetchAll = async () => {
       const [ratingsRes, eventsRes, userDataRes] = await Promise.all([
