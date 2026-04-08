@@ -523,7 +523,22 @@ export default function Profile() {
             <span className="font-medium text-foreground">Replay walkthrough</span>
           </button>
 
-          <AlertDialog>
+          {isAdmin && (
+            <button
+              onClick={() => navigate('/admin')}
+              className="w-full glass-card rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98]"
+            >
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <Shield size={18} className="text-primary" />
+              </div>
+              <div>
+                <span className="font-medium text-foreground">Admin Dashboard</span>
+                <p className="text-xs text-muted-foreground">Analytics & insights</p>
+              </div>
+            </button>
+          )}
+
+
             <AlertDialogTrigger asChild>
               <button className="w-full glass-card rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98]">
                 <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
