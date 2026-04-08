@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { track } from '@/hooks/useAnalytics';
 import { Plus, Image, Quote, Loader2 } from 'lucide-react';
 import ProfileButton from '@/components/ProfileButton';
 import { toast } from 'sonner';
@@ -23,6 +24,8 @@ export default function Moodboard() {
   const { user } = useAuth();
   const { profile, addMoodboardItem, removeMoodboardItem, reorderMoodboardItems } = useUserStore();
   const items = profile.moodboardItems || [];
+
+  useEffect(() => { track('feature_used', { feature: 'moodboard' }); }, []);
 
   const [selectedBoard, setSelectedBoard] = useState<string>('All');
   const [quoteOpen, setQuoteOpen] = useState(false);
