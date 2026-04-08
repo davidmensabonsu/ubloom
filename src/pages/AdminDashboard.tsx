@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAdminCheck } from '@/hooks/useAdminCheck';
@@ -14,6 +14,7 @@ import EngagementTab from '@/components/admin/EngagementTab';
 import DemographicsTab from '@/components/admin/DemographicsTab';
 import ProgressTab from '@/components/admin/ProgressTab';
 import FunnelsTab from '@/components/admin/FunnelsTab';
+import DateRangeFilter, { type DateRange } from '@/components/admin/DateRangeFilter';
 
 interface RatingRow {
   id: string;
@@ -23,6 +24,15 @@ interface RatingRow {
   created_at: string;
 }
 
+function filterByDate<T extends { created_at: string }>(items: T[], range: DateRange): T[] {
+  return items.filter(item => {
+    const d = new Date(item.created_at);
+    if (range.from && d < range.from) return false;
+    if (range.to && d > range.to) return false;
+    return true;
+  });
+}
+
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const { isAdmin, loading: adminLoading } = useAdminCheck();
@@ -30,6 +40,7 @@ export default function AdminDashboard() {
   const [events, setEvents] = useState<any[]>([]);
   const [userData, setUserData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dateRange, setDateRange] = useState<DateRange>({ from: undefined, to: undefined });
 
   useEffect(() => {
     if (adminLoading) return;
@@ -51,6 +62,9 @@ export default function AdminDashboard() {
     fetchAll();
   }, [isAdmin, adminLoading]);
 
+  const filteredEvents = useMemo(() => filterByDate(events, dateRange), [events, dateRange]);
+  const filteredRatings = useMemo(() => filterByDate(ratings, dateRange), [ratings, dateRange]);
+
   if (adminLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -71,14 +85,14 @@ export default function AdminDashboard() {
     );
   }
 
-  // Ubi ratings stats
-  const totalUp = ratings.filter(r => r.rating === 'up').length;
-  const totalDown = ratings.filter(r => r.rating === 'down').length;
-  const total = ratings.length;
+  // Ubi ratings stats (filtered)
+  const totalUp = filteredRatings.filter(r => r.rating === 'up').length;
+  const totalDown = filteredRatings.filter(r => r.rating === 'down').length;
+  const total = filteredRatings.length;
   const approvalRate = total > 0 ? Math.round((totalUp / total) * 100) : 0;
 
   const dailyMap = new Map<string, { date: string; up: number; down: number }>();
-  ratings.forEach(r => {
+  filteredRatings.forEach(r => {
     const day = r.created_at.slice(0, 10);
     const entry = dailyMap.get(day) || { date: day, up: 0, down: 0 };
     if (r.rating === 'up') entry.up++;
@@ -93,7 +107,7 @@ export default function AdminDashboard() {
   ];
   const PIE_COLORS = ['hsl(var(--primary))', 'hsl(var(--destructive, 0 84% 60%))'];
 
-  const recentRated = [...ratings].reverse().slice(0, 10);
+  const recentRated = [...filteredRatings].reverse().slice(0, 10);
 
   const downloadCsv = (filename: string, headers: string[], rows: string[][]) => {
     const csvContent = [headers.join(','), ...rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(','))].join('\n');
@@ -109,14 +123,14 @@ export default function AdminDashboard() {
   const exportEvents = () => {
     downloadCsv('analytics_events.csv',
       ['timestamp', 'user_id', 'event_name', 'event_data'],
-      events.map(e => [e.created_at, e.user_id, e.event_name, JSON.stringify(e.event_data)])
+      filteredEvents.map(e => [e.created_at, e.user_id, e.event_name, JSON.stringify(e.event_data)])
     );
   };
 
   const exportRatings = () => {
     downloadCsv('ubi_ratings.csv',
       ['timestamp', 'rating', 'message_content', 'conversation_context'],
-      ratings.map(r => [r.created_at, r.rating, r.message_content, r.conversation_context || ''])
+      filteredRatings.map(r => [r.created_at, r.rating, r.message_content, r.conversation_context || ''])
     );
   };
 
@@ -131,7 +145,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-background">
       <div className="max-w-5xl mx-auto p-4 sm:p-6 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-3">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" onClick={() => navigate('/home')}>
               <ArrowLeft className="h-5 w-5" />
@@ -154,6 +168,9 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+        {/* Date Range Filter */}
+        <DateRangeFilter dateRange={dateRange} onDateRangeChange={setDateRange} />
+
         <Tabs defaultValue="engagement" className="w-full">
           <TabsList className="w-full grid grid-cols-5">
             <TabsTrigger value="engagement" className="text-xs">Engagement</TabsTrigger>
@@ -164,7 +181,7 @@ export default function AdminDashboard() {
           </TabsList>
 
           <TabsContent value="engagement">
-            <EngagementTab events={events} />
+            <EngagementTab events={filteredEvents} />
           </TabsContent>
 
           <TabsContent value="demographics">
@@ -172,11 +189,11 @@ export default function AdminDashboard() {
           </TabsContent>
 
           <TabsContent value="progress">
-            <ProgressTab events={events} />
+            <ProgressTab events={filteredEvents} />
           </TabsContent>
 
           <TabsContent value="funnels">
-            <FunnelsTab events={events} />
+            <FunnelsTab events={filteredEvents} />
           </TabsContent>
 
           <TabsContent value="ubi">
