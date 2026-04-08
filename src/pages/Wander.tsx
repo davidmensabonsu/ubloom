@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { track } from '@/hooks/useAnalytics';
 import { motion } from 'framer-motion';
 import { Search, Heart, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -51,6 +52,8 @@ export default function Wonder2() {
   const savedIds = useUserStore((s) => s.profile.savedResources) || [];
   const recentlyViewedIds = useUserStore((s) => s.profile.recentlyViewedResources) || [];
   const { saveResource, unsaveResource } = useUserStore();
+
+  useEffect(() => { track('feature_used', { feature: 'wander' }); }, []);
 
   // Resolve recently viewed resource objects (max 6 shown)
   const recentResources = recentlyViewedIds
