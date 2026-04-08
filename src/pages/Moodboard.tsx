@@ -25,6 +25,8 @@ export default function Moodboard() {
   const { profile, addMoodboardItem, removeMoodboardItem, reorderMoodboardItems } = useUserStore();
   const items = profile.moodboardItems || [];
 
+  useEffect(() => { track('feature_used', { feature: 'moodboard' }); }, []);
+
   const [selectedBoard, setSelectedBoard] = useState<string>('All');
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [quoteBoard, setQuoteBoard] = useState(BOARDS[0]);

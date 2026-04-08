@@ -39,6 +39,8 @@ export default function Health() {
   const nextPeriod = setupComplete ? getFormattedNextPeriod(cycleData.lastPeriodStart, cycleData.cycleLength) : '';
 
   useEffect(() => {
+  useEffect(() => { track('feature_used', { feature: 'health' }); }, []);
+
     if (!setupComplete) { setLoadingInsights(false); return; }
     const fetchInsights = async () => {
       try {
