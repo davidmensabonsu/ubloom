@@ -54,7 +54,21 @@ export default function CoreHabitsSection() {
   };
 
   const getHabitsByTime = (time: TimeOfDay) => {
-    return coreHabits.filter((h) => h.timeOfDay === time && isHabitScheduledForDate(h, today));
+    return coreHabits
+      .filter((h) => h.timeOfDay === time && isHabitScheduledForDate(h, today))
+      .sort((a, b) => {
+        if (a.scheduledTime && b.scheduledTime) return a.scheduledTime.localeCompare(b.scheduledTime);
+        if (a.scheduledTime) return -1;
+        if (b.scheduledTime) return 1;
+        return 0;
+      });
+  };
+
+  const formatTime = (time: string) => {
+    const [h, m] = time.split(':').map(Number);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 || 12;
+    return `${h12}:${m.toString().padStart(2, '0')} ${ampm}`;
   };
 
   // All habits for reordering (unfiltered by date)
@@ -229,8 +243,11 @@ export default function CoreHabitsSection() {
                     >
                       <HabitIcon iconId={habit.icon} />
                       {habit.title}
+                      {habit.scheduledTime && (
+                        <span className="text-xs text-muted-foreground/60 font-normal">{formatTime(habit.scheduledTime)}</span>
+                      )}
                     </span>
-                    {getFrequencyLabel(habit) && (
+                    {getFrequencyLabel(habit) && !habit.scheduledTime && (
                       <span className="ml-auto text-xs text-muted-foreground/50">{getFrequencyLabel(habit)}</span>
                     )}
                   </motion.button>

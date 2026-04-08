@@ -13,6 +13,7 @@ export interface CoreHabit {
   frequency?: HabitFrequency;       // defaults to 'daily'
   specificDays?: number[];           // 0=Sun, 1=Mon, ... 6=Sat
   oneOffDate?: string;               // yyyy-MM-dd for one-off habits
+  scheduledTime?: string;            // HH:mm format, optional specific time
 }
 
 export interface HabitCompletion {

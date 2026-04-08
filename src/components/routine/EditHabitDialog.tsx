@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { CoreHabit, TimeOfDay, HabitFrequency } from '@/stores/userStore';
 import { taskIconOptions, getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
-import { Sun, Clock, Moon, Sparkles } from 'lucide-react';
+import { Sun, Clock, Moon, Sparkles, Timer } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -29,6 +29,8 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>('morning');
   const [frequency, setFrequency] = useState<HabitFrequency>('daily');
   const [specificDays, setSpecificDays] = useState<number[]>([]);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [scheduledTime, setScheduledTime] = useState('');
 
   // Sync state when habit changes
   const [lastHabitId, setLastHabitId] = useState<string | null>(null);
@@ -38,6 +40,8 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
     setTimeOfDay(habit.timeOfDay);
     setFrequency(habit.frequency || 'daily');
     setSpecificDays(habit.specificDays || []);
+    setScheduledTime(habit.scheduledTime || '');
+    setShowTimePicker(!!habit.scheduledTime);
     setLastHabitId(habit.id);
   }
   if (!habit && lastHabitId) {
@@ -46,7 +50,7 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
 
   const handleSave = () => {
     if (!habit || !title.trim()) return;
-    const updates: Partial<Omit<CoreHabit, 'id'>> = { title: title.trim(), icon, timeOfDay, frequency };
+    const updates: Partial<Omit<CoreHabit, 'id'>> = { title: title.trim(), icon, timeOfDay, frequency, scheduledTime: scheduledTime || undefined };
     if (frequency === 'specific-days') updates.specificDays = specificDays;
     if (frequency === 'one-off') updates.oneOffDate = habit.oneOffDate;
     onSave(habit.id, updates);
@@ -108,6 +112,35 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Specific time (optional) */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-medium text-muted-foreground">Specific time</label>
+              <button
+                onClick={() => {
+                  setShowTimePicker(!showTimePicker);
+                  if (showTimePicker) setScheduledTime('');
+                }}
+                className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-xl transition-all ${
+                  showTimePicker
+                    ? 'bg-primary/10 text-primary'
+                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                }`}
+              >
+                <Timer size={12} strokeWidth={2.5} />
+                {showTimePicker ? 'Remove' : 'Add time'}
+              </button>
+            </div>
+            {showTimePicker && (
+              <input
+                type="time"
+                value={scheduledTime}
+                onChange={(e) => setScheduledTime(e.target.value)}
+                className="w-full p-2.5 rounded-xl bg-muted border-0 focus:ring-2 focus:ring-primary/30 focus:outline-none text-sm"
+              />
+            )}
           </div>
 
           {/* Frequency */}
