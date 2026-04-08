@@ -87,6 +87,7 @@ export const quickActionIcons: Record<string, string> = {
   routine: sparklesIcon,
   ubi: crystalBallIcon,
   wonder: butterflyIcon,
+  health: blossomIcon,
 };
 
 // Shared icon component helper - renders an img tag for a mood icon
