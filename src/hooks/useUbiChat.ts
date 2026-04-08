@@ -2,6 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import { supabase } from '@/integrations/supabase/client';
+import { track } from '@/hooks/useAnalytics';
 
 export interface UbiMessage {
   id?: string;
@@ -259,6 +260,7 @@ export function useUbiChat() {
       }
 
       const userMsg: UbiMessage = { role: 'user', content: input };
+      track('ubi_message_sent', { conversationId: convoId });
 
       // Insert user message into DB
       if (!options?.hideUserMessage) {

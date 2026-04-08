@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { useNavigate } from 'react-router-dom';
 import { getLocalDateStr } from '@/lib/dateUtils';
+import { track } from '@/hooks/useAnalytics';
 import cloudIcon from '@/assets/icons/cloud.png';
 import spiralIcon from '@/assets/icons/spiral.png';
 import plantIcon from '@/assets/icons/plant.png';
@@ -54,6 +55,7 @@ export default function DailyMoodCheckin() {
       lastMoodCheckinDate: getLocalDateStr(),
       dailyCheckinState: state.value,
     });
+    track('mood_checkin', { mood: state.value, date: getLocalDateStr() });
 
     setTimeout(() => {
       navigate('/home', { replace: true });

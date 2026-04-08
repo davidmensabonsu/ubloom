@@ -6,6 +6,7 @@ import { Check, Sun, Clock, Moon, Plus, X, Sparkles, Pencil, Trash2, ChevronUp, 
 import { getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
 import EditHabitDialog from '@/components/routine/EditHabitDialog';
 import { isHabitScheduledForDate, getFrequencyLabel } from '@/components/routine/FrequencyPicker';
+import { track } from '@/hooks/useAnalytics';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -229,7 +230,7 @@ export default function CoreHabitsSection() {
                 return (
                   <motion.button
                     key={habit.id}
-                    onClick={() => toggleHabitCompletion(habit.id)}
+                    onClick={() => { toggleHabitCompletion(habit.id); track('habit_completed', { habitId: habit.id, timeOfDay: habit.timeOfDay }); }}
                     className="check-item w-full"
                     whileTap={{ scale: 0.98 }}
                   >

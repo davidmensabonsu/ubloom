@@ -14,6 +14,7 @@ import { format } from 'date-fns';
 import { feelingIcons } from '@/lib/moodIcons';
 import heartIcon from '@/assets/icons/heart.png';
 import JournalPrompts from '@/components/alignment/JournalPrompts';
+import { track } from '@/hooks/useAnalytics';
 
 const feelingOptions = [
   { value: 'calm', label: 'Calm' },
@@ -103,6 +104,7 @@ export default function Alignment() {
         content: journalText,
         date: new Date().toISOString(),
       });
+      track('journal_created', { wordCount: journalText.trim().split(/\s+/).length });
       setJournalText('');
     }
     setSaved(true);
