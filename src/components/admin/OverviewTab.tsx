@@ -28,7 +28,7 @@ interface Props {
   totalOnboardingUsers: number;
 }
 
-function periodSplit(items: { created_at: string }[]) {
+function periodSplit<T extends { created_at: string }>(items: T[]): { current: T[]; previous: T[] } {
   if (items.length === 0) return { current: [], previous: [] };
   const dates = items.map(i => new Date(i.created_at).getTime());
   const min = Math.min(...dates);
