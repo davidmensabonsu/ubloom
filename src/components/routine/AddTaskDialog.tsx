@@ -3,7 +3,7 @@ import { useUserStore, TimeOfDay, HabitFrequency } from '@/stores/userStore';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter, DrawerDescription } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sun, Clock, Moon } from 'lucide-react';
+import { Sun, Clock, Moon, Timer } from 'lucide-react';
 import { taskIconOptions, iconCategories, renderTaskIcon, getTaskIcon } from '@/lib/taskIcons';
 import FrequencyPicker from '@/components/routine/FrequencyPicker';
 import { getLocalDateStr } from '@/lib/dateUtils';
@@ -26,6 +26,8 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
   const [icon, setIcon] = useState(taskIconOptions[0].id);
   const [frequency, setFrequency] = useState<HabitFrequency>('daily');
   const [specificDays, setSpecificDays] = useState<number[]>([]);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [scheduledTime, setScheduledTime] = useState('');
 
   const reset = () => {
     setTitle('');
@@ -33,6 +35,8 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
     setIcon(taskIconOptions[0].id);
     setFrequency('daily');
     setSpecificDays([]);
+    setShowTimePicker(false);
+    setScheduledTime('');
   };
 
   const handleSubmit = () => {
@@ -44,6 +48,7 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
       timeOfDay,
       icon,
       frequency,
+      ...(scheduledTime ? { scheduledTime } : {}),
     };
 
     if (frequency === 'specific-days') {
@@ -135,6 +140,35 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
                 );
               })}
             </div>
+          </div>
+
+          {/* Specific time (optional) */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium">Specific time</label>
+              <button
+                onClick={() => {
+                  setShowTimePicker(!showTimePicker);
+                  if (showTimePicker) setScheduledTime('');
+                }}
+                className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-xl transition-all ${
+                  showTimePicker
+                    ? 'bg-primary/10 text-primary'
+                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                }`}
+              >
+                <Timer size={14} strokeWidth={2.5} />
+                {showTimePicker ? 'Remove' : 'Add time'}
+              </button>
+            </div>
+            {showTimePicker && (
+              <input
+                type="time"
+                value={scheduledTime}
+                onChange={(e) => setScheduledTime(e.target.value)}
+                className="w-full p-2.5 rounded-xl bg-muted border-0 focus:ring-2 focus:ring-primary/30 focus:outline-none text-sm"
+              />
+            )}
           </div>
 
           {/* Frequency */}
