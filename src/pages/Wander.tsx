@@ -53,6 +53,8 @@ export default function Wonder2() {
   const recentlyViewedIds = useUserStore((s) => s.profile.recentlyViewedResources) || [];
   const { saveResource, unsaveResource } = useUserStore();
 
+  useEffect(() => { track('feature_used', { feature: 'wander' }); }, []);
+
   // Resolve recently viewed resource objects (max 6 shown)
   const recentResources = recentlyViewedIds
     .map((id) => wonderResources.find((r) => r.id === id))
