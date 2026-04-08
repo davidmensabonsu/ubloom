@@ -95,17 +95,62 @@ export default function AdminDashboard() {
 
   const recentRated = [...ratings].reverse().slice(0, 10);
 
+  const downloadCsv = (filename: string, headers: string[], rows: string[][]) => {
+    const csvContent = [headers.join(','), ...rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportEvents = () => {
+    downloadCsv('analytics_events.csv',
+      ['timestamp', 'user_id', 'event_name', 'event_data'],
+      events.map(e => [e.created_at, e.user_id, e.event_name, JSON.stringify(e.event_data)])
+    );
+  };
+
+  const exportRatings = () => {
+    downloadCsv('ubi_ratings.csv',
+      ['timestamp', 'rating', 'message_content', 'conversation_context'],
+      ratings.map(r => [r.created_at, r.rating, r.message_content, r.conversation_context || ''])
+    );
+  };
+
+  const exportUserData = () => {
+    downloadCsv('user_data.csv',
+      ['user_id', 'data'],
+      userData.map((u: any) => [u.user_id, JSON.stringify(u.data)])
+    );
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-5xl mx-auto p-4 sm:p-6 space-y-6">
         {/* Header */}
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/home')}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
-            <p className="text-sm text-muted-foreground">Analytics & insights</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" onClick={() => navigate('/home')}>
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
+              <p className="text-sm text-muted-foreground">Analytics & insights</p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={exportEvents} className="gap-1.5 text-xs">
+              <Download className="h-3.5 w-3.5" /> Events
+            </Button>
+            <Button variant="outline" size="sm" onClick={exportRatings} className="gap-1.5 text-xs">
+              <Download className="h-3.5 w-3.5" /> Ratings
+            </Button>
+            <Button variant="outline" size="sm" onClick={exportUserData} className="gap-1.5 text-xs">
+              <Download className="h-3.5 w-3.5" /> Users
+            </Button>
           </div>
         </div>
 
