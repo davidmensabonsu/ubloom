@@ -127,28 +127,24 @@ export function useReminders() {
      });
    }, [reminderSettings, coreHabits, isHabitCompletedToday, sendNotification, markReminderSent]);
  
-   // Check every minute
+   // Check every minute + reset sent habit reminders at midnight
    useEffect(() => {
      if (!reminderSettings.enabled) return;
  
      checkAndNotify();
+     let lastDate = getLocalDateStr();
  
-     const interval = setInterval(checkAndNotify, 60000);
+     const interval = setInterval(() => {
+       const currentDate = getLocalDateStr();
+       if (currentDate !== lastDate) {
+         sentHabitRemindersRef.current.clear();
+         lastDate = currentDate;
+       }
+       checkAndNotify();
+     }, 60000);
  
      return () => clearInterval(interval);
    }, [reminderSettings.enabled, checkAndNotify]);
-
-   // Reset sent habit reminders at midnight
-   useEffect(() => {
-     const lastDateRef = getLocalDateStr();
-     const midnightCheck = setInterval(() => {
-       const currentDate = getLocalDateStr();
-       if (currentDate !== lastDateRef) {
-         sentHabitRemindersRef.current.clear();
-       }
-     }, 60000);
-     return () => clearInterval(midnightCheck);
-   }, []);
  
    return {
      requestPermission,
