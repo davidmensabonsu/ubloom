@@ -539,6 +539,7 @@ export default function Profile() {
           )}
 
 
+          <AlertDialog>
             <AlertDialogTrigger asChild>
               <button className="w-full glass-card rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98]">
                 <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
