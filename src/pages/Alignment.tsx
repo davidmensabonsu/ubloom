@@ -139,9 +139,8 @@ export default function Alignment() {
         <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="page-title">
           Daily Reflect
         </motion.h1>
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="flex items-center justify-between">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
           <p className="subtle-text">A quiet moment before your day unfolds</p>
-          <MoodStreak moodHistory={profile.moodHistory} />
         </motion.div>
 
         <motion.button
