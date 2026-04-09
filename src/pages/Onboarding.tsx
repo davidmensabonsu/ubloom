@@ -242,15 +242,7 @@ export default function Onboarding() {
                   whileTap={{ scale: 0.98 }}>
                   
                     <span className="font-medium">{option.label}</span>
-                    {isSelected(option.value) &&
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="ml-auto">
-                    
-                        <img src={ubloomFlower} alt="" className="w-5 h-5 clay-icon" />
-                      </motion.div>
-                  }
+                  </motion.button>);
                   </motion.button>);
 
             })}
