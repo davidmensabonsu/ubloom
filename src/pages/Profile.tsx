@@ -53,6 +53,7 @@ export default function Profile() {
   const { profile, setAesthetic, resetProfile, updateProfile } = useUserStore();
   const { isAdmin } = useAdminCheck();
   const { toast } = useToast();
+  const { status, isTrial, isActive, isExpired, trialDaysLeft, subscriptionEnd } = useSubscription();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [displayName, setDisplayName] = useState('');
