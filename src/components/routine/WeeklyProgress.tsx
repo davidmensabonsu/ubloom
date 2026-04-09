@@ -81,7 +81,6 @@ export default function WeeklyProgress() {
     if (totalTrackable === 0) return { streak: 0, longestStreak: 0 };
 
     const today = startOfDay(new Date());
-    let currentStreak = 0;
     let maxStreak = 0;
     let tempStreak = 0;
 
@@ -102,17 +101,46 @@ export default function WeeklyProgress() {
 
       if (completionRate >= 0.5) {
         tempStreak++;
-        if (currentStreak === tempStreak - 1) currentStreak = tempStreak;
       } else {
-        if (i === 0) {
-          // Don't break current streak tracking on incomplete today
-          currentStreak = 0;
-        }
         maxStreak = Math.max(maxStreak, tempStreak);
         tempStreak = 0;
       }
     }
     maxStreak = Math.max(maxStreak, tempStreak);
+
+    // Current streak: count consecutive days backward, skipping today if incomplete
+    let currentStreak = 0;
+    const todayStr = format(today, 'yyyy-MM-dd');
+    const todayCompletions = habitCompletions.filter(
+      (c) => c.date === todayStr && c.completed && allTrackableIds.has(c.habitId)
+    );
+    const todayScheduled = coreHabits.filter(h => isHabitScheduledForDate(h, todayStr)).length;
+    const todayExpected = todayScheduled + getCustomTaskCountForDate(todayStr, today.getDay());
+    const todayEffective = Math.max(todayExpected, todayCompletions.length);
+    const todayRate = todayEffective > 0 ? todayCompletions.length / todayEffective : 0;
+
+    const startDay = todayRate >= 0.5 ? 0 : 1;
+
+    for (let i = startDay; i <= 365; i++) {
+      const date = subDays(today, i);
+      const dateStr = format(date, 'yyyy-MM-dd');
+      const dayOfWeek = date.getDay();
+
+      const dayCompletions = habitCompletions.filter(
+        (c) => c.date === dateStr && c.completed && allTrackableIds.has(c.habitId)
+      );
+
+      const scheduledCount = coreHabits.filter(h => isHabitScheduledForDate(h, dateStr)).length;
+      const expectedTotal = scheduledCount + getCustomTaskCountForDate(dateStr, dayOfWeek);
+      const effectiveTotal = Math.max(expectedTotal, dayCompletions.length);
+      const completionRate = effectiveTotal > 0 ? dayCompletions.length / effectiveTotal : 0;
+
+      if (completionRate >= 0.5) {
+        currentStreak++;
+      } else {
+        break;
+      }
+    }
 
     return { streak: currentStreak, longestStreak: maxStreak };
   }, [coreHabits, customTasks, allTrackableIds, habitCompletions]);
