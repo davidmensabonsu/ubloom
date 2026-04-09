@@ -59,7 +59,7 @@ function ThemeManager() {
 function MoodCheckinGate({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const cloudSyncLoaded = useCloudSyncStatus();
-  const { profile } = useUserStore();
+  const { profile, updateProfile } = useUserStore();
   const location = useLocation();
 
   const mainRoutes = ['/home', '/alignment', '/routine', '/wander', '/ubi', '/moodboard', '/profile', '/health'];
