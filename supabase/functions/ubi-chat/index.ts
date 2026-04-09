@@ -92,19 +92,27 @@ ${userContext ? JSON.stringify(userContext) : "No context available yet."}${chat
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-          await writer.write(value);
 
+          // Filter out [DONE] from upstream so we can append prompts before our own [DONE]
           const chunk = decoder.decode(value, { stream: true });
-          for (const line of chunk.split("\n")) {
-            if (!line.startsWith("data: ")) continue;
-            const jsonStr = line.slice(6).trim();
-            if (jsonStr === "[DONE]") continue;
-            try {
-              const parsed = JSON.parse(jsonStr);
-              const content = parsed.choices?.[0]?.delta?.content;
-              if (content) fullContent += content;
-            } catch { /* ignore */ }
+          const lines = chunk.split("\n");
+          const filtered: string[] = [];
+          for (const line of lines) {
+            const cleaned = line.replace(/\r$/, "").trim();
+            if (cleaned === "data: [DONE]") continue; // strip upstream DONE
+            filtered.push(line);
+
+            if (cleaned.startsWith("data: ") && cleaned !== "data: [DONE]") {
+              const jsonStr = cleaned.slice(6).trim();
+              try {
+                const parsed = JSON.parse(jsonStr);
+                const content = parsed.choices?.[0]?.delta?.content;
+                if (content) fullContent += content;
+              } catch { /* ignore */ }
+            }
           }
+          const filteredChunk = filtered.join("\n");
+          if (filteredChunk.trim()) await writer.write(encoder.encode(filteredChunk));
         }
 
         try {
