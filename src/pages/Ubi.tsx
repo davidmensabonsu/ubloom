@@ -9,7 +9,7 @@ import { getLocalDateStr } from '@/lib/dateUtils';
 import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import ubiAvatar from '@/assets/ubi-avatar-cartoon.png';
+import ubiAvatar from '@/assets/ubi-avatar-bloom.png';
 
 import crystalBallIcon from '@/assets/icons/crystal-ball.png';
 import sparklesIcon from '@/assets/icons/sparkles.png';
