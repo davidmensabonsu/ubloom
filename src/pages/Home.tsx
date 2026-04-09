@@ -134,7 +134,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="grid grid-cols-2 gap-2 mt-auto"
+          className="grid grid-cols-2 gap-2"
         >
           <QuickAction icon={quickActionIcons.journal} title="Journal" href="/alignment" />
           <QuickAction icon={quickActionIcons.routine} title="Routine" href="/routine" />
