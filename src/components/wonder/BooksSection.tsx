@@ -1,8 +1,10 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bookmark, BookOpen, Sparkles } from 'lucide-react';
+import { Bookmark, BookOpen, Sparkles, Lock } from 'lucide-react';
 import { wonderResources, type WonderResource } from '@/lib/wonderResources';
 import { useUserStore } from '@/stores/userStore';
+import { useSubscription } from '@/hooks/useSubscription';
+import { useNavigate } from 'react-router-dom';
 import { typeLabels, categoryColors } from '@/lib/wonderResources';
 import { supabase } from '@/integrations/supabase/client';
 import ResourceDetailSheet from './ResourceDetailSheet';
@@ -139,12 +141,16 @@ function BookCard({
   );
 }
 
+const FREE_RESOURCE_LIMIT = 3;
+
 export default function BooksSection() {
   const [activeTopic, setActiveTopic] = useState<TopicKey>('all');
   const [selectedResource, setSelectedResource] = useState<WonderResource | null>(null);
   const [selectedReason, setSelectedReason] = useState<string | undefined>();
   const [sheetOpen, setSheetOpen] = useState(false);
   const { profile, saveResource, unsaveResource } = useUserStore();
+  const { isActive } = useSubscription();
+  const navigate = useNavigate();
 
   const allBooks = wonderResources.filter((r) => r.category === 'books');
   const savedIds = profile.savedResources || [];
@@ -296,23 +302,38 @@ export default function BooksSection() {
             exit={{ opacity: 0 }}
             className="grid grid-cols-2 gap-3"
           >
-            {filtered.map((resource, i) => (
-              <motion.div
-                key={resource.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: Math.min(i * 0.03, 0.2) }}
-              >
-                <BookCard
-                  resource={resource}
-                  onTap={() => handleSelect(resource, reasonMap[resource.id])}
-                  isSaved={savedIds.includes(resource.id)}
-                  onToggleSave={(e) => handleToggleSave(e, resource.id)}
-                  coverUrl={resource.coverUrl}
-                  reason={activeTopic === 'for-you' ? reasonMap[resource.id] : undefined}
-                />
-              </motion.div>
-            ))}
+            {filtered.map((resource, i) => {
+              const isLocked = !isActive && activeTopic !== 'reading-list' && activeTopic !== 'for-you' && i >= FREE_RESOURCE_LIMIT;
+              return (
+                <motion.div
+                  key={resource.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: Math.min(i * 0.03, 0.2) }}
+                  className="relative"
+                >
+                  <div className={isLocked ? 'pointer-events-none select-none' : ''} style={isLocked ? { filter: 'blur(4px)', opacity: 0.5 } : undefined}>
+                    <BookCard
+                      resource={resource}
+                      onTap={() => !isLocked && handleSelect(resource, reasonMap[resource.id])}
+                      isSaved={savedIds.includes(resource.id)}
+                      onToggleSave={(e) => handleToggleSave(e, resource.id)}
+                      coverUrl={resource.coverUrl}
+                      reason={activeTopic === 'for-you' ? reasonMap[resource.id] : undefined}
+                    />
+                  </div>
+                  {isLocked && (
+                    <button
+                      onClick={() => navigate('/upgrade')}
+                      className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-background/30 backdrop-blur-[1px] rounded-xl z-10"
+                    >
+                      <Lock size={16} className="text-primary" />
+                      <span className="text-[10px] text-primary font-medium">Upgrade</span>
+                    </button>
+                  )}
+                </motion.div>
+              );
+            })}
           </motion.div>
         )}
       </AnimatePresence>

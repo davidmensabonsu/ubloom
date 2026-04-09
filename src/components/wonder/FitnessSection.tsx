@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bookmark, Dumbbell } from 'lucide-react';
+import { Bookmark, Dumbbell, Lock } from 'lucide-react';
 import { fitnessWorkouts, type FitnessWorkout, type FitnessType } from '@/lib/wonderResources';
+import { useSubscription } from '@/hooks/useSubscription';
+import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 import FitnessWorkoutCard from './FitnessWorkoutCard';
 import FitnessDetailSheet from './FitnessDetailSheet';
@@ -23,11 +25,15 @@ const fitnessTabs: { key: TabKey; label: string; icon: string }[] = [
   { key: 'stretches-yoga', label: 'Stretches & Yoga', icon: yogaIcon },
 ];
 
+const FREE_RESOURCE_LIMIT = 3;
+
 export default function FitnessSection() {
   const [activeTab, setActiveTab] = useState<TabKey>('upper-body');
   const [selectedWorkout, setSelectedWorkout] = useState<FitnessWorkout | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const { profile, saveResource, unsaveResource } = useUserStore();
+  const { isActive } = useSubscription();
+  const navigate = useNavigate();
 
   const savedIds = profile.savedResources || [];
 
@@ -94,26 +100,42 @@ export default function FitnessSection() {
             exit={{ opacity: 0 }}
             className="grid grid-cols-2 gap-3"
           >
-            {filtered.map((workout, i) => (
-              <motion.div
-                key={workout.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="relative"
-              >
-                <FitnessWorkoutCard workout={workout} onTap={() => handleSelect(workout)} />
-                <button
-                  onClick={(e) => handleToggleSave(e, workout.id)}
-                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-background z-10"
+            {filtered.map((workout, i) => {
+              const isLocked = !isActive && activeTab !== 'saved' && i >= FREE_RESOURCE_LIMIT;
+              return (
+                <motion.div
+                  key={workout.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="relative"
                 >
-                  <Bookmark
-                    size={14}
-                    className={savedIds.includes(workout.id) ? 'text-primary fill-primary' : 'text-muted-foreground'}
-                  />
-                </button>
-              </motion.div>
-            ))}
+                  <div className={isLocked ? 'pointer-events-none select-none' : ''} style={isLocked ? { filter: 'blur(4px)', opacity: 0.5 } : undefined}>
+                    <FitnessWorkoutCard workout={workout} onTap={() => !isLocked && handleSelect(workout)} />
+                  </div>
+                  {isLocked && (
+                    <button
+                      onClick={() => navigate('/upgrade')}
+                      className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-background/30 backdrop-blur-[1px] rounded-xl z-10"
+                    >
+                      <Lock size={16} className="text-primary" />
+                      <span className="text-[10px] text-primary font-medium">Upgrade</span>
+                    </button>
+                  )}
+                  {!isLocked && (
+                    <button
+                      onClick={(e) => handleToggleSave(e, workout.id)}
+                      className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-background z-10"
+                    >
+                      <Bookmark
+                        size={14}
+                        className={savedIds.includes(workout.id) ? 'text-primary fill-primary' : 'text-muted-foreground'}
+                      />
+                    </button>
+                  )}
+                </motion.div>
+              );
+            })}
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bookmark, Sparkles } from 'lucide-react';
+import { Bookmark, Sparkles, Lock } from 'lucide-react';
 import { wonderResources, type WonderResource } from '@/lib/wonderResources';
 import { useUserStore } from '@/stores/userStore';
+import { useSubscription } from '@/hooks/useSubscription';
+import { useNavigate } from 'react-router-dom';
 import ResourceCard from './ResourceCard';
 import ResourceDetailSheet from './ResourceDetailSheet';
 
@@ -28,11 +30,15 @@ const topicTagMap: Record<string, string[]> = {
   'hands-feet': ['nails', 'hands', 'grooming', 'feet', 'self-care'],
 };
 
+const FREE_RESOURCE_LIMIT = 3;
+
 export default function HygieneSection() {
   const [activeTopic, setActiveTopic] = useState<TopicKey>('all');
   const [selectedResource, setSelectedResource] = useState<WonderResource | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const { profile, saveResource, unsaveResource } = useUserStore();
+  const { isActive } = useSubscription();
+  const navigate = useNavigate();
 
   const allHygiene = wonderResources.filter((r) => r.category === 'hygiene');
   const savedIds = profile.savedResources || [];
@@ -104,30 +110,46 @@ export default function HygieneSection() {
             exit={{ opacity: 0 }}
             className="grid grid-cols-2 gap-3"
           >
-            {filtered.map((resource, i) => (
-              <motion.div
-                key={resource.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: Math.min(i * 0.03, 0.2) }}
-                className="relative"
-              >
-                <ResourceCard
-                  resource={resource}
-                  onTap={() => handleSelect(resource)}
-                  compact
-                />
-                <button
-                  onClick={(e) => handleToggleSave(e, resource.id)}
-                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-background z-10"
+            {filtered.map((resource, i) => {
+              const isLocked = !isActive && activeTopic !== 'saved' && i >= FREE_RESOURCE_LIMIT;
+              return (
+                <motion.div
+                  key={resource.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: Math.min(i * 0.03, 0.2) }}
+                  className="relative"
                 >
-                  <Bookmark
-                    size={14}
-                    className={savedIds.includes(resource.id) ? 'text-primary fill-primary' : 'text-muted-foreground'}
-                  />
-                </button>
-              </motion.div>
-            ))}
+                  <div className={isLocked ? 'pointer-events-none select-none' : ''} style={isLocked ? { filter: 'blur(4px)', opacity: 0.5 } : undefined}>
+                    <ResourceCard
+                      resource={resource}
+                      onTap={() => !isLocked && handleSelect(resource)}
+                      compact
+                    />
+                  </div>
+                  {isLocked && (
+                    <button
+                      onClick={() => navigate('/upgrade')}
+                      className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-background/30 backdrop-blur-[1px] rounded-xl z-10"
+                    >
+                      <Lock size={16} className="text-primary" />
+                      <span className="text-[10px] text-primary font-medium">Upgrade</span>
+                    </button>
+                  )}
+                  {!isLocked && (
+                    <button
+                      onClick={(e) => handleToggleSave(e, resource.id)}
+                      className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-background z-10"
+                    >
+                      <Bookmark
+                        size={14}
+                        className={savedIds.includes(resource.id) ? 'text-primary fill-primary' : 'text-muted-foreground'}
+                      />
+                    </button>
+                  )}
+                </motion.div>
+              );
+            })}
           </motion.div>
         )}
       </AnimatePresence>
