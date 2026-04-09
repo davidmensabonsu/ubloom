@@ -234,7 +234,7 @@ export default function DreamLife() {
                 {category.title}
               </h2>
               <p className="text-sm text-muted-foreground">
-                Select statements that resonate
+                Choose up to 2 that resonate most
               </p>
             </div>
           </div>
