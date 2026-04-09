@@ -26,6 +26,7 @@ import crystalBallIcon from '@/assets/icons/crystal-ball.png';
 export default function Health() {
   const navigate = useNavigate();
   const { profile, updateProfile } = useUserStore();
+  const { canUse } = useSubscription();
   const cycleData = profile.cycleData;
   const [showSetup, setShowSetup] = useState(false);
   const [showPeriodConfirm, setShowPeriodConfirm] = useState(false);
