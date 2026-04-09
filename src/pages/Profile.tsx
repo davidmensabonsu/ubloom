@@ -7,11 +7,12 @@ import { useUserStore } from '@/stores/userStore';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { Check, Camera, LogOut, Trash2, Pencil, BookOpen, Target, Lock, KeyRound, Sparkles, Eye, EyeOff, Shield, Heart } from 'lucide-react';
+import { Check, Camera, LogOut, Trash2, Pencil, BookOpen, Target, Lock, KeyRound, Sparkles, Eye, EyeOff, Shield, Heart, Crown } from 'lucide-react';
 import { useAdminCheck } from '@/hooks/useAdminCheck';
 import ubloomLogo from '@/assets/ubloom-flower.png';
 import flameIcon from '@/assets/icons/flame.png';
 import { useToast } from '@/hooks/use-toast';
+import { useSubscription } from '@/hooks/useSubscription';
 import {
   AlertDialog,
   AlertDialogAction,
