@@ -9,7 +9,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { struggles, dreamSelfFeels, wantsMoreOf, identityStatement, recentMoods, recentJournals, habitCategories, resourceIds } = await req.json();
+    const { struggles, dreamSelfFeels, wantsMoreOf, identityStatement, recentMoods, recentJournals, habitCategories, resourceIds, interests } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
@@ -22,6 +22,7 @@ serve(async (req) => {
       recentMoods?.length ? `Recent moods: ${recentMoods.join(', ')}` : '',
       recentJournals?.length ? `Recent journal themes: ${recentJournals.join(' | ')}` : '',
       habitCategories?.length ? `Current habits: ${habitCategories.join(', ')}` : '',
+      interests?.length ? `Interests: ${interests.join(', ')}` : '',
     ].filter(Boolean).join('\n');
 
     const resourceList = (resourceIds || []).map((r: { id: string; title: string; tags: string[] }) =>

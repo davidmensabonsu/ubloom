@@ -31,6 +31,7 @@ export interface UserProfile {
   dreamSelfFeels: string[];
   identityStatement: string;
   futureNote: string;
+  interests: string[];
   
   // Dream self by category
   dreamSelf: {
@@ -242,6 +243,7 @@ const initialProfile: UserProfile = {
   dreamSelfFeels: [],
   identityStatement: '',
   futureNote: '',
+  interests: [],
   dreamSelf: {
     career: [],
     selfWorth: [],
