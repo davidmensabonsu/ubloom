@@ -61,7 +61,7 @@ function MoodCheckinGate({ children }: { children: React.ReactNode }) {
   const { profile } = useUserStore();
   const location = useLocation();
 
-  const mainRoutes = ['/home', '/alignment', '/routine', '/wander', '/ubi', '/moodboard', '/profile'];
+  const mainRoutes = ['/home', '/alignment', '/routine', '/wander', '/ubi', '/moodboard', '/profile', '/health'];
   const isMainRoute = mainRoutes.includes(location.pathname);
 
   // Show walkthrough overlay on top of page content for first-time users
