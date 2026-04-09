@@ -9,6 +9,7 @@ import { getLocalDateStr } from '@/lib/dateUtils';
 import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { useSubscription } from '@/hooks/useSubscription';
 import ubiAvatar from '@/assets/ubi-avatar-bloom.png';
 
 import crystalBallIcon from '@/assets/icons/crystal-ball.png';
@@ -40,6 +41,7 @@ export default function Ubi() {
     conversations, currentConversationId, loadConversation, startNewChat, deleteConversation
   } = useUbiChat();
   const profile = useUserStore((s) => s.profile);
+  const { canUse, ubiMessagesRemaining, incrementUbiMessageCount, isActive, DAILY_UBI_LIMIT } = useSubscription();
   const updateProfile = useUserStore((s) => s.updateProfile);
   const [input, setInput] = useState('');
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -92,6 +94,8 @@ export default function Ubi() {
   const handleSend = () => {
     const text = input.trim();
     if (!text || isStreaming) return;
+    if (!canUse('ubi_chat')) return;
+    incrementUbiMessageCount();
     setInput('');
     sendMessage(text);
     if (inputRef.current) inputRef.current.style.height = 'auto';
