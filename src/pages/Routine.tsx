@@ -158,6 +158,57 @@ export default function Routine() {
         {/* Core Daily Habits */}
         <CoreHabitsSection />
 
+        {/* Empty state when no habits */}
+        {(!profile.coreHabits || profile.coreHabits.length === 0) && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="glass-card rounded-3xl p-8 text-center space-y-4"
+          >
+            <motion.div
+              className="text-5xl"
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              🌱
+            </motion.div>
+            <h2 className="font-display text-lg font-semibold text-foreground">
+              Build your daily routine
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-xs mx-auto">
+              Start by adding habits that matter to you. Small, consistent steps lead to big transformations.
+            </p>
+            <motion.button
+              onClick={() => setShowAddTask(true)}
+              className="soft-button inline-flex items-center gap-2 mx-auto"
+              whileTap={{ scale: 0.97 }}
+            >
+              <Plus size={18} />
+              <span>Add your first habit</span>
+            </motion.button>
+
+            {/* Suggestion cards */}
+            <div className="pt-2 space-y-2">
+              <p className="text-xs text-muted-foreground/60 font-medium">Popular habits</p>
+              {[
+                { emoji: '💧', title: 'Drink a glass of water' },
+                { emoji: '🧘', title: 'Morning meditation' },
+                { emoji: '📝', title: 'Gratitude journaling' },
+              ].map((suggestion) => (
+                <motion.div
+                  key={suggestion.title}
+                  className="flex items-center gap-3 p-3 rounded-2xl bg-muted/50 text-left"
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <span className="text-lg">{suggestion.emoji}</span>
+                  <span className="text-sm text-muted-foreground">{suggestion.title}</span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
 
 
          {/* Reminder Settings */}
