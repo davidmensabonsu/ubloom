@@ -170,13 +170,13 @@ export default function Routine() {
             transition={{ delay: 0.2 }}
             className="glass-card rounded-3xl p-8 text-center space-y-4"
           >
-             <motion.div
-170:               className="w-14 h-14 mx-auto"
-               animate={{ scale: [1, 1.1, 1] }}
-               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-             >
-               <img src={plantImg} alt="Plant" className="w-full h-full object-contain clay-icon" />
-             </motion.div>
+            <motion.div
+              className="w-14 h-14 mx-auto"
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <img src={plantImg} alt="Plant" className="w-full h-full object-contain clay-icon" />
+            </motion.div>
             <h2 className="font-display text-lg font-semibold text-foreground">
               Build your daily routine
             </h2>
