@@ -296,6 +296,29 @@ export default function Ubi() {
                 </AnimatePresence>
               )}
 
+              {/* Inline follow-up prompts below last Ubi message */}
+              {!isStreaming && suggestedPrompts.length > 0 && messages.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-x-auto scrollbar-hide -mx-1"
+                >
+                  <div className="flex gap-2 px-1 py-1 w-max">
+                    {suggestedPrompts.map((text, i) => (
+                      <button
+                        key={`${text}-${i}`}
+                        onClick={() => handlePreset(text)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 hover:bg-primary/20 border border-primary/20 transition-colors whitespace-nowrap shrink-0"
+                      >
+                        <img src={promptIcons[i % promptIcons.length]} alt="" className="w-4 h-4 object-contain shrink-0 clay-icon" />
+                        <span className="text-xs text-foreground/90">{text}</span>
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
               {messages.length === 0 && (
                 <p className="text-xs text-muted-foreground text-center mt-8">
                   Tap a prompt or type your own question to get started
@@ -311,27 +334,7 @@ export default function Ubi() {
         {/* Horizontal scrollable prompts */}
         {!isStreaming && (() => {
           const hasMessages = messages.length > 0;
-          if (hasMessages) {
-            // After conversation starts, only show AI-generated suggestions
-            if (suggestedPrompts.length === 0) return null;
-            const prompts = suggestedPrompts.map((text, i) => ({ text, icon: promptIcons[i % promptIcons.length] }));
-            return (
-              <div className="overflow-x-auto scrollbar-hide border-b border-border/30">
-                <div className="flex gap-2 px-4 py-2 max-w-lg mx-auto w-max min-w-full">
-                  {prompts.map((prompt, i) => (
-                    <button
-                      key={`${prompt.text}-${i}`}
-                      onClick={() => handlePreset(prompt.text)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary/60 hover:bg-secondary/90 border border-border/40 transition-colors whitespace-nowrap shrink-0"
-                    >
-                      <img src={prompt.icon} alt="" className="w-4 h-4 object-contain shrink-0 clay-icon" />
-                      <span className="text-xs text-foreground/90">{prompt.text}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            );
-          }
+          if (hasMessages) return null; // AI suggestions now shown inline in chat
           // No messages yet — show presets filtered by today's used list
           const usedToday: string[] = JSON.parse(localStorage.getItem(`ubi-used-presets-${getLocalDateStr()}`) || '[]');
           const filtered = presetPrompts.filter(p => !usedToday.includes(p.text));
