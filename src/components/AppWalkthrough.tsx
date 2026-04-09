@@ -42,7 +42,7 @@ const walkthroughSteps = [
     route: '/health',
     icon: Activity,
     title: 'Health',
-    headline: 'Understand your body's rhythm',
+    headline: "Understand your body's rhythm",
     description:
       "Track your cycle, understand your phases, and get personalised insights that sync with your body. From energy levels to mood shifts — know what's happening and why, so you can plan your days with confidence.",
   },
