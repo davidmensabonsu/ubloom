@@ -1,13 +1,9 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.58d2bcb3c13a4994b92228eaa0fecbae',
+  appId: 'com.ubloom.app',
   appName: 'ubloom',
-  webDir: 'dist',
-  server: {
-    url: 'https://58d2bcb3-c13a-4994-b922-28eaa0fecbae.lovableproject.com?forceHideBadge=true',
-    cleartext: true
-  }
+  webDir: 'dist'
 };
 
 export default config;
