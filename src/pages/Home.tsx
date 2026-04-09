@@ -30,7 +30,7 @@ export default function Home() {
   return (
     <div className="h-[100dvh] flex flex-col gradient-background overflow-hidden md:overflow-auto">
       {/* Header — compact */}
-      <div className="px-5 pt-10 pb-2 shrink-0">
+      <div className="px-5 pt-8 pb-1 shrink-0">
         <div className="flex items-center justify-between">
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -56,14 +56,14 @@ export default function Home() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-2xl font-display font-medium tracking-tight text-foreground mt-1"
+          className="text-xl md:text-2xl font-display font-medium tracking-tight text-foreground mt-0.5"
         >
           {greeting.text}, beautiful
         </motion.h1>
       </div>
 
-      {/* Main content — fills remaining space */}
-      <div className="flex-1 min-h-0 px-5 pb-20 flex flex-col gap-3">
+      {/* Main content — fits viewport on mobile, scrollable on desktop */}
+      <div className="flex-1 min-h-0 px-5 pb-20 flex flex-col gap-2 md:gap-3">
 
         {/* Future Self Message */}
         <motion.div
