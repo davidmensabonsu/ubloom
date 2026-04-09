@@ -18,6 +18,8 @@ import CycleSetup from '@/components/cycle/CycleSetup';
 import CycleWheel from '@/components/cycle/CycleWheel';
 import CycleInsightCard from '@/components/cycle/CycleInsightCard';
 import CycleMoodCard from '@/components/cycle/CycleMoodCard';
+import LockedOverlay from '@/components/LockedOverlay';
+import { useSubscription } from '@/hooks/useSubscription';
 
 import crystalBallIcon from '@/assets/icons/crystal-ball.png';
 
