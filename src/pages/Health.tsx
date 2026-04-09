@@ -38,8 +38,9 @@ export default function Health() {
   const currentPhase = setupComplete ? getCurrentPhase(cycleDay, cycleData.periodLength, cycleData.cycleLength) : 'Follicular' as const;
   const nextPeriod = setupComplete ? getFormattedNextPeriod(cycleData.lastPeriodStart, cycleData.cycleLength) : '';
 
-  useEffect(() => {
   useEffect(() => { track('feature_used', { feature: 'health' }); }, []);
+
+  useEffect(() => {
 
     if (!setupComplete) { setLoadingInsights(false); return; }
     const fetchInsights = async () => {
