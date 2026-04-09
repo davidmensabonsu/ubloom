@@ -4,6 +4,10 @@ import { useState, useEffect, useRef } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { isHabitScheduledForDate } from '@/components/routine/FrequencyPicker';
 import { Plus } from 'lucide-react';
+import plantImg from '@/assets/icons/plant.png';
+import glassWaterImg from '@/assets/icons/glass-water.png';
+import yogaImg from '@/assets/icons/yoga.png';
+import pencilImg from '@/assets/icons/pencil.png';
 import ProfileButton from '@/components/ProfileButton';
 import BottomNav from '@/components/BottomNav';
 import CoreHabitsSection from '@/components/routine/CoreHabitsSection';
@@ -166,13 +170,13 @@ export default function Routine() {
             transition={{ delay: 0.2 }}
             className="glass-card rounded-3xl p-8 text-center space-y-4"
           >
-            <motion.div
-              className="text-5xl"
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              🌱
-            </motion.div>
+             <motion.div
+170:               className="w-14 h-14 mx-auto"
+               animate={{ scale: [1, 1.1, 1] }}
+               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+             >
+               <img src={plantImg} alt="Plant" className="w-full h-full object-contain clay-icon" />
+             </motion.div>
             <h2 className="font-display text-lg font-semibold text-foreground">
               Build your daily routine
             </h2>
@@ -192,16 +196,16 @@ export default function Routine() {
             <div className="pt-2 space-y-2">
               <p className="text-xs text-muted-foreground/60 font-medium">Popular habits</p>
               {[
-                { emoji: '💧', title: 'Drink a glass of water' },
-                { emoji: '🧘', title: 'Morning meditation' },
-                { emoji: '📝', title: 'Gratitude journaling' },
+                { img: glassWaterImg, title: 'Drink a glass of water' },
+                { img: yogaImg, title: 'Morning meditation' },
+                { img: pencilImg, title: 'Gratitude journaling' },
               ].map((suggestion) => (
                 <motion.div
                   key={suggestion.title}
                   className="flex items-center gap-3 p-3 rounded-2xl bg-muted/50 text-left"
                   whileTap={{ scale: 0.98 }}
                 >
-                  <span className="text-lg">{suggestion.emoji}</span>
+                  <img src={suggestion.img} alt={suggestion.title} className="w-8 h-8 object-contain clay-icon" />
                   <span className="text-sm text-muted-foreground">{suggestion.title}</span>
                 </motion.div>
               ))}
