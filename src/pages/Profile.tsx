@@ -7,7 +7,7 @@ import { useUserStore } from '@/stores/userStore';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { Check, Camera, LogOut, Trash2, Pencil, BookOpen, Target, Lock, KeyRound, Sparkles, Eye, EyeOff, Shield } from 'lucide-react';
+import { Check, Camera, LogOut, Trash2, Pencil, BookOpen, Target, Lock, KeyRound, Sparkles, Eye, EyeOff, Shield, Heart } from 'lucide-react';
 import { useAdminCheck } from '@/hooks/useAdminCheck';
 import ubloomLogo from '@/assets/ubloom-flower.png';
 import flameIcon from '@/assets/icons/flame.png';
@@ -337,6 +337,59 @@ export default function Profile() {
             )}
           </motion.div>
         )}
+
+        {/* Interests Editor */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.17 }}
+        >
+          <Collapsible>
+            <CollapsibleTrigger asChild>
+              <button className="w-full glass-card rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98]">
+                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                  <Heart size={18} className="text-primary" />
+                </div>
+                <div>
+                  <span className="font-medium text-foreground">Interests</span>
+                  <p className="text-xs text-muted-foreground">
+                    {profile.interests?.length ? `${profile.interests.length} selected` : 'Tap to set'}
+                  </p>
+                </div>
+              </button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="glass-card rounded-2xl p-4 mt-2">
+                <p className="text-xs text-muted-foreground mb-3">Select your interests to personalise recommendations</p>
+                <div className="flex flex-wrap gap-2">
+                  {['pilates', 'gym', 'beauty', 'skincare', 'business', 'reading', 'travel', 'journaling', 'wellness'].map((interest) => {
+                    const selected = (profile.interests || []).includes(interest);
+                    return (
+                      <button
+                        key={interest}
+                        onClick={() => {
+                          const current = profile.interests || [];
+                          const updated = selected
+                            ? current.filter((i) => i !== interest)
+                            : [...current, interest];
+                          updateProfile({ interests: updated });
+                        }}
+                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                          selected
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted/60 text-foreground/70'
+                        }`}
+                      >
+                        {interest.charAt(0).toUpperCase() + interest.slice(1)}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </motion.div>
+
 
         {/* Journey Stats */}
         <motion.div
