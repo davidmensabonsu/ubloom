@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bookmark, UtensilsCrossed } from 'lucide-react';
+import { Bookmark, UtensilsCrossed, Lock } from 'lucide-react';
 import { mealRecipes, type MealRecipe, type MealType } from '@/lib/wonderResources';
 import { useUserStore } from '@/stores/userStore';
+import { useSubscription } from '@/hooks/useSubscription';
+import { useNavigate } from 'react-router-dom';
 import MealRecipeCard from './MealRecipeCard';
 import RecipeDetailSheet from './RecipeDetailSheet';
 import heartIcon from '@/assets/icons/heart.png';
@@ -21,11 +23,15 @@ const mealTabs: { key: TabKey; label: string; icon: string }[] = [
   { key: 'snack', label: 'Snacks', icon: fruitIcon },
 ];
 
+const FREE_RESOURCE_LIMIT = 3;
+
 export default function FoodRecipesSection() {
   const [activeMeal, setActiveMeal] = useState<TabKey>('breakfast');
   const [selectedRecipe, setSelectedRecipe] = useState<MealRecipe | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const { profile, saveResource, unsaveResource } = useUserStore();
+  const { isActive } = useSubscription();
+  const navigate = useNavigate();
 
   const savedIds = profile.savedResources || [];
 
@@ -92,26 +98,42 @@ export default function FoodRecipesSection() {
             exit={{ opacity: 0 }}
             className="grid grid-cols-2 gap-3"
           >
-            {filtered.map((recipe, i) => (
-              <motion.div
-                key={recipe.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="relative"
-              >
-                <MealRecipeCard recipe={recipe} onTap={() => handleSelect(recipe)} />
-                <button
-                  onClick={(e) => handleToggleSave(e, recipe.id)}
-                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-background z-10"
+            {filtered.map((recipe, i) => {
+              const isLocked = !isActive && activeMeal !== 'saved' && i >= FREE_RESOURCE_LIMIT;
+              return (
+                <motion.div
+                  key={recipe.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="relative"
                 >
-                  <Bookmark
-                    size={14}
-                    className={savedIds.includes(recipe.id) ? 'text-primary fill-primary' : 'text-muted-foreground'}
-                  />
-                </button>
-              </motion.div>
-            ))}
+                  <div className={isLocked ? 'pointer-events-none select-none' : ''} style={isLocked ? { filter: 'blur(4px)', opacity: 0.5 } : undefined}>
+                    <MealRecipeCard recipe={recipe} onTap={() => !isLocked && handleSelect(recipe)} />
+                  </div>
+                  {isLocked && (
+                    <button
+                      onClick={() => navigate('/upgrade')}
+                      className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-background/30 backdrop-blur-[1px] rounded-xl z-10"
+                    >
+                      <Lock size={16} className="text-primary" />
+                      <span className="text-[10px] text-primary font-medium">Upgrade</span>
+                    </button>
+                  )}
+                  {!isLocked && (
+                    <button
+                      onClick={(e) => handleToggleSave(e, recipe.id)}
+                      className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-background z-10"
+                    >
+                      <Bookmark
+                        size={14}
+                        className={savedIds.includes(recipe.id) ? 'text-primary fill-primary' : 'text-muted-foreground'}
+                      />
+                    </button>
+                  )}
+                </motion.div>
+              );
+            })}
           </motion.div>
         )}
       </AnimatePresence>
