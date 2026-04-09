@@ -33,6 +33,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import WanderCategory from "./pages/WanderCategory";
 import Health from "./pages/Health";
 import Society from "./pages/Society";
+import Upgrade from "./pages/Upgrade";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();

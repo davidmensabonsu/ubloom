@@ -83,6 +83,7 @@ export interface UserProfile {
   healthHistory?: HealthHistoryEntry[];
   cycleData?: CycleData;
   walkthroughComplete?: boolean;
+  trialStartedAt?: string; // ISO date when free trial began
 }
 
 export interface PeriodLogEntry {
