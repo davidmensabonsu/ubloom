@@ -285,10 +285,10 @@ export default function WeeklyProgress() {
           className="text-center text-sm text-muted-foreground mt-4"
         >
           {streak >= 7
-            ? "🌟 Amazing! You've completed a full week!"
+            ? "Amazing! You've completed a full week!"
             : streak >= 5
-            ? "🔥 You're on fire! Keep going!"
-            : "💪 Great momentum! Keep it up!"}
+            ? "You're on fire! Keep going!"
+            : "Great momentum! Keep it up!"}
         </motion.p>
       )}
     </motion.div>

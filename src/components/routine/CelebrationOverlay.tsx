@@ -17,7 +17,7 @@
    '#98FB98',
  ];
  
- const emojis = ['✨', '🎉', '💫', '🌟', '🔥', '💪', '🎊', '⭐'];
+ const emojis = ['✨', '💫', '⭐'];
  
  function Confetti({ delay, x }: { delay: number; x: number }) {
    const color = confettiColors[Math.floor(Math.random() * confettiColors.length)];
@@ -111,24 +111,24 @@
      }
    }, [show, onComplete]);
  
-   const getMessage = () => {
-     if (type === 'all-complete') {
-       return { title: "You did it!", subtitle: "All habits completed today!" };
-     }
-     if (streakDays === 3) {
-       return { title: "3 Day Streak! 🔥", subtitle: "You're building momentum!" };
-     }
-     if (streakDays === 7) {
-       return { title: "1 Week Streak! 🌟", subtitle: "Amazing consistency!" };
-     }
-     if (streakDays === 14) {
-       return { title: "2 Week Streak! 💫", subtitle: "You're unstoppable!" };
-     }
-     if (streakDays === 30) {
-       return { title: "30 Day Streak! 👑", subtitle: "Legendary dedication!" };
-     }
-     return { title: "Milestone! 🎊", subtitle: `${streakDays} day streak!` };
-   };
+    const getMessage = () => {
+      if (type === 'all-complete') {
+        return { title: "You did it!", subtitle: "All habits completed today!" };
+      }
+      if (streakDays === 3) {
+        return { title: "3 Day Streak!", subtitle: "You're building momentum!" };
+      }
+      if (streakDays === 7) {
+        return { title: "1 Week Streak!", subtitle: "Amazing consistency!" };
+      }
+      if (streakDays === 14) {
+        return { title: "2 Week Streak!", subtitle: "You're unstoppable!" };
+      }
+      if (streakDays === 30) {
+        return { title: "30 Day Streak!", subtitle: "Legendary dedication!" };
+      }
+      return { title: "Milestone!", subtitle: `${streakDays} day streak!` };
+    };
  
    const message = getMessage();
  
