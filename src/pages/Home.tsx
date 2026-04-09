@@ -70,19 +70,19 @@ export default function Home() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="glass-card rounded-2xl p-4"
+          className="glass-card rounded-2xl p-3 md:p-4 flex-1 min-h-0 md:flex-none overflow-hidden"
         >
-          <h2 className="text-base font-display font-semibold tracking-tight text-foreground mb-1.5 flex items-center gap-2">
-            <Heart size={16} className="text-primary" />
+          <h2 className="text-sm md:text-base font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
+            <Heart size={14} className="text-primary shrink-0" />
             From your future self
           </h2>
           {loading ? (
             <div className="space-y-1.5">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-4/5" />
+              <Skeleton className="h-3 w-full" />
+              <Skeleton className="h-3 w-4/5" />
             </div>
           ) : (
-            <p className="font-display text-sm leading-relaxed text-foreground/90 italic line-clamp-3">
+            <p className="font-display text-xs md:text-sm leading-relaxed text-foreground/90 italic line-clamp-3">
               "{futureSelfMessage}"
             </p>
           )}
@@ -93,16 +93,16 @@ export default function Home() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="glass-card rounded-2xl p-4"
+          className="glass-card rounded-2xl p-3 md:p-4 flex-1 min-h-0 md:flex-none overflow-hidden"
         >
-          <h2 className="text-base font-display font-semibold tracking-tight text-foreground mb-1.5 flex items-center gap-2">
-            <Heart size={16} className="text-primary" />
+          <h2 className="text-sm md:text-base font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
+            <Heart size={14} className="text-primary shrink-0" />
             Mindset
           </h2>
           {loading ? (
-            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-3 w-3/4" />
           ) : (
-            <p className="text-sm text-foreground/80 leading-relaxed">
+            <p className="text-xs md:text-sm text-foreground/80 leading-relaxed line-clamp-2 md:line-clamp-none">
               {mindsetMessage}
             </p>
           )}
@@ -113,27 +113,27 @@ export default function Home() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
-          className="glass-card rounded-2xl p-4 border border-primary/20"
+          className="glass-card rounded-2xl p-3 md:p-4 border border-primary/20 flex-1 min-h-0 md:flex-none overflow-hidden"
         >
-          <h2 className="text-base font-display font-semibold tracking-tight text-foreground mb-1.5 flex items-center gap-2">
-            <Target size={16} className="text-primary" />
+          <h2 className="text-sm md:text-base font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
+            <Target size={14} className="text-primary shrink-0" />
             Focus
           </h2>
           {loading ? (
-            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-3 w-3/4" />
           ) : (
-            <p className="text-sm font-medium text-foreground/90 leading-relaxed">
+            <p className="text-xs md:text-sm font-medium text-foreground/90 leading-relaxed line-clamp-2 md:line-clamp-none">
               {focusToday}
             </p>
           )}
         </motion.div>
 
-        {/* Quick Actions — pushed to bottom */}
+        {/* Quick Actions */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="grid grid-cols-2 gap-2"
+          className="grid grid-cols-4 md:grid-cols-2 gap-2 shrink-0"
         >
           <QuickAction icon={quickActionIcons.journal} title="Journal" href="/alignment" />
           <QuickAction icon={quickActionIcons.routine} title="Routine" href="/routine" />
