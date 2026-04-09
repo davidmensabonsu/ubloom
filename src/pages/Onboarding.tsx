@@ -243,7 +243,6 @@ export default function Onboarding() {
                   
                     <span className="font-medium">{option.label}</span>
                   </motion.button>);
-                  </motion.button>);
 
             })}
             </div> :
