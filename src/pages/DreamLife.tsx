@@ -95,6 +95,8 @@ export default function DreamLife() {
   const category = dreamCategories[currentCategory];
   const progress = ((currentCategory + 1) / dreamCategories.length) * 100;
 
+  const MAX_PER_CATEGORY = 2;
+
   const handleSelect = (statement: string) => {
     const current = selections[category.id] || [];
     if (current.includes(statement)) {
@@ -102,7 +104,7 @@ export default function DreamLife() {
         ...selections,
         [category.id]: current.filter((s) => s !== statement),
       });
-    } else {
+    } else if (current.length < MAX_PER_CATEGORY) {
       setSelections({
         ...selections,
         [category.id]: [...current, statement],
@@ -232,7 +234,7 @@ export default function DreamLife() {
                 {category.title}
               </h2>
               <p className="text-sm text-muted-foreground">
-                Select statements that resonate
+                Choose up to 2 that resonate most
               </p>
             </div>
           </div>
