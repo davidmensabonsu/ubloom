@@ -88,46 +88,45 @@ export default function Home() {
           )}
         </motion.div>
 
-        {/* Mindset + Focus — side by side */}
-        <div className="grid grid-cols-2 gap-3">
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="glass-card rounded-2xl p-3"
-          >
-            <h2 className="text-sm font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-1.5">
-              <Heart size={14} className="text-primary" />
-              Mindset
-            </h2>
-            {loading ? (
-              <Skeleton className="h-4 w-3/4" />
-            ) : (
-              <p className="text-xs text-foreground/80 leading-relaxed line-clamp-3">
-                {mindsetMessage}
-              </p>
-            )}
-          </motion.div>
+        {/* Mindset */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="glass-card rounded-2xl p-4"
+        >
+          <h2 className="text-base font-display font-semibold tracking-tight text-foreground mb-1.5 flex items-center gap-2">
+            <Heart size={16} className="text-primary" />
+            Mindset
+          </h2>
+          {loading ? (
+            <Skeleton className="h-4 w-3/4" />
+          ) : (
+            <p className="text-sm text-foreground/80 leading-relaxed">
+              {mindsetMessage}
+            </p>
+          )}
+        </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35 }}
-            className="glass-card rounded-2xl p-3 border border-primary/20"
-          >
-            <h2 className="text-sm font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-1.5">
-              <Target size={14} className="text-primary" />
-              Focus
-            </h2>
-            {loading ? (
-              <Skeleton className="h-4 w-3/4" />
-            ) : (
-              <p className="text-xs font-medium text-foreground/90 leading-relaxed line-clamp-3">
-                {focusToday}
-              </p>
-            )}
-          </motion.div>
-        </div>
+        {/* Focus */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+          className="glass-card rounded-2xl p-4 border border-primary/20"
+        >
+          <h2 className="text-base font-display font-semibold tracking-tight text-foreground mb-1.5 flex items-center gap-2">
+            <Target size={16} className="text-primary" />
+            Focus
+          </h2>
+          {loading ? (
+            <Skeleton className="h-4 w-3/4" />
+          ) : (
+            <p className="text-sm font-medium text-foreground/90 leading-relaxed">
+              {focusToday}
+            </p>
+          )}
+        </motion.div>
 
         {/* Quick Actions — pushed to bottom */}
         <motion.div
