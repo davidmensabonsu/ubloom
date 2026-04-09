@@ -98,12 +98,12 @@ ${userContext ? JSON.stringify(userContext) : "No context available yet."}${chat
           const lines = chunk.split("\n");
           const filtered: string[] = [];
           for (const line of lines) {
-            const trimmed = line.trim();
-            if (trimmed === "data: [DONE]") continue; // strip upstream DONE
+            const cleaned = line.replace(/\r$/, "").trim();
+            if (cleaned === "data: [DONE]") continue; // strip upstream DONE
             filtered.push(line);
 
-            if (line.startsWith("data: ") && trimmed !== "data: [DONE]") {
-              const jsonStr = line.slice(6).trim();
+            if (cleaned.startsWith("data: ") && cleaned !== "data: [DONE]") {
+              const jsonStr = cleaned.slice(6).trim();
               try {
                 const parsed = JSON.parse(jsonStr);
                 const content = parsed.choices?.[0]?.delta?.content;
@@ -112,7 +112,7 @@ ${userContext ? JSON.stringify(userContext) : "No context available yet."}${chat
             }
           }
           const filteredChunk = filtered.join("\n");
-          if (filteredChunk) await writer.write(encoder.encode(filteredChunk));
+          if (filteredChunk.trim()) await writer.write(encoder.encode(filteredChunk));
         }
 
         try {
