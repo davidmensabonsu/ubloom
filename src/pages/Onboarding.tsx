@@ -38,6 +38,22 @@ const onboardingSteps = [
 
 },
 {
+  id: 'interests',
+  question: "What are your interests?",
+  subtitle: "Select all that apply to you.",
+  type: 'multi',
+  options: [
+  { value: 'pilates', label: 'Pilates' },
+  { value: 'gym', label: 'Gym' },
+  { value: 'beauty', label: 'Beauty' },
+  { value: 'skincare', label: 'Skincare' },
+  { value: 'business', label: 'Business' },
+  { value: 'reading', label: 'Reading' },
+  { value: 'travel', label: 'Travel' },
+  { value: 'journaling', label: 'Journaling' },
+  { value: 'wellness', label: 'Wellness' }]
+},
+{
   id: 'reaction',
   question: "How do you react when things do not go to plan?",
   subtitle: "Understanding your patterns helps us support you better.",
@@ -159,6 +175,7 @@ export default function Onboarding() {
       updateProfile({
         currentFeeling: answers.feeling as string,
         struggles: answers.struggles as string[],
+        interests: answers.interests as string[],
         reactionStyle: answers.reaction as string,
         wantsMoreOf: answers.wantsMore as string[],
         dreamSelfFeels: answers.dreamFeels as string[],

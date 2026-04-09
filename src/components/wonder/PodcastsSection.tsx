@@ -92,6 +92,7 @@ export default function PodcastsSection() {
           dreamSelfFeels: profile.dreamSelfFeels,
           wantsMoreOf: profile.wantsMoreOf,
           identityStatement: profile.identityStatement,
+          interests: profile.interests,
           recentMoods: profile.moodHistory?.slice(-5).map((m) => m.moods).flat(),
           habitCategories: [],
           resourceIds,

@@ -30,6 +30,7 @@ export default function RecommendedSection({ onSelectResource }: { onSelectResou
             dreamSelfFeels: profile.dreamSelfFeels,
             wantsMoreOf: profile.wantsMoreOf,
             identityStatement: profile.identityStatement,
+            interests: profile.interests,
             recentMoods: profile.moodHistory.slice(0, 5).map((m) => m.moods).flat(),
             recentJournals: profile.journalEntries.slice(0, 3).map((j) => j.content.slice(0, 100)),
             habitCategories: profile.coreHabits.map((h) => h.title),
