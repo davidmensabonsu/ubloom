@@ -3,6 +3,8 @@ import { Heart, Sun, Moon, Cloud, Target } from 'lucide-react';
 import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/BottomNav';
+import TrialBanner from '@/components/TrialBanner';
+import { useSubscription } from '@/hooks/useSubscription';
 
 import logo from '@/assets/logo.png';
 import { quickActionIcons } from '@/lib/moodIcons';
@@ -18,6 +20,7 @@ const timeGreetings = () => {
 
 export default function Home() {
   const { futureSelfMessage, mindsetMessage, focusToday, loading } = useHomeMessages();
+  const { status, isTrial, isExpired, trialDaysLeft } = useSubscription();
   const greeting = timeGreetings();
   const GreetingIcon = greeting.icon;
 
@@ -64,6 +67,10 @@ export default function Home() {
 
       {/* Main content — fits viewport on mobile, scrollable on desktop */}
       <div className="flex-1 min-h-0 px-5 pb-20 flex flex-col gap-2 md:gap-3">
+        {/* Trial / Expired Banner */}
+        {(isTrial || isExpired) && status !== 'loading' && (
+          <TrialBanner status={isTrial ? 'trial' : 'expired'} trialDaysLeft={trialDaysLeft} />
+        )}
 
         {/* Future Self Message */}
         <motion.div
