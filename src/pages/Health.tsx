@@ -18,12 +18,15 @@ import CycleSetup from '@/components/cycle/CycleSetup';
 import CycleWheel from '@/components/cycle/CycleWheel';
 import CycleInsightCard from '@/components/cycle/CycleInsightCard';
 import CycleMoodCard from '@/components/cycle/CycleMoodCard';
+import LockedOverlay from '@/components/LockedOverlay';
+import { useSubscription } from '@/hooks/useSubscription';
 
 import crystalBallIcon from '@/assets/icons/crystal-ball.png';
 
 export default function Health() {
   const navigate = useNavigate();
   const { profile, updateProfile } = useUserStore();
+  const { canUse } = useSubscription();
   const cycleData = profile.cycleData;
   const [showSetup, setShowSetup] = useState(false);
   const [showPeriodConfirm, setShowPeriodConfirm] = useState(false);
@@ -236,32 +239,34 @@ export default function Health() {
         <CycleMoodCard />
 
         {/* Ubi Insights */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <div className="flex items-center gap-2 mb-3">
-            <img src={crystalBallIcon} alt="Ubi" className="w-6 h-6 object-contain clay-icon" />
-            <h2 className="section-title">Ubi Insights</h2>
-          </div>
-          <div className="space-y-3">
-            {loadingInsights ? (
-              <>
-                <Skeleton className="h-20 rounded-2xl" />
-                <Skeleton className="h-20 rounded-2xl" />
-              </>
-            ) : (
-              insights.map((insight, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.25 + i * 0.08 }}
-                  className="glass-card rounded-2xl p-4"
-                >
-                  <p className="text-sm text-foreground/90 leading-relaxed">{insight}</p>
-                </motion.div>
-              ))
-            )}
-          </div>
-        </motion.div>
+        <LockedOverlay locked={!canUse('ubi_insights')} message="Upgrade for personalised health insights">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+            <div className="flex items-center gap-2 mb-3">
+              <img src={crystalBallIcon} alt="Ubi" className="w-6 h-6 object-contain clay-icon" />
+              <h2 className="section-title">Ubi Insights</h2>
+            </div>
+            <div className="space-y-3">
+              {loadingInsights ? (
+                <>
+                  <Skeleton className="h-20 rounded-2xl" />
+                  <Skeleton className="h-20 rounded-2xl" />
+                </>
+              ) : (
+                insights.map((insight, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.25 + i * 0.08 }}
+                    className="glass-card rounded-2xl p-4"
+                  >
+                    <p className="text-sm text-foreground/90 leading-relaxed">{insight}</p>
+                  </motion.div>
+                ))
+              )}
+            </div>
+          </motion.div>
+        </LockedOverlay>
       </div>
 
       <BottomNav />

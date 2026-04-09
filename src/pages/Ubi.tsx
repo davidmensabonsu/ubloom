@@ -9,6 +9,7 @@ import { getLocalDateStr } from '@/lib/dateUtils';
 import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { useSubscription } from '@/hooks/useSubscription';
 import ubiAvatar from '@/assets/ubi-avatar-bloom.png';
 
 import crystalBallIcon from '@/assets/icons/crystal-ball.png';
@@ -40,6 +41,7 @@ export default function Ubi() {
     conversations, currentConversationId, loadConversation, startNewChat, deleteConversation
   } = useUbiChat();
   const profile = useUserStore((s) => s.profile);
+  const { canUse, ubiMessagesRemaining, incrementUbiMessageCount, isActive, DAILY_UBI_LIMIT } = useSubscription();
   const updateProfile = useUserStore((s) => s.updateProfile);
   const [input, setInput] = useState('');
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -92,6 +94,8 @@ export default function Ubi() {
   const handleSend = () => {
     const text = input.trim();
     if (!text || isStreaming) return;
+    if (!canUse('ubi_chat')) return;
+    incrementUbiMessageCount();
     setInput('');
     sendMessage(text);
     if (inputRef.current) inputRef.current.style.height = 'auto';
@@ -357,6 +361,25 @@ export default function Ubi() {
           );
         })()}
 
+        {/* Ubi limit notice */}
+        {!isActive && (
+          <div className="max-w-lg mx-auto px-4 py-1.5 flex items-center justify-between">
+            <span className="text-[11px] text-muted-foreground">
+              {ubiMessagesRemaining > 0
+                ? `${ubiMessagesRemaining} of ${DAILY_UBI_LIMIT} messages left today`
+                : 'Daily limit reached'}
+            </span>
+            {ubiMessagesRemaining === 0 && (
+              <button
+                onClick={() => navigate('/upgrade')}
+                className="text-[11px] font-medium text-primary"
+              >
+                Upgrade
+              </button>
+            )}
+          </div>
+        )}
+
         {/* Input row */}
         <div className="max-w-lg mx-auto flex items-end gap-2 px-4 py-3">
           <textarea
@@ -364,9 +387,10 @@ export default function Ubi() {
             value={input}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            placeholder="Talk to Ubi..."
+            placeholder={!canUse('ubi_chat') ? 'Daily limit reached — upgrade for unlimited' : 'Talk to Ubi...'}
             rows={1}
-            className="flex-1 resize-none rounded-2xl border border-input bg-secondary/50 px-4 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 max-h-[120px]"
+            disabled={!canUse('ubi_chat')}
+            className="flex-1 resize-none rounded-2xl border border-input bg-secondary/50 px-4 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 max-h-[120px] disabled:opacity-50"
           />
           {isStreaming ? (
             <Button
@@ -381,7 +405,7 @@ export default function Ubi() {
             <Button
               size="icon"
               onClick={handleSend}
-              disabled={!input.trim()}
+              disabled={!input.trim() || !canUse('ubi_chat')}
               className="shrink-0 rounded-full h-10 w-10"
             >
               <Send size={16} />

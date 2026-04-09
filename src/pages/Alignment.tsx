@@ -6,6 +6,8 @@ import { Sparkles, Feather, BookOpen, ChevronDown, Search, X, Calendar, Trash2, 
 import ProfileButton from '@/components/ProfileButton';
 import BottomNav from '@/components/BottomNav';
 import MoodTrendsChart from '@/components/alignment/MoodTrendsChart';
+import LockedOverlay from '@/components/LockedOverlay';
+import { useSubscription } from '@/hooks/useSubscription';
 
 import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -38,6 +40,7 @@ const feelingOptions = [
 export default function Alignment() {
   const navigate = useNavigate();
   const { profile, addJournalEntry, removeJournalEntry } = useUserStore();
+  const { canUse } = useSubscription();
   const { futureSelfMessage, loading: messageLoading } = useHomeMessages();
   const [entryToDelete, setEntryToDelete] = useState<string | null>(null);
   const [journalText, setJournalText] = useState('');
@@ -173,7 +176,9 @@ export default function Alignment() {
         </motion.div>
 
         {/* Mood Trends Chart */}
-        <MoodTrendsChart moodHistory={profile.moodHistory} />
+        <LockedOverlay locked={!canUse('mood_trends')} message="Upgrade to see your mood trends">
+          <MoodTrendsChart moodHistory={profile.moodHistory} />
+        </LockedOverlay>
 
         {/* Journal */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card rounded-3xl p-5">

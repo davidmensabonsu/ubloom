@@ -7,11 +7,12 @@ import { useUserStore } from '@/stores/userStore';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { Check, Camera, LogOut, Trash2, Pencil, BookOpen, Target, Lock, KeyRound, Sparkles, Eye, EyeOff, Shield, Heart } from 'lucide-react';
+import { Check, Camera, LogOut, Trash2, Pencil, BookOpen, Target, Lock, KeyRound, Sparkles, Eye, EyeOff, Shield, Heart, Crown } from 'lucide-react';
 import { useAdminCheck } from '@/hooks/useAdminCheck';
 import ubloomLogo from '@/assets/ubloom-flower.png';
 import flameIcon from '@/assets/icons/flame.png';
 import { useToast } from '@/hooks/use-toast';
+import { useSubscription } from '@/hooks/useSubscription';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -52,6 +53,7 @@ export default function Profile() {
   const { profile, setAesthetic, resetProfile, updateProfile } = useUserStore();
   const { isAdmin } = useAdminCheck();
   const { toast } = useToast();
+  const { status, isTrial, isActive, isExpired, trialDaysLeft, subscriptionEnd } = useSubscription();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [displayName, setDisplayName] = useState('');
@@ -417,6 +419,64 @@ export default function Profile() {
               <p className="text-xs text-muted-foreground">Current streak</p>
             </div>
           </div>
+        </motion.div>
+
+        {/* Subscription Status */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.22 }}
+          className="glass-card rounded-3xl p-5"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <Crown size={16} className="text-primary" />
+            <h2 className="section-title">Subscription</h2>
+          </div>
+          {status === 'loading' ? (
+            <p className="text-sm text-muted-foreground">Checking...</p>
+          ) : isActive && !isTrial ? (
+            <div className="space-y-3">
+              <p className="text-sm text-foreground/90">
+                You're on <span className="font-semibold text-primary">uBloom Pro</span>
+              </p>
+              {subscriptionEnd && (
+                <p className="text-xs text-muted-foreground">
+                  Renews {new Date(subscriptionEnd).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </p>
+              )}
+              <button
+                onClick={async () => {
+                  const { data } = await supabase.functions.invoke('customer-portal');
+                  if (data?.url) window.open(data.url, '_blank');
+                }}
+                className="text-sm text-primary font-medium hover:underline"
+              >
+                Manage subscription →
+              </button>
+            </div>
+          ) : isTrial ? (
+            <div className="space-y-3">
+              <p className="text-sm text-foreground/90">
+                Free trial · <span className="font-semibold">{trialDaysLeft} day{trialDaysLeft !== 1 ? 's' : ''} left</span>
+              </p>
+              <button
+                onClick={() => navigate('/upgrade')}
+                className="px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium"
+              >
+                Upgrade to Pro
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-sm text-foreground/90">Your free trial has ended</p>
+              <button
+                onClick={() => navigate('/upgrade')}
+                className="px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium"
+              >
+                Upgrade to Pro
+              </button>
+            </div>
+          )}
         </motion.div>
 
         {/* Theme Picker is next, Society follows after */}

@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bookmark, Heart, ChevronDown, ChevronUp } from 'lucide-react';
+import { Bookmark, Heart, ChevronDown, ChevronUp, Lock } from 'lucide-react';
 import { wonderResources, type WonderResource, type WonderCategory } from '@/lib/wonderResources';
 import { useUserStore } from '@/stores/userStore';
+import { useSubscription } from '@/hooks/useSubscription';
+import { useNavigate } from 'react-router-dom';
 import ResourceCard from './ResourceCard';
 
-const INITIAL_SHOW = 8;
+const FREE_RESOURCE_LIMIT = 3;
 
 interface CategoryGridSectionProps {
   category: WonderCategory | 'all';
@@ -16,6 +18,9 @@ export default function CategoryGridSection({ category, onSelectResource }: Cate
   const [showSaved, setShowSaved] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const { profile, saveResource, unsaveResource } = useUserStore();
+  const { isActive } = useSubscription();
+  const navigate = useNavigate();
+  const INITIAL_SHOW = isActive ? 8 : FREE_RESOURCE_LIMIT;
 
   const savedIds = profile.savedResources || [];
 
@@ -92,30 +97,46 @@ export default function CategoryGridSection({ category, onSelectResource }: Cate
             exit={{ opacity: 0 }}
           >
             <div className="grid grid-cols-2 gap-3">
-              {visibleResources.map((resource, i) => (
-                <motion.div
-                  key={resource.id}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: Math.min(i * 0.03, 0.2) }}
-                  className="relative"
-                >
-                  <ResourceCard
-                    resource={resource}
-                    onTap={() => onSelectResource(resource)}
-                    compact
-                  />
-                  <button
-                    onClick={(e) => handleToggleSave(e, resource.id)}
-                    className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-background z-10"
+              {visibleResources.map((resource, i) => {
+                const isLocked = !isActive && !showSaved && i >= FREE_RESOURCE_LIMIT;
+                return (
+                  <motion.div
+                    key={resource.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: Math.min(i * 0.03, 0.2) }}
+                    className="relative"
                   >
-                    <Bookmark
-                      size={14}
-                      className={savedIds.includes(resource.id) ? 'text-primary fill-primary' : 'text-muted-foreground'}
-                    />
-                  </button>
-                </motion.div>
-              ))}
+                    <div className={isLocked ? 'pointer-events-none select-none' : ''} style={isLocked ? { filter: 'blur(4px)', opacity: 0.5 } : undefined}>
+                      <ResourceCard
+                        resource={resource}
+                        onTap={() => !isLocked && onSelectResource(resource)}
+                        compact
+                      />
+                    </div>
+                    {isLocked && (
+                      <button
+                        onClick={() => navigate('/upgrade')}
+                        className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-background/30 backdrop-blur-[1px] rounded-xl z-10"
+                      >
+                        <Lock size={16} className="text-primary" />
+                        <span className="text-[10px] text-primary font-medium">Upgrade</span>
+                      </button>
+                    )}
+                    {!isLocked && (
+                      <button
+                        onClick={(e) => handleToggleSave(e, resource.id)}
+                        className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-background z-10"
+                      >
+                        <Bookmark
+                          size={14}
+                          className={savedIds.includes(resource.id) ? 'text-primary fill-primary' : 'text-muted-foreground'}
+                        />
+                      </button>
+                    )}
+                  </motion.div>
+                );
+              })}
             </div>
 
             {!showSaved && hasMore && (
