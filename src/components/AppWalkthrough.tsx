@@ -67,7 +67,7 @@ export default function AppWalkthrough() {
 
   const handleNext = () => {
     if (isLast) {
-      updateProfile({ walkthroughComplete: true });
+      updateProfile({ walkthroughComplete: true, showTrialWelcome: true });
       navigate('/home');
     } else {
       const nextStep = walkthroughSteps[currentStep + 1];
@@ -77,7 +77,7 @@ export default function AppWalkthrough() {
   };
 
   const handleSkip = () => {
-    updateProfile({ walkthroughComplete: true });
+    updateProfile({ walkthroughComplete: true, showTrialWelcome: true });
     navigate('/home');
   };
 

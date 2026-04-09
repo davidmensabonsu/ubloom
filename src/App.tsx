@@ -12,6 +12,7 @@ import { AnimatePresence } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
 import DailyMoodCheckin from "@/components/DailyMoodCheckin";
 import AppWalkthrough from "@/components/AppWalkthrough";
+import TrialWelcomeModal from "@/components/TrialWelcomeModal";
 import PageViewTracker from "@/components/PageViewTracker";
 import { getLocalDateStr } from "@/lib/dateUtils";
 
@@ -58,7 +59,7 @@ function ThemeManager() {
 function MoodCheckinGate({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const cloudSyncLoaded = useCloudSyncStatus();
-  const { profile } = useUserStore();
+  const { profile, updateProfile } = useUserStore();
   const location = useLocation();
 
   const mainRoutes = ['/home', '/alignment', '/routine', '/wander', '/ubi', '/moodboard', '/profile', '/health'];
@@ -80,6 +81,15 @@ function MoodCheckinGate({ children }: { children: React.ReactNode }) {
     isMainRoute &&
     profile.lastMoodCheckinDate !== getLocalDateStr();
 
+  const showTrialModal =
+    user &&
+    cloudSyncLoaded &&
+    profile.onboardingComplete &&
+    profile.walkthroughComplete &&
+    profile.showTrialWelcome &&
+    !needsWalkthrough &&
+    isMainRoute;
+
   if (needsCheckin) {
     return <DailyMoodCheckin />;
   }
@@ -88,6 +98,12 @@ function MoodCheckinGate({ children }: { children: React.ReactNode }) {
     <>
       {children}
       {needsWalkthrough && <AppWalkthrough />}
+      {showTrialModal && (
+        <TrialWelcomeModal
+          open={true}
+          onDismiss={() => updateProfile({ showTrialWelcome: false })}
+        />
+      )}
     </>
   );
 }
