@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
-import { Home, Compass, Calendar, Search, Heart, ArrowRight, Check } from 'lucide-react';
+import { Home, Compass, Calendar, Search, Heart, ArrowRight, Check, Activity } from 'lucide-react';
 import ubloomFlower from '@/assets/ubloom-flower.png';
 
 const walkthroughSteps = [
@@ -37,6 +37,14 @@ const walkthroughSteps = [
     headline: 'Pause. Feel. Grow.',
     description:
       "Journal your thoughts, track your emotional patterns over time, and receive messages from your future self. This space is yours — no rules, no performance, just honest reflection.",
+  },
+  {
+    route: '/health',
+    icon: Activity,
+    title: 'Health',
+    headline: 'Understand your body's rhythm',
+    description:
+      "Track your cycle, understand your phases, and get personalised insights that sync with your body. From energy levels to mood shifts — know what's happening and why, so you can plan your days with confidence.",
   },
   {
     route: '/wander',
