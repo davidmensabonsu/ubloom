@@ -6,7 +6,7 @@ import { Sparkles, Feather, BookOpen, ChevronDown, Search, X, Calendar, Trash2, 
 import ProfileButton from '@/components/ProfileButton';
 import BottomNav from '@/components/BottomNav';
 import MoodTrendsChart from '@/components/alignment/MoodTrendsChart';
-import MoodStreak from '@/components/alignment/MoodStreak';
+
 import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Input } from '@/components/ui/input';
