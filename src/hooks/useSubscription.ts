@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserStore } from '@/stores/userStore';
 import { getLocalDateStr } from '@/lib/dateUtils';
+import { useAdminCheck } from '@/hooks/useAdminCheck';
 
 export type SubscriptionStatus = 'trial' | 'active' | 'expired' | 'loading';
 
@@ -29,6 +30,7 @@ export { PLANS };
 export function useSubscription() {
   const { user } = useAuth();
   const { profile, updateProfile } = useUserStore();
+  const { isAdmin } = useAdminCheck();
   const [stripeSubscribed, setStripeSubscribed] = useState(false);
   const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -65,14 +67,14 @@ export function useSubscription() {
 
   const status: SubscriptionStatus = useMemo(() => {
     if (isLoading) return 'loading';
-    if (stripeSubscribed) return 'active';
+    if (isAdmin || stripeSubscribed) return 'active';
     if (profile.trialStartedAt) {
       const trialEnd = new Date(profile.trialStartedAt);
       trialEnd.setDate(trialEnd.getDate() + TRIAL_DAYS);
       if (new Date() < trialEnd) return 'trial';
     }
     return 'expired';
-  }, [isLoading, stripeSubscribed, profile.trialStartedAt]);
+  }, [isLoading, isAdmin, stripeSubscribed, profile.trialStartedAt]);
 
   const trialDaysLeft = useMemo(() => {
     if (!profile.trialStartedAt) return 0;
