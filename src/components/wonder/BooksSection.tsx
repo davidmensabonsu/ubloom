@@ -83,17 +83,9 @@ function BookCard({
       whileTap={{ scale: 0.97 }}
     >
       <button onClick={onTap} className="w-full text-left">
-        <div className="w-full aspect-[3/4] overflow-hidden relative bg-muted/50">
+        <div className="w-full aspect-[3/4] overflow-hidden relative bg-muted">
           {coverUrl ? (
-            <>
-              <img
-                src={coverUrl}
-                alt={resource.title}
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-black/25" />
-            </>
+            <div className="w-full h-full bg-muted" />
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10 p-4">
               <BookOpen size={32} className="text-primary/40 mb-2" />
