@@ -86,7 +86,9 @@ function BookCard({
     >
       <button onClick={onTap} className="w-full text-left">
         <div className="w-full aspect-[3/4] overflow-hidden relative bg-muted">
-          {coverUrl ? (
+          {coverUrl && !isLocked ? (
+            <img src={coverUrl} alt={resource.title} className="w-full h-full object-cover" loading="lazy" />
+          ) : coverUrl && isLocked ? (
             <div className="w-full h-full bg-muted" />
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10 p-4">
