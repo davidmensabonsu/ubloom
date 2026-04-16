@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserStore } from '@/stores/userStore';
 import { getLocalDateStr } from '@/lib/dateUtils';
+import { useAdminCheck } from '@/hooks/useAdminCheck';
 
 export type SubscriptionStatus = 'trial' | 'active' | 'expired' | 'loading';
 
