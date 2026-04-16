@@ -66,6 +66,7 @@ function BookCard({
   onToggleSave,
   coverUrl,
   reason,
+  isLocked,
 }: {
   resource: WonderResource;
   onTap: () => void;
@@ -73,6 +74,7 @@ function BookCard({
   onToggleSave: (e: React.MouseEvent) => void;
   coverUrl?: string | null;
   reason?: string;
+  isLocked?: boolean;
 }) {
   const typeInfo = typeLabels[resource.type];
   const color = categoryColors[resource.category];
