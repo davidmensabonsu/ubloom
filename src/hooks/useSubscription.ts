@@ -30,6 +30,7 @@ export { PLANS };
 export function useSubscription() {
   const { user } = useAuth();
   const { profile, updateProfile } = useUserStore();
+  const { isAdmin } = useAdminCheck();
   const [stripeSubscribed, setStripeSubscribed] = useState(false);
   const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
