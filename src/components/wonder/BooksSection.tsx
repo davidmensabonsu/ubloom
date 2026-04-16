@@ -319,6 +319,7 @@ export default function BooksSection() {
                       onToggleSave={(e) => handleToggleSave(e, resource.id)}
                       coverUrl={resource.coverUrl}
                       reason={activeTopic === 'for-you' ? reasonMap[resource.id] : undefined}
+                      isLocked={isLocked}
                     />
                   </div>
                   {isLocked && (
