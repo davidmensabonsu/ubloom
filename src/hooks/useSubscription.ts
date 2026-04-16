@@ -67,14 +67,14 @@ export function useSubscription() {
 
   const status: SubscriptionStatus = useMemo(() => {
     if (isLoading) return 'loading';
-    if (stripeSubscribed) return 'active';
+    if (isAdmin || stripeSubscribed) return 'active';
     if (profile.trialStartedAt) {
       const trialEnd = new Date(profile.trialStartedAt);
       trialEnd.setDate(trialEnd.getDate() + TRIAL_DAYS);
       if (new Date() < trialEnd) return 'trial';
     }
     return 'expired';
-  }, [isLoading, stripeSubscribed, profile.trialStartedAt]);
+  }, [isLoading, isAdmin, stripeSubscribed, profile.trialStartedAt]);
 
   const trialDaysLeft = useMemo(() => {
     if (!profile.trialStartedAt) return 0;
