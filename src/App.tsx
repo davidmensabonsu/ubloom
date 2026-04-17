@@ -44,12 +44,25 @@ function ThemeManager() {
   const { profile } = useUserStore();
   
   useEffect(() => {
-    const themeClasses = ['theme-beige', 'theme-sage', 'theme-lilac', 'theme-sky', 'theme-coral', 'theme-teal', 'theme-mocha', 'theme-midnight', 'theme-peach', 'theme-mauve', 'theme-grey'];
+    // Clear all known theme classes (current + legacy)
+    const themeClasses = [
+      'theme-rose', 'theme-sage', 'theme-sand', 'theme-lavender', 'theme-arctic',
+      'theme-beige', 'theme-lilac', 'theme-sky', 'theme-coral', 'theme-teal',
+      'theme-mocha', 'theme-midnight', 'theme-peach', 'theme-mauve', 'theme-grey', 'theme-blush',
+    ];
     themeClasses.forEach(cls => document.documentElement.classList.remove(cls));
-    
-    if (profile.aesthetic && profile.aesthetic !== 'blush') {
-      document.documentElement.classList.add(`theme-${profile.aesthetic}`);
-    }
+
+    // Map legacy themes onto the new 5-theme palette so existing users still render
+    const aestheticMap: Record<string, string> = {
+      // new
+      rose: '', sage: 'theme-sage', sand: 'theme-sand', lavender: 'theme-lavender', arctic: 'theme-arctic',
+      // legacy → closest new theme
+      blush: '', mauve: '', peach: 'theme-sand', coral: 'theme-sand', beige: 'theme-sand', mocha: 'theme-sand',
+      lilac: 'theme-lavender', midnight: 'theme-lavender',
+      sky: 'theme-arctic', teal: 'theme-arctic', grey: 'theme-arctic',
+    };
+    const cls = aestheticMap[profile.aesthetic ?? 'rose'];
+    if (cls) document.documentElement.classList.add(cls);
   }, [profile.aesthetic]);
   
   return null;
