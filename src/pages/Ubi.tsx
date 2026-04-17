@@ -149,22 +149,22 @@ export default function Ubi() {
 
   return (
     <div className="min-h-screen gradient-background flex flex-col">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border/50 px-4 py-3">
+      {/* Hero gradient header */}
+      <div className="sticky top-0 z-10 hero-gradient px-4 pt-6 pb-5">
         <div className="flex items-center justify-between max-w-lg mx-auto">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/30 shadow-sm">
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/40 shadow-sm bg-white/20">
               <img src={ubiAvatar} alt="Ubi" className="w-full h-full object-cover" />
             </div>
             <div>
-              <h1 className="text-base font-semibold text-foreground">Ubi</h1>
-              <p className="text-xs text-muted-foreground">Your personal mentor</p>
+              <h1 className="text-base font-semibold text-white">Meet Ubi</h1>
+              <p className="text-xs text-white/85">Your personal mentor</p>
             </div>
           </div>
           <div className="flex items-center gap-1">
             <Sheet open={historyOpen} onOpenChange={(open) => { setHistoryOpen(open); if (!open) setHistorySearch(''); }}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-muted-foreground" title="Chat history">
+                <Button variant="ghost" size="icon" className="text-white/90 hover:text-white hover:bg-white/15" title="Chat history">
                   <History size={18} />
                 </Button>
               </SheetTrigger>
@@ -241,7 +241,7 @@ export default function Ubi() {
               variant="ghost"
               size="icon"
               onClick={handleNewChat}
-              className="text-muted-foreground"
+              className="text-white/90 hover:text-white hover:bg-white/15"
               title="New chat"
             >
               <Plus size={18} />

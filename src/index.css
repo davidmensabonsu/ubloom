@@ -4,55 +4,63 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ubloom Design System - Soft, Feminine, Elegant */
+/* ubloom Design System — Warm Rose default + 4 alt themes */
 
 @layer base {
   :root {
-    /* Default theme: Blush Pink */
-    --theme-hue: 350;
-    --theme-sat: 60%;
+    /* Default theme: Warm Rose */
+    --theme-hue: 344;
+    --theme-sat: 55%;
     --icon-hue-base: 350; /* base hue of the clay icons (pink) */
-    
-    --background: 30 30% 98%;
-    --foreground: 30 15% 20%;
 
-    --card: 30 25% 96%;
-    --card-foreground: 30 15% 20%;
+    --background: 350 50% 98%;
+    --foreground: 340 25% 20%;
 
-    --popover: 30 25% 98%;
-    --popover-foreground: 30 15% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 340 25% 20%;
 
-    --primary: var(--theme-hue) var(--theme-sat) 70%;
-    --primary-foreground: 30 15% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 340 25% 20%;
 
-    --secondary: 30 20% 92%;
-    --secondary-foreground: 30 15% 25%;
+    --primary: 344 55% 65%;
+    --primary-foreground: 0 0% 100%;
 
-    --muted: 30 15% 94%;
-    --muted-foreground: 30 10% 40%;
+    --secondary: 344 30% 94%;
+    --secondary-foreground: 340 25% 30%;
 
-    --accent: var(--theme-hue) calc(var(--theme-sat) - 20%) 85%;
-    --accent-foreground: 30 15% 20%;
+    --muted: 340 20% 94%;
+    --muted-foreground: 340 15% 50%;
+
+    --accent: 344 55% 65%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 65% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 30 20% 90%;
-    --input: 30 20% 90%;
-    --ring: var(--theme-hue) var(--theme-sat) 70%;
+    --border: 344 20% 90%;
+    --input: 344 20% 95%;
+    --ring: 344 55% 65%;
 
     --radius: 1rem;
 
     /* Custom ubloom tokens */
-    --glow: var(--theme-hue) 70% 92%;
-    --glow-strong: var(--theme-hue) 65% 85%;
-    --surface-glass: 30 30% 98% / 0.8;
+    --glow: 344 55% 92%;
+    --glow-strong: 344 65% 85%;
+    --surface-glass: 350 50% 98% / 0.85;
     --surface-elevated: 0 0% 100%;
-    --gradient-soft: linear-gradient(135deg, hsl(var(--glow) / 0.5) 0%, hsl(var(--background)) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100% / 0.9) 0%, hsl(var(--card)) 100%);
-    --shadow-soft: 0 4px 20px -4px hsl(var(--theme-hue) 30% 70% / 0.15);
-    --shadow-elevated: 0 8px 32px -8px hsl(var(--theme-hue) 30% 50% / 0.12);
-    
+    --gradient-soft: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--background)) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(var(--card)) 100%);
+    --shadow-soft: 0 2px 16px hsl(var(--theme-hue) 50% 60% / 0.10);
+    --shadow-elevated: 0 4px 24px hsl(var(--theme-hue) 50% 50% / 0.16);
+
+    /* Hero gradient — used on the top of every page */
+    --gradient-hero-from: 344 40% 57%;   /* deep rose */
+    --gradient-hero-to: 344 55% 78%;     /* soft blush */
+
+    /* Dark accent card gradient */
+    --gradient-dark-from: 344 35% 18%;   /* deep plum */
+    --gradient-dark-to: 344 35% 27%;     /* rich mauve */
+
     /* Typography */
     --font-display: 'Cormorant Garamond', Georgia, serif;
     --font-body: 'DM Sans', system-ui, sans-serif;
@@ -68,70 +76,88 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
-  /* Theme: Warm Beige */
-  .theme-beige {
-    --theme-hue: 35;
-    --theme-sat: 45%;
-  }
-
-  /* Theme: Sage Green */
+  /* Theme: Sage */
   .theme-sage {
-    --theme-hue: 140;
+    --theme-hue: 150;
     --theme-sat: 30%;
+    --primary: 150 30% 45%;
+    --ring: 150 30% 45%;
+    --accent: 150 30% 45%;
+    --background: 150 30% 98%;
+    --foreground: 150 25% 18%;
+    --secondary: 150 25% 94%;
+    --muted: 150 20% 94%;
+    --border: 150 20% 88%;
+    --input: 150 20% 95%;
+    --gradient-hero-from: 150 30% 35%;
+    --gradient-hero-to: 150 30% 63%;
+    --gradient-dark-from: 150 35% 18%;
+    --gradient-dark-to: 150 35% 27%;
+    --glow: 150 40% 90%;
+    --glow-strong: 150 40% 80%;
   }
 
-  /* Theme: Lilac */
-  .theme-lilac {
-    --theme-hue: 270;
-    --theme-sat: 50%;
-  }
-
-  /* Theme: Mocha */
-  .theme-mocha {
+  /* Theme: Sand */
+  .theme-sand {
     --theme-hue: 25;
+    --theme-sat: 50%;
+    --primary: 25 50% 55%;
+    --ring: 25 50% 55%;
+    --accent: 25 50% 55%;
+    --background: 30 50% 98%;
+    --foreground: 25 30% 20%;
+    --secondary: 25 30% 94%;
+    --muted: 25 20% 94%;
+    --border: 25 25% 88%;
+    --input: 25 25% 95%;
+    --gradient-hero-from: 25 55% 50%;
+    --gradient-hero-to: 25 55% 75%;
+    --gradient-dark-from: 25 50% 16%;
+    --gradient-dark-to: 25 45% 25%;
+    --glow: 25 55% 92%;
+    --glow-strong: 25 55% 82%;
+  }
+
+  /* Theme: Lavender */
+  .theme-lavender {
+    --theme-hue: 270;
     --theme-sat: 35%;
+    --primary: 270 35% 60%;
+    --ring: 270 35% 60%;
+    --accent: 270 35% 60%;
+    --background: 270 40% 98%;
+    --foreground: 270 25% 22%;
+    --secondary: 270 25% 94%;
+    --muted: 270 20% 94%;
+    --border: 270 20% 88%;
+    --input: 270 20% 95%;
+    --gradient-hero-from: 270 30% 48%;
+    --gradient-hero-to: 270 35% 73%;
+    --gradient-dark-from: 270 35% 17%;
+    --gradient-dark-to: 270 35% 27%;
+    --glow: 270 40% 92%;
+    --glow-strong: 270 40% 82%;
   }
 
-  /* Theme: Soft Grey */
-  .theme-grey {
-    --theme-hue: 220;
-    --theme-sat: 15%;
-  }
-
-  /* Theme: Sky Blue */
-  .theme-sky {
-    --theme-hue: 200;
-    --theme-sat: 55%;
-  }
-
-  /* Theme: Coral */
-  .theme-coral {
-    --theme-hue: 15;
-    --theme-sat: 65%;
-  }
-
-  /* Theme: Teal */
-  .theme-teal {
-    --theme-hue: 175;
+  /* Theme: Arctic */
+  .theme-arctic {
+    --theme-hue: 210;
     --theme-sat: 40%;
-  }
-
-  /* Theme: Midnight */
-  .theme-midnight {
-    --theme-hue: 240;
-    --theme-sat: 45%;
-  }
-
-  /* Theme: Peach */
-  .theme-peach {
-    --theme-hue: 20;
-    --theme-sat: 75%;
-  }
-
-  /* Theme: Mauve */
-  .theme-mauve {
-    --theme-hue: 310;
-    --theme-sat: 35%;
+    --primary: 210 40% 55%;
+    --ring: 210 40% 55%;
+    --accent: 210 40% 55%;
+    --background: 210 40% 98%;
+    --foreground: 210 30% 20%;
+    --secondary: 210 25% 94%;
+    --muted: 210 20% 94%;
+    --border: 210 20% 88%;
+    --input: 210 20% 95%;
+    --gradient-hero-from: 210 35% 45%;
+    --gradient-hero-to: 210 35% 70%;
+    --gradient-dark-from: 210 35% 18%;
+    --gradient-dark-to: 210 35% 28%;
+    --glow: 210 40% 92%;
+    --glow-strong: 210 40% 82%;
   }
 
   * {
@@ -156,14 +182,43 @@
 
 @layer components {
   .glass-card {
-    background: linear-gradient(180deg, hsl(0 0% 100% / 0.9) 0%, hsl(var(--card)) 100%);
-    backdrop-filter: blur(20px);
+    background: hsl(var(--card));
     border: 1px solid hsl(var(--border));
     box-shadow: var(--shadow-soft);
   }
 
   .gradient-background {
-    background: var(--gradient-soft);
+    background: hsl(var(--background));
+  }
+
+  /* Hero gradient header used on every main page */
+  .hero-gradient {
+    background: linear-gradient(135deg, hsl(var(--gradient-hero-from)), hsl(var(--gradient-hero-to)));
+    color: hsl(0 0% 100%);
+    position: relative;
+  }
+
+  .hero-gradient::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 28px;
+    background: linear-gradient(180deg, transparent, hsl(var(--background)));
+    pointer-events: none;
+  }
+
+  .hero-gradient .subtle-text,
+  .hero-gradient .text-muted-foreground {
+    color: hsl(0 0% 100% / 0.85) !important;
+  }
+
+  /* Dark accent card — used for Today's Intention, Ubi prompts etc */
+  .dark-accent-card {
+    background: linear-gradient(135deg, hsl(var(--gradient-dark-from)), hsl(var(--gradient-dark-to)));
+    color: hsl(0 0% 100%);
+    border-radius: var(--radius);
   }
 
   .elevated-surface {
@@ -229,8 +284,7 @@
 
   .bottom-nav {
     @apply fixed bottom-0 left-0 right-0 z-50;
-    background: hsl(var(--surface-elevated) / 0.95);
-    backdrop-filter: blur(20px);
+    background: hsl(var(--surface-elevated));
     border-top: 1px solid hsl(var(--border));
     padding-bottom: env(safe-area-inset-bottom, 0);
   }
@@ -246,7 +300,7 @@
 
   .mood-pill {
     @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-all duration-200;
-    background: hsl(var(--glow) / 0.28);
+    background: hsl(var(--glow) / 0.4);
     color: hsl(var(--foreground));
   }
 
@@ -300,12 +354,22 @@
   .page-title {
     font-family: var(--font-display);
     @apply text-3xl font-medium tracking-tight;
-    color: hsl(var(--foreground));
   }
 
   .subtle-text {
     @apply text-sm;
     color: hsl(var(--muted-foreground));
+  }
+
+  /* Section label: ◆ YOUR SPACE */
+  .section-label {
+    @apply inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em];
+    color: hsl(var(--muted-foreground));
+  }
+  .section-label::before {
+    content: '◆';
+    color: hsl(var(--primary));
+    font-size: 10px;
   }
 
   .icon-3d {
@@ -347,6 +411,9 @@
   .safe-bottom {
     padding-bottom: calc(80px + env(safe-area-inset-bottom, 0));
   }
+
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
   .animate-fade-in {
     animation: fadeIn 0.5s ease-out forwards;

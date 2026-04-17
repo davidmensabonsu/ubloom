@@ -132,18 +132,18 @@ export default function Alignment() {
 
   return (
     <div className="min-h-screen gradient-background pb-24">
-      <div className="px-5 pt-12 pb-6">
+      <div className="hero-gradient px-5 pt-12 pb-8">
         <div className="flex items-center justify-between mb-1">
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-muted-foreground">
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-white/85">
             {todayFormatted}
           </motion.p>
           <ProfileButton />
         </div>
-        <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="page-title">
+        <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="page-title text-white">
           Daily Reflect
         </motion.h1>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
-          <p className="subtle-text">A quiet moment before your day unfolds</p>
+          <p className="text-sm text-white/85">A quiet moment before your day unfolds</p>
         </motion.div>
 
         <motion.button
@@ -151,15 +151,15 @@ export default function Alignment() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
           onClick={() => navigate('/health')}
-          className="mt-3 flex items-center gap-2 glass-card rounded-2xl px-4 py-3 w-full hover:bg-primary/5 transition-colors"
+          className="mt-4 flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-3 w-full hover:bg-white/25 transition-colors"
         >
-          <img src={heartIcon} alt="Health" className="w-6 h-6 object-contain clay-icon" />
-          <span className="text-sm font-medium text-foreground">Health</span>
-          <span className="text-xs text-muted-foreground ml-auto">View insights →</span>
+          <img src={heartIcon} alt="Health" className="w-6 h-6 object-contain" />
+          <span className="text-sm font-medium text-white">Health</span>
+          <span className="text-xs text-white/75 ml-auto">View insights →</span>
         </motion.button>
       </div>
 
-      <div className="px-5 space-y-6">
+      <div className="px-5 space-y-6 pt-6">
         {/* Future Self Message */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card rounded-3xl p-5">
           <div className="flex items-center gap-2 mb-3">
