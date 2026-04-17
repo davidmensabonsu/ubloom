@@ -161,14 +161,14 @@ export default function Alignment() {
 
       <div className="px-5 space-y-6 pt-6">
         {/* Future Self Message */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card rounded-3xl p-5">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="dark-accent-card rounded-3xl p-5">
           <div className="flex items-center gap-2 mb-3">
-            <Sparkles size={18} className="text-primary" />
-            <h2 className="section-title">From your future self</h2>
+            <Sparkles size={18} className="text-white/80" />
+            <h2 className="section-title text-white">From your future self</h2>
           </div>
-          <p className="font-display text-lg leading-relaxed text-foreground/90 italic">
+          <p className="font-display text-lg leading-relaxed text-white/95 italic">
             {messageLoading ? (
-              <span className="animate-pulse text-muted-foreground">Listening to your future self...</span>
+              <span className="animate-pulse text-white/60">Listening to your future self...</span>
             ) : (
               `"${futureSelfMessage}"`
             )}
