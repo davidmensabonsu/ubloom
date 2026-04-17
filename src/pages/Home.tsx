@@ -77,19 +77,19 @@ export default function Home() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="glass-card rounded-2xl p-3 md:p-4 flex-1 min-h-0 md:flex-none overflow-hidden"
+          className="dark-accent-card p-3 md:p-4 flex-1 min-h-0 md:flex-none overflow-hidden"
         >
-          <h2 className="text-sm md:text-base font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-            <Heart size={14} className="text-primary shrink-0" />
+          <h2 className="text-sm md:text-base font-display font-semibold tracking-tight text-white mb-1 flex items-center gap-2">
+            <Heart size={14} className="text-white/80 shrink-0" />
             From your future self
           </h2>
           {loading ? (
             <div className="space-y-1.5">
-              <Skeleton className="h-3 w-full" />
-              <Skeleton className="h-3 w-4/5" />
+              <Skeleton className="h-3 w-full bg-white/15" />
+              <Skeleton className="h-3 w-4/5 bg-white/15" />
             </div>
           ) : (
-            <p className="font-display text-xs md:text-sm leading-relaxed text-foreground/90 italic line-clamp-3">
+            <p className="font-display text-xs md:text-sm leading-relaxed text-white/95 italic line-clamp-3">
               "{futureSelfMessage}"
             </p>
           )}
