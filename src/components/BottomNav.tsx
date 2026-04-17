@@ -1,17 +1,20 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import homeIcon from '@/assets/icons/home.png';
-import calendarIcon from '@/assets/icons/calendar-heart.png';
-import speechIcon from '@/assets/icons/speech-bubble.png';
-import featherIcon from '@/assets/icons/feather.png';
-import compassIcon from '@/assets/icons/compass.png';
+import { Home, CalendarHeart, MessageCircle, Feather, Compass, type LucideIcon } from 'lucide-react';
 
-const navItems = [
-  { path: '/home', icon: homeIcon, label: 'Home' },
-  { path: '/routine', icon: calendarIcon, label: 'Routine' },
-  { path: '/ubi', icon: speechIcon, label: 'Ubi', isCenter: true },
-  { path: '/alignment', icon: featherIcon, label: 'Reflect' },
-  { path: '/wander', icon: compassIcon, label: 'Wander' },
+type NavItem = {
+  path: string;
+  icon: LucideIcon;
+  label: string;
+  isCenter?: boolean;
+};
+
+const navItems: NavItem[] = [
+  { path: '/home', icon: Home, label: 'Home' },
+  { path: '/routine', icon: CalendarHeart, label: 'Routine' },
+  { path: '/ubi', icon: MessageCircle, label: 'Ubi', isCenter: true },
+  { path: '/alignment', icon: Feather, label: 'Reflect' },
+  { path: '/wander', icon: Compass, label: 'Wander' },
 ];
 
 export default function BottomNav() {
@@ -22,6 +25,7 @@ export default function BottomNav() {
       <div className="flex items-center justify-around max-w-md mx-auto">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
+          const Icon = item.icon;
 
           if (item.isCenter) {
             return (
@@ -34,9 +38,9 @@ export default function BottomNav() {
                   initial={false}
                   animate={isActive ? { scale: 1.08 } : { scale: 1 }}
                   transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                  className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg border-4 border-background bg-primary"
+                  className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg border-4 border-background bg-primary text-primary-foreground"
                 >
-                  <img src={item.icon} alt={item.label} className="w-7 h-7 object-contain" style={{ filter: 'brightness(0) invert(1)' }} />
+                  <Icon size={26} strokeWidth={2} />
                 </motion.div>
                 <span className={`text-xs font-medium ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
                   {item.label}
@@ -57,11 +61,10 @@ export default function BottomNav() {
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 className="relative"
               >
-                <img
-                  src={item.icon}
-                  alt={item.label}
-                  className={`w-6 h-6 object-contain transition-opacity ${isActive ? 'opacity-100 clay-icon' : 'opacity-50'}`}
-                  style={!isActive ? { filter: 'grayscale(0.5)' } : undefined}
+                <Icon
+                  size={22}
+                  strokeWidth={isActive ? 2.25 : 1.75}
+                  className={isActive ? 'text-primary' : 'text-muted-foreground'}
                 />
               </motion.div>
               <span className="text-xs font-medium">{item.label}</span>
