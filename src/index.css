@@ -193,9 +193,37 @@
 
   /* Hero gradient header used on every main page */
   .hero-gradient {
-    background: linear-gradient(135deg, hsl(var(--gradient-hero-from)), hsl(var(--gradient-hero-to)));
+    background:
+      /* glossy specular highlights — soft orbs of light */
+      radial-gradient(ellipse 60% 50% at 85% 15%, hsl(0 0% 100% / 0.22), transparent 60%),
+      radial-gradient(ellipse 70% 55% at 15% 90%, hsl(var(--gradient-hero-to) / 0.55), transparent 65%),
+      /* top sheen for glass effect */
+      linear-gradient(180deg, hsl(0 0% 100% / 0.14) 0%, hsl(0 0% 100% / 0.04) 30%, transparent 55%),
+      /* base warm gradient */
+      linear-gradient(135deg, hsl(var(--gradient-hero-from)) 0%, hsl(var(--gradient-hero-to)) 100%);
     color: hsl(0 0% 100%);
     position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  /* Soft glossy orb — adds depth and a premium "lit from within" feel */
+  .hero-gradient::before {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -15%;
+    width: 70%;
+    height: 140%;
+    background: radial-gradient(circle, hsl(0 0% 100% / 0.18) 0%, hsl(0 0% 100% / 0.06) 35%, transparent 65%);
+    filter: blur(8px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero-gradient > * {
+    position: relative;
+    z-index: 1;
   }
 
   .hero-gradient::after {
@@ -207,6 +235,17 @@
     height: 28px;
     background: linear-gradient(180deg, transparent, hsl(var(--background)));
     pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Glossy variant for dark accent cards */
+  .dark-accent-card {
+    background:
+      radial-gradient(ellipse 55% 45% at 90% 10%, hsl(0 0% 100% / 0.10), transparent 60%),
+      linear-gradient(180deg, hsl(0 0% 100% / 0.08) 0%, transparent 40%),
+      linear-gradient(135deg, hsl(var(--gradient-dark-from)), hsl(var(--gradient-dark-to)));
+    position: relative;
+    overflow: hidden;
   }
 
   .hero-gradient .subtle-text,
