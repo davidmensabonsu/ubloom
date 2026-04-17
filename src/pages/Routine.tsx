@@ -123,14 +123,14 @@ export default function Routine() {
          streakDays={celebration.streakDays}
          onComplete={handleCelebrationComplete}
        />
- 
-      {/* Header */}
-      <div className="px-5 pt-12 pb-6">
+
+      {/* Header — hero gradient */}
+      <div className="hero-gradient px-5 pt-12 pb-8">
         <div className="flex items-center justify-between mb-1">
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-sm text-muted-foreground"
+            className="text-sm text-white/85"
           >
             {todayFormatted}
           </motion.p>
@@ -139,7 +139,7 @@ export default function Routine() {
         <motion.h1
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="page-title"
+          className="page-title text-white"
         >
           Your Routine
         </motion.h1>
@@ -149,8 +149,10 @@ export default function Routine() {
           transition={{ delay: 0.1 }}
           className="flex items-center gap-2 mt-2"
         >
-          <span className="text-sm text-muted-foreground">Feeling</span>
-          <span className="mood-pill selected text-xs">{currentMood}</span>
+          <span className="text-sm text-white/85">Feeling</span>
+          <span className="inline-flex items-center rounded-full bg-white/20 backdrop-blur-sm px-3 py-1 text-xs font-medium text-white border border-white/25">
+            {currentMood}
+          </span>
         </motion.div>
       </div>
 

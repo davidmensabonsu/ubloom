@@ -81,28 +81,28 @@ export default function Health() {
 
   return (
     <div className="min-h-screen gradient-background pb-24">
-      <div className="px-5 pt-12 pb-6">
+      <div className="hero-gradient px-5 pt-12 pb-8">
         <div className="flex items-center justify-between mb-1">
-          <button onClick={() => navigate('/alignment')} className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
+          <button onClick={() => navigate('/alignment')} className="flex items-center gap-1 text-white/85 hover:text-white transition-colors">
             <ArrowLeft size={18} />
             <span className="text-sm">Reflect</span>
           </button>
           <div className="flex items-center gap-2">
-            <button onClick={() => setShowSetup(true)} className="p-2 rounded-full hover:bg-muted/50 transition-colors text-muted-foreground hover:text-foreground">
+            <button onClick={() => setShowSetup(true)} className="p-2 rounded-full hover:bg-white/15 transition-colors text-white/85 hover:text-white">
               <Settings size={18} />
             </button>
             <ProfileButton />
           </div>
         </div>
-        <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="page-title">
+        <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="page-title text-white">
           Cycle Tracker
         </motion.h1>
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.05 }} className="subtle-text">
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.05 }} className="text-sm text-white/85">
           In sync with your rhythm{cycleData?.dateOfBirth ? ` · Age ${differenceInYears(new Date(), new Date(cycleData.dateOfBirth + 'T00:00:00'))}` : ''}
         </motion.p>
       </div>
 
-      <div className="px-5 space-y-6">
+      <div className="px-5 space-y-6 pt-6">
         {/* Cycle Wheel */}
         <CycleWheel
           currentDay={cycleDay}

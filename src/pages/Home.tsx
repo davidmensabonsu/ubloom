@@ -32,13 +32,13 @@ export default function Home() {
 
   return (
     <div className="h-[100dvh] flex flex-col gradient-background overflow-hidden md:overflow-auto">
-      {/* Header — compact */}
-      <div className="px-5 pt-8 pb-1 shrink-0">
+      {/* Hero gradient header */}
+      <div className="hero-gradient px-5 pt-10 pb-8 shrink-0">
         <div className="flex items-center justify-between">
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-2 text-muted-foreground"
+            className="flex items-center gap-2 text-white/85"
           >
             <GreetingIcon size={16} />
             <span className="text-xs">{todayFormatted}</span>
@@ -47,7 +47,7 @@ export default function Home() {
             <ProfileButton />
             <motion.img
               alt="ubloom"
-              className="h-10 w-10 object-contain clay-icon"
+              className="h-10 w-10 object-contain"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.15 }}
@@ -59,7 +59,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-xl md:text-2xl font-display font-medium tracking-tight text-foreground mt-0.5"
+          className="font-display text-2xl md:text-3xl font-normal tracking-tight text-white mt-2"
         >
           {greeting.text}, beautiful
         </motion.h1>

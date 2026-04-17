@@ -98,10 +98,17 @@ export default function Wonder2() {
 
   return (
     <div className="min-h-screen pb-24" style={{ backgroundColor: 'hsl(var(--background))' }}>
-      {/* Search bar */}
-      <div className="px-4 pt-12 pb-3">
+      {/* Hero gradient header */}
+      <div className="hero-gradient px-4 pt-12 pb-8">
+        <div className="flex items-center justify-between mb-3">
+          <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="page-title text-white">
+            Wander
+          </motion.h1>
+          <ProfileButton />
+        </div>
+        <p className="text-sm text-white/85 mb-4">Discover what nourishes you</p>
         <div className="flex items-center gap-2">
-          <div className="flex-1 flex items-center gap-3 rounded-full border border-border/40 bg-card/60 backdrop-blur-sm px-4 py-3">
+          <div className="flex-1 flex items-center gap-3 rounded-full bg-white/95 backdrop-blur-sm px-4 py-3 shadow-sm">
             <Search size={18} className="text-muted-foreground" />
             <input
               type="text"
@@ -113,7 +120,7 @@ export default function Wonder2() {
             <div className="ml-auto flex gap-1.5">
               <button
                 onClick={() => { setTab('for-you'); track('wander_tab_switch', { tab: 'for-you' }); }}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                   tab === 'for-you'
                     ? 'bg-primary/15 text-foreground ring-1 ring-primary/40'
                     : 'text-muted-foreground'
@@ -123,7 +130,7 @@ export default function Wonder2() {
               </button>
               <button
                 onClick={() => { setTab('popular'); track('wander_tab_switch', { tab: 'popular' }); }}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                   tab === 'popular'
                     ? 'bg-primary/15 text-foreground ring-1 ring-primary/40'
                     : 'text-muted-foreground'
@@ -133,7 +140,6 @@ export default function Wonder2() {
               </button>
             </div>
           </div>
-          <ProfileButton />
         </div>
       </div>
 
