@@ -1,9 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Pen, Mic, Video, Square, Play, Pause, RefreshCw, Sparkles } from 'lucide-react';
+import { Pen, Mic, Video, Square, Play, Pause, RefreshCw, Sparkles, Loader2 } from 'lucide-react';
 import { useUbiJournalPrompt } from '@/hooks/useUbiJournalPrompt';
 import { useUserStore } from '@/stores/userStore';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import { track } from '@/hooks/useAnalytics';
+import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
 
 type Mode = 'write' | 'voice' | 'video';
@@ -21,6 +24,8 @@ export default function JournalModes() {
   const [mode, setMode] = useState<Mode>('write');
   const [text, setText] = useState('');
   const [savedFlash, setSavedFlash] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const { user } = useAuth();
 
   // Voice
   const [recording, setRecording] = useState(false);
@@ -103,15 +108,43 @@ export default function JournalModes() {
     setPlaying(false);
   };
 
-  const handleSaveVoice = () => {
+  const handleSaveVoice = async () => {
     if (!recordedBlob) return;
-    const tag = `🎙️ Voice memo · ${formatDuration(duration)}`;
-    const note = prompt ? `${tag}\nPrompt: ${prompt}` : tag;
-    addJournalEntry({ content: note, date: new Date().toISOString() });
-    track('journal_created', { mode: 'voice', durationSec: Math.round(duration) });
-    resetVoice();
-    setSavedFlash(true);
-    setTimeout(() => setSavedFlash(false), 2400);
+    if (!user) {
+      toast.error('Please sign in to save your voice journal.');
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = recordedBlob.type.includes('mp4') ? 'mp4' : 'webm';
+      const fileName = `${Date.now()}.${ext}`;
+      const path = `${user.id}/${fileName}`;
+      const { error } = await supabase.storage
+        .from('voice-journals')
+        .upload(path, recordedBlob, {
+          contentType: recordedBlob.type || 'audio/webm',
+          upsert: false,
+        });
+      if (error) throw error;
+
+      const tag = `🎙️ Voice memo · ${formatDuration(duration)}`;
+      const note = prompt ? `${tag}\nPrompt: ${prompt}` : tag;
+      addJournalEntry({
+        content: note,
+        date: new Date().toISOString(),
+        audioPath: path,
+        audioDurationSec: Math.round(duration),
+      });
+      track('journal_created', { mode: 'voice', durationSec: Math.round(duration) });
+      resetVoice();
+      setSavedFlash(true);
+      setTimeout(() => setSavedFlash(false), 2400);
+    } catch (e) {
+      console.error('Voice upload failed:', e);
+      toast.error('Could not save your recording. Please try again.');
+    } finally {
+      setUploading(false);
+    }
   };
 
   const tabs: { value: Mode; label: string; Icon: typeof Pen }[] = [
@@ -265,10 +298,15 @@ export default function JournalModes() {
             <div className="flex items-center justify-end mt-2">
               <button
                 onClick={handleSaveVoice}
-                disabled={!recordedBlob}
-                className="px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium disabled:opacity-40 transition-all hover:shadow-md"
+                disabled={!recordedBlob || uploading}
+                className="px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium disabled:opacity-40 transition-all hover:shadow-md inline-flex items-center gap-1.5"
               >
-                {savedFlash ? 'Saved ✓' : 'Save entry'}
+                {uploading ? (
+                  <>
+                    <Loader2 size={14} className="animate-spin" />
+                    Saving…
+                  </>
+                ) : savedFlash ? 'Saved ✓' : 'Save entry'}
               </button>
             </div>
           </motion.div>

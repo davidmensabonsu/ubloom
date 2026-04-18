@@ -9,6 +9,7 @@ import MoodCalendar from '@/components/alignment/MoodCalendar';
 import JournalModes from '@/components/alignment/JournalModes';
 import WeeklySummaryCard from '@/components/alignment/WeeklySummaryCard';
 import BloomScoreSheet from '@/components/alignment/BloomScoreSheet';
+import JournalAudioPlayer from '@/components/alignment/JournalAudioPlayer';
 import heartPulseIcon from '@/assets/icons/heart-pulse.png';
 import { getCurrentCycleDay, getCurrentPhase } from '@/lib/cycleUtils';
 import { computeBloomScore } from '@/lib/bloomScore';
@@ -139,6 +140,9 @@ export default function Alignment() {
                         <p className="text-sm text-foreground/85 leading-snug mt-0.5 line-clamp-2">
                           {preview}
                         </p>
+                        {isVoice && entry.audioPath && (
+                          <JournalAudioPlayer path={entry.audioPath} durationSec={entry.audioDurationSec} />
+                        )}
                       </div>
                     </motion.div>
                   );
