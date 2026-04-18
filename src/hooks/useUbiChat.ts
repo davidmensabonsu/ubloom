@@ -462,7 +462,14 @@ export function useUbiChat() {
           content: cleanContent,
         });
 
-        // Update conversation timestamp
+        // Fire-and-forget memory extraction (silent background task)
+        const assistantMsg: UbiMessage = { role: 'assistant', content: cleanContent };
+        const fullThread = [...apiMessages, assistantMsg];
+        void extractAndSaveMemories({
+          userId,
+          conversationId: convoId,
+          messages: fullThread,
+        });
         await (supabase as any).from('ubi_conversations')
           .update({ updated_at: new Date().toISOString() })
           .eq('id', convoId);
