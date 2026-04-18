@@ -103,6 +103,7 @@ export default function Ubi() {
 
   const handlePreset = (prompt: string) => {
     if (isStreaming) return;
+    if (!canUse('ubi_chat')) return;
     markPromptUsed(prompt);
     // Persist to localStorage for daily tracking
     const key = `ubi-used-presets-${getLocalDateStr()}`;
@@ -111,11 +112,8 @@ export default function Ubi() {
       used.push(prompt);
       localStorage.setItem(key, JSON.stringify(used));
     }
-    setInput(prompt);
-    setTimeout(() => {
-      inputRef.current?.focus();
-      inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 50);
+    incrementUbiMessageCount();
+    sendMessage(prompt);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
