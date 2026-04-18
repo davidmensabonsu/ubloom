@@ -494,12 +494,12 @@ export default function Profile() {
             </CollapsibleTrigger>
             <CollapsibleContent>
               <div className="glass-card rounded-2xl p-4 mt-2">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-5 gap-2">
                   {aesthetics.map((aesthetic) => (
                     <motion.button
                       key={aesthetic.id}
                       onClick={() => setAesthetic(aesthetic.id)}
-                      className={`relative rounded-2xl overflow-hidden aspect-[4/5] transition-all duration-300 ${
+                      className={`relative rounded-xl overflow-hidden aspect-[3/4] transition-all duration-300 ${
                         profile.aesthetic === aesthetic.id
                           ? 'ring-2 ring-primary ring-offset-2 ring-offset-background'
                           : ''
@@ -507,8 +507,8 @@ export default function Profile() {
                       whileTap={{ scale: 0.95 }}
                     >
                       <div className="absolute inset-0" style={{ background: aesthetic.gradient }} />
-                      <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
-                        <span className="text-base font-display font-medium text-white drop-shadow-md">
+                      <div className="absolute inset-0 flex items-end justify-center p-1.5">
+                        <span className="text-[10px] font-display font-medium text-white drop-shadow-md text-center leading-tight">
                           {aesthetic.name}
                         </span>
                       </div>
@@ -516,9 +516,9 @@ export default function Profile() {
                         <motion.div
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
-                          className="absolute top-3 right-3 w-6 h-6 rounded-full bg-white flex items-center justify-center shadow-md"
+                          className="absolute top-1 right-1 w-4 h-4 rounded-full bg-white flex items-center justify-center shadow-md"
                         >
-                          <Check size={14} className="text-foreground" />
+                          <Check size={9} className="text-foreground" />
                         </motion.div>
                       )}
                     </motion.button>
