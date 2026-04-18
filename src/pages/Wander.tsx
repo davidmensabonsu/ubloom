@@ -205,7 +205,16 @@ export default function Wonder2() {
                   initial={{ opacity: 0, x: 12 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.05 + i * 0.05 }}
-                  onClick={() => { track('wander_curated_tap', { category: card.categoryKey, phase: currentPhase }); navigate(`/wander/${card.categoryKey}`); }}
+                  onClick={() => {
+                    const resource = wonderResources.find((r) => r.id === card.resourceId);
+                    track('wander_curated_tap', { category: card.categoryKey, phase: currentPhase, resourceId: card.resourceId, opened: !!resource });
+                    if (resource) {
+                      setSelectedResource(resource);
+                      setSheetOpen(true);
+                    } else {
+                      navigate(`/wander/${card.categoryKey}`);
+                    }
+                  }}
                   className="shrink-0 w-[70vw] max-w-[320px] rounded-2xl bg-white border border-primary/20 shadow-sm p-4 text-left flex flex-col justify-between min-h-[140px] hover:shadow-md transition-shadow"
                 >
                   <div className="space-y-2">
