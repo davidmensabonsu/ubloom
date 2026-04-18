@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useSubscription } from '@/hooks/useSubscription';
 import ubiAvatar from '@/assets/ubi-avatar-bloom.png';
+import speechBubbleIcon from '@/assets/icons/speech-bubble.png';
+import UbiOnboarding from '@/components/ubi/UbiOnboarding';
 
 import crystalBallIcon from '@/assets/icons/crystal-ball.png';
 import sparklesIcon from '@/assets/icons/sparkles.png';
