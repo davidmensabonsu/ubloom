@@ -229,7 +229,7 @@ export default function Wonder2() {
                         onClick={(e) => {
                           e.stopPropagation();
                           track('wander_curated_setup_cycle_tap');
-                          navigate('/health');
+                          navigate('/health?redirect=/wander');
                         }}
                         className="text-[10px] text-primary/70 hover:text-primary underline underline-offset-2 decoration-primary/30 text-left"
                       >
