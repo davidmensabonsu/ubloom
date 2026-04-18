@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { getLocalDateStr } from '@/lib/dateUtils';
+import { getCurrentCycleDay, getCurrentPhase } from '@/lib/cycleUtils';
 import { supabase } from '@/integrations/supabase/client';
 import { track } from '@/hooks/useAnalytics';
 
@@ -62,6 +63,20 @@ async function buildUserContext(
     }
   }
 
+  // Compute cycle phase + day using the SAME util the rest of the app uses,
+  // so Ubi's opener never disagrees with the on-screen context pill.
+  let cyclePhase: string | null = null;
+  let cycleDay: number | null = null;
+  const c = profile.cycleData;
+  if (c?.setupComplete && c.lastPeriodStart && c.cycleLength && c.periodLength) {
+    try {
+      cycleDay = getCurrentCycleDay(c.lastPeriodStart, c.cycleLength);
+      cyclePhase = getCurrentPhase(cycleDay, c.periodLength, c.cycleLength);
+    } catch (e) {
+      console.error('Failed to compute cycle phase for Ubi context:', e);
+    }
+  }
+
   return {
     currentFeeling: profile.currentFeeling,
     struggles: profile.struggles,
@@ -87,6 +102,8 @@ async function buildUserContext(
     neverForget: profile.neverForget,
     ubiSummary: profile.ubiSummary,
     cycleData: profile.cycleData,
+    cyclePhase,
+    cycleDay,
     ubiMemories,
   };
 }
