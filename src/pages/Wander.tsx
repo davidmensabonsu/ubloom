@@ -224,7 +224,18 @@ export default function Wonder2() {
                   <div className="flex items-end justify-between gap-2 mt-3">
                     {phaseLabel ? (
                       <p className="text-[10px] text-primary/60">Picked for your {phaseLabel} phase</p>
-                    ) : <span />}
+                    ) : (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          track('wander_curated_setup_cycle_tap');
+                          navigate('/health');
+                        }}
+                        className="text-[10px] text-primary/70 hover:text-primary underline underline-offset-2 decoration-primary/30 text-left"
+                      >
+                        Set up your cycle for personalised picks
+                      </button>
+                    )}
                     <Heart size={15} className="text-primary/50 shrink-0" />
                   </div>
                 </motion.button>
