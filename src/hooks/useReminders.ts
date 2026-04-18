@@ -27,6 +27,10 @@ export function useReminders() {
 
   // Track which individual habit reminders we've already sent today (habitId:date)
   const sentHabitRemindersRef = useRef<Set<string>>(new Set());
+  // Track which 30-min heads-up reminders we've already sent today (habitId:date)
+  const sentUpcomingRemindersRef = useRef<Set<string>>(new Set());
+
+  const HEADS_UP_MINUTES = 30;
  
    const requestPermission = useCallback(async () => {
      if (!('Notification' in window)) {
