@@ -36,7 +36,7 @@ const LEGEND: { label: string; classes: string }[] = [
 ];
 
 export default function MoodCalendar({ moodHistory, profile }: Props) {
-  const navigate = useNavigate();
+  const updateProfile = useUserStore((s) => s.updateProfile);
   const [range, setRange] = useState<Range>('14d');
   const days = range === '7d' ? 7 : range === '14d' ? 14 : 30;
 
