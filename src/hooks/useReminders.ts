@@ -159,14 +159,15 @@ export function useReminders() {
      checkAndNotify();
      let lastDate = getLocalDateStr();
  
-     const interval = setInterval(() => {
-       const currentDate = getLocalDateStr();
-       if (currentDate !== lastDate) {
-         sentHabitRemindersRef.current.clear();
-         lastDate = currentDate;
-       }
-       checkAndNotify();
-     }, 60000);
+      const interval = setInterval(() => {
+        const currentDate = getLocalDateStr();
+        if (currentDate !== lastDate) {
+          sentHabitRemindersRef.current.clear();
+          sentUpcomingRemindersRef.current.clear();
+          lastDate = currentDate;
+        }
+        checkAndNotify();
+      }, 60000);
  
      return () => clearInterval(interval);
    }, [reminderSettings.enabled, checkAndNotify]);
