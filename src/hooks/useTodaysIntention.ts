@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import { supabase } from '@/integrations/supabase/client';
@@ -69,77 +69,75 @@ export function useTodaysIntention() {
   const [intention, setIntention] = useState<string>(isFresh ? cached!.message : '');
   const [loading, setLoading] = useState<boolean>(!isFresh);
 
+  const generate = useCallback(async (signal?: { cancelled: boolean }) => {
+    setLoading(true);
+    try {
+      let cyclePhase: CyclePhase | null = null;
+      let cycleDay: number | null = null;
+      if (profile.cycleData?.setupComplete && profile.cycleData.lastPeriodStart) {
+        cycleDay = getCurrentCycleDay(profile.cycleData.lastPeriodStart, profile.cycleData.cycleLength);
+        cyclePhase = getCurrentPhase(cycleDay, profile.cycleData.periodLength, profile.cycleData.cycleLength);
+      }
+
+      let topMemories: string[] = [];
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data } = await (supabase as any)
+            .from('ubi_memory')
+            .select('memory_type, content')
+            .eq('user_id', user.id)
+            .order('importance', { ascending: false })
+            .limit(3);
+          topMemories = (data || []).map((m: any) => `[${m.memory_type}] ${m.content}`);
+        }
+      } catch {/* non-fatal */}
+
+      const context = {
+        preferredName: profile.preferredName || null,
+        dailyCheckinState: profile.dailyCheckinState || null,
+        cyclePhase,
+        cycleDay,
+        topMemories,
+      };
+
+      const phaseLabel = cyclePhase ?? 'current';
+      const dayLabel = cycleDay ?? '—';
+      const moodLabel = profile.dailyCheckinState || 'neutral';
+
+      const prompt = `This user is on Day ${dayLabel} of their ${phaseLabel} phase and checked in feeling ${moodLabel} today. Based on everything you know about them, write one single sentence that gives them both a mindset anchor and a clear action for today. Maximum 20 words. Second person. Make it feel like it was written specifically for them — not generic. Return only the sentence.\n\nContext:\n${JSON.stringify(context)}`;
+
+      const result = await streamIntention(prompt);
+      if (signal?.cancelled) return;
+
+      const final = result || FALLBACK;
+      setIntention(final);
+      updateProfile({ cachedFocusToday: { message: final, dateKey: todayKey } });
+    } catch (e) {
+      if (signal?.cancelled) return;
+      console.error('Intention generation failed:', e);
+      setIntention((prev) => prev || cached?.message || FALLBACK);
+    } finally {
+      if (!signal?.cancelled) setLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [todayKey, profile.cycleData, profile.dailyCheckinState, profile.preferredName]);
+
   useEffect(() => {
     if (isFresh) {
       setIntention(cached!.message);
       setLoading(false);
       return;
     }
-
-    let cancelled = false;
-    setLoading(true);
-
-    (async () => {
-      try {
-        // Compute cycle phase if available
-        let cyclePhase: CyclePhase | null = null;
-        if (profile.cycleData?.setupComplete && profile.cycleData.lastPeriodStart) {
-          const day = getCurrentCycleDay(profile.cycleData.lastPeriodStart, profile.cycleData.cycleLength);
-          cyclePhase = getCurrentPhase(day, profile.cycleData.periodLength, profile.cycleData.cycleLength);
-        }
-
-        // Top 3 ubi memories
-        let topMemories: string[] = [];
-        try {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (user) {
-            const { data } = await (supabase as any)
-              .from('ubi_memory')
-              .select('memory_type, content')
-              .eq('user_id', user.id)
-              .order('importance', { ascending: false })
-              .limit(3);
-            topMemories = (data || []).map((m: any) => `[${m.memory_type}] ${m.content}`);
-          }
-        } catch {/* non-fatal */}
-
-        let cycleDay: number | null = null;
-        if (profile.cycleData?.setupComplete && profile.cycleData.lastPeriodStart) {
-          cycleDay = getCurrentCycleDay(profile.cycleData.lastPeriodStart, profile.cycleData.cycleLength);
-        }
-
-        const context = {
-          preferredName: profile.preferredName || null,
-          dailyCheckinState: profile.dailyCheckinState || null,
-          cyclePhase,
-          cycleDay,
-          topMemories,
-        };
-
-        const phaseLabel = cyclePhase ?? 'current';
-        const dayLabel = cycleDay ?? '—';
-        const moodLabel = profile.dailyCheckinState || 'neutral';
-
-        const prompt = `This user is on Day ${dayLabel} of their ${phaseLabel} phase and checked in feeling ${moodLabel} today. Based on everything you know about them, write one single sentence that gives them both a mindset anchor and a clear action for today. Maximum 20 words. Second person. Make it feel like it was written specifically for them — not generic. Return only the sentence.\n\nContext:\n${JSON.stringify(context)}`;
-
-        const result = await streamIntention(prompt);
-        if (cancelled) return;
-
-        const final = result || FALLBACK;
-        setIntention(final);
-        updateProfile({ cachedFocusToday: { message: final, dateKey: todayKey } });
-      } catch (e) {
-        if (cancelled) return;
-        console.error('Intention generation failed:', e);
-        setIntention(cached?.message || FALLBACK);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-
-    return () => { cancelled = true; };
+    const signal = { cancelled: false };
+    generate(signal);
+    return () => { signal.cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [todayKey]);
 
-  return { intention, loading };
+  const regenerate = useCallback(() => {
+    return generate();
+  }, [generate]);
+
+  return { intention, loading, regenerate };
 }

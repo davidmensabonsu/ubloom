@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Sun, Moon, Cloud, Check } from 'lucide-react';
+import { Heart, Sun, Moon, Cloud, Check, RefreshCw } from 'lucide-react';
+import { toast } from 'sonner';
 import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { useTodaysIntention } from '@/hooks/useTodaysIntention';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -32,7 +33,7 @@ const PHASE_ENERGY: Record<CyclePhase, string> = {
 
 export default function Home() {
   const { futureSelfMessage, loading } = useHomeMessages();
-  const { intention, loading: intentionLoading } = useTodaysIntention();
+  const { intention, loading: intentionLoading, regenerate } = useTodaysIntention();
   const { status, isTrial, isExpired, trialDaysLeft } = useSubscription();
   const habitCompletions = useUserStore((s) => s.profile.habitCompletions);
   const preferredName = useUserStore((s) => s.profile.preferredName);
@@ -100,6 +101,37 @@ export default function Home() {
 
   const toggleIntentionDone = () => {
     updateProfile({ intentionCompletedDate: intentionDone ? undefined : todayStr });
+  };
+
+  // Long-press to regenerate intention
+  const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const triggeredRef = useRef(false);
+
+  const handleRegenerate = async () => {
+    if (intentionLoading) return;
+    triggeredRef.current = true;
+    try {
+      if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+        (navigator as any).vibrate?.(30);
+      }
+    } catch {/* noop */}
+    toast.message('Regenerating today\'s intention…');
+    await regenerate();
+  };
+
+  const startPress = () => {
+    triggeredRef.current = false;
+    if (pressTimer.current) clearTimeout(pressTimer.current);
+    pressTimer.current = setTimeout(() => {
+      handleRegenerate();
+    }, 600);
+  };
+
+  const cancelPress = () => {
+    if (pressTimer.current) {
+      clearTimeout(pressTimer.current);
+      pressTimer.current = null;
+    }
   };
 
   return (
@@ -185,11 +217,24 @@ export default function Home() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: intentionDone ? 0.7 : 1, y: 0 }}
           transition={{ delay: 0.18 }}
-          className="dark-accent-card p-4"
+          className="dark-accent-card p-4 select-none cursor-pointer"
+          onPointerDown={startPress}
+          onPointerUp={cancelPress}
+          onPointerLeave={cancelPress}
+          onPointerCancel={cancelPress}
+          onContextMenu={(e) => e.preventDefault()}
+          role="button"
+          aria-label="Today's intention. Long-press to regenerate."
         >
-          <div className="flex items-center gap-1.5 text-white/60 font-body text-[10px] uppercase tracking-[0.14em] mb-2">
-            <span aria-hidden>◆</span>
-            <span>Today's intention — chosen by Ubi</span>
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <div className="flex items-center gap-1.5 text-white/60 font-body text-[10px] uppercase tracking-[0.14em]">
+              <span aria-hidden>◆</span>
+              <span>Today's intention — chosen by Ubi</span>
+            </div>
+            <span className="hidden sm:flex items-center gap-1 text-white/40 text-[9px] uppercase tracking-[0.12em]">
+              <RefreshCw size={9} />
+              Hold to refresh
+            </span>
           </div>
 
           {intentionLoading ? (
@@ -205,7 +250,12 @@ export default function Home() {
 
           <button
             type="button"
-            onClick={toggleIntentionDone}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (triggeredRef.current) { triggeredRef.current = false; return; }
+              toggleIntentionDone();
+            }}
+            onPointerDown={(e) => e.stopPropagation()}
             disabled={intentionLoading}
             className="mt-3 w-full flex items-center justify-between text-white/80 hover:text-white transition-colors disabled:opacity-50"
             aria-pressed={intentionDone}
@@ -224,6 +274,11 @@ export default function Home() {
               {intentionDone && <Check size={14} strokeWidth={3} className="text-foreground/80" />}
             </span>
           </button>
+
+          <p className="sm:hidden mt-2 text-[9px] text-white/35 uppercase tracking-[0.12em] flex items-center gap-1">
+            <RefreshCw size={9} />
+            Hold card to refresh
+          </p>
         </motion.div>
 
         {/* Future Self Message */}
