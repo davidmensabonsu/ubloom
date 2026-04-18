@@ -415,44 +415,32 @@ export default function Ubi() {
                 </motion.div>
               )}
 
-              {/* Warm-up state: Ubi is preparing to greet — show logo + typing bubble */}
+              {/* Warm-up state: Ubi is preparing to greet — inline typing bubble */}
               {messages.length === 0 && profile.ubiOnboardingComplete && profile.ubiIntroSeen && !currentConversationId && (
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4 }}
-                  className="flex flex-col items-center justify-center text-center pt-16 pb-8"
+                  className="flex gap-2 items-start"
                 >
-                  <motion.img
-                    src={ubloomFlower}
-                    alt=""
-                    className="w-14 h-14 object-contain mb-5 opacity-95"
-                    animate={{ scale: [1, 1.05, 1], opacity: [0.9, 1, 0.9] }}
-                    transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-                  />
-                  <div className="flex items-start gap-2">
-                    <div className="w-7 h-7 rounded-full overflow-hidden border border-primary/20 shrink-0 mt-0.5 flex items-center justify-center bg-primary/10">
-                      <img src={speechBubbleIcon} alt="Ubi" className="w-4 h-4 object-contain clay-icon" />
-                    </div>
-                    <div className="bg-white border border-primary/20 shadow-soft rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-1.5 ubi-bubble-shimmer">
-                      {[0, 1, 2].map((i) => (
-                        <motion.span
-                          key={i}
-                          className="w-2 h-2 rounded-full bg-primary"
-                          animate={{ opacity: [0.3, 1, 0.3], y: [0, -4, 0] }}
-                          transition={{
-                            duration: 0.9,
-                            repeat: Infinity,
-                            delay: i * 0.15,
-                            ease: 'easeInOut',
-                          }}
-                        />
-                      ))}
-                    </div>
+                  <div className="w-7 h-7 rounded-full overflow-hidden border border-primary/20 shrink-0 mt-0.5 flex items-center justify-center bg-primary/10">
+                    <img src={speechBubbleIcon} alt="Ubi" className="w-4 h-4 object-contain clay-icon" />
                   </div>
-                  <p className="text-xs text-muted-foreground mt-4" style={{ fontFamily: 'DM Sans, sans-serif' }}>
-                    Ubi is getting ready...
-                  </p>
+                  <div className="bg-white border border-primary/20 shadow-soft rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-1.5 ubi-bubble-shimmer">
+                    {[0, 1, 2].map((i) => (
+                      <motion.span
+                        key={i}
+                        className="w-2 h-2 rounded-full bg-primary"
+                        animate={{ opacity: [0.3, 1, 0.3], y: [0, -4, 0] }}
+                        transition={{
+                          duration: 0.9,
+                          repeat: Infinity,
+                          delay: i * 0.15,
+                          ease: 'easeInOut',
+                        }}
+                      />
+                    ))}
+                  </div>
                 </motion.div>
               )}
             </>
