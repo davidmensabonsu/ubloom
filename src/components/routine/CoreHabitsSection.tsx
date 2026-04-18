@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import { useState } from 'react';
-import { useUserStore, CoreHabit, CustomTask } from '@/stores/userStore';
+import { useUserStore, CoreHabit } from '@/stores/userStore';
 import { Check, Sparkles, Pencil, Trash2, Settings2, GripVertical } from 'lucide-react';
 import { getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
 import EditHabitDialog from '@/components/routine/EditHabitDialog';
@@ -35,10 +35,6 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
-type UnifiedItem =
-  | { kind: 'habit'; id: string; data: CoreHabit }
-  | { kind: 'custom'; id: string; data: CustomTask };
-
 function HabitIcon({ iconId }: { iconId?: string }) {
   const opt = iconId ? getTaskIcon(iconId) : undefined;
   if (opt?.imageSrc) {
@@ -59,17 +55,17 @@ function formatTime(time: string) {
 }
 
 interface SortableRowProps {
-  item: UnifiedItem;
+  habit: CoreHabit;
   editMode: boolean;
   isCompleted: boolean;
   onToggle: () => void;
-  onEdit?: () => void;
+  onEdit: () => void;
   onDelete: () => void;
 }
 
-function SortableRow({ item, editMode, isCompleted, onToggle, onEdit, onDelete }: SortableRowProps) {
+function SortableRow({ habit, editMode, isCompleted, onToggle, onEdit, onDelete }: SortableRowProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: item.id,
+    id: habit.id,
   });
 
   const style = {
@@ -79,102 +75,6 @@ function SortableRow({ item, editMode, isCompleted, onToggle, onEdit, onDelete }
     zIndex: isDragging ? 10 : 'auto' as const,
   };
 
-  const dragHandle = (
-    <button
-      ref={setNodeRef as any}
-      {...attributes}
-      {...listeners}
-      className="touch-none p-1 -ml-1 text-primary/40 hover:text-primary/70 transition-colors cursor-grab active:cursor-grabbing"
-      aria-label="Drag to reorder"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <GripVertical size={16} strokeWidth={2.5} />
-    </button>
-  );
-
-  if (item.kind === 'habit') {
-    const habit = item.data;
-    if (editMode) {
-      return (
-        <div
-          ref={setNodeRef}
-          style={style}
-          className={`check-item w-full ${isDragging ? 'shadow-elevated' : ''}`}
-        >
-          <button
-            {...attributes}
-            {...listeners}
-            className="touch-none p-1 -ml-1 text-primary/40 hover:text-primary/70 transition-colors cursor-grab active:cursor-grabbing"
-            aria-label="Drag to reorder"
-          >
-            <GripVertical size={16} strokeWidth={2.5} />
-          </button>
-          <span className="text-sm font-medium flex items-center gap-2 flex-1">
-            <HabitIcon iconId={habit.icon} />
-            {habit.title}
-          </span>
-          <div className="flex items-center gap-1 ml-auto">
-            <button
-              onClick={onEdit}
-              className="p-1.5 rounded-full hover:bg-primary/10 text-primary transition-colors"
-            >
-              <Settings2 size={14} strokeWidth={2.5} />
-            </button>
-            <button
-              onClick={onDelete}
-              className="p-1.5 rounded-full hover:bg-destructive/10 text-destructive transition-colors"
-            >
-              <Trash2 size={14} strokeWidth={2.5} />
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <motion.div
-        ref={setNodeRef}
-        style={style}
-        className={`check-item w-full ${isDragging ? 'shadow-elevated' : ''}`}
-        whileTap={{ scale: 0.98 }}
-      >
-        <button
-          {...attributes}
-          {...listeners}
-          className="touch-none p-1 -ml-1 text-primary/40 hover:text-primary/70 transition-colors cursor-grab active:cursor-grabbing"
-          aria-label="Drag to reorder"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <GripVertical size={16} strokeWidth={2.5} />
-        </button>
-        <button
-          onClick={onToggle}
-          className="flex items-center gap-3 flex-1 min-w-0 text-left"
-        >
-          <div className={`check-circle ${isCompleted ? 'checked' : ''}`}>
-            {isCompleted && <Check size={14} strokeWidth={2.5} />}
-          </div>
-          <span
-            className={`text-sm font-medium flex items-center gap-2 ${
-              isCompleted ? 'line-through text-muted-foreground' : ''
-            }`}
-          >
-            <HabitIcon iconId={habit.icon} />
-            {habit.title}
-            {habit.scheduledTime && (
-              <span className="text-xs text-muted-foreground/60 font-normal">{formatTime(habit.scheduledTime)}</span>
-            )}
-          </span>
-          {getFrequencyLabel(habit) && !habit.scheduledTime && (
-            <span className="ml-auto text-xs text-muted-foreground/50">{getFrequencyLabel(habit)}</span>
-          )}
-        </button>
-      </motion.div>
-    );
-  }
-
-  // Custom task
-  const task = item.data;
   if (editMode) {
     return (
       <div
@@ -191,15 +91,23 @@ function SortableRow({ item, editMode, isCompleted, onToggle, onEdit, onDelete }
           <GripVertical size={16} strokeWidth={2.5} />
         </button>
         <span className="text-sm font-medium flex items-center gap-2 flex-1">
-          <HabitIcon iconId={task.icon} />
-          {task.title}
+          <HabitIcon iconId={habit.icon} />
+          {habit.title}
         </span>
-        <button
-          onClick={onDelete}
-          className="p-1.5 rounded-full hover:bg-destructive/10 text-destructive transition-colors ml-auto"
-        >
-          <Trash2 size={14} strokeWidth={2.5} />
-        </button>
+        <div className="flex items-center gap-1 ml-auto">
+          <button
+            onClick={onEdit}
+            className="p-1.5 rounded-full hover:bg-primary/10 text-primary transition-colors"
+          >
+            <Settings2 size={14} strokeWidth={2.5} />
+          </button>
+          <button
+            onClick={onDelete}
+            className="p-1.5 rounded-full hover:bg-destructive/10 text-destructive transition-colors"
+          >
+            <Trash2 size={14} strokeWidth={2.5} />
+          </button>
+        </div>
       </div>
     );
   }
@@ -232,9 +140,15 @@ function SortableRow({ item, editMode, isCompleted, onToggle, onEdit, onDelete }
             isCompleted ? 'line-through text-muted-foreground' : ''
           }`}
         >
-          <HabitIcon iconId={task.icon} />
-          {task.title}
+          <HabitIcon iconId={habit.icon} />
+          {habit.title}
+          {habit.scheduledTime && (
+            <span className="text-xs text-muted-foreground/60 font-normal">{formatTime(habit.scheduledTime)}</span>
+          )}
         </span>
+        {getFrequencyLabel(habit) && !habit.scheduledTime && (
+          <span className="ml-auto text-xs text-muted-foreground/50">{getFrequencyLabel(habit)}</span>
+        )}
       </button>
     </motion.div>
   );
@@ -248,18 +162,12 @@ export default function CoreHabitsSection() {
     removeHabit,
     updateHabit,
     setCoreHabits,
-    getVisibleCustomTasks,
-    toggleCustomTaskCompletion,
-    isCustomTaskCompletedToday,
-    removeCustomTask,
-    reorderCustomTasks,
   } = useUserStore();
 
   const { coreHabits } = profile;
-  const customTasks = profile.customTasks || [];
 
   const [editMode, setEditMode] = useState(false);
-  const [habitToDelete, setHabitToDelete] = useState<{ id: string; title: string; kind: 'habit' | 'custom' } | null>(null);
+  const [habitToDelete, setHabitToDelete] = useState<{ id: string; title: string } | null>(null);
   const [habitToEdit, setHabitToEdit] = useState<CoreHabit | null>(null);
 
   const today = getLocalDateStr();
@@ -269,52 +177,27 @@ export default function CoreHabitsSection() {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  // Build unified visible list (in their stored order)
-  const visibleHabits = coreHabits.filter((h) => isHabitScheduledForDate(h, today));
-  const visibleCustom = getVisibleCustomTasks();
+  // Visible list = all today-scheduled habits in their stored order.
+  // In edit mode we show every habit so users can reorder and tweak any of them.
+  const visibleHabits = editMode
+    ? coreHabits
+    : coreHabits.filter((h) => isHabitScheduledForDate(h, today));
 
-  const unifiedItems: UnifiedItem[] = editMode
-    ? [
-        ...coreHabits.map((h) => ({ kind: 'habit' as const, id: h.id, data: h })),
-        ...customTasks.map((t) => ({ kind: 'custom' as const, id: t.id, data: t })),
-      ]
-    : [
-        ...visibleHabits.map((h) => ({ kind: 'habit' as const, id: h.id, data: h })),
-        ...visibleCustom.map((t) => ({ kind: 'custom' as const, id: t.id, data: t })),
-      ];
-
-  const totalItems = unifiedItems.length;
-  const totalCompleted = unifiedItems.filter((it) =>
-    it.kind === 'habit' ? isHabitCompletedToday(it.id) : isCustomTaskCompletedToday(it.id)
-  ).length;
+  const totalItems = visibleHabits.length;
+  const totalCompleted = visibleHabits.filter((h) => isHabitCompletedToday(h.id)).length;
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    const activeItem = unifiedItems.find((it) => it.id === active.id);
-    const overItem = unifiedItems.find((it) => it.id === over.id);
-    if (!activeItem || !overItem) return;
-
-    // Only allow reordering within the same kind
-    if (activeItem.kind !== overItem.kind) return;
-
-    if (activeItem.kind === 'habit') {
-      const ids = coreHabits.map((h) => h.id);
-      const oldIdx = ids.indexOf(active.id as string);
-      const newIdx = ids.indexOf(over.id as string);
-      if (oldIdx === -1 || newIdx === -1) return;
-      setCoreHabits(arrayMove(coreHabits, oldIdx, newIdx));
-    } else {
-      const ids = customTasks.map((t) => t.id);
-      const oldIdx = ids.indexOf(active.id as string);
-      const newIdx = ids.indexOf(over.id as string);
-      if (oldIdx === -1 || newIdx === -1) return;
-      reorderCustomTasks(arrayMove(customTasks, oldIdx, newIdx));
-    }
+    const ids = coreHabits.map((h) => h.id);
+    const oldIdx = ids.indexOf(active.id as string);
+    const newIdx = ids.indexOf(over.id as string);
+    if (oldIdx === -1 || newIdx === -1) return;
+    setCoreHabits(arrayMove(coreHabits, oldIdx, newIdx));
   };
 
-  if (coreHabits.length === 0 && customTasks.length === 0) {
+  if (coreHabits.length === 0) {
     return null;
   }
 
@@ -323,7 +206,7 @@ export default function CoreHabitsSection() {
       {/* Header with progress */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="section-title">Daily Habits</h2>
+          <h2 className="section-title">To-do list</h2>
           <p className="text-xs text-muted-foreground font-medium">
             {totalCompleted} of {totalItems} completed today
           </p>
@@ -348,36 +231,23 @@ export default function CoreHabitsSection() {
 
       {/* Unified flat list with drag and drop */}
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={unifiedItems.map((it) => it.id)} strategy={verticalListSortingStrategy}>
+        <SortableContext items={visibleHabits.map((h) => h.id)} strategy={verticalListSortingStrategy}>
           <div className="space-y-2">
             <AnimatePresence>
-              {unifiedItems.map((item) => {
-                const isCompleted =
-                  item.kind === 'habit'
-                    ? isHabitCompletedToday(item.id)
-                    : isCustomTaskCompletedToday(item.id);
-
-                return (
-                  <SortableRow
-                    key={item.id}
-                    item={item}
-                    editMode={editMode}
-                    isCompleted={isCompleted}
-                    onToggle={() => {
-                      if (item.kind === 'habit') {
-                        toggleHabitCompletion(item.id);
-                        track('habit_completed', { habitId: item.id, timeOfDay: item.data.timeOfDay });
-                      } else {
-                        toggleCustomTaskCompletion(item.id);
-                      }
-                    }}
-                    onEdit={item.kind === 'habit' ? () => setHabitToEdit(item.data) : undefined}
-                    onDelete={() =>
-                      setHabitToDelete({ id: item.id, title: item.data.title, kind: item.kind })
-                    }
-                  />
-                );
-              })}
+              {visibleHabits.map((habit) => (
+                <SortableRow
+                  key={habit.id}
+                  habit={habit}
+                  editMode={editMode}
+                  isCompleted={isHabitCompletedToday(habit.id)}
+                  onToggle={() => {
+                    toggleHabitCompletion(habit.id);
+                    track('habit_completed', { habitId: habit.id, timeOfDay: habit.timeOfDay });
+                  }}
+                  onEdit={() => setHabitToEdit(habit)}
+                  onDelete={() => setHabitToDelete({ id: habit.id, title: habit.title })}
+                />
+              ))}
             </AnimatePresence>
           </div>
         </SortableContext>
@@ -385,7 +255,7 @@ export default function CoreHabitsSection() {
 
       {editMode && (
         <p className="text-center text-xs text-muted-foreground pt-1">
-          Use the + button to add new habits
+          Use the + button to add new to-dos
         </p>
       )}
 
@@ -393,9 +263,9 @@ export default function CoreHabitsSection() {
       <AlertDialog open={!!habitToDelete} onOpenChange={(open) => !open && setHabitToDelete(null)}>
         <AlertDialogContent className="rounded-3xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove habit?</AlertDialogTitle>
+            <AlertDialogTitle>Remove to-do?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently remove <span className="font-semibold">"{habitToDelete?.title}"</span> from your daily routine. This can't be undone.
+              This will permanently remove <span className="font-semibold">"{habitToDelete?.title}"</span> from your list. This can't be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -404,8 +274,7 @@ export default function CoreHabitsSection() {
               className="rounded-2xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => {
                 if (habitToDelete) {
-                  if (habitToDelete.kind === 'habit') removeHabit(habitToDelete.id);
-                  else removeCustomTask(habitToDelete.id);
+                  removeHabit(habitToDelete.id);
                 }
                 setHabitToDelete(null);
               }}

@@ -13,23 +13,11 @@ export default function WeeklyProgress() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [weekOffset, setWeekOffset] = useState(0); // 0 = current week, -1 = last week, etc.
   const coreHabits = profile.coreHabits || [];
-  const customTasks = profile.customTasks || [];
   const habitCompletions = profile.habitCompletions || [];
 
   const allTrackableIds = useMemo(() => {
-    const coreIds = coreHabits.map((h) => h.id);
-    const customIds = customTasks.map((t) => t.id);
-    return new Set([...coreIds, ...customIds]);
-  }, [coreHabits, customTasks]);
-
-  const getCustomTaskCountForDate = (dateStr: string, dayOfWeek: number) => {
-    return customTasks.filter((task) => {
-      if (task.recurrence === 'daily') return true;
-      if (task.recurrence === 'weekly') return task.weeklyDays?.includes(dayOfWeek) ?? false;
-      if (task.recurrence === 'oneoff') return task.scheduledDate === dateStr;
-      return false;
-    }).length;
-  };
+    return new Set(coreHabits.map((h) => h.id));
+  }, [coreHabits]);
 
   const weekData = useMemo(() => {
     const today = startOfDay(new Date());
