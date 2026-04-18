@@ -298,10 +298,15 @@ export default function JournalModes() {
             <div className="flex items-center justify-end mt-2">
               <button
                 onClick={handleSaveVoice}
-                disabled={!recordedBlob}
-                className="px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium disabled:opacity-40 transition-all hover:shadow-md"
+                disabled={!recordedBlob || uploading}
+                className="px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium disabled:opacity-40 transition-all hover:shadow-md inline-flex items-center gap-1.5"
               >
-                {savedFlash ? 'Saved ✓' : 'Save entry'}
+                {uploading ? (
+                  <>
+                    <Loader2 size={14} className="animate-spin" />
+                    Saving…
+                  </>
+                ) : savedFlash ? 'Saved ✓' : 'Save entry'}
               </button>
             </div>
           </motion.div>
