@@ -494,29 +494,31 @@ export default function Profile() {
             </CollapsibleTrigger>
             <CollapsibleContent>
               <div className="glass-card rounded-2xl p-4 mt-2">
-                <div className="grid grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 gap-4">
                   {aesthetics.map((aesthetic) => (
                     <motion.button
                       key={aesthetic.id}
                       onClick={() => setAesthetic(aesthetic.id)}
-                      className={`relative rounded-2xl aspect-square transition-all duration-300 ${
+                      className={`relative rounded-2xl overflow-hidden aspect-[4/5] transition-all duration-300 ${
                         profile.aesthetic === aesthetic.id
                           ? 'ring-2 ring-primary ring-offset-2 ring-offset-background'
                           : ''
                       }`}
-                      whileTap={{ scale: 0.9 }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      <div className={`absolute inset-0 rounded-2xl ${aesthetic.preview}`} />
-                      <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <div className={`w-6 h-6 rounded-full ${aesthetic.accent} shadow-sm`} />
+                      <div className="absolute inset-0" style={{ background: aesthetic.gradient }} />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
+                        <span className="text-base font-display font-medium text-white drop-shadow-md">
+                          {aesthetic.name}
+                        </span>
                       </div>
                       {profile.aesthetic === aesthetic.id && (
                         <motion.div
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
-                          className="absolute top-1 right-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center"
+                          className="absolute top-3 right-3 w-6 h-6 rounded-full bg-white flex items-center justify-center shadow-md"
                         >
-                          <Check size={10} className="text-primary-foreground" />
+                          <Check size={14} className="text-foreground" />
                         </motion.div>
                       )}
                     </motion.button>
