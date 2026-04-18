@@ -98,17 +98,14 @@ export default function Alignment() {
             </div>
             <span className="text-xs font-medium text-primary shrink-0 hidden sm:inline">View →</span>
           </button>
-          <button
-            onClick={() => setBloomSheetOpen(true)}
-            className="shrink-0 flex flex-col items-center justify-center px-3 py-1.5 rounded-xl bg-primary/10 hover:bg-primary/20 active:scale-95 transition-all"
-            aria-label="View Bloom Score breakdown"
+          <div
+            className="shrink-0 flex flex-col items-center justify-center px-3 py-1.5 rounded-xl bg-primary/10"
+            aria-label="Bloom Score"
           >
             <span className="text-[10px] uppercase tracking-wide text-primary/80 font-medium leading-none">Bloom</span>
             <span className="text-lg font-serif text-primary tabular-nums leading-tight">{bloom.total}</span>
-          </button>
+          </div>
         </motion.div>
-
-        <BloomScoreSheet open={bloomSheetOpen} onOpenChange={setBloomSheetOpen} breakdown={bloom} />
 
         {/* Journal section */}
         <div>
