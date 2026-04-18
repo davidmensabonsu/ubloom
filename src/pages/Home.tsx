@@ -89,50 +89,55 @@ export default function Home() {
               <Skeleton className="h-3 w-4/5 bg-white/15" />
             </div>
           ) : (
-            <p className="font-display text-xs md:text-sm leading-relaxed text-white/95 italic line-clamp-3">
-              "{futureSelfMessage}"
-            </p>
+            <>
+              <p className="font-display text-xs md:text-sm leading-relaxed text-white/95 italic line-clamp-2">
+                "{futureSelfMessage}"
+              </p>
+              <button
+                onClick={() => setLetterOpen(true)}
+                className="mt-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+                style={{ color: 'hsl(var(--primary))' }}
+              >
+                Read full letter →
+              </button>
+            </>
           )}
         </motion.div>
 
-        {/* Mindset */}
+        {/* Mindset + Focus combined card */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           className="glass-card rounded-2xl p-3 md:p-4 flex-1 min-h-0 md:flex-none overflow-hidden"
         >
-          <h2 className="text-sm md:text-base font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-            <Heart size={14} className="text-primary shrink-0" />
-            Mindset
-          </h2>
-          {loading ? (
-            <Skeleton className="h-3 w-3/4" />
-          ) : (
-            <p className="text-xs md:text-sm text-foreground/80 leading-relaxed line-clamp-2 md:line-clamp-none">
-              {mindsetMessage}
-            </p>
-          )}
-        </motion.div>
+          <div>
+            <h2 className="text-sm md:text-base font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
+              <Heart size={14} className="text-primary shrink-0" />
+              Mindset
+            </h2>
+            {loading ? (
+              <Skeleton className="h-3 w-3/4" />
+            ) : (
+              <p className="text-xs md:text-sm text-foreground/80 leading-relaxed line-clamp-2 md:line-clamp-none">
+                {mindsetMessage}
+              </p>
+            )}
+          </div>
 
-        {/* Focus */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
-          className="glass-card rounded-2xl p-3 md:p-4 border border-primary/20 flex-1 min-h-0 md:flex-none overflow-hidden"
-        >
-          <h2 className="text-sm md:text-base font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-            <Target size={14} className="text-primary shrink-0" />
-            Focus
-          </h2>
-          {loading ? (
-            <Skeleton className="h-3 w-3/4" />
-          ) : (
-            <p className="text-xs md:text-sm font-medium text-foreground/90 leading-relaxed line-clamp-2 md:line-clamp-none">
-              {focusToday}
-            </p>
-          )}
+          <div className="border-t border-border mt-3 pt-3">
+            <h2 className="text-sm md:text-base font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
+              <Target size={14} className="text-primary shrink-0" />
+              Focus
+            </h2>
+            {loading ? (
+              <Skeleton className="h-3 w-3/4" />
+            ) : (
+              <p className="text-xs md:text-sm font-medium text-foreground/90 leading-relaxed line-clamp-2 md:line-clamp-none">
+                {focusToday}
+              </p>
+            )}
+          </div>
         </motion.div>
 
         {/* Quick Actions */}
@@ -148,6 +153,35 @@ export default function Home() {
           <QuickAction icon={quickActionIcons.health} title="Health" href="/health" />
         </motion.div>
       </div>
+
+      {/* Full letter dialog */}
+      {letterOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-5 bg-black/50 backdrop-blur-sm"
+          onClick={() => setLetterOpen(false)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="dark-accent-card max-w-md w-full p-6 max-h-[80vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-base font-display font-semibold text-white mb-3 flex items-center gap-2">
+              <Heart size={16} className="text-white/80" />
+              From your future self
+            </h2>
+            <p className="font-display text-sm leading-relaxed text-white/95 italic whitespace-pre-line">
+              "{futureSelfMessage}"
+            </p>
+            <button
+              onClick={() => setLetterOpen(false)}
+              className="mt-5 w-full py-2 rounded-full bg-white/15 hover:bg-white/25 transition-colors text-white text-sm font-medium"
+            >
+              Close
+            </button>
+          </motion.div>
+        </div>
+      )}
 
       <BottomNav />
     </div>
