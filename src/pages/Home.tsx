@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Sun, Moon, Cloud, Target } from 'lucide-react';
 import { useHomeMessages } from '@/hooks/useHomeMessages';
@@ -7,6 +7,8 @@ import BottomNav from '@/components/BottomNav';
 import TrialBanner from '@/components/TrialBanner';
 import { useSubscription } from '@/hooks/useSubscription';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { useUserStore } from '@/stores/userStore';
+import { getLocalDateStr } from '@/lib/dateUtils';
 
 import logo from '@/assets/logo.png';
 import { quickActionIcons } from '@/lib/moodIcons';
@@ -23,6 +25,7 @@ const timeGreetings = () => {
 export default function Home() {
   const { futureSelfMessage, mindsetMessage, focusToday, loading } = useHomeMessages();
   const { status, isTrial, isExpired, trialDaysLeft } = useSubscription();
+  const habitCompletions = useUserStore((s) => s.profile.habitCompletions);
   const [letterOpen, setLetterOpen] = useState(false);
   const greeting = timeGreetings();
   const GreetingIcon = greeting.icon;
@@ -32,6 +35,40 @@ export default function Home() {
     month: 'long',
     day: 'numeric',
   });
+
+  // Weekly consistency: Sunday → Saturday of current week
+  const week = useMemo(() => {
+    const today = new Date();
+    const todayStr = getLocalDateStr(today);
+    const dayOfWeek = today.getDay(); // 0=Sun..6=Sat
+    const sunday = new Date(today);
+    sunday.setDate(today.getDate() - dayOfWeek);
+
+    const completedDates = new Set(
+      (habitCompletions || []).filter((c) => c.completed).map((c) => c.date)
+    );
+
+    const days = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(sunday);
+      d.setDate(sunday.getDate() + i);
+      const dateStr = getLocalDateStr(d);
+      return {
+        dateStr,
+        isToday: dateStr === todayStr,
+        isPast: dateStr <= todayStr,
+        completed: completedDates.has(dateStr),
+      };
+    });
+
+    const completedCount = days.filter((d) => d.completed).length;
+    let label: string;
+    if (completedCount === 7) label = "Perfect week — you're glowing";
+    else if (completedCount >= 5) label = `${completedCount} of 7 days — you're on a roll`;
+    else if (completedCount >= 1) label = `${completedCount} of 7 days this week`;
+    else label = 'A fresh week — start with one small step';
+
+    return { days, label };
+  }, [habitCompletions]);
 
   return (
     <div className="h-[100dvh] flex flex-col gradient-background overflow-hidden md:overflow-auto">
@@ -66,6 +103,31 @@ export default function Home() {
         >
           {greeting.text}, beautiful
         </motion.h1>
+
+        {/* Weekly consistency tracker */}
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.18 }}
+          className="mt-4"
+        >
+          <div className="flex items-center gap-2.5">
+            {week.days.map((d, i) => {
+              const base = d.isToday ? 'w-2.5 h-2.5' : 'w-2 h-2';
+              const fill = d.completed
+                ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.5)]'
+                : 'bg-transparent border border-white/45';
+              return (
+                <span
+                  key={i}
+                  className={`${base} ${fill} rounded-full transition-all`}
+                  aria-label={`${d.dateStr}${d.completed ? ' completed' : ''}${d.isToday ? ' (today)' : ''}`}
+                />
+              );
+            })}
+          </div>
+          <p className="mt-2 text-[11px] text-white/70 tracking-wide">{week.label}</p>
+        </motion.div>
       </div>
 
       {/* Main content — fits viewport on mobile, scrollable on desktop */}

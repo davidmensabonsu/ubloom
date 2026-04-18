@@ -28,6 +28,9 @@ import trophyIcon from '@/assets/icons/trophy.png';
 import cameraIcon from '@/assets/icons/camera.png';
 import briefcaseIcon from '@/assets/icons/briefcase.png';
 import planeIcon from '@/assets/icons/plane.png';
+import calendarHeartIcon from '@/assets/icons/calendar-heart.png';
+import speechBubbleIcon from '@/assets/icons/speech-bubble.png';
+import heartPulseIcon from '@/assets/icons/heart-pulse.png';
 
 // Mood/feeling icons used across alignment, mood charts, and summaries
 export const feelingIcons: Record<string, string> = {
@@ -84,10 +87,10 @@ export const goalCategoryIcons: Record<string, string> = {
 // Home quick action icons
 export const quickActionIcons: Record<string, string> = {
   journal: pencilIcon,
-  routine: sparklesIcon,
-  ubi: crystalBallIcon,
+  routine: calendarHeartIcon,
+  ubi: speechBubbleIcon,
   wonder: butterflyIcon,
-  health: blossomIcon,
+  health: heartPulseIcon,
 };
 
 // Shared icon component helper - renders an img tag for a mood icon
