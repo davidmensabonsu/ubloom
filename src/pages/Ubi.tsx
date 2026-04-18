@@ -168,7 +168,7 @@ export default function Ubi() {
           <div className="flex items-center gap-1">
             <Sheet open={historyOpen} onOpenChange={(open) => { setHistoryOpen(open); if (!open) setHistorySearch(''); }}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-white/90 hover:text-white hover:bg-white/15" title="Chat history">
+                <Button variant="ghost" size="icon" className="text-white hover:text-white hover:bg-white/15" title="Chat history">
                   <History size={18} />
                 </Button>
               </SheetTrigger>
@@ -245,7 +245,7 @@ export default function Ubi() {
               variant="ghost"
               size="icon"
               onClick={handleNewChat}
-              className="text-white/90 hover:text-white hover:bg-white/15"
+              className="text-white hover:text-white hover:bg-white/15"
               title="New chat"
             >
               <Plus size={18} />
@@ -328,9 +328,25 @@ export default function Ubi() {
               )}
 
               {messages.length === 0 && (
-                <p className="text-xs text-muted-foreground text-center mt-8">
-                  Tap a prompt or type your own question to get started
-                </p>
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="flex flex-col items-center justify-center text-center pt-16 pb-8"
+                >
+                  <img
+                    src={ubloomFlower}
+                    alt=""
+                    className="w-12 h-12 object-contain mb-4 opacity-90"
+                    style={{ filter: 'hue-rotate(0deg)' }}
+                  />
+                  <p className="font-display italic text-foreground/85 text-lg leading-snug">
+                    What's on your mind today?
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                    Your conversations are private and just for you
+                  </p>
+                </motion.div>
               )}
             </>
           )}
@@ -348,19 +364,26 @@ export default function Ubi() {
           const filtered = presetPrompts.filter(p => !usedToday.includes(p.text));
           if (filtered.length === 0) return null;
           return (
-            <div className="overflow-x-auto scrollbar-hide border-b border-border/30">
-              <div className="flex gap-2 px-4 py-2 max-w-lg mx-auto w-max min-w-full">
-                {filtered.map((prompt, i) => (
-                  <button
-                    key={`${prompt.text}-${i}`}
-                    onClick={() => handlePreset(prompt.text)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary/60 hover:bg-secondary/90 border border-border/40 transition-colors whitespace-nowrap shrink-0"
-                  >
-                    <img src={prompt.icon} alt="" className="w-4 h-4 object-contain shrink-0 clay-icon" />
-                    <span className="text-xs text-foreground/90">{prompt.text}</span>
-                  </button>
-                ))}
-              </div>
+            <div className="max-w-lg mx-auto px-4 pt-3 pb-1 space-y-2">
+              {filtered.map((prompt, i) => (
+                <motion.button
+                  key={`${prompt.text}-${i}`}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: i * 0.06 }}
+                  onClick={() => handlePreset(prompt.text)}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-white border border-primary/20 hover:border-primary/40 hover:bg-white transition-all text-left shadow-soft"
+                >
+                  <img
+                    src={prompt.icon}
+                    alt=""
+                    className="w-5 h-5 object-contain shrink-0 clay-icon"
+                  />
+                  <span className="text-sm text-foreground flex-1" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                    {prompt.text}
+                  </span>
+                </motion.button>
+              ))}
             </div>
           );
         })()}
@@ -385,36 +408,43 @@ export default function Ubi() {
         )}
 
         {/* Input row */}
-        <div className="max-w-lg mx-auto flex items-end gap-2 px-4 py-3">
-          <textarea
-            ref={inputRef}
-            value={input}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            placeholder={!canUse('ubi_chat') ? 'Daily limit reached — upgrade for unlimited' : 'Talk to Ubi...'}
-            rows={1}
-            disabled={!canUse('ubi_chat')}
-            className="flex-1 resize-none rounded-2xl border border-input bg-secondary/50 px-4 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 max-h-[120px] disabled:opacity-50"
-          />
-          {isStreaming ? (
-            <Button
-              size="icon"
-              variant="outline"
-              onClick={stopStreaming}
-              className="shrink-0 rounded-full h-10 w-10"
-            >
-              <Square size={16} />
-            </Button>
-          ) : (
-            <Button
-              size="icon"
-              onClick={handleSend}
-              disabled={!input.trim() || !canUse('ubi_chat')}
-              className="shrink-0 rounded-full h-10 w-10"
-            >
-              <Send size={16} />
-            </Button>
-          )}
+        <div className="max-w-lg mx-auto px-4 py-3">
+          <div className="flex items-end gap-2">
+            <textarea
+              ref={inputRef}
+              value={input}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              placeholder={!canUse('ubi_chat') ? 'Daily limit reached — upgrade for unlimited' : 'Talk to Ubi...'}
+              rows={1}
+              disabled={!canUse('ubi_chat')}
+              className="flex-1 resize-none rounded-full border border-primary/30 bg-white/80 px-5 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 max-h-[120px] disabled:opacity-50"
+              style={{ fontFamily: 'DM Sans, sans-serif' }}
+            />
+            {isStreaming ? (
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={stopStreaming}
+                className="shrink-0 rounded-full h-10 w-10"
+              >
+                <Square size={16} />
+              </Button>
+            ) : (
+              <Button
+                size="icon"
+                onClick={handleSend}
+                disabled={!input.trim() || !canUse('ubi_chat')}
+                className="shrink-0 rounded-full h-10 w-10 bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-60 disabled:bg-primary"
+              >
+                <Send size={16} />
+              </Button>
+            )}
+          </div>
+          <div className="flex items-center justify-center gap-1 mt-2 text-muted-foreground/70">
+            <Lock size={10} />
+            <span className="text-[10px]" style={{ fontFamily: 'DM Sans, sans-serif' }}>Private &amp; secure</span>
+          </div>
         </div>
       </div>
 
