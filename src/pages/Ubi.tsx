@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Trash2, Square, Plus, History, ThumbsUp, ThumbsDown, ArrowLeft, X, Search, MessageCircle } from 'lucide-react';
+import { Send, Trash2, Square, Plus, History, ThumbsUp, ThumbsDown, ArrowLeft, X, Search, MessageCircle, Lock } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useUbiChat, UbiMessage, UbiConversation } from '@/hooks/useUbiChat';
 import { useUserStore } from '@/stores/userStore';
@@ -12,6 +12,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { useSubscription } from '@/hooks/useSubscription';
 import ubiAvatar from '@/assets/ubi-avatar-bloom.png';
 import speechBubbleIcon from '@/assets/icons/speech-bubble.png';
+import ubloomFlower from '@/assets/ubloom-flower.png';
 import UbiOnboarding from '@/components/ubi/UbiOnboarding';
 
 import crystalBallIcon from '@/assets/icons/crystal-ball.png';
@@ -24,14 +25,9 @@ import brainIcon from '@/assets/icons/brain.png';
 import butterflyIcon from '@/assets/icons/butterfly.png';
 
 const presetPrompts = [
-  { text: "I feel lost, help me find direction", icon: crystalBallIcon },
-  { text: "How can I level up my mindset?", icon: sparklesIcon },
+  { text: "I feel lost — help me find direction", icon: crystalBallIcon },
   { text: "What should I focus on today?", icon: starIcon },
-  { text: "Be honest, am I wasting my time?", icon: sunriseIcon },
-  { text: "Help me figure out my purpose", icon: heartIcon },
-  { text: "I want advice on building discipline", icon: flameIcon },
-  { text: "What patterns do you see in my mood?", icon: brainIcon },
-  { text: "Am I aligned with my dream self?", icon: butterflyIcon },
+  { text: "Be honest, am I on the right track?", icon: sunriseIcon },
 ];
 
 const promptIcons = [crystalBallIcon, sparklesIcon, starIcon, sunriseIcon, heartIcon, flameIcon, brainIcon, butterflyIcon];
