@@ -161,6 +161,8 @@ export function useUbiChat() {
               updated_at: new Date().toISOString(),
               preview: oldMessages[oldMessages.length - 1]?.content?.slice(0, 80) || '',
             }]);
+            // Clear legacy local array so it stops syncing to user_data.data
+            updateProfile({ ubiMessages: [] });
           }
         }
       }
