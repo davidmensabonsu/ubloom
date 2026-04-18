@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/BottomNav';
 import TrialBanner from '@/components/TrialBanner';
 import { useSubscription } from '@/hooks/useSubscription';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 import logo from '@/assets/logo.png';
 import { quickActionIcons } from '@/lib/moodIcons';
