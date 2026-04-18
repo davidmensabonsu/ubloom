@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Sun, Moon, Cloud, Target } from 'lucide-react';
 import { useHomeMessages } from '@/hooks/useHomeMessages';
@@ -21,6 +22,7 @@ const timeGreetings = () => {
 export default function Home() {
   const { futureSelfMessage, mindsetMessage, focusToday, loading } = useHomeMessages();
   const { status, isTrial, isExpired, trialDaysLeft } = useSubscription();
+  const [letterOpen, setLetterOpen] = useState(false);
   const greeting = timeGreetings();
   const GreetingIcon = greeting.icon;
 

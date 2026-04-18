@@ -107,39 +107,15 @@ export default function Wonder2() {
           <ProfileButton />
         </div>
         <p className="text-sm text-white/85 mb-4">Discover what nourishes you</p>
-        <div className="flex items-center gap-2">
-          <div className="flex-1 flex items-center gap-3 rounded-full bg-white/95 backdrop-blur-sm px-4 py-3 shadow-sm">
-            <Search size={18} className="text-muted-foreground" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); trackSearch(e.target.value); }}
-              placeholder="Search ideas..."
-              className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
-            />
-            <div className="ml-auto flex gap-1.5">
-              <button
-                onClick={() => { setTab('for-you'); track('wander_tab_switch', { tab: 'for-you' }); }}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  tab === 'for-you'
-                    ? 'bg-primary/15 text-foreground ring-1 ring-primary/40'
-                    : 'text-muted-foreground'
-                }`}
-              >
-                For you
-              </button>
-              <button
-                onClick={() => { setTab('popular'); track('wander_tab_switch', { tab: 'popular' }); }}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  tab === 'popular'
-                    ? 'bg-primary/15 text-foreground ring-1 ring-primary/40'
-                    : 'text-muted-foreground'
-                }`}
-              >
-                Popular
-              </button>
-            </div>
-          </div>
+        <div className="flex items-center gap-3 rounded-full bg-white/95 backdrop-blur-sm px-4 py-3 shadow-sm">
+          <Search size={18} className="text-muted-foreground" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); trackSearch(e.target.value); }}
+            placeholder="Search ideas, topics, content..."
+            className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
+          />
         </div>
       </div>
 
