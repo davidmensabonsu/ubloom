@@ -92,6 +92,50 @@ export type Database = {
         }
         Relationships: []
       }
+      ubi_memory: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          importance: number
+          last_referenced_at: string | null
+          memory_type: string
+          source_conversation_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          importance?: number
+          last_referenced_at?: string | null
+          memory_type: string
+          source_conversation_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          importance?: number
+          last_referenced_at?: string | null
+          memory_type?: string
+          source_conversation_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ubi_memory_source_conversation_id_fkey"
+            columns: ["source_conversation_id"]
+            isOneToOne: false
+            referencedRelation: "ubi_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ubi_messages: {
         Row: {
           content: string

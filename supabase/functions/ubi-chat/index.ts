@@ -27,7 +27,14 @@ serve(async (req) => {
 - Adapt your tone: gentle when they're struggling, energising when they're thriving
 
 ## User Context (use naturally, don't force references)
-${userContext ? JSON.stringify(userContext) : "No context available yet."}${chatHistorySection}
+${userContext ? JSON.stringify(userContext) : "No context available yet."}
+
+## What I Remember About You
+${userContext?.ubiMemories?.length > 0
+  ? userContext.ubiMemories.join("\n")
+  : "Still getting to know you — this is an early conversation."}
+
+Use these memories naturally when relevant. Do not list them back or announce that you remember them. Just let them inform how you speak to this person. If something they say connects to a memory, reference it as if you've been paying attention — because you have.${chatHistorySection}
 
 ## Response Guidelines
 - Be concise. Say more with less. **2-3 short paragraphs max.** Avoid walls of text.

@@ -23,7 +23,10 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ubi-chat`;
 const MAX_MESSAGES = 50;
 const PROMPTS_REGEX = /<!--PROMPTS:(.*?)-->/;
 
-function buildUserContext(profile: ReturnType<typeof useUserStore.getState>['profile']) {
+async function buildUserContext(
+  profile: ReturnType<typeof useUserStore.getState>['profile'],
+  userId: string | null,
+) {
   const today = getLocalDateStr();
   const recentMoods = (profile.moodHistory || []).slice(0, 14).map((m) => ({
     date: m.date,
@@ -41,6 +44,23 @@ function buildUserContext(profile: ReturnType<typeof useUserStore.getState>['pro
   const habitCompletionRate = totalHabits > 0 ? Math.round((completedHabits / totalHabits) * 100) : 0;
   const recentJournal = (profile.journalEntries || []).slice(0, 5).map((j) => j.content.slice(0, 200));
   const todayMood = (profile.moodHistory || []).find((m) => m.date.startsWith(today));
+
+  // Fetch top 15 most important memories Ubi has stored about this user
+  let ubiMemories: string[] = [];
+  if (userId) {
+    try {
+      const { data: memories } = await (supabase as any)
+        .from('ubi_memory')
+        .select('memory_type, content, importance, created_at')
+        .eq('user_id', userId)
+        .order('importance', { ascending: false })
+        .order('created_at', { ascending: false })
+        .limit(15);
+      ubiMemories = (memories || []).map((m: any) => `[${m.memory_type}] ${m.content}`);
+    } catch (e) {
+      console.error('Failed to fetch ubi memories:', e);
+    }
+  }
 
   return {
     currentFeeling: profile.currentFeeling,
@@ -67,7 +87,50 @@ function buildUserContext(profile: ReturnType<typeof useUserStore.getState>['pro
     neverForget: profile.neverForget,
     ubiSummary: profile.ubiSummary,
     cycleData: profile.cycleData,
+    ubiMemories,
   };
+}
+
+async function extractAndSaveMemories(params: {
+  userId: string;
+  conversationId: string;
+  messages: UbiMessage[];
+}) {
+  try {
+    const userMessageCount = params.messages.filter((m) => m.role === 'user').length;
+    if (userMessageCount < 2) return;
+
+    const last10 = params.messages.slice(-10).map((m) => ({ role: m.role, content: m.content }));
+
+    const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ubi-memory-extract`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+      },
+      body: JSON.stringify({
+        messages: last10,
+        userId: params.userId,
+        conversationId: params.conversationId,
+      }),
+    });
+
+    if (!resp.ok) return;
+    const data = await resp.json();
+    const memories = Array.isArray(data?.memories) ? data.memories : [];
+    if (memories.length === 0) return;
+
+    const rows = memories.map((m: any) => ({
+      user_id: params.userId,
+      memory_type: m.type,
+      content: m.content,
+      importance: m.importance ?? 5,
+      source_conversation_id: params.conversationId,
+    }));
+    await (supabase as any).from('ubi_memory').insert(rows);
+  } catch (e) {
+    console.error('Memory extraction failed (non-fatal):', e);
+  }
 }
 
 function extractPrompts(content: string): { cleanContent: string; prompts: string[] } {
@@ -290,7 +353,7 @@ export function useUbiChat() {
       setIsStreaming(true);
       setSuggestedPrompts([]);
 
-      const userContext = buildUserContext(profile);
+      const userContext = await buildUserContext(profile, userId);
       const chatHistory = buildChatHistorySummary();
       const controller = new AbortController();
       abortRef.current = controller;
@@ -399,7 +462,14 @@ export function useUbiChat() {
           content: cleanContent,
         });
 
-        // Update conversation timestamp
+        // Fire-and-forget memory extraction (silent background task)
+        const assistantMsg: UbiMessage = { role: 'assistant', content: cleanContent };
+        const fullThread = [...apiMessages, assistantMsg];
+        void extractAndSaveMemories({
+          userId,
+          conversationId: convoId,
+          messages: fullThread,
+        });
         await (supabase as any).from('ubi_conversations')
           .update({ updated_at: new Date().toISOString() })
           .eq('id', convoId);

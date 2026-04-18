@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
 import speechBubbleIcon from '@/assets/icons/speech-bubble.png';
 
 type StepType = 'choice' | 'multi' | 'text';
@@ -212,8 +213,38 @@ export default function UbiOnboarding({ onComplete }: Props) {
     }
   };
 
-  const handleBegin = () => {
+  const handleBegin = async () => {
     updateProfile({ ubiOnboardingComplete: true });
+
+    // Seed Ubi's memory from onboarding answers (fire-and-forget)
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const lifeStage = collectedAnswers.lifeStage || profile.lifeStage;
+        const primaryFocusArea = collectedAnswers.primaryFocusArea || profile.primaryFocusArea;
+        const struggles = collectedAnswers.struggles || profile.struggles || [];
+        const communicationTone = collectedAnswers.communicationTone || profile.communicationTone;
+        const neverForget = collectedAnswers.neverForget || profile.neverForget;
+
+        const seeds: Array<{ memory_type: string; content: string; importance: number }> = [];
+        if (lifeStage) seeds.push({ memory_type: 'life_context', content: `User is currently: ${lifeStage}`, importance: 8 });
+        if (primaryFocusArea) seeds.push({ memory_type: 'goal', content: `User's primary focus is: ${primaryFocusArea}`, importance: 9 });
+        if (Array.isArray(struggles) && struggles.length > 0) {
+          seeds.push({ memory_type: 'struggle', content: `User struggles with: ${struggles.join(', ')}`, importance: 8 });
+        }
+        if (communicationTone) seeds.push({ memory_type: 'preference', content: `User prefers Ubi to communicate in a ${communicationTone} style`, importance: 10 });
+        if (neverForget) seeds.push({ memory_type: 'never_forget', content: String(neverForget), importance: 10 });
+
+        if (seeds.length > 0) {
+          await (supabase as any).from('ubi_memory').insert(
+            seeds.map((s) => ({ ...s, user_id: user.id }))
+          );
+        }
+      }
+    } catch (e) {
+      console.error('Failed to seed Ubi memories from onboarding:', e);
+    }
+
     onComplete();
   };
 
