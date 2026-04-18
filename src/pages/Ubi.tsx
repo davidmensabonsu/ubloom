@@ -151,6 +151,11 @@ export default function Ubi() {
     deleteConversation(convoId);
   };
 
+  // Show onboarding flow first time
+  if (!profile.ubiOnboardingComplete) {
+    return <UbiOnboarding onComplete={() => { /* state update triggers re-render */ }} />;
+  }
+
   return (
     <div className="min-h-screen gradient-background flex flex-col">
       {/* Hero gradient header */}
@@ -281,8 +286,8 @@ export default function Ubi() {
                       animate={{ opacity: 1 }}
                       className="flex gap-2 items-start"
                     >
-                      <div className="w-7 h-7 rounded-full overflow-hidden border border-primary/20 shrink-0 mt-0.5">
-                        <img src={ubiAvatar} alt="Ubi" className="w-full h-full object-cover" />
+                      <div className="w-7 h-7 rounded-full overflow-hidden border border-primary/20 shrink-0 mt-0.5 flex items-center justify-center bg-primary/10">
+                        <img src={speechBubbleIcon} alt="Ubi" className="w-4 h-4 object-contain clay-icon" />
                       </div>
                       <div className="bg-secondary/80 rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-1.5">
                         {[0, 1, 2].map((i) => (
