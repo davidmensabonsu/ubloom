@@ -253,6 +253,7 @@ interface UserStore {
   toggleCustomTaskCompletion: (taskId: string) => void;
   isCustomTaskCompletedToday: (taskId: string) => boolean;
   getVisibleCustomTasks: () => CustomTask[];
+  reorderCustomTasks: (tasks: CustomTask[]) => void;
 }
 
 const initialProfile: UserProfile = {
@@ -644,6 +645,14 @@ export const useUserStore = create<UserStore>()(
         const c = completions.find((c) => c.habitId === taskId && c.date === today);
         return c?.completed ?? false;
       },
+
+      reorderCustomTasks: (tasks) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            customTasks: tasks,
+          },
+        })),
 
       getVisibleCustomTasks: () => {
         const today = new Date();
