@@ -157,7 +157,7 @@ export default function Ubi() {
         <div className="max-w-lg mx-auto flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="w-14 h-14 rounded-full flex items-center justify-center bg-white/25 border border-white/30 shadow-sm backdrop-blur-sm shrink-0">
-              <img src={speechBubbleIcon} alt="Ubi" className="w-7 h-7 object-contain" />
+              <MessageCircle size={28} strokeWidth={2} className="text-white" />
             </div>
             <div>
               <h1 className="font-display text-2xl font-semibold text-white leading-tight">Ubi</h1>
