@@ -2,7 +2,6 @@ import { useMemo, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Sun, Moon, Cloud, Check, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import { track } from '@/hooks/useAnalytics';
 import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { useTodaysIntention } from '@/hooks/useTodaysIntention';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -116,12 +115,6 @@ export default function Home() {
         (navigator as any).vibrate?.(30);
       }
     } catch {/* noop */}
-    track('intention_regenerated', {
-      had_cycle_phase: !!cycleData?.setupComplete,
-      checkin_state: dailyCheckinState || null,
-      previous_intention: intention || null,
-      triggered_at: new Date().toISOString(),
-    });
     toast.message('Regenerating today\'s intention…');
     await regenerate();
   };
