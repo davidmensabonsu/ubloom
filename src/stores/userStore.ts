@@ -5,6 +5,11 @@ import { getLocalDateStr } from '@/lib/dateUtils';
 export type TimeOfDay = 'morning' | 'midday' | 'evening';
 export type HabitFrequency = 'daily' | 'specific-days' | 'one-off';
 
+/**
+ * Unified to-do item. Historically there were two types (CoreHabit and CustomTask) —
+ * they have been merged. CustomTask is kept as a deprecated alias for backward-compat
+ * during the data migration in `merge()` below.
+ */
 export interface CoreHabit {
   id: string;
   title: string;
@@ -61,7 +66,6 @@ export interface UserProfile {
   moodHistory: MoodEntry[];
   routineTasks: RoutineTask[]; // Now used for one-off daily tasks only
   coreHabits: CoreHabit[];
-  customTasks: CustomTask[];
   habitCompletions: HabitCompletion[];
   routineSetupComplete: boolean;
    reminderSettings: ReminderSettings;
@@ -170,14 +174,18 @@ export interface CachedMindsetMessage {
   dateKey: string; // e.g. "2026-02-16"
 }
 
+/**
+ * @deprecated CustomTask has been merged into CoreHabit. Kept only so the
+ * persisted-state migration can read old data from localStorage / cloud sync.
+ */
 export interface CustomTask {
   id: string;
   title: string;
   timeOfDay: TimeOfDay;
-  icon: string; // emoji
+  icon: string;
   recurrence: 'daily' | 'weekly' | 'oneoff';
-  weeklyDays?: number[]; // 0=Sun..6=Sat
-  scheduledDate?: string; // yyyy-MM-dd for one-off
+  weeklyDays?: number[];
+  scheduledDate?: string;
   createdAt: string;
 }
 
@@ -233,7 +241,7 @@ interface UserStore {
   viewResource: (resourceId: string) => void;
   completeOnboarding: () => void;
   resetProfile: () => void;
-  // Core habits
+  // Unified to-dos (formerly "core habits")
   setCoreHabits: (habits: CoreHabit[]) => void;
   toggleHabitCompletion: (habitId: string) => void;
   isHabitCompletedToday: (habitId: string) => boolean;
@@ -247,13 +255,6 @@ interface UserStore {
   addMoodboardItem: (item: Omit<MoodboardItem, 'id' | 'createdAt'>) => void;
   removeMoodboardItem: (id: string) => void;
   reorderMoodboardItems: (items: MoodboardItem[]) => void;
-  // Custom tasks
-  addCustomTask: (task: Omit<CustomTask, 'id' | 'createdAt'>) => void;
-  removeCustomTask: (id: string) => void;
-  toggleCustomTaskCompletion: (taskId: string) => void;
-  isCustomTaskCompletedToday: (taskId: string) => boolean;
-  getVisibleCustomTasks: () => CustomTask[];
-  reorderCustomTasks: (tasks: CustomTask[]) => void;
 }
 
 const initialProfile: UserProfile = {
@@ -279,7 +280,6 @@ const initialProfile: UserProfile = {
   moodHistory: [],
   routineTasks: [],
   coreHabits: [],
-  customTasks: [],
   habitCompletions: [],
   routineSetupComplete: false,
    reminderSettings: {
@@ -303,6 +303,31 @@ const initialProfile: UserProfile = {
   cachedJournalPrompt: undefined,
   cachedWeeklySummary: undefined,
 };
+
+/** Convert a legacy CustomTask into the unified CoreHabit shape. */
+function customTaskToHabit(t: CustomTask): CoreHabit {
+  let frequency: HabitFrequency = 'daily';
+  let specificDays: number[] | undefined;
+  let oneOffDate: string | undefined;
+
+  if (t.recurrence === 'weekly') {
+    frequency = 'specific-days';
+    specificDays = t.weeklyDays ?? [];
+  } else if (t.recurrence === 'oneoff') {
+    frequency = 'one-off';
+    oneOffDate = t.scheduledDate;
+  }
+
+  return {
+    id: t.id,
+    title: t.title,
+    timeOfDay: t.timeOfDay,
+    icon: t.icon,
+    frequency,
+    ...(specificDays ? { specificDays } : {}),
+    ...(oneOffDate ? { oneOffDate } : {}),
+  };
+}
 
 export const useUserStore = create<UserStore>()(
   persist(
@@ -425,7 +450,7 @@ export const useUserStore = create<UserStore>()(
       
       resetProfile: () => set({ profile: initialProfile }),
 
-      // Core habits functions
+      // Unified to-do functions (legacy name "Habit" preserved internally)
       setCoreHabits: (habits) =>
         set((state) => ({
           profile: { ...state.profile, coreHabits: habits },
@@ -519,16 +544,9 @@ export const useUserStore = create<UserStore>()(
           const habits = [...state.profile.coreHabits];
           const idx = habits.findIndex((h) => h.id === habitId);
           if (idx === -1) return state;
-          const habit = habits[idx];
-          // Find habits in the same timeOfDay section
-          const sectionHabits = habits.filter((h) => h.timeOfDay === habit.timeOfDay);
-          const sectionIdx = sectionHabits.findIndex((h) => h.id === habitId);
-          const swapIdx = direction === 'up' ? sectionIdx - 1 : sectionIdx + 1;
-          if (swapIdx < 0 || swapIdx >= sectionHabits.length) return state;
-          // Find the global indices and swap
-          const globalIdx = habits.indexOf(sectionHabits[sectionIdx]);
-          const globalSwapIdx = habits.indexOf(sectionHabits[swapIdx]);
-          [habits[globalIdx], habits[globalSwapIdx]] = [habits[globalSwapIdx], habits[globalIdx]];
+          const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+          if (swapIdx < 0 || swapIdx >= habits.length) return state;
+          [habits[idx], habits[swapIdx]] = [habits[swapIdx], habits[idx]];
           return { profile: { ...state.profile, coreHabits: habits } };
         }),
 
@@ -589,83 +607,6 @@ export const useUserStore = create<UserStore>()(
           };
         }),
 
-      // Custom tasks
-      addCustomTask: (task) =>
-        set((state) => ({
-          profile: {
-            ...state.profile,
-            customTasks: [
-              ...(state.profile.customTasks || []),
-              { ...task, id: `custom-${Date.now()}`, createdAt: new Date().toISOString() },
-            ],
-          },
-        })),
-
-      removeCustomTask: (id) =>
-        set((state) => ({
-          profile: {
-            ...state.profile,
-            customTasks: (state.profile.customTasks || []).filter((t) => t.id !== id),
-          },
-        })),
-
-      toggleCustomTaskCompletion: (taskId) => {
-        const today = getLocalDateStr();
-        set((state) => {
-          const existing = state.profile.habitCompletions.find(
-            (c) => c.habitId === taskId && c.date === today
-          );
-          if (existing) {
-            return {
-              profile: {
-                ...state.profile,
-                habitCompletions: state.profile.habitCompletions.map((c) =>
-                  c.habitId === taskId && c.date === today
-                    ? { ...c, completed: !c.completed }
-                    : c
-                ),
-              },
-            };
-          }
-          return {
-            profile: {
-              ...state.profile,
-              habitCompletions: [
-                ...state.profile.habitCompletions,
-                { habitId: taskId, date: today, completed: true },
-              ],
-            },
-          };
-        });
-      },
-
-      isCustomTaskCompletedToday: (taskId) => {
-        const today = getLocalDateStr();
-        const completions = get().profile.habitCompletions || [];
-        const c = completions.find((c) => c.habitId === taskId && c.date === today);
-        return c?.completed ?? false;
-      },
-
-      reorderCustomTasks: (tasks) =>
-        set((state) => ({
-          profile: {
-            ...state.profile,
-            customTasks: tasks,
-          },
-        })),
-
-      getVisibleCustomTasks: () => {
-        const today = new Date();
-        const todayStr = getLocalDateStr(today);
-        const dayOfWeek = today.getDay();
-        return (get().profile.customTasks || []).filter((task) => {
-          if (task.recurrence === 'daily') return true;
-          if (task.recurrence === 'weekly') return task.weeklyDays?.includes(dayOfWeek) ?? false;
-          if (task.recurrence === 'oneoff') return task.scheduledDate === todayStr;
-          return false;
-        });
-      },
-
       markReminderSent: (timeOfDay) => {
         const today = getLocalDateStr();
         set((state) => {
@@ -716,14 +657,31 @@ export const useUserStore = create<UserStore>()(
       },
       merge: (persistedState, currentState) => {
         const persisted = (persistedState as Partial<UserStore>) ?? {};
-        const persistedProfile = (persisted.profile as Partial<UserProfile>) ?? {};
+        const persistedProfile = (persisted.profile as Partial<UserProfile> & { customTasks?: CustomTask[] }) ?? {};
+
+        // ---- One-time migration: merge legacy customTasks into coreHabits ----
+        const legacyCustomTasks = Array.isArray(persistedProfile.customTasks)
+          ? persistedProfile.customTasks
+          : [];
+        const existingHabits = Array.isArray(persistedProfile.coreHabits)
+          ? persistedProfile.coreHabits
+          : [];
+        const existingIds = new Set(existingHabits.map((h) => h.id));
+        const migratedFromCustom = legacyCustomTasks
+          .filter((t) => !existingIds.has(t.id))
+          .map(customTaskToHabit);
+        const mergedHabits = [...existingHabits, ...migratedFromCustom];
+
+        // Strip the now-deprecated customTasks field
+        const { customTasks: _drop, ...cleanProfile } = persistedProfile;
 
         return {
           ...currentState,
           ...persisted,
           profile: {
             ...currentState.profile,
-            ...persistedProfile,
+            ...cleanProfile,
+            coreHabits: mergedHabits,
             dreamSelf: {
               ...currentState.profile.dreamSelf,
               ...(persistedProfile.dreamSelf ?? {}),
