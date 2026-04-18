@@ -122,8 +122,16 @@ export default function Health() {
         {/* Bloom Score */}
         <div>
           <div className="section-label mb-3">Bloom Score</div>
-          <BloomScoreCard score={bloom.total} />
+          <button
+            onClick={() => setBloomSheetOpen(true)}
+            className="w-full text-left rounded-2xl active:scale-[0.99] transition-transform"
+            aria-label="View Bloom Score breakdown"
+          >
+            <BloomScoreCard score={bloom.total} />
+          </button>
         </div>
+
+        <BloomScoreSheet open={bloomSheetOpen} onOpenChange={setBloomSheetOpen} breakdown={bloom} />
 
         {/* Horizontal scroll data tiles */}
         <HealthDataTiles />
