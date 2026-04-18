@@ -10,7 +10,7 @@ export default function ProfileButton() {
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: 0.1 }}
-      className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center hover:bg-white/25 transition-colors backdrop-blur-sm"
+      className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center hover:bg-white/25 transition-all backdrop-blur-sm ring-0 hover:ring-1 focus:ring-1 focus:outline-none ring-white/70 focus-visible:ring-1"
     >
       <User size={18} className="text-white" />
     </motion.button>
