@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 import { Pen, Mic } from 'lucide-react';
@@ -8,6 +8,7 @@ import BottomNav from '@/components/BottomNav';
 import MoodCalendar from '@/components/alignment/MoodCalendar';
 import JournalModes from '@/components/alignment/JournalModes';
 import WeeklySummaryCard from '@/components/alignment/WeeklySummaryCard';
+import BloomScoreSheet from '@/components/alignment/BloomScoreSheet';
 import heartPulseIcon from '@/assets/icons/heart-pulse.png';
 import { getCurrentCycleDay, getCurrentPhase } from '@/lib/cycleUtils';
 import { computeBloomScore } from '@/lib/bloomScore';
@@ -16,6 +17,7 @@ export default function Alignment() {
   const navigate = useNavigate();
   const profile = useUserStore((s) => s.profile);
   const updateProfile = useUserStore((s) => s.updateProfile);
+  const [bloomSheetOpen, setBloomSheetOpen] = useState(false);
 
   const totalHabits = (profile.coreHabits || []).length;
 
@@ -73,23 +75,37 @@ export default function Alignment() {
 
       <div className="px-5 space-y-6 pt-6">
         {/* Health shortcut card */}
-        <motion.button
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          onClick={() => navigate('/health')}
-          className="w-full bg-card border border-border rounded-2xl p-4 flex items-center gap-3 text-left hover:shadow-md transition-shadow"
+          className="w-full bg-card border border-border rounded-2xl p-4 flex items-center gap-3 hover:shadow-md transition-shadow"
         >
-          <img src={heartPulseIcon} alt="Health" className="w-8 h-8 object-contain shrink-0 clay-icon" />
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-foreground">Health</p>
-            <p className="text-xs text-muted-foreground truncate">
-              {cycleDay != null && cyclePhase
-                ? `Day ${cycleDay} · ${cyclePhase} · Bloom Score ${bloom.total}`
-                : `Bloom Score ${bloom.total}`}
-            </p>
-          </div>
-          <span className="text-xs font-medium text-primary shrink-0">View insights →</span>
-        </motion.button>
+          <button
+            onClick={() => navigate('/health')}
+            className="flex items-center gap-3 flex-1 min-w-0 text-left"
+          >
+            <img src={heartPulseIcon} alt="Health" className="w-8 h-8 object-contain shrink-0 clay-icon" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-foreground">Health</p>
+              <p className="text-xs text-muted-foreground truncate">
+                {cycleDay != null && cyclePhase
+                  ? `Day ${cycleDay} · ${cyclePhase}`
+                  : 'Cycle insights'}
+              </p>
+            </div>
+            <span className="text-xs font-medium text-primary shrink-0 hidden sm:inline">View →</span>
+          </button>
+          <button
+            onClick={() => setBloomSheetOpen(true)}
+            className="shrink-0 flex flex-col items-center justify-center px-3 py-1.5 rounded-xl bg-primary/10 hover:bg-primary/20 active:scale-95 transition-all"
+            aria-label="View Bloom Score breakdown"
+          >
+            <span className="text-[10px] uppercase tracking-wide text-primary/80 font-medium leading-none">Bloom</span>
+            <span className="text-lg font-serif text-primary tabular-nums leading-tight">{bloom.total}</span>
+          </button>
+        </motion.div>
+
+        <BloomScoreSheet open={bloomSheetOpen} onOpenChange={setBloomSheetOpen} breakdown={bloom} />
 
         {/* Journal section */}
         <div>
