@@ -334,9 +334,13 @@ export default function Ubi() {
             <>
               {messages.length > 0 && (
                 <AnimatePresence initial={false}>
-                  {messages.map((msg, i) => (
-                    <MessageBubble key={i} message={msg} index={i} onRate={rateMessage} />
-                  ))}
+                  {messages.map((msg, i) => {
+                    const isLast = i === messages.length - 1;
+                    const shimmer = isStreaming && isLast && msg.role === 'assistant';
+                    return (
+                      <MessageBubble key={i} message={msg} index={i} onRate={rateMessage} shimmer={shimmer} />
+                    );
+                  })}
                   {isStreaming && messages[messages.length - 1]?.role !== 'assistant' && (
                     <motion.div
                       initial={{ opacity: 0 }}
@@ -346,7 +350,7 @@ export default function Ubi() {
                       <div className="w-7 h-7 rounded-full overflow-hidden border border-primary/20 shrink-0 mt-0.5 flex items-center justify-center bg-primary/10">
                         <img src={speechBubbleIcon} alt="Ubi" className="w-4 h-4 object-contain clay-icon" />
                       </div>
-                      <div className="bg-white border border-primary/20 shadow-soft rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-1.5">
+                      <div className="bg-white border border-primary/20 shadow-soft rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-1.5 ubi-bubble-shimmer">
                         {[0, 1, 2].map((i) => (
                           <motion.span
                             key={i}
@@ -516,7 +520,7 @@ export default function Ubi() {
   );
 }
 
-function MessageBubble({ message, index, onRate }: { message: UbiMessage; index: number; onRate: (index: number, rating: 'up' | 'down') => void }) {
+function MessageBubble({ message, index, onRate, shimmer }: { message: UbiMessage; index: number; onRate: (index: number, rating: 'up' | 'down') => void; shimmer?: boolean }) {
   const isUser = message.role === 'user';
 
   return (
@@ -536,7 +540,7 @@ function MessageBubble({ message, index, onRate }: { message: UbiMessage; index:
           className={`rounded-2xl px-4 py-3 text-sm ${
             isUser
               ? 'bg-primary/15 text-foreground rounded-tr-sm'
-              : 'bg-white text-foreground border border-primary/20 rounded-tl-sm shadow-soft'
+              : `bg-white text-foreground border border-primary/20 rounded-tl-sm shadow-soft ${shimmer ? 'ubi-bubble-shimmer' : ''}`
           }`}
         >
           {isUser ? (
