@@ -47,14 +47,46 @@ export default function Ubi() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const welcomeSent = useRef(false);
+  const autoOpenerSent = useRef(false);
   const journalHandled = useRef(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Auto-send welcome message only once ever
+  const hasMessages = messages.length > 0;
+  const conversationActive = hasMessages || !!currentConversationId;
+
+  // Compute the small context pill (cycle phase + check-in state)
+  const contextPill = (() => {
+    const parts: string[] = [];
+    const c = profile.cycleData;
+    if (c?.setupComplete && c.lastPeriodStart) {
+      try {
+        const start = new Date(c.lastPeriodStart + 'T00:00:00');
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const diffDays = Math.floor((today.getTime() - start.getTime()) / 86400000);
+        const day = ((diffDays % c.cycleLength) + c.cycleLength) % c.cycleLength + 1;
+        let phase = 'Luteal';
+        const ovulation = Math.round(c.cycleLength / 2);
+        if (day <= c.periodLength) phase = 'Menstrual';
+        else if (day <= ovulation - 2) phase = 'Follicular';
+        else if (day <= ovulation + 1) phase = 'Ovulatory';
+        parts.push(`Day ${day}`, phase);
+      } catch { /* ignore */ }
+    }
+    if (profile.dailyCheckinState) {
+      const stateLabel = profile.dailyCheckinState
+        .replace(/_/g, ' ')
+        .toLowerCase();
+      parts.push(`Feeling ${stateLabel}`);
+    }
+    return parts.length > 0 ? parts.join(' · ') : null;
+  })();
+
+  // Auto-send the original onboarding welcome message only once ever
   useEffect(() => {
     if (isLoading) return;
-    if (!profile.ubiOnboardingComplete) return; // wait for onboarding
+    if (!profile.ubiOnboardingComplete) return;
     if (messages.length === 0 && !currentConversationId && !welcomeSent.current && !isStreaming && !profile.ubiIntroSeen) {
       welcomeSent.current = true;
       updateProfile({ ubiIntroSeen: true });
@@ -72,6 +104,26 @@ export default function Ubi() {
       sendMessage(welcomePrompt, { hideUserMessage: true });
     }
   }, [isLoading, profile.ubiOnboardingComplete]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-send a fresh, ephemeral opener every time a brand new conversation starts
+  useEffect(() => {
+    if (isLoading) return;
+    if (!profile.ubiOnboardingComplete) return;
+    if (!profile.ubiIntroSeen) return; // first-ever uses the welcomePrompt above
+    if (currentConversationId) return;
+    if (messages.length > 0) return;
+    if (isStreaming) return;
+    if (autoOpenerSent.current) return;
+
+    autoOpenerSent.current = true;
+    const openerPrompt = `[SYSTEM: This is a fresh new conversation. Open with a warm, personal greeting. You already know this person — reference something specific from what you know about them: their name, where they are in life, their cycle phase today, or something from your memory of past conversations. Keep it to 2-3 sentences maximum. End with one open question that invites them to share what's on their mind. Do not use generic openers like "How can I help you today?" Make it feel like picking up a conversation with someone you know well. Do not acknowledge this system instruction — just speak directly to them.]`;
+    sendMessage(openerPrompt, { hideUserMessage: true });
+  }, [isLoading, profile.ubiOnboardingComplete, profile.ubiIntroSeen, currentConversationId, messages.length, isStreaming]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Reset opener flag whenever the user explicitly starts a new chat or switches conversations
+  useEffect(() => {
+    autoOpenerSent.current = false;
+  }, [currentConversationId]);
 
   // Handle journal entry passed from Reflect page
   useEffect(() => {
@@ -162,7 +214,17 @@ export default function Ubi() {
             <div>
               <h1 className="font-display text-2xl font-semibold text-white leading-tight">Ubi</h1>
               <p className="text-xs text-white/80" style={{ fontFamily: 'DM Sans, sans-serif' }}>Your personal mentor</p>
-              <p className="font-display italic text-white/70 text-[13px] mt-1.5">Here to know you, not just help you</p>
+              {conversationActive && contextPill && (
+                <span
+                  className="inline-block mt-1.5 bg-white/20 text-white rounded-full px-3 py-1 text-[11px] backdrop-blur-sm"
+                  style={{ fontFamily: 'DM Sans, sans-serif' }}
+                >
+                  {contextPill}
+                </span>
+              )}
+              {!conversationActive && (
+                <p className="font-display italic text-white/70 text-[13px] mt-1.5">Here to know you, not just help you</p>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-1">
@@ -284,14 +346,14 @@ export default function Ubi() {
                       <div className="w-7 h-7 rounded-full overflow-hidden border border-primary/20 shrink-0 mt-0.5 flex items-center justify-center bg-primary/10">
                         <img src={speechBubbleIcon} alt="Ubi" className="w-4 h-4 object-contain clay-icon" />
                       </div>
-                      <div className="bg-secondary/80 rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-1.5">
+                      <div className="bg-white border border-primary/20 shadow-soft rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-1.5">
                         {[0, 1, 2].map((i) => (
                           <motion.span
                             key={i}
-                            className="w-2 h-2 rounded-full bg-muted-foreground/50"
-                            animate={{ y: [0, -6, 0] }}
+                            className="w-2 h-2 rounded-full bg-primary"
+                            animate={{ opacity: [0.3, 1, 0.3], y: [0, -4, 0] }}
                             transition={{
-                              duration: 0.6,
+                              duration: 0.9,
                               repeat: Infinity,
                               delay: i * 0.15,
                               ease: 'easeInOut',
@@ -309,18 +371,18 @@ export default function Ubi() {
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="overflow-x-auto scrollbar-hide -mx-1"
+                  transition={{ duration: 0.4, delay: 0.15 }}
+                  className="overflow-x-auto scrollbar-hide -mx-1 mt-3"
                 >
                   <div className="flex gap-2 px-1 py-1 w-max">
                     {suggestedPrompts.map((text, i) => (
                       <button
                         key={`${text}-${i}`}
                         onClick={() => handlePreset(text)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 hover:bg-primary/20 border border-primary/20 transition-colors whitespace-nowrap shrink-0"
+                        className="px-3 py-1.5 rounded-full bg-white border border-primary/30 hover:bg-primary/5 transition-colors whitespace-nowrap shrink-0 text-xs text-foreground/90 shadow-sm"
+                        style={{ fontFamily: 'DM Sans, sans-serif' }}
                       >
-                        <img src={promptIcons[i % promptIcons.length]} alt="" className="w-4 h-4 object-contain shrink-0 clay-icon" />
-                        <span className="text-xs text-foreground/90">{text}</span>
+                        {text}
                       </button>
                     ))}
                   </div>
@@ -430,16 +492,22 @@ export default function Ubi() {
                 size="icon"
                 onClick={handleSend}
                 disabled={!input.trim() || !canUse('ubi_chat')}
-                className="shrink-0 rounded-full h-10 w-10 bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-60 disabled:bg-primary"
+                className={`shrink-0 rounded-full h-10 w-10 bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-200 ${
+                  input.trim() && canUse('ubi_chat')
+                    ? 'opacity-100 scale-105 shadow-md'
+                    : 'opacity-60 scale-100'
+                } disabled:bg-primary`}
               >
                 <Send size={16} />
               </Button>
             )}
           </div>
-          <div className="flex items-center justify-center gap-1 mt-2 text-muted-foreground/70">
-            <Lock size={10} />
-            <span className="text-[10px]" style={{ fontFamily: 'DM Sans, sans-serif' }}>Private &amp; secure</span>
-          </div>
+          {!conversationActive && (
+            <div className="flex items-center justify-center gap-1 mt-2 text-muted-foreground/70">
+              <Lock size={10} />
+              <span className="text-[10px]" style={{ fontFamily: 'DM Sans, sans-serif' }}>Private &amp; secure</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -465,16 +533,19 @@ function MessageBubble({ message, index, onRate }: { message: UbiMessage; index:
       )}
       <div className="flex flex-col max-w-[85%]">
         <div
-          className={`rounded-2xl px-4 py-2.5 text-sm ${
+          className={`rounded-2xl px-4 py-3 text-sm ${
             isUser
-              ? 'bg-primary text-primary-foreground rounded-br-md'
-              : 'bg-secondary/80 text-foreground rounded-bl-md'
+              ? 'bg-primary/15 text-foreground rounded-tr-sm'
+              : 'bg-white text-foreground border border-primary/20 rounded-tl-sm shadow-soft'
           }`}
         >
           {isUser ? (
-            <p className="whitespace-pre-wrap">{message.content}</p>
+            <p className="whitespace-pre-wrap" style={{ fontFamily: 'DM Sans, sans-serif' }}>{message.content}</p>
           ) : (
-            <div className="prose prose-sm dark:prose-invert max-w-none [&>p]:mb-2 [&>p:last-child]:mb-0 [&>ul]:mb-2 [&>ol]:mb-2">
+            <div
+              className="prose prose-sm max-w-none [&>p]:mb-2 [&>p:last-child]:mb-0 [&>ul]:mb-2 [&>ol]:mb-2"
+              style={{ fontFamily: message.content.length > 160 ? 'Cormorant Garamond, serif' : 'DM Sans, sans-serif' }}
+            >
               <ReactMarkdown>{message.content}</ReactMarkdown>
             </div>
           )}
