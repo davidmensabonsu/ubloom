@@ -2,26 +2,27 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Settings, Droplets, CalendarDays, ChevronDown, ChevronUp } from 'lucide-react';
 import { track } from '@/hooks/useAnalytics';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import ProfileButton from '@/components/ProfileButton';
 import BottomNav from '@/components/BottomNav';
 import { useUserStore } from '@/stores/userStore';
 import { supabase } from '@/integrations/supabase/client';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { getCurrentCycleDay, getCurrentPhase, getFormattedNextPeriod } from '@/lib/cycleUtils';
 import { differenceInYears } from 'date-fns';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import { toast } from 'sonner';
+import { computeBloomScore } from '@/lib/bloomScore';
 
 import CycleSetup from '@/components/cycle/CycleSetup';
 import CycleWheel from '@/components/cycle/CycleWheel';
 import CycleInsightCard from '@/components/cycle/CycleInsightCard';
-import CycleMoodCard from '@/components/cycle/CycleMoodCard';
+import DeviceConnectionBanner from '@/components/cycle/DeviceConnectionBanner';
+import BloomScoreCard from '@/components/cycle/BloomScoreCard';
+import HealthDataTiles from '@/components/cycle/HealthDataTiles';
+import UbiInsightsCard from '@/components/cycle/UbiInsightsCard';
 import LockedOverlay from '@/components/LockedOverlay';
 import { useSubscription } from '@/hooks/useSubscription';
-
-import crystalBallIcon from '@/assets/icons/crystal-ball.png';
 
 export default function Health() {
   const navigate = useNavigate();
@@ -41,10 +42,20 @@ export default function Health() {
   const currentPhase = setupComplete ? getCurrentPhase(cycleDay, cycleData.periodLength, cycleData.cycleLength) : 'Follicular' as const;
   const nextPeriod = setupComplete ? getFormattedNextPeriod(cycleData.lastPeriodStart, cycleData.cycleLength) : '';
 
+  // Bloom score
+  const totalHabits = (profile.coreHabits || []).length;
+  const bloom = useMemo(() => computeBloomScore(profile, totalHabits), [profile, totalHabits]);
+
   useEffect(() => { track('feature_used', { feature: 'health' }); }, []);
 
   useEffect(() => {
+    if (profile.bloomScore !== bloom.total) {
+      updateProfile({ bloomScore: bloom.total });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bloom.total]);
 
+  useEffect(() => {
     if (!setupComplete) { setLoadingInsights(false); return; }
     const fetchInsights = async () => {
       try {
@@ -103,6 +114,18 @@ export default function Health() {
       </div>
 
       <div className="px-5 space-y-6 pt-6">
+        {/* Device connection banner */}
+        <DeviceConnectionBanner />
+
+        {/* Bloom Score */}
+        <div>
+          <div className="section-label mb-3">Bloom Score</div>
+          <BloomScoreCard score={bloom.total} />
+        </div>
+
+        {/* Horizontal scroll data tiles */}
+        <HealthDataTiles />
+
         {/* Cycle Wheel */}
         <CycleWheel
           currentDay={cycleDay}
@@ -232,40 +255,12 @@ export default function Health() {
           </motion.div>
         )}
 
-        {/* Today's Insight */}
+        {/* Today's Cycle Insight */}
         <CycleInsightCard phase={currentPhase} />
 
-        {/* Mood Card */}
-        <CycleMoodCard />
-
-        {/* Ubi Insights */}
+        {/* Ubi Insights — consolidated */}
         <LockedOverlay locked={!canUse('ubi_insights')} message="Upgrade for personalised health insights">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <div className="flex items-center gap-2 mb-3">
-              <img src={crystalBallIcon} alt="Ubi" className="w-6 h-6 object-contain clay-icon" />
-              <h2 className="section-title">Ubi Insights</h2>
-            </div>
-            <div className="space-y-3">
-              {loadingInsights ? (
-                <>
-                  <Skeleton className="h-20 rounded-2xl" />
-                  <Skeleton className="h-20 rounded-2xl" />
-                </>
-              ) : (
-                insights.map((insight, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.25 + i * 0.08 }}
-                    className="glass-card rounded-2xl p-4"
-                  >
-                    <p className="text-sm text-foreground/90 leading-relaxed">{insight}</p>
-                  </motion.div>
-                ))
-              )}
-            </div>
-          </motion.div>
+          <UbiInsightsCard insights={insights} loading={loadingInsights} />
         </LockedOverlay>
       </div>
 
