@@ -86,8 +86,9 @@ const onboardingSteps = [
 {
   id: 'dreamFeels',
   question: "How does your dream self feel?",
-  subtitle: "Imagine her, fully aligned and radiant.",
+  subtitle: "Choose up to 3 that resonate most.",
   type: 'multi',
+  max: 3,
   options: [
   { value: 'grounded', label: 'Grounded' },
   { value: 'magnetic', label: 'Magnetic' },
