@@ -309,7 +309,7 @@ function QuickAction({ icon, title, href }: { icon: string; title: string; href:
       className="glass-card rounded-xl p-3 flex flex-col items-center gap-1.5"
       whileTap={{ scale: 0.97 }}
     >
-      <img src={icon} alt="" className="w-7 h-7 object-contain" style={{ filter: 'none' }} />
+      <img src={icon} alt="" className="w-7 h-7 object-contain clay-icon" />
       <span className="text-xs font-medium text-foreground">{title}</span>
     </motion.a>
   );
