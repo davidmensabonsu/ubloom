@@ -33,11 +33,11 @@ import ReminderSettings from '@/components/routine/ReminderSettings';
 import BottomNav from '@/components/BottomNav';
 
 const aesthetics = [
-  { id: 'rose', name: 'Warm Rose', preview: 'bg-gradient-to-br from-rose-100 to-pink-200', accent: 'bg-rose-300' },
-  { id: 'sage', name: 'Sage', preview: 'bg-gradient-to-br from-green-50 to-emerald-100', accent: 'bg-emerald-300' },
-  { id: 'sand', name: 'Sand', preview: 'bg-gradient-to-br from-amber-50 to-orange-100', accent: 'bg-amber-400' },
-  { id: 'lavender', name: 'Lavender', preview: 'bg-gradient-to-br from-purple-50 to-violet-100', accent: 'bg-violet-300' },
-  { id: 'arctic', name: 'Arctic', preview: 'bg-gradient-to-br from-sky-50 to-blue-100', accent: 'bg-sky-400' },
+  { id: 'rose', name: 'Warm Rose', preview: 'bg-gradient-to-br from-rose-100 to-pink-200', accent: 'bg-rose-300', gradient: 'linear-gradient(135deg, hsl(344 40% 57%), hsl(344 55% 78%))' },
+  { id: 'sage', name: 'Sage', preview: 'bg-gradient-to-br from-green-50 to-emerald-100', accent: 'bg-emerald-300', gradient: 'linear-gradient(135deg, hsl(150 30% 35%), hsl(150 30% 63%))' },
+  { id: 'sand', name: 'Sand', preview: 'bg-gradient-to-br from-amber-50 to-orange-100', accent: 'bg-amber-400', gradient: 'linear-gradient(135deg, hsl(25 55% 50%), hsl(25 55% 75%))' },
+  { id: 'lavender', name: 'Lavender', preview: 'bg-gradient-to-br from-purple-50 to-violet-100', accent: 'bg-violet-300', gradient: 'linear-gradient(135deg, hsl(270 30% 48%), hsl(270 35% 73%))' },
+  { id: 'arctic', name: 'Arctic', preview: 'bg-gradient-to-br from-sky-50 to-blue-100', accent: 'bg-sky-400', gradient: 'linear-gradient(135deg, hsl(210 35% 45%), hsl(210 35% 70%))' },
 ];
 
 export default function Profile() {
