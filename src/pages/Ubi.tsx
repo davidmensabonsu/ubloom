@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Trash2, Square, Plus, History, ThumbsUp, ThumbsDown, ArrowLeft, X, Search, MessageCircle } from 'lucide-react';
+import { Send, Trash2, Square, Plus, History, ThumbsUp, ThumbsDown, ArrowLeft, X, Search, MessageCircle, Lock } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useUbiChat, UbiMessage, UbiConversation } from '@/hooks/useUbiChat';
 import { useUserStore } from '@/stores/userStore';
@@ -12,6 +12,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { useSubscription } from '@/hooks/useSubscription';
 import ubiAvatar from '@/assets/ubi-avatar-bloom.png';
 import speechBubbleIcon from '@/assets/icons/speech-bubble.png';
+import ubloomFlower from '@/assets/ubloom-flower.png';
 import UbiOnboarding from '@/components/ubi/UbiOnboarding';
 
 import crystalBallIcon from '@/assets/icons/crystal-ball.png';
@@ -24,14 +25,9 @@ import brainIcon from '@/assets/icons/brain.png';
 import butterflyIcon from '@/assets/icons/butterfly.png';
 
 const presetPrompts = [
-  { text: "I feel lost, help me find direction", icon: crystalBallIcon },
-  { text: "How can I level up my mindset?", icon: sparklesIcon },
+  { text: "I feel lost — help me find direction", icon: crystalBallIcon },
   { text: "What should I focus on today?", icon: starIcon },
-  { text: "Be honest, am I wasting my time?", icon: sunriseIcon },
-  { text: "Help me figure out my purpose", icon: heartIcon },
-  { text: "I want advice on building discipline", icon: flameIcon },
-  { text: "What patterns do you see in my mood?", icon: brainIcon },
-  { text: "Am I aligned with my dream self?", icon: butterflyIcon },
+  { text: "Be honest, am I on the right track?", icon: sunriseIcon },
 ];
 
 const promptIcons = [crystalBallIcon, sparklesIcon, starIcon, sunriseIcon, heartIcon, flameIcon, brainIcon, butterflyIcon];
@@ -107,6 +103,7 @@ export default function Ubi() {
 
   const handlePreset = (prompt: string) => {
     if (isStreaming) return;
+    if (!canUse('ubi_chat')) return;
     markPromptUsed(prompt);
     // Persist to localStorage for daily tracking
     const key = `ubi-used-presets-${getLocalDateStr()}`;
@@ -115,11 +112,8 @@ export default function Ubi() {
       used.push(prompt);
       localStorage.setItem(key, JSON.stringify(used));
     }
-    setInput(prompt);
-    setTimeout(() => {
-      inputRef.current?.focus();
-      inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 50);
+    incrementUbiMessageCount();
+    sendMessage(prompt);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -159,21 +153,22 @@ export default function Ubi() {
   return (
     <div className="min-h-screen gradient-background flex flex-col">
       {/* Hero gradient header */}
-      <div className="sticky top-0 z-10 hero-gradient px-4 pt-6 pb-5">
-        <div className="flex items-center justify-between max-w-lg mx-auto">
+      <div className="sticky top-0 z-10 hero-gradient px-4 pt-7 pb-8">
+        <div className="max-w-lg mx-auto flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-white/40 shadow-sm bg-white/20">
-              <MessageCircle size={20} className="text-white" strokeWidth={2} />
+            <div className="w-14 h-14 rounded-full flex items-center justify-center bg-white/25 border border-white/30 shadow-sm backdrop-blur-sm shrink-0">
+              <img src={speechBubbleIcon} alt="Ubi" className="w-7 h-7 object-contain" />
             </div>
             <div>
-              <h1 className="font-display text-base font-semibold text-white">Ubi</h1>
-              <p className="text-xs text-white/85" style={{ fontFamily: 'DM Sans, sans-serif' }}>Your personal mentor</p>
+              <h1 className="font-display text-2xl font-semibold text-white leading-tight">Ubi</h1>
+              <p className="text-xs text-white/80" style={{ fontFamily: 'DM Sans, sans-serif' }}>Your personal mentor</p>
+              <p className="font-display italic text-white/70 text-[13px] mt-1.5">Here to know you, not just help you</p>
             </div>
           </div>
           <div className="flex items-center gap-1">
             <Sheet open={historyOpen} onOpenChange={(open) => { setHistoryOpen(open); if (!open) setHistorySearch(''); }}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-white/90 hover:text-white hover:bg-white/15" title="Chat history">
+                <Button variant="ghost" size="icon" className="text-white hover:text-white hover:bg-white/15" title="Chat history">
                   <History size={18} />
                 </Button>
               </SheetTrigger>
@@ -250,7 +245,7 @@ export default function Ubi() {
               variant="ghost"
               size="icon"
               onClick={handleNewChat}
-              className="text-white/90 hover:text-white hover:bg-white/15"
+              className="text-white hover:text-white hover:bg-white/15"
               title="New chat"
             >
               <Plus size={18} />
@@ -333,9 +328,25 @@ export default function Ubi() {
               )}
 
               {messages.length === 0 && (
-                <p className="text-xs text-muted-foreground text-center mt-8">
-                  Tap a prompt or type your own question to get started
-                </p>
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="flex flex-col items-center justify-center text-center pt-16 pb-8"
+                >
+                  <img
+                    src={ubloomFlower}
+                    alt=""
+                    className="w-12 h-12 object-contain mb-4 opacity-90"
+                    style={{ filter: 'hue-rotate(0deg)' }}
+                  />
+                  <p className="font-display italic text-foreground/85 text-lg leading-snug">
+                    What's on your mind today?
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                    Your conversations are private and just for you
+                  </p>
+                </motion.div>
               )}
             </>
           )}
@@ -353,19 +364,26 @@ export default function Ubi() {
           const filtered = presetPrompts.filter(p => !usedToday.includes(p.text));
           if (filtered.length === 0) return null;
           return (
-            <div className="overflow-x-auto scrollbar-hide border-b border-border/30">
-              <div className="flex gap-2 px-4 py-2 max-w-lg mx-auto w-max min-w-full">
-                {filtered.map((prompt, i) => (
-                  <button
-                    key={`${prompt.text}-${i}`}
-                    onClick={() => handlePreset(prompt.text)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary/60 hover:bg-secondary/90 border border-border/40 transition-colors whitespace-nowrap shrink-0"
-                  >
-                    <img src={prompt.icon} alt="" className="w-4 h-4 object-contain shrink-0 clay-icon" />
-                    <span className="text-xs text-foreground/90">{prompt.text}</span>
-                  </button>
-                ))}
-              </div>
+            <div className="max-w-lg mx-auto px-4 pt-3 pb-1 space-y-2">
+              {filtered.map((prompt, i) => (
+                <motion.button
+                  key={`${prompt.text}-${i}`}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: i * 0.06 }}
+                  onClick={() => handlePreset(prompt.text)}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-white border border-primary/20 hover:border-primary/40 hover:bg-white transition-all text-left shadow-soft"
+                >
+                  <img
+                    src={prompt.icon}
+                    alt=""
+                    className="w-5 h-5 object-contain shrink-0 clay-icon"
+                  />
+                  <span className="text-sm text-foreground flex-1" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                    {prompt.text}
+                  </span>
+                </motion.button>
+              ))}
             </div>
           );
         })()}
@@ -390,36 +408,43 @@ export default function Ubi() {
         )}
 
         {/* Input row */}
-        <div className="max-w-lg mx-auto flex items-end gap-2 px-4 py-3">
-          <textarea
-            ref={inputRef}
-            value={input}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            placeholder={!canUse('ubi_chat') ? 'Daily limit reached — upgrade for unlimited' : 'Talk to Ubi...'}
-            rows={1}
-            disabled={!canUse('ubi_chat')}
-            className="flex-1 resize-none rounded-2xl border border-input bg-secondary/50 px-4 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 max-h-[120px] disabled:opacity-50"
-          />
-          {isStreaming ? (
-            <Button
-              size="icon"
-              variant="outline"
-              onClick={stopStreaming}
-              className="shrink-0 rounded-full h-10 w-10"
-            >
-              <Square size={16} />
-            </Button>
-          ) : (
-            <Button
-              size="icon"
-              onClick={handleSend}
-              disabled={!input.trim() || !canUse('ubi_chat')}
-              className="shrink-0 rounded-full h-10 w-10"
-            >
-              <Send size={16} />
-            </Button>
-          )}
+        <div className="max-w-lg mx-auto px-4 py-3">
+          <div className="flex items-end gap-2">
+            <textarea
+              ref={inputRef}
+              value={input}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              placeholder={!canUse('ubi_chat') ? 'Daily limit reached — upgrade for unlimited' : 'Talk to Ubi...'}
+              rows={1}
+              disabled={!canUse('ubi_chat')}
+              className="flex-1 resize-none rounded-full border border-primary/30 bg-white/80 px-5 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 max-h-[120px] disabled:opacity-50"
+              style={{ fontFamily: 'DM Sans, sans-serif' }}
+            />
+            {isStreaming ? (
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={stopStreaming}
+                className="shrink-0 rounded-full h-10 w-10"
+              >
+                <Square size={16} />
+              </Button>
+            ) : (
+              <Button
+                size="icon"
+                onClick={handleSend}
+                disabled={!input.trim() || !canUse('ubi_chat')}
+                className="shrink-0 rounded-full h-10 w-10 bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-60 disabled:bg-primary"
+              >
+                <Send size={16} />
+              </Button>
+            )}
+          </div>
+          <div className="flex items-center justify-center gap-1 mt-2 text-muted-foreground/70">
+            <Lock size={10} />
+            <span className="text-[10px]" style={{ fontFamily: 'DM Sans, sans-serif' }}>Private &amp; secure</span>
+          </div>
         </div>
       </div>
 
