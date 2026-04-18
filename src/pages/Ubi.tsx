@@ -492,16 +492,22 @@ export default function Ubi() {
                 size="icon"
                 onClick={handleSend}
                 disabled={!input.trim() || !canUse('ubi_chat')}
-                className="shrink-0 rounded-full h-10 w-10 bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-60 disabled:bg-primary"
+                className={`shrink-0 rounded-full h-10 w-10 bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-200 ${
+                  input.trim() && canUse('ubi_chat')
+                    ? 'opacity-100 scale-105 shadow-md'
+                    : 'opacity-60 scale-100'
+                } disabled:bg-primary`}
               >
                 <Send size={16} />
               </Button>
             )}
           </div>
-          <div className="flex items-center justify-center gap-1 mt-2 text-muted-foreground/70">
-            <Lock size={10} />
-            <span className="text-[10px]" style={{ fontFamily: 'DM Sans, sans-serif' }}>Private &amp; secure</span>
-          </div>
+          {!conversationActive && (
+            <div className="flex items-center justify-center gap-1 mt-2 text-muted-foreground/70">
+              <Lock size={10} />
+              <span className="text-[10px]" style={{ fontFamily: 'DM Sans, sans-serif' }}>Private &amp; secure</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -527,16 +533,19 @@ function MessageBubble({ message, index, onRate }: { message: UbiMessage; index:
       )}
       <div className="flex flex-col max-w-[85%]">
         <div
-          className={`rounded-2xl px-4 py-2.5 text-sm ${
+          className={`rounded-2xl px-4 py-3 text-sm ${
             isUser
-              ? 'bg-primary text-primary-foreground rounded-br-md'
-              : 'bg-secondary/80 text-foreground rounded-bl-md'
+              ? 'bg-primary/15 text-foreground rounded-tr-sm'
+              : 'bg-white text-foreground border border-primary/20 rounded-tl-sm shadow-soft'
           }`}
         >
           {isUser ? (
-            <p className="whitespace-pre-wrap">{message.content}</p>
+            <p className="whitespace-pre-wrap" style={{ fontFamily: 'DM Sans, sans-serif' }}>{message.content}</p>
           ) : (
-            <div className="prose prose-sm dark:prose-invert max-w-none [&>p]:mb-2 [&>p:last-child]:mb-0 [&>ul]:mb-2 [&>ol]:mb-2">
+            <div
+              className="prose prose-sm max-w-none [&>p]:mb-2 [&>p:last-child]:mb-0 [&>ul]:mb-2 [&>ol]:mb-2"
+              style={{ fontFamily: message.content.length > 160 ? 'Cormorant Garamond, serif' : 'DM Sans, sans-serif' }}
+            >
               <ReactMarkdown>{message.content}</ReactMarkdown>
             </div>
           )}
