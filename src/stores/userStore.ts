@@ -85,6 +85,14 @@ export interface UserProfile {
   walkthroughComplete?: boolean;
   showTrialWelcome?: boolean;
   trialStartedAt?: string; // ISO date when free trial began
+  // Ubi onboarding
+  preferredName?: string;
+  communicationTone?: string;
+  lifeStage?: string;
+  primaryFocusArea?: string;
+  neverForget?: string;
+  ubiOnboardingComplete?: boolean;
+  ubiSummary?: string;
 }
 
 export interface PeriodLogEntry {
