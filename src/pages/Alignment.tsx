@@ -17,6 +17,7 @@ export default function Alignment() {
   const navigate = useNavigate();
   const profile = useUserStore((s) => s.profile);
   const updateProfile = useUserStore((s) => s.updateProfile);
+  const [bloomSheetOpen, setBloomSheetOpen] = useState(false);
 
   const totalHabits = (profile.coreHabits || []).length;
 
