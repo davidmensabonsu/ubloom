@@ -137,6 +137,9 @@ export interface JournalEntry {
   content: string;
   date: string;
   mood?: string;
+  // Voice mode
+  audioPath?: string;       // storage path within voice-journals bucket
+  audioDurationSec?: number;
 }
 
 export interface MoodEntry {
