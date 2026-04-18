@@ -1,137 +1,61 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
-import { Sparkles, Feather, BookOpen, ChevronDown, Search, X, Calendar, Trash2, Infinity, Heart, MessageCircle } from 'lucide-react';
+import { Pen, Mic } from 'lucide-react';
 import ProfileButton from '@/components/ProfileButton';
 import BottomNav from '@/components/BottomNav';
-import MoodTrendsChart from '@/components/alignment/MoodTrendsChart';
-import LockedOverlay from '@/components/LockedOverlay';
-import { useSubscription } from '@/hooks/useSubscription';
-
-import { useHomeMessages } from '@/hooks/useHomeMessages';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Input } from '@/components/ui/input';
-import { format } from 'date-fns';
-import { feelingIcons } from '@/lib/moodIcons';
-import heartIcon from '@/assets/icons/heart.png';
-import JournalPrompts from '@/components/alignment/JournalPrompts';
-import { track } from '@/hooks/useAnalytics';
-
-const feelingOptions = [
-  { value: 'calm', label: 'Calm' },
-  { value: 'energized', label: 'Energized' },
-  { value: 'grateful', label: 'Grateful' },
-  { value: 'creative', label: 'Creative' },
-  { value: 'peaceful', label: 'Peaceful' },
-  { value: 'confident', label: 'Confident' },
-  { value: 'grounded', label: 'Grounded' },
-  { value: 'joyful', label: 'Joyful' },
-  { value: 'anxious', label: 'Anxious' },
-  { value: 'sad', label: 'Sad' },
-  { value: 'overwhelmed', label: 'Overwhelmed' },
-  { value: 'frustrated', label: 'Frustrated' },
-  { value: 'tired', label: 'Tired' },
-  { value: 'lonely', label: 'Lonely' },
-  { value: 'numb', label: 'Numb' },
-  { value: 'hopeful', label: 'Hopeful' },
-];
+import MoodCalendar from '@/components/alignment/MoodCalendar';
+import JournalModes from '@/components/alignment/JournalModes';
+import WeeklySummaryCard from '@/components/alignment/WeeklySummaryCard';
+import heartPulseIcon from '@/assets/icons/heart-pulse.png';
+import { getCurrentCycleDay, getCurrentPhase } from '@/lib/cycleUtils';
+import { computeBloomScore } from '@/lib/bloomScore';
 
 export default function Alignment() {
   const navigate = useNavigate();
-  const { profile, addJournalEntry, removeJournalEntry } = useUserStore();
-  const { canUse } = useSubscription();
-  const { futureSelfMessage, loading: messageLoading } = useHomeMessages();
-  const [entryToDelete, setEntryToDelete] = useState<string | null>(null);
-  const [journalText, setJournalText] = useState('');
-  const [savedText, setSavedText] = useState('');
-  const [saved, setSaved] = useState(false);
-  const [historyOpen, setHistoryOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const profile = useUserStore((s) => s.profile);
+  const updateProfile = useUserStore((s) => s.updateProfile);
 
-  const availableMonths = useMemo(() => {
-    const months = new Map<string, Date>();
-    profile.journalEntries.forEach((entry) => {
-      const date = new Date(entry.date);
-      const monthKey = format(date, 'yyyy-MM');
-      if (!months.has(monthKey)) months.set(monthKey, date);
-    });
-    return Array.from(months.entries())
-      .sort((a, b) => b[0].localeCompare(a[0]))
-      .map(([key, date]) => ({ key, label: format(date, 'MMMM yyyy'), date }));
-  }, [profile.journalEntries]);
+  const totalHabits = (profile.coreHabits || []).length;
 
-  const availableDates = useMemo(() => {
-    if (!selectedMonth) return [];
-    const dates = new Map<string, Date>();
-    profile.journalEntries.forEach((entry) => {
-      const date = new Date(entry.date);
-      if (format(date, 'yyyy-MM') === selectedMonth) {
-        const dateKey = format(date, 'yyyy-MM-dd');
-        if (!dates.has(dateKey)) dates.set(dateKey, date);
-      }
-    });
-    return Array.from(dates.entries())
-      .sort((a, b) => b[0].localeCompare(a[0]))
-      .map(([key, date]) => ({ key, label: format(date, 'EEE, MMM d'), date }));
-  }, [profile.journalEntries, selectedMonth]);
-
-  const filteredEntries = useMemo(() => {
-    return profile.journalEntries.filter((entry) => {
-      const entryDate = new Date(entry.date);
-      const matchesSearch = searchQuery.trim() === '' || entry.content.toLowerCase().includes(searchQuery.toLowerCase());
-      let matchesDate = true;
-      if (selectedDate) {
-        matchesDate = format(entryDate, 'yyyy-MM-dd') === selectedDate;
-      } else if (selectedMonth) {
-        matchesDate = format(entryDate, 'yyyy-MM') === selectedMonth;
-      }
-      return matchesSearch && matchesDate;
-    });
-  }, [profile.journalEntries, searchQuery, selectedMonth, selectedDate]);
-
-  const clearFilters = () => {
-    setSearchQuery('');
-    setSelectedMonth(null);
-    setSelectedDate(null);
-  };
-
-  const hasActiveFilters = searchQuery.trim() !== '' || selectedMonth !== null;
-
-  const handleSave = () => {
-    if (journalText.trim()) {
-      setSavedText(journalText);
-      addJournalEntry({
-        content: journalText,
-        date: new Date().toISOString(),
-      });
-      track('journal_created', { wordCount: journalText.trim().split(/\s+/).length });
-      setJournalText('');
+  // Cycle day + phase (shared util)
+  const { cycleDay, cyclePhase } = useMemo(() => {
+    const c = profile.cycleData;
+    if (!c?.setupComplete || !c.lastPeriodStart) return { cycleDay: null as number | null, cyclePhase: null as string | null };
+    try {
+      const d = getCurrentCycleDay(c.lastPeriodStart, c.cycleLength);
+      return { cycleDay: d, cyclePhase: getCurrentPhase(d, c.periodLength, c.cycleLength) };
+    } catch {
+      return { cycleDay: null, cyclePhase: null };
     }
-    setSaved(true);
-    setTimeout(() => setSaved(false), 4000);
-  };
+  }, [profile.cycleData]);
 
-  const handleTalkToUbi = () => {
-    navigate('/ubi', { state: { journalEntry: savedText } });
-  };
+  // Bloom score — recalculate on page load
+  const bloom = useMemo(() => computeBloomScore(profile, totalHabits), [profile, totalHabits]);
+
+  useEffect(() => {
+    if (profile.bloomScore !== bloom.total) {
+      updateProfile({ bloomScore: bloom.total });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bloom.total]);
+
+  const todayFormatted = new Date().toLocaleDateString('en-US', {
+    weekday: 'long', month: 'long', day: 'numeric',
+  });
+
+  // Previous entries — last 5
+  const recentEntries = (profile.journalEntries || []).slice(0, 5);
 
   const formatEntryDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
   };
-
-  const formatEntryTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-  };
-
-  const todayFormatted = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
   return (
     <div className="min-h-screen gradient-background pb-24">
+      {/* Hero */}
       <div className="hero-gradient px-5 pt-12 pb-8">
         <div className="flex items-center justify-between mb-1">
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-white/85">
@@ -145,243 +69,80 @@ export default function Alignment() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
           <p className="text-sm text-white/85">A quiet moment before your day unfolds</p>
         </motion.div>
-
-        <motion.button
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          onClick={() => navigate('/health')}
-          className="mt-4 flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-3 w-full hover:bg-white/25 transition-colors"
-        >
-          <img src={heartIcon} alt="Health" className="w-6 h-6 object-contain" />
-          <span className="text-sm font-medium text-white">Health</span>
-          <span className="text-xs text-white/75 ml-auto">View insights →</span>
-        </motion.button>
       </div>
 
       <div className="px-5 space-y-6 pt-6">
-        {/* Future Self Message */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="dark-accent-card rounded-3xl p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Sparkles size={18} className="text-white/80" />
-            <h2 className="section-title text-white">From your future self</h2>
-          </div>
-          <p className="font-display text-lg leading-relaxed text-white/95 italic">
-            {messageLoading ? (
-              <span className="animate-pulse text-white/60">Listening to your future self...</span>
-            ) : (
-              `"${futureSelfMessage}"`
-            )}
-          </p>
-        </motion.div>
-
-        {/* Mood Trends Chart */}
-        <LockedOverlay locked={!canUse('mood_trends')} message="Upgrade to see your mood trends">
-          <MoodTrendsChart moodHistory={profile.moodHistory} />
-        </LockedOverlay>
-
-        {/* Journal */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card rounded-3xl p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <Feather size={18} className="text-primary" />
-            <h2 className="section-title">Private Journal</h2>
-          </div>
-          <p className="text-sm text-muted-foreground mb-3">What's on your heart right now?</p>
-          <JournalPrompts onSelect={(prompt) => setJournalText((prev) => prev ? prev + '\n\n' + prompt : prompt)} />
-          <textarea
-            value={journalText}
-            onChange={(e) => setJournalText(e.target.value)}
-            placeholder="Write freely, this is just for you..."
-            className="journal-input"
-            rows={5}
-          />
-        </motion.div>
-
-        {/* Save button + Talk to Ubi */}
-        <motion.div
-          className="space-y-3"
-          initial={{ opacity: 0, y: 20 }}
+        {/* Health shortcut card */}
+        <motion.button
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
+          onClick={() => navigate('/health')}
+          className="w-full bg-card border border-border rounded-2xl p-4 flex items-center gap-3 text-left hover:shadow-md transition-shadow"
         >
-          <motion.button
-            onClick={handleSave}
-            disabled={!journalText.trim()}
-            className={`soft-button w-full flex items-center justify-center gap-2 ${!journalText.trim() ? 'opacity-50' : ''}`}
-            whileTap={{ scale: 0.98 }}
-          >
-            {saved ? (
-              <>
-                <span>Saved</span>
-                <Heart size={18} className="fill-current" />
-              </>
-            ) : (
-              <>
-                <span>Save journal entry</span>
-                <Infinity size={18} />
-              </>
-            )}
-          </motion.button>
+          <img src={heartPulseIcon} alt="Health" className="w-8 h-8 object-contain shrink-0 clay-icon" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-foreground">Health</p>
+            <p className="text-xs text-muted-foreground truncate">
+              {cycleDay != null && cyclePhase
+                ? `Day ${cycleDay} · ${cyclePhase} · Bloom Score ${bloom.total}`
+                : `Bloom Score ${bloom.total}`}
+            </p>
+          </div>
+          <span className="text-xs font-medium text-primary shrink-0">View insights →</span>
+        </motion.button>
 
-          <AnimatePresence>
-            {saved && savedText && (
-              <motion.button
-                onClick={handleTalkToUbi}
-                className="soft-button w-full flex items-center justify-center gap-2 bg-gradient-to-r from-primary/15 to-accent/15 border-2 border-primary/30 text-foreground font-medium shadow-sm"
-                initial={{ opacity: 0, y: 10, height: 0 }}
-                animate={{ opacity: 1, y: 0, height: 'auto' }}
-                exit={{ opacity: 0, y: -10, height: 0 }}
-                transition={{ duration: 0.3 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <MessageCircle size={18} className="shrink-0" />
-                <span>Ask Ubi about this</span>
-              </motion.button>
-            )}
-          </AnimatePresence>
-        </motion.div>
+        {/* Journal section */}
+        <div>
+          <div className="section-label mb-3">Your Journal</div>
+          <JournalModes />
 
-        {/* Journal History */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-          <Collapsible open={historyOpen} onOpenChange={setHistoryOpen}>
-            <CollapsibleTrigger className="w-full">
-              <div className="glass-card rounded-3xl p-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <BookOpen size={18} className="text-primary" />
-                  <span className="section-title text-sm">Journal History</span>
-                </div>
-                <motion.div animate={{ rotate: historyOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                  <ChevronDown size={18} className="text-muted-foreground" />
-                </motion.div>
-              </div>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <AnimatePresence>
-                {historyOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="mt-3 space-y-3"
-                  >
-                    {profile.journalEntries.length > 0 && (
-                      <div className="glass-card rounded-2xl p-4 space-y-3">
-                        <div className="relative">
-                          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                          <Input
-                            type="text"
-                            placeholder="Search entries..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-9 pr-9 bg-background/50 border-primary/20 rounded-xl text-sm"
-                          />
-                          {searchQuery && (
-                            <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                              <X size={14} />
-                            </button>
-                          )}
-                        </div>
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-1.5">
-                            <Calendar size={14} className="text-muted-foreground" />
-                            <p className="text-xs text-muted-foreground">Filter by date</p>
-                          </div>
-                          <div className="flex flex-wrap gap-1.5">
-                            {availableMonths.map((month) => (
-                              <button
-                                key={month.key}
-                                onClick={() => {
-                                  if (selectedMonth === month.key) { setSelectedMonth(null); setSelectedDate(null); }
-                                  else { setSelectedMonth(month.key); setSelectedDate(null); }
-                                }}
-                                className={`px-2.5 py-1 rounded-full text-xs transition-all ${selectedMonth === month.key ? 'bg-primary text-primary-foreground' : 'bg-background/50 text-muted-foreground hover:bg-primary/10'}`}
-                              >
-                                {month.label}
-                              </button>
-                            ))}
-                          </div>
-                          {selectedMonth && availableDates.length > 0 && (
-                            <div className="pt-2 space-y-1.5">
-                              <p className="text-xs text-muted-foreground">Select a day</p>
-                              <div className="flex flex-wrap gap-1.5">
-                                {availableDates.map((date) => (
-                                  <button
-                                    key={date.key}
-                                    onClick={() => setSelectedDate(selectedDate === date.key ? null : date.key)}
-                                    className={`px-2.5 py-1 rounded-full text-xs transition-all ${selectedDate === date.key ? 'bg-primary text-primary-foreground' : 'bg-background/50 text-muted-foreground hover:bg-primary/10'}`}
-                                  >
-                                    {date.label}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                        {hasActiveFilters && (
-                          <button onClick={clearFilters} className="text-xs text-primary hover:underline flex items-center gap-1">
-                            <X size={12} />
-                            Clear filters
-                          </button>
-                        )}
-                        <p className="text-xs text-muted-foreground">
-                          {filteredEntries.length} of {profile.journalEntries.length} entries
+          {/* Previous entries */}
+          {recentEntries.length > 0 && (
+            <div className="mt-5">
+              <div className="section-label mb-3">Previous entries</div>
+              <div className="space-y-2">
+                {recentEntries.map((entry, i) => {
+                  const isVoice = entry.content.startsWith('🎙️');
+                  const Icon = isVoice ? Mic : Pen;
+                  // Strip leading voice marker line for the preview
+                  const previewSource = isVoice
+                    ? entry.content.replace(/^🎙️[^\n]*\n?/, '').replace(/^Prompt:[^\n]*\n?/, '').trim() || 'Voice memo'
+                    : entry.content;
+                  const preview = previewSource.slice(0, 80) + (previewSource.length > 80 ? '…' : '');
+                  return (
+                    <motion.div
+                      key={entry.id}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.04 }}
+                      className="bg-card border border-border rounded-2xl p-3 flex items-start gap-3"
+                    >
+                      <Icon size={14} className="text-primary mt-1 shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-primary">{formatEntryDate(entry.date)}</p>
+                        <p className="text-sm text-foreground/85 leading-snug mt-0.5 line-clamp-2">
+                          {preview}
                         </p>
                       </div>
-                    )}
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
 
-                    {profile.journalEntries.length === 0 ? (
-                      <div className="glass-card rounded-2xl p-4 text-center">
-                        <p className="text-sm text-muted-foreground italic">Your past journal entries will appear here once you save your first alignment.</p>
-                      </div>
-                    ) : filteredEntries.length === 0 ? (
-                      <div className="glass-card rounded-2xl p-4 text-center">
-                        <p className="text-sm text-muted-foreground italic">No entries match your filters.</p>
-                      </div>
-                    ) : (
-                      filteredEntries.map((entry, index) => (
-                        <motion.div
-                          key={entry.id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.05 }}
-                          className="glass-card rounded-2xl p-4"
-                        >
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-xs font-medium text-primary">{formatEntryDate(entry.date)}</span>
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs text-muted-foreground">{formatEntryTime(entry.date)}</span>
-                              {entryToDelete === entry.id ? (
-                                <div className="flex items-center gap-1">
-                                  <button onClick={() => { removeJournalEntry(entry.id); setEntryToDelete(null); }} className="text-xs px-2 py-0.5 rounded-full bg-destructive text-destructive-foreground">Delete</button>
-                                  <button onClick={() => setEntryToDelete(null)} className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">Cancel</button>
-                                </div>
-                              ) : (
-                                <button onClick={() => setEntryToDelete(entry.id)} className="text-muted-foreground/50 hover:text-destructive transition-colors">
-                                  <Trash2 size={14} />
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                          <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">{entry.content}</p>
-                          {entry.mood && (
-                            <div className="mt-2 pt-2 border-t border-primary/10">
-                              <span className="text-xs text-muted-foreground flex items-center gap-1">
-                                Mood:{' '}
-                                {feelingIcons[entry.mood] && <img src={feelingIcons[entry.mood]} alt="" className="w-4 h-4 object-contain inline" style={{ filter: 'none' }} />}{' '}
-                                {feelingOptions.find((f) => f.value === entry.mood)?.label}
-                              </span>
-                            </div>
-                          )}
-                        </motion.div>
-                      ))
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </CollapsibleContent>
-          </Collapsible>
-        </motion.div>
+        {/* Mood calendar */}
+        <div>
+          <div className="section-label mb-3">Your mood this month</div>
+          <MoodCalendar moodHistory={profile.moodHistory} profile={profile} />
+        </div>
+
+        {/* Weekly summary */}
+        <div>
+          <div className="section-label mb-3">Ubi's weekly summary</div>
+          <WeeklySummaryCard />
+        </div>
       </div>
 
       <BottomNav />
