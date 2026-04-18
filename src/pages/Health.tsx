@@ -27,6 +27,8 @@ import { useSubscription } from '@/hooks/useSubscription';
 
 export default function Health() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirect');
   const { profile, updateProfile } = useUserStore();
   const { canUse } = useSubscription();
   const cycleData = profile.cycleData;
