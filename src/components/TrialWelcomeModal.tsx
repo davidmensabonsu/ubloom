@@ -53,29 +53,18 @@ export default function TrialWelcomeModal({ open, onDismiss }: TrialWelcomeModal
 
               {/* Message */}
               <p className="text-sm text-foreground/70 leading-relaxed mb-6">
-                You have <span className="font-semibold text-primary">3 days of full access</span> — explore everything, no card needed.
+                A soft space to come home to yourself. Everything is open — take your time and explore.
               </p>
 
               {/* Primary CTA */}
               <motion.button
                 onClick={onDismiss}
-                className="soft-button w-full flex items-center justify-center gap-2 mb-3"
+                className="soft-button w-full flex items-center justify-center gap-2"
                 whileTap={{ scale: 0.97 }}
               >
                 <Sparkles size={16} />
-                <span>Start my free trial</span>
+                <span>Start exploring</span>
               </motion.button>
-
-              {/* Secondary link */}
-              <button
-                onClick={() => {
-                  onDismiss();
-                  navigate('/upgrade');
-                }}
-                className="text-xs text-muted-foreground hover:text-primary transition-colors"
-              >
-                View plans
-              </button>
             </div>
           </motion.div>
         </motion.div>
