@@ -47,14 +47,46 @@ export default function Ubi() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const welcomeSent = useRef(false);
+  const autoOpenerSent = useRef(false);
   const journalHandled = useRef(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Auto-send welcome message only once ever
+  const hasMessages = messages.length > 0;
+  const conversationActive = hasMessages || !!currentConversationId;
+
+  // Compute the small context pill (cycle phase + check-in state)
+  const contextPill = (() => {
+    const parts: string[] = [];
+    const c = profile.cycleData;
+    if (c?.setupComplete && c.lastPeriodStart) {
+      try {
+        const start = new Date(c.lastPeriodStart + 'T00:00:00');
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const diffDays = Math.floor((today.getTime() - start.getTime()) / 86400000);
+        const day = ((diffDays % c.cycleLength) + c.cycleLength) % c.cycleLength + 1;
+        let phase = 'Luteal';
+        const ovulation = Math.round(c.cycleLength / 2);
+        if (day <= c.periodLength) phase = 'Menstrual';
+        else if (day <= ovulation - 2) phase = 'Follicular';
+        else if (day <= ovulation + 1) phase = 'Ovulatory';
+        parts.push(`Day ${day}`, phase);
+      } catch { /* ignore */ }
+    }
+    if (profile.dailyCheckinState) {
+      const stateLabel = profile.dailyCheckinState
+        .replace(/_/g, ' ')
+        .toLowerCase();
+      parts.push(`Feeling ${stateLabel}`);
+    }
+    return parts.length > 0 ? parts.join(' · ') : null;
+  })();
+
+  // Auto-send the original onboarding welcome message only once ever
   useEffect(() => {
     if (isLoading) return;
-    if (!profile.ubiOnboardingComplete) return; // wait for onboarding
+    if (!profile.ubiOnboardingComplete) return;
     if (messages.length === 0 && !currentConversationId && !welcomeSent.current && !isStreaming && !profile.ubiIntroSeen) {
       welcomeSent.current = true;
       updateProfile({ ubiIntroSeen: true });
@@ -72,6 +104,26 @@ export default function Ubi() {
       sendMessage(welcomePrompt, { hideUserMessage: true });
     }
   }, [isLoading, profile.ubiOnboardingComplete]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-send a fresh, ephemeral opener every time a brand new conversation starts
+  useEffect(() => {
+    if (isLoading) return;
+    if (!profile.ubiOnboardingComplete) return;
+    if (!profile.ubiIntroSeen) return; // first-ever uses the welcomePrompt above
+    if (currentConversationId) return;
+    if (messages.length > 0) return;
+    if (isStreaming) return;
+    if (autoOpenerSent.current) return;
+
+    autoOpenerSent.current = true;
+    const openerPrompt = `[SYSTEM: This is a fresh new conversation. Open with a warm, personal greeting. You already know this person — reference something specific from what you know about them: their name, where they are in life, their cycle phase today, or something from your memory of past conversations. Keep it to 2-3 sentences maximum. End with one open question that invites them to share what's on their mind. Do not use generic openers like "How can I help you today?" Make it feel like picking up a conversation with someone you know well. Do not acknowledge this system instruction — just speak directly to them.]`;
+    sendMessage(openerPrompt, { hideUserMessage: true });
+  }, [isLoading, profile.ubiOnboardingComplete, profile.ubiIntroSeen, currentConversationId, messages.length, isStreaming]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Reset opener flag whenever the user explicitly starts a new chat or switches conversations
+  useEffect(() => {
+    autoOpenerSent.current = false;
+  }, [currentConversationId]);
 
   // Handle journal entry passed from Reflect page
   useEffect(() => {
