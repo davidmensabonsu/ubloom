@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Settings, Droplets, CalendarDays, ChevronDown, ChevronUp } from 'lucide-react';
 import { track } from '@/hooks/useAnalytics';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react';
 import ProfileButton from '@/components/ProfileButton';
 import BottomNav from '@/components/BottomNav';
@@ -27,6 +27,8 @@ import { useSubscription } from '@/hooks/useSubscription';
 
 export default function Health() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirect');
   const { profile, updateProfile } = useUserStore();
   const { canUse } = useSubscription();
   const cycleData = profile.cycleData;
@@ -87,7 +89,14 @@ export default function Health() {
     return (
       <CycleSetup
         initialData={cycleData ? { lastPeriodStart: cycleData.lastPeriodStart, cycleLength: cycleData.cycleLength, periodLength: cycleData.periodLength, dateOfBirth: cycleData.dateOfBirth } : undefined}
-        onComplete={() => setShowSetup(false)}
+        onComplete={() => {
+          setShowSetup(false);
+          if (redirectTo) {
+            // Clear the param and send the user back where they came from
+            setSearchParams({}, { replace: true });
+            navigate(redirectTo);
+          }
+        }}
       />
     );
   }
