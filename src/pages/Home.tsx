@@ -103,6 +103,31 @@ export default function Home() {
         >
           {greeting.text}, beautiful
         </motion.h1>
+
+        {/* Weekly consistency tracker */}
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.18 }}
+          className="mt-4"
+        >
+          <div className="flex items-center gap-2.5">
+            {week.days.map((d, i) => {
+              const base = d.isToday ? 'w-2.5 h-2.5' : 'w-2 h-2';
+              const fill = d.completed
+                ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.5)]'
+                : 'bg-transparent border border-white/45';
+              return (
+                <span
+                  key={i}
+                  className={`${base} ${fill} rounded-full transition-all`}
+                  aria-label={`${d.dateStr}${d.completed ? ' completed' : ''}${d.isToday ? ' (today)' : ''}`}
+                />
+              );
+            })}
+          </div>
+          <p className="mt-2 text-[11px] text-white/70 tracking-wide">{week.label}</p>
+        </motion.div>
       </div>
 
       {/* Main content — fits viewport on mobile, scrollable on desktop */}
