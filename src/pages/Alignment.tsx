@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 import { Pen, Mic } from 'lucide-react';
@@ -8,6 +8,7 @@ import BottomNav from '@/components/BottomNav';
 import MoodCalendar from '@/components/alignment/MoodCalendar';
 import JournalModes from '@/components/alignment/JournalModes';
 import WeeklySummaryCard from '@/components/alignment/WeeklySummaryCard';
+import BloomScoreSheet from '@/components/alignment/BloomScoreSheet';
 import heartPulseIcon from '@/assets/icons/heart-pulse.png';
 import { getCurrentCycleDay, getCurrentPhase } from '@/lib/cycleUtils';
 import { computeBloomScore } from '@/lib/bloomScore';
