@@ -393,7 +393,7 @@ export default function Ubi() {
                 </motion.div>
               )}
 
-              {messages.length === 0 && !isStreaming && !(profile.ubiOnboardingComplete && profile.ubiIntroSeen) && (
+              {messages.length === 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
