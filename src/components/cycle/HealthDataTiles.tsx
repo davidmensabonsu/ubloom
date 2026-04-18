@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useUserStore } from '@/stores/userStore';
 import { computeBloomScore } from '@/lib/bloomScore';
-import { getLocalDateStr } from '@/lib/dateUtils';
 import { toast } from 'sonner';
 
 import bedIcon from '@/assets/icons/bed.png';
@@ -29,7 +28,7 @@ const TILES: TileConfig[] = [
   { key: 'sleepHours', icon: bedIcon, label: 'Sleep', subLabel: 'hours last night', unit: 'h', max: 24, editable: true },
   { key: 'recoveryLevel', icon: heartPulseIcon, label: 'HRV', subLabel: 'recovery', max: 100, editable: true },
   { key: 'activityMinutes', icon: flameIcon, label: 'Active', subLabel: 'mins today', unit: 'm', max: 1440, editable: true },
-  { key: 'steps', icon: 'footsteps', label: 'Steps', subLabel: '', editable: false },
+  { key: 'steps', icon: 'footsteps', label: 'Steps', subLabel: 'today', max: 100000, editable: true },
 ];
 
 export default function HealthDataTiles() {

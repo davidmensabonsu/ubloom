@@ -120,6 +120,7 @@ export interface HealthData {
   stressLevel?: number;
   recoveryLevel?: number;
   activityMinutes?: number;
+  steps?: number;
   lastUpdated?: string;
 }
 
@@ -129,6 +130,7 @@ export interface HealthHistoryEntry {
   stressLevel?: number;
   recoveryLevel?: number;
   activityMinutes?: number;
+  steps?: number;
   cycle?: string;
 }
 
