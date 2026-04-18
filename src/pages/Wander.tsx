@@ -54,35 +54,36 @@ const phaseOrder: Record<CyclePhase | 'default', string[]> = {
 
 interface CuratedCard {
   category: string; // display label uppercase
-  categoryKey: string; // navigation key
+  categoryKey: string; // navigation key (fallback)
   title: string;
+  resourceId: string; // wonderResources.id to open in detail sheet
 }
 
 const curatedByPhase: Record<CyclePhase | 'default', CuratedCard[]> = {
   Menstrual: [
-    { category: 'CALM', categoryKey: 'calm', title: 'A gentle yoga flow for your first days' },
-    { category: 'WELLNESS', categoryKey: 'wellness', title: "Nourishing rituals for your cycle's reset" },
-    { category: 'FOOD & RECIPES', categoryKey: 'nutrition', title: 'Iron-rich meals to replenish and restore' },
+    { category: 'CALM', categoryKey: 'calm', title: 'A gentle yoga flow for your first days', resourceId: 'calm-6' },
+    { category: 'WELLNESS', categoryKey: 'wellness', title: "Nourishing rituals for your cycle's reset", resourceId: 'well-1' },
+    { category: 'FOOD & RECIPES', categoryKey: 'nutrition', title: 'Iron-rich meals to replenish and restore', resourceId: 'nutr-2' },
   ],
   Follicular: [
-    { category: 'FITNESS', categoryKey: 'fitness', title: 'High energy workouts for your rising phase' },
-    { category: 'MINDSET', categoryKey: 'mindset', title: 'Bold thinking exercises for your peak clarity' },
-    { category: 'LIFESTYLE', categoryKey: 'lifestyle', title: 'New habits to start when your energy is building' },
+    { category: 'FITNESS', categoryKey: 'fitness', title: 'High energy workouts for your rising phase', resourceId: 'fit-6' },
+    { category: 'MINDSET', categoryKey: 'mindset', title: 'Bold thinking exercises for your peak clarity', resourceId: 'mind-1' },
+    { category: 'LIFESTYLE', categoryKey: 'lifestyle', title: 'New habits to start when your energy is building', resourceId: 'life-1' },
   ],
   Ovulatory: [
-    { category: 'FITNESS', categoryKey: 'fitness', title: 'Strength training at your peak performance window' },
-    { category: 'SKINCARE', categoryKey: 'hygiene', title: 'Glow-up rituals for your most radiant days' },
-    { category: 'PODCASTS', categoryKey: 'podcasts', title: 'Conversations to fuel your most social phase' },
+    { category: 'FITNESS', categoryKey: 'fitness', title: 'Strength training at your peak performance window', resourceId: 'fit-3' },
+    { category: 'SKINCARE', categoryKey: 'hygiene', title: 'Glow-up rituals for your most radiant days', resourceId: 'hyg-1' },
+    { category: 'PODCASTS', categoryKey: 'podcasts', title: 'Conversations to fuel your most social phase', resourceId: 'pod-1' },
   ],
   Luteal: [
-    { category: 'CALM', categoryKey: 'calm', title: 'Slow practices for your inward turn' },
-    { category: 'FOOD & RECIPES', categoryKey: 'nutrition', title: 'Comfort meals that support your luteal phase' },
-    { category: 'WELLNESS', categoryKey: 'wellness', title: 'Self-care rituals for when things feel heavier' },
+    { category: 'CALM', categoryKey: 'calm', title: 'Slow practices for your inward turn', resourceId: 'calm-2' },
+    { category: 'FOOD & RECIPES', categoryKey: 'nutrition', title: 'Comfort meals that support your luteal phase', resourceId: 'nutr-1' },
+    { category: 'WELLNESS', categoryKey: 'wellness', title: 'Self-care rituals for when things feel heavier', resourceId: 'well-2' },
   ],
   default: [
-    { category: 'MINDSET', categoryKey: 'mindset', title: 'Start here: building your foundation' },
-    { category: 'WELLNESS', categoryKey: 'wellness', title: 'Daily rituals to ground your routine' },
-    { category: 'CALM', categoryKey: 'calm', title: 'Finding stillness in a busy week' },
+    { category: 'MINDSET', categoryKey: 'mindset', title: 'Start here: building your foundation', resourceId: 'mind-1' },
+    { category: 'WELLNESS', categoryKey: 'wellness', title: 'Daily rituals to ground your routine', resourceId: 'well-1' },
+    { category: 'CALM', categoryKey: 'calm', title: 'Finding stillness in a busy week', resourceId: 'calm-1' },
   ],
 };
 
@@ -204,7 +205,16 @@ export default function Wonder2() {
                   initial={{ opacity: 0, x: 12 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.05 + i * 0.05 }}
-                  onClick={() => { track('wander_curated_tap', { category: card.categoryKey, phase: currentPhase }); navigate(`/wander/${card.categoryKey}`); }}
+                  onClick={() => {
+                    const resource = wonderResources.find((r) => r.id === card.resourceId);
+                    track('wander_curated_tap', { category: card.categoryKey, phase: currentPhase, resourceId: card.resourceId, opened: !!resource });
+                    if (resource) {
+                      setSelectedResource(resource);
+                      setSheetOpen(true);
+                    } else {
+                      navigate(`/wander/${card.categoryKey}`);
+                    }
+                  }}
                   className="shrink-0 w-[70vw] max-w-[320px] rounded-2xl bg-white border border-primary/20 shadow-sm p-4 text-left flex flex-col justify-between min-h-[140px] hover:shadow-md transition-shadow"
                 >
                   <div className="space-y-2">
