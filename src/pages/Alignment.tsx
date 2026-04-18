@@ -9,6 +9,7 @@ import MoodCalendar from '@/components/alignment/MoodCalendar';
 import JournalModes from '@/components/alignment/JournalModes';
 import WeeklySummaryCard from '@/components/alignment/WeeklySummaryCard';
 import BloomScoreSheet from '@/components/alignment/BloomScoreSheet';
+import JournalAudioPlayer from '@/components/alignment/JournalAudioPlayer';
 import heartPulseIcon from '@/assets/icons/heart-pulse.png';
 import { getCurrentCycleDay, getCurrentPhase } from '@/lib/cycleUtils';
 import { computeBloomScore } from '@/lib/bloomScore';
