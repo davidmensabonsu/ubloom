@@ -353,7 +353,7 @@ export function useUbiChat() {
       setIsStreaming(true);
       setSuggestedPrompts([]);
 
-      const userContext = buildUserContext(profile);
+      const userContext = await buildUserContext(profile, userId);
       const chatHistory = buildChatHistorySummary();
       const controller = new AbortController();
       abortRef.current = controller;
