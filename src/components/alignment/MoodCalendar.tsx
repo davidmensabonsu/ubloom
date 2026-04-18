@@ -171,7 +171,7 @@ export default function MoodCalendar({ moodHistory, profile }: Props) {
             </p>
           </div>
           <button
-            onClick={() => navigate('/checkin')}
+            onClick={() => updateProfile({ lastMoodCheckinDate: undefined, dailyCheckinState: undefined })}
             className="mt-2 ml-6 text-xs font-medium text-primary hover:underline"
           >
             Check in now →
