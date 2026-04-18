@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/BottomNav';
 import TrialBanner from '@/components/TrialBanner';
 import { useSubscription } from '@/hooks/useSubscription';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 import logo from '@/assets/logo.png';
 import { quickActionIcons } from '@/lib/moodIcons';
@@ -156,34 +157,30 @@ export default function Home() {
         </motion.div>
       </div>
 
-      {/* Full letter dialog */}
-      {letterOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-5 bg-black/50 backdrop-blur-sm"
-          onClick={() => setLetterOpen(false)}
+      {/* Full letter slide-up sheet */}
+      <Sheet open={letterOpen} onOpenChange={setLetterOpen}>
+        <SheetContent
+          side="bottom"
+          className="dark-accent-card border-0 rounded-t-3xl max-h-[80vh] overflow-y-auto p-6"
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="dark-accent-card max-w-md w-full p-6 max-h-[80vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="text-base font-display font-semibold text-white mb-3 flex items-center gap-2">
+          <div className="mx-auto -mt-2 mb-4 h-1.5 w-12 rounded-full bg-white/25" />
+          <SheetHeader>
+            <SheetTitle className="text-base font-display font-semibold text-white flex items-center gap-2 text-left">
               <Heart size={16} className="text-white/80" />
               From your future self
-            </h2>
-            <p className="font-display text-sm leading-relaxed text-white/95 italic whitespace-pre-line">
-              "{futureSelfMessage}"
-            </p>
-            <button
-              onClick={() => setLetterOpen(false)}
-              className="mt-5 w-full py-2 rounded-full bg-white/15 hover:bg-white/25 transition-colors text-white text-sm font-medium"
-            >
-              Close
-            </button>
-          </motion.div>
-        </div>
-      )}
+            </SheetTitle>
+          </SheetHeader>
+          <p className="font-display text-sm leading-relaxed text-white/95 italic whitespace-pre-line mt-4">
+            "{futureSelfMessage}"
+          </p>
+          <button
+            onClick={() => setLetterOpen(false)}
+            className="mt-6 w-full py-2.5 rounded-full bg-white/15 hover:bg-white/25 transition-colors text-white text-sm font-medium"
+          >
+            Close
+          </button>
+        </SheetContent>
+      </Sheet>
 
       <BottomNav />
     </div>
