@@ -41,6 +41,10 @@ function buildUserContext(profile: ReturnType<typeof useUserStore.getState>['pro
   const habitCompletionRate = totalHabits > 0 ? Math.round((completedHabits / totalHabits) * 100) : 0;
   const recentJournal = (profile.journalEntries || []).slice(0, 5).map((j) => j.content.slice(0, 200));
   const todayMood = (profile.moodHistory || []).find((m) => m.date.startsWith(today));
+  const recentMoodHistory = (profile.moodHistory || []).slice(0, 5).map((m) => ({
+    date: m.date,
+    moods: m.moods,
+  }));
 
   return {
     currentFeeling: profile.currentFeeling,
@@ -57,6 +61,15 @@ function buildUserContext(profile: ReturnType<typeof useUserStore.getState>['pro
     recentJournalSnippets: recentJournal,
     lastMoodCheckinDate: profile.lastMoodCheckinDate,
     dailyCheckinState: profile.dailyCheckinState,
+    // Ubi onboarding context
+    preferredName: profile.preferredName,
+    lifeStage: profile.lifeStage,
+    primaryFocusArea: profile.primaryFocusArea,
+    communicationTone: profile.communicationTone,
+    neverForget: profile.neverForget,
+    ubiSummary: profile.ubiSummary,
+    cycleData: profile.cycleData,
+    recentMoodHistory,
   };
 }
 

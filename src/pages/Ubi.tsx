@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useSubscription } from '@/hooks/useSubscription';
 import ubiAvatar from '@/assets/ubi-avatar-bloom.png';
+import speechBubbleIcon from '@/assets/icons/speech-bubble.png';
+import UbiOnboarding from '@/components/ubi/UbiOnboarding';
 
 import crystalBallIcon from '@/assets/icons/crystal-ball.png';
 import sparklesIcon from '@/assets/icons/sparkles.png';
@@ -56,22 +58,24 @@ export default function Ubi() {
   // Auto-send welcome message only once ever
   useEffect(() => {
     if (isLoading) return;
+    if (!profile.ubiOnboardingComplete) return; // wait for onboarding
     if (messages.length === 0 && !currentConversationId && !welcomeSent.current && !isStreaming && !profile.ubiIntroSeen) {
       welcomeSent.current = true;
       updateProfile({ ubiIntroSeen: true });
       const dreamFeels = profile.dreamSelfFeels?.length ? profile.dreamSelfFeels.join(', ') : '';
       const identity = profile.identityStatement || '';
-      const name = profile.currentFeeling ? `someone feeling ${profile.currentFeeling}` : '';
+      const name = profile.preferredName || (profile.currentFeeling ? `someone feeling ${profile.currentFeeling}` : '');
 
       let contextHint = '';
       if (identity) contextHint = `Their identity statement is: "${identity}".`;
       else if (dreamFeels) contextHint = `They want their dream self to feel: ${dreamFeels}.`;
 
-      const welcomePrompt = `[SYSTEM: The user just opened the Ubi chat for the first time. Send a warm, personalised welcome. Introduce yourself as Ubi — their mentor inside uBloom. Reference their dream self vision if available. Keep it to 2 short paragraphs max. End by inviting them to share what's on their mind. ${contextHint} ${name ? `They described themselves as ${name}.` : ''}]`;
+      const greetingHint = profile.preferredName ? `Greet them by their name (${profile.preferredName}).` : '';
+      const welcomePrompt = `[SYSTEM: The user just opened the Ubi chat for the first time. Send a warm, personalised welcome. ${greetingHint} Introduce yourself as Ubi — their mentor inside uBloom. Reference their dream self vision if available. Keep it to 2 short paragraphs max. End by inviting them to share what's on their mind. ${contextHint} ${name ? `They described themselves as ${name}.` : ''}]`;
 
       sendMessage(welcomePrompt, { hideUserMessage: true });
     }
-  }, [isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isLoading, profile.ubiOnboardingComplete]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Handle journal entry passed from Reflect page
   useEffect(() => {
@@ -146,6 +150,11 @@ export default function Ubi() {
     e.stopPropagation();
     deleteConversation(convoId);
   };
+
+  // Show onboarding flow first time
+  if (!profile.ubiOnboardingComplete) {
+    return <UbiOnboarding onComplete={() => { /* state update triggers re-render */ }} />;
+  }
 
   return (
     <div className="min-h-screen gradient-background flex flex-col">
@@ -277,8 +286,8 @@ export default function Ubi() {
                       animate={{ opacity: 1 }}
                       className="flex gap-2 items-start"
                     >
-                      <div className="w-7 h-7 rounded-full overflow-hidden border border-primary/20 shrink-0 mt-0.5">
-                        <img src={ubiAvatar} alt="Ubi" className="w-full h-full object-cover" />
+                      <div className="w-7 h-7 rounded-full overflow-hidden border border-primary/20 shrink-0 mt-0.5 flex items-center justify-center bg-primary/10">
+                        <img src={speechBubbleIcon} alt="Ubi" className="w-4 h-4 object-contain clay-icon" />
                       </div>
                       <div className="bg-secondary/80 rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-1.5">
                         {[0, 1, 2].map((i) => (
@@ -430,8 +439,8 @@ function MessageBubble({ message, index, onRate }: { message: UbiMessage; index:
       className={`flex gap-2 items-start ${isUser ? 'flex-row-reverse' : ''}`}
     >
       {!isUser && (
-        <div className="w-7 h-7 rounded-full overflow-hidden border border-primary/20 shrink-0 mt-0.5">
-          <img src={ubiAvatar} alt="Ubi" className="w-full h-full object-cover" />
+        <div className="w-7 h-7 rounded-full border border-primary/20 shrink-0 mt-0.5 flex items-center justify-center bg-primary/10">
+          <img src={speechBubbleIcon} alt="Ubi" className="w-4 h-4 object-contain clay-icon" />
         </div>
       )}
       <div className="flex flex-col max-w-[85%]">
