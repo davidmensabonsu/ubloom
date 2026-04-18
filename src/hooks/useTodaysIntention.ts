@@ -103,14 +103,24 @@ export function useTodaysIntention() {
           }
         } catch {/* non-fatal */}
 
+        let cycleDay: number | null = null;
+        if (profile.cycleData?.setupComplete && profile.cycleData.lastPeriodStart) {
+          cycleDay = getCurrentCycleDay(profile.cycleData.lastPeriodStart, profile.cycleData.cycleLength);
+        }
+
         const context = {
           preferredName: profile.preferredName || null,
           dailyCheckinState: profile.dailyCheckinState || null,
           cyclePhase,
+          cycleDay,
           topMemories,
         };
 
-        const prompt = `Based on this user's current state, write a single powerful intention for today. It should be one sentence, maximum 15 words, written in second person, actionable and specific to their cycle phase and mood. Return only the sentence, nothing else.\n\nContext:\n${JSON.stringify(context)}`;
+        const phaseLabel = cyclePhase ?? 'current';
+        const dayLabel = cycleDay ?? '—';
+        const moodLabel = profile.dailyCheckinState || 'neutral';
+
+        const prompt = `This user is on Day ${dayLabel} of their ${phaseLabel} phase and checked in feeling ${moodLabel} today. Based on everything you know about them, write one single sentence that gives them both a mindset anchor and a clear action for today. Maximum 20 words. Second person. Make it feel like it was written specifically for them — not generic. Return only the sentence.\n\nContext:\n${JSON.stringify(context)}`;
 
         const result = await streamIntention(prompt);
         if (cancelled) return;
