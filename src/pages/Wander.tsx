@@ -41,10 +41,7 @@ const categoryCards: CategoryCard[] = [
   { key: 'lifestyle', label: 'Lifestyle', subtitle: 'Design your life', image: lifestyleImg },
 ];
 
-type Tab = 'for-you' | 'popular';
-
 export default function Wonder2() {
-  const [tab, setTab] = useState<Tab>('for-you');
   const [search, setSearch] = useState('');
   const [selectedResource, setSelectedResource] = useState<WonderResource | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
