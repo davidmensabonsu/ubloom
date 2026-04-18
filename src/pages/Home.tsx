@@ -128,7 +128,7 @@ export default function Home() {
             )}
           </div>
 
-          <div className="border-t border-border mt-3 pt-3">
+          <div className="relative mt-3 pt-3 before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-border before:to-transparent">
             <h2 className="text-sm md:text-base font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
               <Target size={14} className="text-primary shrink-0" />
               Focus
