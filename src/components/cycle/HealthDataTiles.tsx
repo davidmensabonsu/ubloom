@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { Footprints, Info } from 'lucide-react';
+import { Info } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
@@ -12,12 +12,13 @@ import { toast } from 'sonner';
 import bedIcon from '@/assets/icons/bed.png';
 import heartPulseIcon from '@/assets/icons/heart-pulse.png';
 import flameIcon from '@/assets/icons/flame.png';
+import shoeIcon from '@/assets/icons/shoe.png';
 
 type FieldKey = 'sleepHours' | 'recoveryLevel' | 'activityMinutes' | 'steps';
 
 interface TileConfig {
   key: FieldKey;
-  icon: string | 'footsteps';
+  icon: string;
   label: string;
   subLabel: string;
   unit?: string;
@@ -58,7 +59,7 @@ const TILES: TileConfig[] = [
   },
   {
     key: 'steps',
-    icon: 'footsteps',
+    icon: shoeIcon,
     label: 'Steps',
     subLabel: 'today',
     max: 100000,
@@ -131,13 +132,7 @@ export default function HealthDataTiles() {
                 style={{ width: 130 }}
               >
                 <div className="flex items-center justify-between mb-2">
-                  {tile.icon === 'footsteps' ? (
-                    <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Footprints size={16} className="text-primary" />
-                    </div>
-                  ) : (
-                    <img src={tile.icon as string} alt={tile.label} className="w-7 h-7 clay-icon" />
-                  )}
+                  <img src={tile.icon} alt={tile.label} className="w-7 h-7 clay-icon" />
                 </div>
                 <div className="font-display text-xl text-foreground leading-tight">
                   {hasValue ? value : '—'}

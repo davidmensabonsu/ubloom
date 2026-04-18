@@ -19,6 +19,7 @@ import CycleWheel from '@/components/cycle/CycleWheel';
 import CycleInsightCard from '@/components/cycle/CycleInsightCard';
 import DeviceConnectionBanner from '@/components/cycle/DeviceConnectionBanner';
 import BloomScoreCard from '@/components/cycle/BloomScoreCard';
+import BloomScoreSheet from '@/components/alignment/BloomScoreSheet';
 import HealthDataTiles from '@/components/cycle/HealthDataTiles';
 import UbiInsightsCard from '@/components/cycle/UbiInsightsCard';
 import LockedOverlay from '@/components/LockedOverlay';
@@ -32,6 +33,7 @@ export default function Health() {
   const [showSetup, setShowSetup] = useState(false);
   const [showPeriodConfirm, setShowPeriodConfirm] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [bloomSheetOpen, setBloomSheetOpen] = useState(false);
   const [insights, setInsights] = useState<string[]>([]);
   const [loadingInsights, setLoadingInsights] = useState(true);
 
@@ -120,8 +122,16 @@ export default function Health() {
         {/* Bloom Score */}
         <div>
           <div className="section-label mb-3">Bloom Score</div>
-          <BloomScoreCard score={bloom.total} />
+          <button
+            onClick={() => setBloomSheetOpen(true)}
+            className="w-full text-left rounded-2xl active:scale-[0.99] transition-transform"
+            aria-label="View Bloom Score breakdown"
+          >
+            <BloomScoreCard score={bloom.total} />
+          </button>
         </div>
+
+        <BloomScoreSheet open={bloomSheetOpen} onOpenChange={setBloomSheetOpen} breakdown={bloom} />
 
         {/* Horizontal scroll data tiles */}
         <HealthDataTiles />
