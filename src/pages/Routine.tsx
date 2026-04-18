@@ -180,10 +180,10 @@ export default function Routine() {
               <img src={plantImg} alt="Plant" className="w-full h-full object-contain clay-icon" />
             </motion.div>
             <h2 className="font-display text-lg font-semibold text-foreground">
-              Build your daily routine
+              Build your to-do list
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs mx-auto">
-              Start by adding habits that matter to you. Small, consistent steps lead to big transformations.
+              Start by adding to-dos that matter to you. Small, consistent steps lead to big transformations.
             </p>
             <motion.button
               onClick={() => setShowAddTask(true)}
@@ -191,12 +191,12 @@ export default function Routine() {
               whileTap={{ scale: 0.97 }}
             >
               <Plus size={18} />
-              <span>Add your first habit</span>
+              <span>Add your first to-do</span>
             </motion.button>
 
             {/* Suggestion cards */}
             <div className="pt-2 space-y-2">
-              <p className="text-xs text-muted-foreground/60 font-medium">Popular habits</p>
+              <p className="text-xs text-muted-foreground/60 font-medium">Popular to-dos</p>
               {[
                 { img: glassWaterImg, title: 'Drink a glass of water' },
                 { img: yogaImg, title: 'Morning meditation' },

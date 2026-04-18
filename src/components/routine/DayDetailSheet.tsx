@@ -12,13 +12,11 @@ interface DayDetailSheetProps {
 export default function DayDetailSheet({ dateStr, onClose }: DayDetailSheetProps) {
   const { profile } = useUserStore();
   const coreHabits = profile.coreHabits || [];
-  const customTasks = profile.customTasks || [];
   const habitCompletions = profile.habitCompletions || [];
 
   if (!dateStr) return null;
 
   const date = parse(dateStr, 'yyyy-MM-dd', new Date());
-  const dayOfWeek = date.getDay();
   const formattedDate = format(date, 'EEEE, MMM d');
 
   const dayCompletions = habitCompletions.filter(
@@ -26,29 +24,13 @@ export default function DayDetailSheet({ dateStr, onClose }: DayDetailSheetProps
   );
   const completedIds = new Set(dayCompletions.map((c) => c.habitId));
 
-  const relevantCustomTasks = customTasks.filter((task) => {
-    if (task.recurrence === 'daily') return true;
-    if (task.recurrence === 'weekly') return task.weeklyDays?.includes(dayOfWeek) ?? false;
-    if (task.recurrence === 'oneoff') return task.scheduledDate === dateStr;
-    return false;
-  });
-
-  const allItems = [
-    ...coreHabits.map((h) => ({
-      id: h.id,
-      title: h.title,
-      icon: h.icon || 'sparkles',
-      completed: completedIds.has(h.id),
-      type: 'habit' as const,
-    })),
-    ...relevantCustomTasks.map((t) => ({
-      id: t.id,
-      title: t.title,
-      icon: t.icon || '📋',
-      completed: completedIds.has(t.id),
-      type: 'task' as const,
-    })),
-  ];
+  const allItems = coreHabits.map((h) => ({
+    id: h.id,
+    title: h.title,
+    icon: h.icon || 'sparkles',
+    completed: completedIds.has(h.id),
+    type: 'habit' as const,
+  }));
 
   const completedCount = allItems.filter((i) => i.completed).length;
 

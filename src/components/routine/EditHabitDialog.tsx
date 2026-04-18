@@ -61,13 +61,13 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="rounded-3xl max-w-sm mx-auto max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-lg">Edit Habit</DialogTitle>
+          <DialogTitle className="text-lg">Edit to-do</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 pt-2">
           {/* Title */}
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Habit name</label>
+            <label className="text-xs font-medium text-muted-foreground">To-do name</label>
             <input
               type="text"
               value={title}
