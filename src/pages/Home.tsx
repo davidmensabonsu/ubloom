@@ -198,7 +198,7 @@ export default function Home() {
             {loading ? (
               <Skeleton className="h-3 w-3/4" />
             ) : (
-              <p className="text-xs md:text-sm font-medium text-foreground/90 leading-relaxed line-clamp-2 md:line-clamp-none">
+              <p className="text-sm font-medium text-foreground/90 leading-relaxed">
                 {focusToday}
               </p>
             )}
