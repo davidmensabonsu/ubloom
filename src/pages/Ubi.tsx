@@ -166,7 +166,7 @@ export default function Ubi() {
               <MessageCircle size={20} className="text-white" strokeWidth={2} />
             </div>
             <div>
-              <h1 className="font-display text-base font-semibold text-white">Meet Ubi</h1>
+              <h1 className="font-display text-base font-semibold text-white">Ubi</h1>
               <p className="text-xs text-white/85" style={{ fontFamily: 'DM Sans, sans-serif' }}>Your personal mentor</p>
             </div>
           </div>
