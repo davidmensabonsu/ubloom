@@ -1,9 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Pen, Mic, Video, Square, Play, Pause, RefreshCw, Sparkles } from 'lucide-react';
+import { Pen, Mic, Video, Square, Play, Pause, RefreshCw, Sparkles, Loader2 } from 'lucide-react';
 import { useUbiJournalPrompt } from '@/hooks/useUbiJournalPrompt';
 import { useUserStore } from '@/stores/userStore';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import { track } from '@/hooks/useAnalytics';
+import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
 
 type Mode = 'write' | 'voice' | 'video';
