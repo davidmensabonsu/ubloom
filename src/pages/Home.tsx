@@ -198,7 +198,7 @@ export default function Home() {
             {loading ? (
               <Skeleton className="h-3 w-3/4" />
             ) : (
-              <p className="text-sm font-medium text-foreground/90 leading-relaxed">
+              <p className="text-sm text-foreground/90 leading-relaxed font-normal">
                 {focusToday}
               </p>
             )}
