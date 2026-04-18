@@ -94,6 +94,10 @@ export interface UserProfile {
   ubiOnboardingComplete?: boolean;
   ubiSummary?: string;
   intentionCompletedDate?: string; // yyyy-MM-dd — last day the user marked today's intention as done
+  // Reflect page caches
+  bloomScore?: number;
+  cachedJournalPrompt?: { prompt: string; dateKey: string };
+  cachedWeeklySummary?: { letter: string; weekKey: string };
 }
 
 export interface PeriodLogEntry {
@@ -289,6 +293,9 @@ const initialProfile: UserProfile = {
   moodboardItems: [],
   onboardingComplete: false,
   intentionCompletedDate: undefined,
+  bloomScore: undefined,
+  cachedJournalPrompt: undefined,
+  cachedWeeklySummary: undefined,
 };
 
 export const useUserStore = create<UserStore>()(
