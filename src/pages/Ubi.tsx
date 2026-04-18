@@ -214,7 +214,17 @@ export default function Ubi() {
             <div>
               <h1 className="font-display text-2xl font-semibold text-white leading-tight">Ubi</h1>
               <p className="text-xs text-white/80" style={{ fontFamily: 'DM Sans, sans-serif' }}>Your personal mentor</p>
-              <p className="font-display italic text-white/70 text-[13px] mt-1.5">Here to know you, not just help you</p>
+              {conversationActive && contextPill && (
+                <span
+                  className="inline-block mt-1.5 bg-white/20 text-white rounded-full px-3 py-1 text-[11px] backdrop-blur-sm"
+                  style={{ fontFamily: 'DM Sans, sans-serif' }}
+                >
+                  {contextPill}
+                </span>
+              )}
+              {!conversationActive && (
+                <p className="font-display italic text-white/70 text-[13px] mt-1.5">Here to know you, not just help you</p>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-1">
@@ -336,14 +346,14 @@ export default function Ubi() {
                       <div className="w-7 h-7 rounded-full overflow-hidden border border-primary/20 shrink-0 mt-0.5 flex items-center justify-center bg-primary/10">
                         <img src={speechBubbleIcon} alt="Ubi" className="w-4 h-4 object-contain clay-icon" />
                       </div>
-                      <div className="bg-secondary/80 rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-1.5">
+                      <div className="bg-white border border-primary/20 shadow-soft rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-1.5">
                         {[0, 1, 2].map((i) => (
                           <motion.span
                             key={i}
-                            className="w-2 h-2 rounded-full bg-muted-foreground/50"
-                            animate={{ y: [0, -6, 0] }}
+                            className="w-2 h-2 rounded-full bg-primary"
+                            animate={{ opacity: [0.3, 1, 0.3], y: [0, -4, 0] }}
                             transition={{
-                              duration: 0.6,
+                              duration: 0.9,
                               repeat: Infinity,
                               delay: i * 0.15,
                               ease: 'easeInOut',
@@ -361,18 +371,18 @@ export default function Ubi() {
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="overflow-x-auto scrollbar-hide -mx-1"
+                  transition={{ duration: 0.4, delay: 0.15 }}
+                  className="overflow-x-auto scrollbar-hide -mx-1 mt-3"
                 >
                   <div className="flex gap-2 px-1 py-1 w-max">
                     {suggestedPrompts.map((text, i) => (
                       <button
                         key={`${text}-${i}`}
                         onClick={() => handlePreset(text)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 hover:bg-primary/20 border border-primary/20 transition-colors whitespace-nowrap shrink-0"
+                        className="px-3 py-1.5 rounded-full bg-white border border-primary/30 hover:bg-primary/5 transition-colors whitespace-nowrap shrink-0 text-xs text-foreground/90 shadow-sm"
+                        style={{ fontFamily: 'DM Sans, sans-serif' }}
                       >
-                        <img src={promptIcons[i % promptIcons.length]} alt="" className="w-4 h-4 object-contain shrink-0 clay-icon" />
-                        <span className="text-xs text-foreground/90">{text}</span>
+                        {text}
                       </button>
                     ))}
                   </div>
