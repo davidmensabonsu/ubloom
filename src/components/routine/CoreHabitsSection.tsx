@@ -1,12 +1,29 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import { useState } from 'react';
-import { useUserStore, TimeOfDay, CoreHabit } from '@/stores/userStore';
-import { Check, Sun, Clock, Moon, Plus, X, Sparkles, Pencil, Trash2, ChevronUp, ChevronDown, Settings2 } from 'lucide-react';
+import { useUserStore, CoreHabit, CustomTask } from '@/stores/userStore';
+import { Check, Sparkles, Pencil, Trash2, Settings2, GripVertical } from 'lucide-react';
 import { getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
 import EditHabitDialog from '@/components/routine/EditHabitDialog';
 import { isHabitScheduledForDate, getFrequencyLabel } from '@/components/routine/FrequencyPicker';
 import { track } from '@/hooks/useAnalytics';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,11 +35,9 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
-const timeOfDayConfig = {
-  morning: { label: 'Morning', icon: Sun, color: 'text-primary' },
-  midday: { label: 'Midday', icon: Clock, color: 'text-primary' },
-  evening: { label: 'Evening', icon: Moon, color: 'text-primary' },
-};
+type UnifiedItem =
+  | { kind: 'habit'; id: string; data: CoreHabit }
+  | { kind: 'custom'; id: string; data: CustomTask };
 
 function HabitIcon({ iconId }: { iconId?: string }) {
   const opt = iconId ? getTaskIcon(iconId) : undefined;
@@ -36,88 +51,270 @@ function HabitIcon({ iconId }: { iconId?: string }) {
   );
 }
 
+function formatTime(time: string) {
+  const [h, m] = time.split(':').map(Number);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 || 12;
+  return `${h12}:${m.toString().padStart(2, '0')} ${ampm}`;
+}
+
+interface SortableRowProps {
+  item: UnifiedItem;
+  editMode: boolean;
+  isCompleted: boolean;
+  onToggle: () => void;
+  onEdit?: () => void;
+  onDelete: () => void;
+}
+
+function SortableRow({ item, editMode, isCompleted, onToggle, onEdit, onDelete }: SortableRowProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: item.id,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.9 : 1,
+    zIndex: isDragging ? 10 : 'auto' as const,
+  };
+
+  const dragHandle = (
+    <button
+      ref={setNodeRef as any}
+      {...attributes}
+      {...listeners}
+      className="touch-none p-1 -ml-1 text-primary/40 hover:text-primary/70 transition-colors cursor-grab active:cursor-grabbing"
+      aria-label="Drag to reorder"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <GripVertical size={16} strokeWidth={2.5} />
+    </button>
+  );
+
+  if (item.kind === 'habit') {
+    const habit = item.data;
+    if (editMode) {
+      return (
+        <div
+          ref={setNodeRef}
+          style={style}
+          className={`check-item w-full ${isDragging ? 'shadow-elevated' : ''}`}
+        >
+          <button
+            {...attributes}
+            {...listeners}
+            className="touch-none p-1 -ml-1 text-primary/40 hover:text-primary/70 transition-colors cursor-grab active:cursor-grabbing"
+            aria-label="Drag to reorder"
+          >
+            <GripVertical size={16} strokeWidth={2.5} />
+          </button>
+          <span className="text-sm font-medium flex items-center gap-2 flex-1">
+            <HabitIcon iconId={habit.icon} />
+            {habit.title}
+          </span>
+          <div className="flex items-center gap-1 ml-auto">
+            <button
+              onClick={onEdit}
+              className="p-1.5 rounded-full hover:bg-primary/10 text-primary transition-colors"
+            >
+              <Settings2 size={14} strokeWidth={2.5} />
+            </button>
+            <button
+              onClick={onDelete}
+              className="p-1.5 rounded-full hover:bg-destructive/10 text-destructive transition-colors"
+            >
+              <Trash2 size={14} strokeWidth={2.5} />
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <motion.div
+        ref={setNodeRef}
+        style={style}
+        className={`check-item w-full ${isDragging ? 'shadow-elevated' : ''}`}
+        whileTap={{ scale: 0.98 }}
+      >
+        <button
+          {...attributes}
+          {...listeners}
+          className="touch-none p-1 -ml-1 text-primary/40 hover:text-primary/70 transition-colors cursor-grab active:cursor-grabbing"
+          aria-label="Drag to reorder"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <GripVertical size={16} strokeWidth={2.5} />
+        </button>
+        <button
+          onClick={onToggle}
+          className="flex items-center gap-3 flex-1 min-w-0 text-left"
+        >
+          <div className={`check-circle ${isCompleted ? 'checked' : ''}`}>
+            {isCompleted && <Check size={14} strokeWidth={2.5} />}
+          </div>
+          <span
+            className={`text-sm font-medium flex items-center gap-2 ${
+              isCompleted ? 'line-through text-muted-foreground' : ''
+            }`}
+          >
+            <HabitIcon iconId={habit.icon} />
+            {habit.title}
+            {habit.scheduledTime && (
+              <span className="text-xs text-muted-foreground/60 font-normal">{formatTime(habit.scheduledTime)}</span>
+            )}
+          </span>
+          {getFrequencyLabel(habit) && !habit.scheduledTime && (
+            <span className="ml-auto text-xs text-muted-foreground/50">{getFrequencyLabel(habit)}</span>
+          )}
+        </button>
+      </motion.div>
+    );
+  }
+
+  // Custom task
+  const task = item.data;
+  if (editMode) {
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className={`check-item w-full ${isDragging ? 'shadow-elevated' : ''}`}
+      >
+        <button
+          {...attributes}
+          {...listeners}
+          className="touch-none p-1 -ml-1 text-primary/40 hover:text-primary/70 transition-colors cursor-grab active:cursor-grabbing"
+          aria-label="Drag to reorder"
+        >
+          <GripVertical size={16} strokeWidth={2.5} />
+        </button>
+        <span className="text-sm font-medium flex items-center gap-2 flex-1">
+          <HabitIcon iconId={task.icon} />
+          {task.title}
+        </span>
+        <button
+          onClick={onDelete}
+          className="p-1.5 rounded-full hover:bg-destructive/10 text-destructive transition-colors ml-auto"
+        >
+          <Trash2 size={14} strokeWidth={2.5} />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <motion.div
+      ref={setNodeRef}
+      style={style}
+      className={`check-item w-full ${isDragging ? 'shadow-elevated' : ''}`}
+      whileTap={{ scale: 0.98 }}
+    >
+      <button
+        {...attributes}
+        {...listeners}
+        className="touch-none p-1 -ml-1 text-primary/40 hover:text-primary/70 transition-colors cursor-grab active:cursor-grabbing"
+        aria-label="Drag to reorder"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <GripVertical size={16} strokeWidth={2.5} />
+      </button>
+      <button
+        onClick={onToggle}
+        className="flex items-center gap-3 flex-1 min-w-0 text-left"
+      >
+        <div className={`check-circle ${isCompleted ? 'checked' : ''}`}>
+          {isCompleted && <Check size={14} strokeWidth={2.5} />}
+        </div>
+        <span
+          className={`text-sm font-medium flex items-center gap-2 ${
+            isCompleted ? 'line-through text-muted-foreground' : ''
+          }`}
+        >
+          <HabitIcon iconId={task.icon} />
+          {task.title}
+        </span>
+      </button>
+    </motion.div>
+  );
+}
+
 export default function CoreHabitsSection() {
-  const { profile, toggleHabitCompletion, isHabitCompletedToday, addRoutineTask, toggleTask, removeHabit, updateHabit, reorderHabit } = useUserStore();
+  const {
+    profile,
+    toggleHabitCompletion,
+    isHabitCompletedToday,
+    removeHabit,
+    updateHabit,
+    setCoreHabits,
+    getVisibleCustomTasks,
+    toggleCustomTaskCompletion,
+    isCustomTaskCompletedToday,
+    removeCustomTask,
+    reorderCustomTasks,
+  } = useUserStore();
+
   const { coreHabits } = profile;
-  
-  const [addingToSection, setAddingToSection] = useState<TimeOfDay | null>(null);
-  const [newTaskTitle, setNewTaskTitle] = useState('');
+  const customTasks = profile.customTasks || [];
+
   const [editMode, setEditMode] = useState(false);
-  const [habitToDelete, setHabitToDelete] = useState<{ id: string; title: string } | null>(null);
+  const [habitToDelete, setHabitToDelete] = useState<{ id: string; title: string; kind: 'habit' | 'custom' } | null>(null);
   const [habitToEdit, setHabitToEdit] = useState<CoreHabit | null>(null);
 
   const today = getLocalDateStr();
-  
-  const getTodayTasks = (time: TimeOfDay) => {
-    return (profile.routineTasks || []).filter(
-      (task) => task.date.split('T')[0] === today && task.timeOfDay === time
-    );
-  };
 
-  const getHabitsByTime = (time: TimeOfDay) => {
-    return coreHabits
-      .filter((h) => h.timeOfDay === time && isHabitScheduledForDate(h, today))
-      .sort((a, b) => {
-        if (a.scheduledTime && b.scheduledTime) return a.scheduledTime.localeCompare(b.scheduledTime);
-        if (a.scheduledTime) return -1;
-        if (b.scheduledTime) return 1;
-        return 0;
-      });
-  };
-
-  const formatTime = (time: string) => {
-    const [h, m] = time.split(':').map(Number);
-    const ampm = h >= 12 ? 'PM' : 'AM';
-    const h12 = h % 12 || 12;
-    return `${h12}:${m.toString().padStart(2, '0')} ${ampm}`;
-  };
-
-  // All habits for reordering (unfiltered by date)
-  const getAllHabitsByTime = (time: TimeOfDay) => {
-    return coreHabits.filter((h) => h.timeOfDay === time);
-  };
-
-  const getCompletedCount = (time: TimeOfDay) => {
-    const habits = getHabitsByTime(time);
-    const habitCompleted = habits.filter((h) => isHabitCompletedToday(h.id)).length;
-    const tasks = getTodayTasks(time);
-    const taskCompleted = tasks.filter((t) => t.completed).length;
-    return habitCompleted + taskCompleted;
-  };
-
-  const getTotalCount = (time: TimeOfDay) => {
-    return getHabitsByTime(time).length + getTodayTasks(time).length;
-  };
-
-  const totalHabits = coreHabits.length;
-  const totalTasks = (['morning', 'midday', 'evening'] as TimeOfDay[]).reduce(
-    (sum, time) => sum + getTodayTasks(time).length, 0
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
-  const totalItems = totalHabits + totalTasks;
-  const totalCompleted = coreHabits.filter((h) => isHabitCompletedToday(h.id)).length +
-    (['morning', 'midday', 'evening'] as TimeOfDay[]).reduce(
-      (sum, time) => sum + getTodayTasks(time).filter((t) => t.completed).length, 0
-    );
 
-  const handleAddTask = (time: TimeOfDay) => {
-    if (newTaskTitle.trim()) {
-      addRoutineTask({
-        title: newTaskTitle,
-        category: 'plans',
-        completed: false,
-        date: new Date().toISOString(),
-        timeOfDay: time,
-      });
-      setNewTaskTitle('');
-      setAddingToSection(null);
+  // Build unified visible list (in their stored order)
+  const visibleHabits = coreHabits.filter((h) => isHabitScheduledForDate(h, today));
+  const visibleCustom = getVisibleCustomTasks();
+
+  const unifiedItems: UnifiedItem[] = editMode
+    ? [
+        ...coreHabits.map((h) => ({ kind: 'habit' as const, id: h.id, data: h })),
+        ...customTasks.map((t) => ({ kind: 'custom' as const, id: t.id, data: t })),
+      ]
+    : [
+        ...visibleHabits.map((h) => ({ kind: 'habit' as const, id: h.id, data: h })),
+        ...visibleCustom.map((t) => ({ kind: 'custom' as const, id: t.id, data: t })),
+      ];
+
+  const totalItems = unifiedItems.length;
+  const totalCompleted = unifiedItems.filter((it) =>
+    it.kind === 'habit' ? isHabitCompletedToday(it.id) : isCustomTaskCompletedToday(it.id)
+  ).length;
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const activeItem = unifiedItems.find((it) => it.id === active.id);
+    const overItem = unifiedItems.find((it) => it.id === over.id);
+    if (!activeItem || !overItem) return;
+
+    // Only allow reordering within the same kind
+    if (activeItem.kind !== overItem.kind) return;
+
+    if (activeItem.kind === 'habit') {
+      const ids = coreHabits.map((h) => h.id);
+      const oldIdx = ids.indexOf(active.id as string);
+      const newIdx = ids.indexOf(over.id as string);
+      if (oldIdx === -1 || newIdx === -1) return;
+      setCoreHabits(arrayMove(coreHabits, oldIdx, newIdx));
+    } else {
+      const ids = customTasks.map((t) => t.id);
+      const oldIdx = ids.indexOf(active.id as string);
+      const newIdx = ids.indexOf(over.id as string);
+      if (oldIdx === -1 || newIdx === -1) return;
+      reorderCustomTasks(arrayMove(customTasks, oldIdx, newIdx));
     }
   };
 
-  const hasAnyContent = (['morning', 'midday', 'evening'] as TimeOfDay[]).some(
-    (time) => getHabitsByTime(time).length > 0 || getTodayTasks(time).length > 0
-  );
-
-  if (coreHabits.length === 0 && !hasAnyContent) {
+  if (coreHabits.length === 0 && customTasks.length === 0) {
     return null;
   }
 
@@ -149,200 +346,49 @@ export default function CoreHabitsSection() {
         />
       </div>
 
-      {/* Habits by time of day */}
-      {(['morning', 'midday', 'evening'] as TimeOfDay[]).map((time, sectionIndex) => {
-        const habits = editMode ? getAllHabitsByTime(time) : getHabitsByTime(time);
-        const tasks = getTodayTasks(time);
-        const config = timeOfDayConfig[time];
-        const Icon = config.icon;
-        const completedCount = getCompletedCount(time);
-        const totalCount = getTotalCount(time);
-
-        const isEmpty = habits.length === 0 && tasks.length === 0;
-
-        return (
-          <motion.div
-            key={time}
-            data-section={time}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: sectionIndex * 0.1 }}
-            className="glass-card rounded-3xl p-5"
-          >
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Icon size={18} strokeWidth={2.5} className={config.color} />
-                <h3 className="font-semibold text-sm">{config.label}</h3>
-              </div>
-              <span className="text-xs text-muted-foreground font-medium">
-                  {completedCount}/{totalCount}
-                </span>
-            </div>
-
-            <div className="space-y-2">
-              {/* Core habits */}
-              {habits.map((habit, habitIndex) => {
-                const isCompleted = isHabitCompletedToday(habit.id);
-
-                if (editMode) {
-                  return (
-                    <motion.div
-                      key={habit.id}
-                      className="check-item w-full"
-                      layout
-                    >
-                      <span className="text-sm font-medium flex items-center gap-2 flex-1">
-                        <HabitIcon iconId={habit.icon} />
-                        {habit.title}
-                      </span>
-                      <div className="flex items-center gap-1 ml-auto">
-                        <button
-                          onClick={() => reorderHabit(habit.id, 'up')}
-                          disabled={habitIndex === 0}
-                          className="p-1.5 rounded-full hover:bg-muted transition-colors disabled:opacity-30"
-                        >
-                          <ChevronUp size={14} strokeWidth={2.5} />
-                        </button>
-                        <button
-                          onClick={() => reorderHabit(habit.id, 'down')}
-                          disabled={habitIndex === habits.length - 1}
-                          className="p-1.5 rounded-full hover:bg-muted transition-colors disabled:opacity-30"
-                        >
-                          <ChevronDown size={14} strokeWidth={2.5} />
-                        </button>
-                        <button
-                          onClick={() => setHabitToEdit(habit)}
-                          className="p-1.5 rounded-full hover:bg-primary/10 text-primary transition-colors"
-                        >
-                          <Settings2 size={14} strokeWidth={2.5} />
-                        </button>
-                        <button
-                          onClick={() => setHabitToDelete({ id: habit.id, title: habit.title })}
-                          className="p-1.5 rounded-full hover:bg-destructive/10 text-destructive transition-colors"
-                        >
-                          <Trash2 size={14} strokeWidth={2.5} />
-                        </button>
-                      </div>
-                    </motion.div>
-                  );
-                }
+      {/* Unified flat list with drag and drop */}
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={unifiedItems.map((it) => it.id)} strategy={verticalListSortingStrategy}>
+          <div className="space-y-2">
+            <AnimatePresence>
+              {unifiedItems.map((item) => {
+                const isCompleted =
+                  item.kind === 'habit'
+                    ? isHabitCompletedToday(item.id)
+                    : isCustomTaskCompletedToday(item.id);
 
                 return (
-                  <motion.button
-                    key={habit.id}
-                    onClick={() => { toggleHabitCompletion(habit.id); track('habit_completed', { habitId: habit.id, timeOfDay: habit.timeOfDay }); }}
-                    className="check-item w-full"
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <div className={`check-circle ${isCompleted ? 'checked' : ''}`}>
-                      {isCompleted && <Check size={14} strokeWidth={2.5} />}
-                    </div>
-                    <span
-                      className={`text-sm font-medium flex items-center gap-2 ${
-                        isCompleted ? 'line-through text-muted-foreground' : ''
-                      }`}
-                    >
-                      <HabitIcon iconId={habit.icon} />
-                      {habit.title}
-                      {habit.scheduledTime && (
-                        <span className="text-xs text-muted-foreground/60 font-normal">{formatTime(habit.scheduledTime)}</span>
-                      )}
-                    </span>
-                    {getFrequencyLabel(habit) && !habit.scheduledTime && (
-                      <span className="ml-auto text-xs text-muted-foreground/50">{getFrequencyLabel(habit)}</span>
-                    )}
-                  </motion.button>
+                  <SortableRow
+                    key={item.id}
+                    item={item}
+                    editMode={editMode}
+                    isCompleted={isCompleted}
+                    onToggle={() => {
+                      if (item.kind === 'habit') {
+                        toggleHabitCompletion(item.id);
+                        track('habit_completed', { habitId: item.id, timeOfDay: item.data.timeOfDay });
+                      } else {
+                        toggleCustomTaskCompletion(item.id);
+                      }
+                    }}
+                    onEdit={item.kind === 'habit' ? () => setHabitToEdit(item.data) : undefined}
+                    onDelete={() =>
+                      setHabitToDelete({ id: item.id, title: item.data.title, kind: item.kind })
+                    }
+                  />
                 );
               })}
+            </AnimatePresence>
+          </div>
+        </SortableContext>
+      </DndContext>
 
-              {/* One-off tasks for this time of day */}
-              {tasks.map((task) => (
-                <motion.button
-                  key={task.id}
-                  onClick={() => toggleTask(task.id)}
-                  className="check-item w-full"
-                  whileTap={{ scale: 0.98 }}
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                >
-                  <div className={`check-circle ${task.completed ? 'checked' : ''}`}>
-                    {task.completed && <Check size={14} strokeWidth={2.5} />}
-                  </div>
-                  <span
-                    className={`text-sm font-medium ${
-                      task.completed ? 'line-through text-muted-foreground' : ''
-                    }`}
-                  >
-                    {task.title}
-                  </span>
-                  <span className="ml-auto text-xs text-muted-foreground/50">today only</span>
-                </motion.button>
-              ))}
-
-              {/* Empty section hint */}
-              {isEmpty && addingToSection !== time && (
-                <button
-                  onClick={() => setAddingToSection(time)}
-                  className="w-full text-xs text-muted-foreground/60 py-2 hover:text-muted-foreground transition-colors"
-                >
-                  Tap + to add a task for today
-                </button>
-              )}
-
-              {/* Inline add task input */}
-              <AnimatePresence>
-                {addingToSection === time && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="flex items-center gap-2 pt-2"
-                  >
-                    <input
-                      type="text"
-                      value={newTaskTitle}
-                      onChange={(e) => setNewTaskTitle(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') handleAddTask(time);
-                        if (e.key === 'Escape') {
-                          setAddingToSection(null);
-                          setNewTaskTitle('');
-                        }
-                      }}
-                      placeholder="Add a task for today..."
-                      className="flex-1 text-sm p-2 rounded-xl bg-muted border-0 focus:ring-2 focus:ring-primary/30 focus:outline-none"
-                      autoFocus
-                    />
-                    <button
-                      onClick={() => handleAddTask(time)}
-                      disabled={!newTaskTitle.trim()}
-                      className="p-2 rounded-full bg-primary text-primary-foreground disabled:opacity-50"
-                    >
-                      <Check size={16} strokeWidth={2.5} />
-                    </button>
-                    <button
-                      onClick={() => {
-                        setAddingToSection(null);
-                        setNewTaskTitle('');
-                      }}
-                      className="p-2 rounded-full hover:bg-muted"
-                    >
-                      <X size={16} strokeWidth={2.5} />
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </motion.div>
-        );
-      })}
-
-      {/* Add habit hint in edit mode */}
       {editMode && (
         <p className="text-center text-xs text-muted-foreground pt-1">
           Use the + button to add new habits
         </p>
       )}
+
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!habitToDelete} onOpenChange={(open) => !open && setHabitToDelete(null)}>
         <AlertDialogContent className="rounded-3xl">
@@ -357,7 +403,10 @@ export default function CoreHabitsSection() {
             <AlertDialogAction
               className="rounded-2xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => {
-                if (habitToDelete) removeHabit(habitToDelete.id);
+                if (habitToDelete) {
+                  if (habitToDelete.kind === 'habit') removeHabit(habitToDelete.id);
+                  else removeCustomTask(habitToDelete.id);
+                }
                 setHabitToDelete(null);
               }}
             >
