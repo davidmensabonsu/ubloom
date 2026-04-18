@@ -89,7 +89,14 @@ export default function Health() {
     return (
       <CycleSetup
         initialData={cycleData ? { lastPeriodStart: cycleData.lastPeriodStart, cycleLength: cycleData.cycleLength, periodLength: cycleData.periodLength, dateOfBirth: cycleData.dateOfBirth } : undefined}
-        onComplete={() => setShowSetup(false)}
+        onComplete={() => {
+          setShowSetup(false);
+          if (redirectTo) {
+            // Clear the param and send the user back where they came from
+            setSearchParams({}, { replace: true });
+            navigate(redirectTo);
+          }
+        }}
       />
     );
   }
