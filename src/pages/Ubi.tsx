@@ -58,22 +58,24 @@ export default function Ubi() {
   // Auto-send welcome message only once ever
   useEffect(() => {
     if (isLoading) return;
+    if (!profile.ubiOnboardingComplete) return; // wait for onboarding
     if (messages.length === 0 && !currentConversationId && !welcomeSent.current && !isStreaming && !profile.ubiIntroSeen) {
       welcomeSent.current = true;
       updateProfile({ ubiIntroSeen: true });
       const dreamFeels = profile.dreamSelfFeels?.length ? profile.dreamSelfFeels.join(', ') : '';
       const identity = profile.identityStatement || '';
-      const name = profile.currentFeeling ? `someone feeling ${profile.currentFeeling}` : '';
+      const name = profile.preferredName || (profile.currentFeeling ? `someone feeling ${profile.currentFeeling}` : '');
 
       let contextHint = '';
       if (identity) contextHint = `Their identity statement is: "${identity}".`;
       else if (dreamFeels) contextHint = `They want their dream self to feel: ${dreamFeels}.`;
 
-      const welcomePrompt = `[SYSTEM: The user just opened the Ubi chat for the first time. Send a warm, personalised welcome. Introduce yourself as Ubi — their mentor inside uBloom. Reference their dream self vision if available. Keep it to 2 short paragraphs max. End by inviting them to share what's on their mind. ${contextHint} ${name ? `They described themselves as ${name}.` : ''}]`;
+      const greetingHint = profile.preferredName ? `Greet them by their name (${profile.preferredName}).` : '';
+      const welcomePrompt = `[SYSTEM: The user just opened the Ubi chat for the first time. Send a warm, personalised welcome. ${greetingHint} Introduce yourself as Ubi — their mentor inside uBloom. Reference their dream self vision if available. Keep it to 2 short paragraphs max. End by inviting them to share what's on their mind. ${contextHint} ${name ? `They described themselves as ${name}.` : ''}]`;
 
       sendMessage(welcomePrompt, { hideUserMessage: true });
     }
-  }, [isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isLoading, profile.ubiOnboardingComplete]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Handle journal entry passed from Reflect page
   useEffect(() => {
