@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Sun, Moon, Cloud, Target } from 'lucide-react';
 import { useHomeMessages } from '@/hooks/useHomeMessages';
@@ -7,6 +7,8 @@ import BottomNav from '@/components/BottomNav';
 import TrialBanner from '@/components/TrialBanner';
 import { useSubscription } from '@/hooks/useSubscription';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { useUserStore } from '@/stores/userStore';
+import { getLocalDateStr } from '@/lib/dateUtils';
 
 import logo from '@/assets/logo.png';
 import { quickActionIcons } from '@/lib/moodIcons';
