@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Sun, Moon, Cloud, Target } from 'lucide-react';
+import { Heart, Sun, Moon, Cloud, Target, Check } from 'lucide-react';
 import { useHomeMessages } from '@/hooks/useHomeMessages';
+import { useTodaysIntention } from '@/hooks/useTodaysIntention';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/BottomNav';
 import TrialBanner from '@/components/TrialBanner';
@@ -9,6 +10,7 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useUserStore } from '@/stores/userStore';
 import { getLocalDateStr } from '@/lib/dateUtils';
+import { getCurrentCycleDay, getCurrentPhase, type CyclePhase } from '@/lib/cycleUtils';
 
 import logo from '@/assets/logo.png';
 import { quickActionIcons } from '@/lib/moodIcons';
@@ -18,17 +20,32 @@ const timeGreetings = () => {
   const hour = new Date().getHours();
   if (hour < 12) return { text: 'Good morning', icon: Sun };
   if (hour < 17) return { text: 'Good afternoon', icon: Cloud };
-  if (hour < 21) return { text: 'Good evening', icon: Moon };
-  return { text: 'Sweet dreams', icon: Moon };
+  return { text: 'Good evening', icon: Moon };
+};
+
+const PHASE_ENERGY: Record<CyclePhase, string> = {
+  Menstrual: 'rest and restore today',
+  Follicular: 'your energy is rising',
+  Ovulatory: 'peak energy — use it',
+  Luteal: 'turn inward, go steady',
 };
 
 export default function Home() {
   const { futureSelfMessage, mindsetMessage, focusToday, loading } = useHomeMessages();
+  const { intention, loading: intentionLoading } = useTodaysIntention();
   const { status, isTrial, isExpired, trialDaysLeft } = useSubscription();
   const habitCompletions = useUserStore((s) => s.profile.habitCompletions);
+  const preferredName = useUserStore((s) => s.profile.preferredName);
+  const cycleData = useUserStore((s) => s.profile.cycleData);
+  const dailyCheckinState = useUserStore((s) => s.profile.dailyCheckinState);
+  const intentionCompletedDate = useUserStore((s) => s.profile.intentionCompletedDate);
+  const updateProfile = useUserStore((s) => s.updateProfile);
+
   const [letterOpen, setLetterOpen] = useState(false);
   const greeting = timeGreetings();
   const GreetingIcon = greeting.icon;
+  const todayStr = getLocalDateStr();
+  const intentionDone = intentionCompletedDate === todayStr;
 
   const todayFormatted = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -36,11 +53,22 @@ export default function Home() {
     day: 'numeric',
   });
 
+  // Subtitle: cycle phase or daily check-in state
+  const subtitle = useMemo(() => {
+    if (cycleData?.setupComplete && cycleData.lastPeriodStart) {
+      const day = getCurrentCycleDay(cycleData.lastPeriodStart, cycleData.cycleLength);
+      const phase = getCurrentPhase(day, cycleData.periodLength, cycleData.cycleLength);
+      return `Day ${day} · ${phase} — ${PHASE_ENERGY[phase]}`;
+    }
+    if (dailyCheckinState) return `Feeling ${dailyCheckinState} today`;
+    return null;
+  }, [cycleData, dailyCheckinState]);
+
   // Weekly consistency: Sunday → Saturday of current week
   const week = useMemo(() => {
     const today = new Date();
-    const todayStr = getLocalDateStr(today);
-    const dayOfWeek = today.getDay(); // 0=Sun..6=Sat
+    const todayLocal = getLocalDateStr(today);
+    const dayOfWeek = today.getDay();
     const sunday = new Date(today);
     sunday.setDate(today.getDate() - dayOfWeek);
 
@@ -54,8 +82,8 @@ export default function Home() {
       const dateStr = getLocalDateStr(d);
       return {
         dateStr,
-        isToday: dateStr === todayStr,
-        isPast: dateStr <= todayStr,
+        isToday: dateStr === todayLocal,
+        isPast: dateStr <= todayLocal,
         completed: completedDates.has(dateStr),
       };
     });
@@ -69,6 +97,10 @@ export default function Home() {
 
     return { days, label };
   }, [habitCompletions]);
+
+  const toggleIntentionDone = () => {
+    updateProfile({ intentionCompletedDate: intentionDone ? undefined : todayStr });
+  };
 
   return (
     <div className="min-h-[100dvh] flex flex-col gradient-background">
@@ -101,8 +133,19 @@ export default function Home() {
           transition={{ delay: 0.1 }}
           className="font-display text-2xl md:text-3xl font-normal tracking-tight text-white mt-2"
         >
-          {greeting.text}, beautiful
+          {greeting.text}, {preferredName || 'beautiful'}
         </motion.h1>
+
+        {subtitle && (
+          <motion.p
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.14 }}
+            className="font-body text-xs md:text-sm text-white/80 mt-1.5"
+          >
+            {subtitle}
+          </motion.p>
+        )}
 
         {/* Weekly consistency tracker */}
         <motion.div
@@ -137,11 +180,57 @@ export default function Home() {
           <TrialBanner status={isTrial ? 'trial' : 'expired'} trialDaysLeft={trialDaysLeft} />
         )}
 
+        {/* Today's Intention — chosen by Ubi */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: intentionDone ? 0.7 : 1, y: 0 }}
+          transition={{ delay: 0.18 }}
+          className="dark-accent-card p-4"
+        >
+          <div className="flex items-center gap-1.5 text-white/60 font-body text-[10px] uppercase tracking-[0.14em] mb-2">
+            <span aria-hidden>◆</span>
+            <span>Today's intention — chosen by Ubi</span>
+          </div>
+
+          {intentionLoading ? (
+            <div className="space-y-2 py-1" aria-busy="true" aria-label="Generating today's intention">
+              <div className="h-4 w-11/12 rounded-full bg-white/15 animate-pulse blur-[1px]" />
+              <div className="h-4 w-3/4 rounded-full bg-white/15 animate-pulse blur-[1px]" />
+            </div>
+          ) : (
+            <p className="font-display italic text-lg md:text-xl leading-snug text-white">
+              {intention}
+            </p>
+          )}
+
+          <button
+            type="button"
+            onClick={toggleIntentionDone}
+            disabled={intentionLoading}
+            className="mt-3 w-full flex items-center justify-between text-white/80 hover:text-white transition-colors disabled:opacity-50"
+            aria-pressed={intentionDone}
+            aria-label={intentionDone ? "Mark today's intention as not done" : "Mark today's intention as done"}
+          >
+            <span className="text-xs font-medium">
+              {intentionDone ? 'Done for today' : 'Mark as done'}
+            </span>
+            <span
+              className={`flex items-center justify-center w-6 h-6 rounded-full border transition-all ${
+                intentionDone
+                  ? 'bg-white/90 border-white/90'
+                  : 'bg-transparent border-white/40'
+              }`}
+            >
+              {intentionDone && <Check size={14} strokeWidth={3} className="text-foreground/80" />}
+            </span>
+          </button>
+        </motion.div>
+
         {/* Future Self Message */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.22 }}
           className="dark-accent-card p-4"
         >
           <h2 className="text-sm md:text-base font-display font-semibold tracking-tight text-white mb-1 flex items-center gap-2">

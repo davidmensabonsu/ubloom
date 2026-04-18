@@ -93,6 +93,7 @@ export interface UserProfile {
   neverForget?: string;
   ubiOnboardingComplete?: boolean;
   ubiSummary?: string;
+  intentionCompletedDate?: string; // yyyy-MM-dd — last day the user marked today's intention as done
 }
 
 export interface PeriodLogEntry {
@@ -287,6 +288,7 @@ const initialProfile: UserProfile = {
   resourceCompletions: [],
   moodboardItems: [],
   onboardingComplete: false,
+  intentionCompletedDate: undefined,
 };
 
 export const useUserStore = create<UserStore>()(
