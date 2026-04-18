@@ -439,8 +439,8 @@ function MessageBubble({ message, index, onRate }: { message: UbiMessage; index:
       className={`flex gap-2 items-start ${isUser ? 'flex-row-reverse' : ''}`}
     >
       {!isUser && (
-        <div className="w-7 h-7 rounded-full overflow-hidden border border-primary/20 shrink-0 mt-0.5">
-          <img src={ubiAvatar} alt="Ubi" className="w-full h-full object-cover" />
+        <div className="w-7 h-7 rounded-full border border-primary/20 shrink-0 mt-0.5 flex items-center justify-center bg-primary/10">
+          <img src={speechBubbleIcon} alt="Ubi" className="w-4 h-4 object-contain clay-icon" />
         </div>
       )}
       <div className="flex flex-col max-w-[85%]">
