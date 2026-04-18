@@ -153,15 +153,16 @@ export default function Ubi() {
   return (
     <div className="min-h-screen gradient-background flex flex-col">
       {/* Hero gradient header */}
-      <div className="sticky top-0 z-10 hero-gradient px-4 pt-6 pb-5">
-        <div className="flex items-center justify-between max-w-lg mx-auto">
+      <div className="sticky top-0 z-10 hero-gradient px-4 pt-7 pb-8">
+        <div className="max-w-lg mx-auto flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-white/40 shadow-sm bg-white/20">
-              <MessageCircle size={20} className="text-white" strokeWidth={2} />
+            <div className="w-14 h-14 rounded-full flex items-center justify-center bg-white/25 border border-white/30 shadow-sm backdrop-blur-sm shrink-0">
+              <img src={speechBubbleIcon} alt="Ubi" className="w-7 h-7 object-contain" />
             </div>
             <div>
-              <h1 className="font-display text-base font-semibold text-white">Ubi</h1>
-              <p className="text-xs text-white/85" style={{ fontFamily: 'DM Sans, sans-serif' }}>Your personal mentor</p>
+              <h1 className="font-display text-2xl font-semibold text-white leading-tight">Ubi</h1>
+              <p className="text-xs text-white/80" style={{ fontFamily: 'DM Sans, sans-serif' }}>Your personal mentor</p>
+              <p className="font-display italic text-white/70 text-[13px] mt-1.5">Here to know you, not just help you</p>
             </div>
           </div>
           <div className="flex items-center gap-1">
