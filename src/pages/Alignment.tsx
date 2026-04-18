@@ -10,6 +10,7 @@ import JournalModes from '@/components/alignment/JournalModes';
 import WeeklySummaryCard from '@/components/alignment/WeeklySummaryCard';
 import BloomScoreSheet from '@/components/alignment/BloomScoreSheet';
 import JournalAudioPlayer from '@/components/alignment/JournalAudioPlayer';
+import JournalHistorySheet from '@/components/alignment/JournalHistorySheet';
 import heartPulseIcon from '@/assets/icons/heart-pulse.png';
 import { getCurrentCycleDay, getCurrentPhase } from '@/lib/cycleUtils';
 import { computeBloomScore } from '@/lib/bloomScore';
@@ -19,6 +20,7 @@ export default function Alignment() {
   const profile = useUserStore((s) => s.profile);
   const updateProfile = useUserStore((s) => s.updateProfile);
   const [bloomSheetOpen, setBloomSheetOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   const totalHabits = (profile.coreHabits || []).length;
 
@@ -148,8 +150,15 @@ export default function Alignment() {
                   );
                 })}
               </div>
+              <button
+                onClick={() => setHistoryOpen(true)}
+                className="mt-3 text-xs font-medium text-primary hover:underline"
+              >
+                View all entries →
+              </button>
             </div>
           )}
+          <JournalHistorySheet open={historyOpen} onOpenChange={setHistoryOpen} />
         </div>
 
         {/* Mood calendar */}
