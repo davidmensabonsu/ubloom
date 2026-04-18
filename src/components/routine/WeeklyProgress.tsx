@@ -34,9 +34,7 @@ export default function WeeklyProgress() {
         (c) => c.date === dateStr && c.completed && allTrackableIds.has(c.habitId)
       ).length;
 
-      const dayOfWeek = date.getDay();
-      const scheduledHabitsCount = coreHabits.filter(h => isHabitScheduledForDate(h, dateStr)).length;
-      const expectedTotal = scheduledHabitsCount + getCustomTaskCountForDate(dateStr, dayOfWeek);
+      const expectedTotal = coreHabits.filter(h => isHabitScheduledForDate(h, dateStr)).length;
       const totalHabits = isToday
         ? expectedTotal
         : Math.max(expectedTotal, completedHabits);
@@ -53,7 +51,7 @@ export default function WeeklyProgress() {
     }
 
     return days;
-  }, [coreHabits, customTasks, allTrackableIds, habitCompletions, weekOffset]);
+  }, [coreHabits, allTrackableIds, habitCompletions, weekOffset]);
 
   const weekLabel = useMemo(() => {
     if (weekOffset === 0) return 'This week';
@@ -65,8 +63,7 @@ export default function WeeklyProgress() {
   }, [weekOffset]);
 
   const { streak, longestStreak } = useMemo(() => {
-    const totalTrackable = coreHabits.length + customTasks.length;
-    if (totalTrackable === 0) return { streak: 0, longestStreak: 0 };
+    if (coreHabits.length === 0) return { streak: 0, longestStreak: 0 };
 
     const today = startOfDay(new Date());
     let maxStreak = 0;
@@ -76,14 +73,12 @@ export default function WeeklyProgress() {
     for (let i = 0; i <= 365; i++) {
       const date = subDays(today, i);
       const dateStr = format(date, 'yyyy-MM-dd');
-      const dayOfWeek = date.getDay();
 
       const dayCompletions = habitCompletions.filter(
         (c) => c.date === dateStr && c.completed && allTrackableIds.has(c.habitId)
       );
 
-      const scheduledCount = coreHabits.filter(h => isHabitScheduledForDate(h, dateStr)).length;
-      const expectedTotal = scheduledCount + getCustomTaskCountForDate(dateStr, dayOfWeek);
+      const expectedTotal = coreHabits.filter(h => isHabitScheduledForDate(h, dateStr)).length;
       const effectiveTotal = Math.max(expectedTotal, dayCompletions.length);
       const completionRate = effectiveTotal > 0 ? dayCompletions.length / effectiveTotal : 0;
 
@@ -102,8 +97,7 @@ export default function WeeklyProgress() {
     const todayCompletions = habitCompletions.filter(
       (c) => c.date === todayStr && c.completed && allTrackableIds.has(c.habitId)
     );
-    const todayScheduled = coreHabits.filter(h => isHabitScheduledForDate(h, todayStr)).length;
-    const todayExpected = todayScheduled + getCustomTaskCountForDate(todayStr, today.getDay());
+    const todayExpected = coreHabits.filter(h => isHabitScheduledForDate(h, todayStr)).length;
     const todayEffective = Math.max(todayExpected, todayCompletions.length);
     const todayRate = todayEffective > 0 ? todayCompletions.length / todayEffective : 0;
 
@@ -112,14 +106,12 @@ export default function WeeklyProgress() {
     for (let i = startDay; i <= 365; i++) {
       const date = subDays(today, i);
       const dateStr = format(date, 'yyyy-MM-dd');
-      const dayOfWeek = date.getDay();
 
       const dayCompletions = habitCompletions.filter(
         (c) => c.date === dateStr && c.completed && allTrackableIds.has(c.habitId)
       );
 
-      const scheduledCount = coreHabits.filter(h => isHabitScheduledForDate(h, dateStr)).length;
-      const expectedTotal = scheduledCount + getCustomTaskCountForDate(dateStr, dayOfWeek);
+      const expectedTotal = coreHabits.filter(h => isHabitScheduledForDate(h, dateStr)).length;
       const effectiveTotal = Math.max(expectedTotal, dayCompletions.length);
       const completionRate = effectiveTotal > 0 ? dayCompletions.length / effectiveTotal : 0;
 
@@ -131,14 +123,14 @@ export default function WeeklyProgress() {
     }
 
     return { streak: currentStreak, longestStreak: maxStreak };
-  }, [coreHabits, customTasks, allTrackableIds, habitCompletions]);
+  }, [coreHabits, allTrackableIds, habitCompletions]);
 
   const weeklyAverage = useMemo(() => {
     const totalPercentage = weekData.reduce((sum, day) => sum + day.percentage, 0);
     return Math.round(totalPercentage / 7);
   }, [weekData]);
 
-  if (coreHabits.length === 0 && customTasks.length === 0) {
+  if (coreHabits.length === 0) {
     return null;
   }
 
