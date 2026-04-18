@@ -462,7 +462,7 @@ export default function Ubi() {
           const filtered = presetPrompts.filter(p => !usedToday.includes(p.text));
           if (filtered.length === 0) return null;
           return (
-            <div className="max-w-lg mx-auto px-4 pt-3 pb-1 space-y-2">
+            <div className="max-w-lg mx-auto px-4 pt-1.5 pb-0 space-y-1.5">
               {filtered.map((prompt, i) => (
                 <motion.button
                   key={`${prompt.text}-${i}`}
