@@ -142,8 +142,26 @@ export default function HealthDataTiles() {
                 <div className="font-display text-xl text-foreground leading-tight">
                   {hasValue ? value : '—'}
                 </div>
-                <div className="text-[11px] font-medium text-foreground/80 uppercase tracking-wide mt-0.5">
-                  {tile.label}
+                <div className="flex items-center gap-1 mt-0.5">
+                  <span className="text-[11px] font-medium text-foreground/80 uppercase tracking-wide">
+                    {tile.label}
+                  </span>
+                  <Popover>
+                    <PopoverTrigger
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-muted-foreground/70 hover:text-foreground transition-colors"
+                      aria-label={`What is ${tile.label}?`}
+                    >
+                      <Info size={11} />
+                    </PopoverTrigger>
+                    <PopoverContent
+                      side="top"
+                      className="w-56 text-xs leading-relaxed p-3 rounded-xl"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {tile.info}
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 {hasValue && tile.subLabel && (
                   <div className="text-[10px] text-muted-foreground mt-0.5">{tile.subLabel}</div>
