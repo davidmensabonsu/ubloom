@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { Footprints } from 'lucide-react';
+import { Footprints, Info } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useUserStore } from '@/stores/userStore';
@@ -22,13 +23,48 @@ interface TileConfig {
   unit?: string;
   max?: number;
   editable: boolean;
+  info: string;
 }
 
 const TILES: TileConfig[] = [
-  { key: 'sleepHours', icon: bedIcon, label: 'Sleep', subLabel: 'hours last night', unit: 'h', max: 24, editable: true },
-  { key: 'recoveryLevel', icon: heartPulseIcon, label: 'HRV', subLabel: 'recovery', max: 100, editable: true },
-  { key: 'activityMinutes', icon: flameIcon, label: 'Active', subLabel: 'mins today', unit: 'm', max: 1440, editable: true },
-  { key: 'steps', icon: 'footsteps', label: 'Steps', subLabel: 'today', max: 100000, editable: true },
+  {
+    key: 'sleepHours',
+    icon: bedIcon,
+    label: 'Sleep',
+    subLabel: 'hours last night',
+    unit: 'h',
+    max: 24,
+    editable: true,
+    info: 'Total hours of sleep you got last night. Most adults thrive on 7–9 hours.',
+  },
+  {
+    key: 'recoveryLevel',
+    icon: heartPulseIcon,
+    label: 'HRV',
+    subLabel: 'recovery',
+    max: 100,
+    editable: true,
+    info: 'Heart Rate Variability — a 0–100 recovery score from your wearable. Higher means better recovered and less stressed.',
+  },
+  {
+    key: 'activityMinutes',
+    icon: flameIcon,
+    label: 'Active',
+    subLabel: 'mins today',
+    unit: 'm',
+    max: 1440,
+    editable: true,
+    info: 'Minutes spent in moderate-to-vigorous movement today (walks, workouts, etc.). Not calories.',
+  },
+  {
+    key: 'steps',
+    icon: 'footsteps',
+    label: 'Steps',
+    subLabel: 'today',
+    max: 100000,
+    editable: true,
+    info: 'Total steps taken today. A common daily target is 7,000–10,000.',
+  },
 ];
 
 export default function HealthDataTiles() {
