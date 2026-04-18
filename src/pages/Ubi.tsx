@@ -419,8 +419,38 @@ export default function Ubi() {
         </div>
       </div>
 
-      {/* Input area */}
+      {/* Input area with prompts strip */}
       <div className="fixed bottom-16 left-0 right-0 bg-background/90 backdrop-blur-md border-t border-border/50 z-10">
+        {/* Horizontal scrollable prompts */}
+        {!isStreaming && (() => {
+          const hasMessages = messages.length > 0;
+          if (hasMessages) return null; // AI suggestions now shown inline in chat
+          // Suppress preset prompts whenever the auto-opener is about to fire
+          // (i.e. onboarding is complete — every fresh chat gets a personal greeting).
+          if (profile.ubiOnboardingComplete && profile.ubiIntroSeen) return null;
+          // No messages yet — show presets filtered by today's used list
+          const usedToday: string[] = JSON.parse(localStorage.getItem(`ubi-used-presets-${getLocalDateStr()}`) || '[]');
+          const filtered = presetPrompts.filter(p => !usedToday.includes(p.text));
+          if (filtered.length === 0) return null;
+          return (
+            <div className="max-w-lg mx-auto px-4 pt-3 pb-1 space-y-2">
+              {filtered.map((prompt, i) => (
+                <motion.button
+                  key={`${prompt.text}-${i}`}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: i * 0.06 }}
+                  onClick={() => handlePreset(prompt.text)}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-white border border-primary/20 hover:border-primary/40 hover:bg-white transition-all text-left shadow-soft"
+                >
+                  <span className="text-sm text-foreground flex-1" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                    {prompt.text}
+                  </span>
+                </motion.button>
+              ))}
+            </div>
+          );
+        })()}
 
         {/* Ubi limit notice */}
         {!isActive && (
