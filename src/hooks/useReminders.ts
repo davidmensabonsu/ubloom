@@ -27,6 +27,10 @@ export function useReminders() {
 
   // Track which individual habit reminders we've already sent today (habitId:date)
   const sentHabitRemindersRef = useRef<Set<string>>(new Set());
+  // Track which 30-min heads-up reminders we've already sent today (habitId:date)
+  const sentUpcomingRemindersRef = useRef<Set<string>>(new Set());
+
+  const HEADS_UP_MINUTES = 30;
  
    const requestPermission = useCallback(async () => {
      if (!('Notification' in window)) {
@@ -101,31 +105,52 @@ export function useReminders() {
        }
      });
 
-     // --- Individual habit scheduled-time reminders ---
-     coreHabits.forEach((habit) => {
-       if (!habit.scheduledTime) return;
-       if (!isHabitScheduledForDate(habit, today)) return;
-       if (isHabitCompletedToday(habit.id)) return;
+      // --- Individual habit scheduled-time reminders ---
+      coreHabits.forEach((habit) => {
+        if (!habit.scheduledTime) return;
+        if (!isHabitScheduledForDate(habit, today)) return;
+        if (isHabitCompletedToday(habit.id)) return;
 
-       const key = `${habit.id}:${today}`;
-       if (sentHabitRemindersRef.current.has(key)) return;
+        const [hStr, mStr] = habit.scheduledTime.split(':');
+        const h = parseInt(hStr);
+        const m = parseInt(mStr);
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12 = h % 12 || 12;
+        const timeStr = `${h12}:${m.toString().padStart(2, '0')} ${ampm}`;
 
-       if (currentTime === habit.scheduledTime) {
-         const h = parseInt(habit.scheduledTime.split(':')[0]);
-         const m = parseInt(habit.scheduledTime.split(':')[1]);
-         const ampm = h >= 12 ? 'PM' : 'AM';
-         const h12 = h % 12 || 12;
-         const timeStr = `${h12}:${m.toString().padStart(2, '0')} ${ampm}`;
+        // 30-minute heads-up reminder
+        const upcomingKey = `${habit.id}:${today}:upcoming`;
+        if (!sentUpcomingRemindersRef.current.has(upcomingKey)) {
+          const scheduledDate = new Date(now);
+          scheduledDate.setHours(h, m, 0, 0);
+          const headsUpDate = new Date(scheduledDate.getTime() - HEADS_UP_MINUTES * 60000);
+          const headsUpTime = `${headsUpDate.getHours().toString().padStart(2, '0')}:${headsUpDate.getMinutes().toString().padStart(2, '0')}`;
 
-         sendNotification(
-           `⏰ Time for: ${habit.title}`,
-           `Scheduled for ${timeStr}`,
-           `habit-time-${habit.id}`
-         );
-         sentHabitRemindersRef.current.add(key);
-       }
-     });
-   }, [reminderSettings, coreHabits, isHabitCompletedToday, sendNotification, markReminderSent]);
+          // Only fire if heads-up time is on the same day (avoid weird negative times like 00:15 → -00:15)
+          if (currentTime === headsUpTime && headsUpDate.getDate() === now.getDate()) {
+            sendNotification(
+              `⏰ Coming up: ${habit.title}`,
+              `In ${HEADS_UP_MINUTES} minutes — scheduled for ${timeStr}`,
+              `habit-upcoming-${habit.id}`
+            );
+            sentUpcomingRemindersRef.current.add(upcomingKey);
+          }
+        }
+
+        // Exact-time reminder
+        const key = `${habit.id}:${today}`;
+        if (sentHabitRemindersRef.current.has(key)) return;
+
+        if (currentTime === habit.scheduledTime) {
+          sendNotification(
+            `⏰ Time for: ${habit.title}`,
+            `Scheduled for ${timeStr}`,
+            `habit-time-${habit.id}`
+          );
+          sentHabitRemindersRef.current.add(key);
+        }
+      });
+    }, [reminderSettings, coreHabits, isHabitCompletedToday, sendNotification, markReminderSent]);
  
    // Check every minute + reset sent habit reminders at midnight
    useEffect(() => {
@@ -134,14 +159,15 @@ export function useReminders() {
      checkAndNotify();
      let lastDate = getLocalDateStr();
  
-     const interval = setInterval(() => {
-       const currentDate = getLocalDateStr();
-       if (currentDate !== lastDate) {
-         sentHabitRemindersRef.current.clear();
-         lastDate = currentDate;
-       }
-       checkAndNotify();
-     }, 60000);
+      const interval = setInterval(() => {
+        const currentDate = getLocalDateStr();
+        if (currentDate !== lastDate) {
+          sentHabitRemindersRef.current.clear();
+          sentUpcomingRemindersRef.current.clear();
+          lastDate = currentDate;
+        }
+        checkAndNotify();
+      }, 60000);
  
      return () => clearInterval(interval);
    }, [reminderSettings.enabled, checkAndNotify]);
