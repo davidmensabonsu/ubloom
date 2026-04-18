@@ -25,6 +25,7 @@ const timeGreetings = () => {
 export default function Home() {
   const { futureSelfMessage, mindsetMessage, focusToday, loading } = useHomeMessages();
   const { status, isTrial, isExpired, trialDaysLeft } = useSubscription();
+  const habitCompletions = useUserStore((s) => s.profile.habitCompletions);
   const [letterOpen, setLetterOpen] = useState(false);
   const greeting = timeGreetings();
   const GreetingIcon = greeting.icon;
@@ -34,6 +35,40 @@ export default function Home() {
     month: 'long',
     day: 'numeric',
   });
+
+  // Weekly consistency: Sunday → Saturday of current week
+  const week = useMemo(() => {
+    const today = new Date();
+    const todayStr = getLocalDateStr(today);
+    const dayOfWeek = today.getDay(); // 0=Sun..6=Sat
+    const sunday = new Date(today);
+    sunday.setDate(today.getDate() - dayOfWeek);
+
+    const completedDates = new Set(
+      (habitCompletions || []).filter((c) => c.completed).map((c) => c.date)
+    );
+
+    const days = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(sunday);
+      d.setDate(sunday.getDate() + i);
+      const dateStr = getLocalDateStr(d);
+      return {
+        dateStr,
+        isToday: dateStr === todayStr,
+        isPast: dateStr <= todayStr,
+        completed: completedDates.has(dateStr),
+      };
+    });
+
+    const completedCount = days.filter((d) => d.completed).length;
+    let label: string;
+    if (completedCount === 7) label = "Perfect week — you're glowing";
+    else if (completedCount >= 5) label = `${completedCount} of 7 days — you're on a roll`;
+    else if (completedCount >= 1) label = `${completedCount} of 7 days this week`;
+    else label = 'A fresh week — start with one small step';
+
+    return { days, label };
+  }, [habitCompletions]);
 
   return (
     <div className="h-[100dvh] flex flex-col gradient-background overflow-hidden md:overflow-auto">
