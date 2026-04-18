@@ -19,6 +19,7 @@ import CycleWheel from '@/components/cycle/CycleWheel';
 import CycleInsightCard from '@/components/cycle/CycleInsightCard';
 import DeviceConnectionBanner from '@/components/cycle/DeviceConnectionBanner';
 import BloomScoreCard from '@/components/cycle/BloomScoreCard';
+import BloomScoreSheet from '@/components/alignment/BloomScoreSheet';
 import HealthDataTiles from '@/components/cycle/HealthDataTiles';
 import UbiInsightsCard from '@/components/cycle/UbiInsightsCard';
 import LockedOverlay from '@/components/LockedOverlay';
@@ -32,6 +33,7 @@ export default function Health() {
   const [showSetup, setShowSetup] = useState(false);
   const [showPeriodConfirm, setShowPeriodConfirm] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [bloomSheetOpen, setBloomSheetOpen] = useState(false);
   const [insights, setInsights] = useState<string[]>([]);
   const [loadingInsights, setLoadingInsights] = useState(true);
 
