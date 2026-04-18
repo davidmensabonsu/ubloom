@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Sun, Moon, Cloud, Check } from 'lucide-react';
+import { Heart, Sun, Moon, Cloud, Check, RefreshCw } from 'lucide-react';
+import { toast } from 'sonner';
 import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { useTodaysIntention } from '@/hooks/useTodaysIntention';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -32,7 +33,7 @@ const PHASE_ENERGY: Record<CyclePhase, string> = {
 
 export default function Home() {
   const { futureSelfMessage, loading } = useHomeMessages();
-  const { intention, loading: intentionLoading } = useTodaysIntention();
+  const { intention, loading: intentionLoading, regenerate } = useTodaysIntention();
   const { status, isTrial, isExpired, trialDaysLeft } = useSubscription();
   const habitCompletions = useUserStore((s) => s.profile.habitCompletions);
   const preferredName = useUserStore((s) => s.profile.preferredName);
@@ -100,6 +101,37 @@ export default function Home() {
 
   const toggleIntentionDone = () => {
     updateProfile({ intentionCompletedDate: intentionDone ? undefined : todayStr });
+  };
+
+  // Long-press to regenerate intention
+  const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const triggeredRef = useRef(false);
+
+  const handleRegenerate = async () => {
+    if (intentionLoading) return;
+    triggeredRef.current = true;
+    try {
+      if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+        (navigator as any).vibrate?.(30);
+      }
+    } catch {/* noop */}
+    toast.message('Regenerating today\'s intention…');
+    await regenerate();
+  };
+
+  const startPress = () => {
+    triggeredRef.current = false;
+    if (pressTimer.current) clearTimeout(pressTimer.current);
+    pressTimer.current = setTimeout(() => {
+      handleRegenerate();
+    }, 600);
+  };
+
+  const cancelPress = () => {
+    if (pressTimer.current) {
+      clearTimeout(pressTimer.current);
+      pressTimer.current = null;
+    }
   };
 
   return (
