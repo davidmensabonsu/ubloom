@@ -71,7 +71,7 @@ export default function Home() {
   }, [habitCompletions]);
 
   return (
-    <div className="h-[100dvh] flex flex-col gradient-background overflow-hidden md:overflow-auto">
+    <div className="min-h-[100dvh] flex flex-col gradient-background">
       {/* Hero gradient header */}
       <div className="hero-gradient px-5 pt-10 pb-8 shrink-0">
         <div className="flex items-center justify-between">
@@ -130,8 +130,8 @@ export default function Home() {
         </motion.div>
       </div>
 
-      {/* Main content — fits viewport on mobile, scrollable on desktop */}
-      <div className="flex-1 min-h-0 px-5 pb-20 flex flex-col gap-2 md:gap-3">
+      {/* Main content */}
+      <div className="flex-1 px-5 pb-24 pt-3 flex flex-col gap-3">
         {/* Trial / Expired Banner */}
         {(isTrial || isExpired) && status !== 'loading' && (
           <TrialBanner status={isTrial ? 'trial' : 'expired'} trialDaysLeft={trialDaysLeft} />
@@ -142,7 +142,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="dark-accent-card p-3 md:p-4 flex-1 min-h-0 md:flex-none overflow-hidden"
+          className="dark-accent-card p-4"
         >
           <h2 className="text-sm md:text-base font-display font-semibold tracking-tight text-white mb-1 flex items-center gap-2">
             <Heart size={14} className="text-white/80 shrink-0" />
@@ -174,7 +174,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="glass-card rounded-2xl p-3 md:p-4 flex-1 min-h-0 md:flex-none overflow-hidden"
+          className="glass-card rounded-2xl p-4"
         >
           <div>
             <h2 className="text-sm md:text-base font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
@@ -184,7 +184,7 @@ export default function Home() {
             {loading ? (
               <Skeleton className="h-3 w-3/4" />
             ) : (
-              <p className="text-xs md:text-sm text-foreground/80 leading-relaxed line-clamp-2 md:line-clamp-none">
+              <p className="text-sm text-foreground/80 leading-relaxed">
                 {mindsetMessage}
               </p>
             )}
@@ -198,7 +198,7 @@ export default function Home() {
             {loading ? (
               <Skeleton className="h-3 w-3/4" />
             ) : (
-              <p className="text-xs md:text-sm font-medium text-foreground/90 leading-relaxed line-clamp-2 md:line-clamp-none">
+              <p className="text-sm font-medium text-foreground/90 leading-relaxed">
                 {focusToday}
               </p>
             )}
