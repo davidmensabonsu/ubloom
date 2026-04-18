@@ -113,7 +113,7 @@
  
     const getMessage = () => {
       if (type === 'all-complete') {
-        return { title: "You did it!", subtitle: "All habits completed today!" };
+        return { title: "You did it!", subtitle: "All to-dos done today!" };
       }
       if (streakDays === 3) {
         return { title: "3 Day Streak!", subtitle: "You're building momentum!" };

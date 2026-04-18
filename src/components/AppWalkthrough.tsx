@@ -18,9 +18,9 @@ const walkthroughSteps = [
     route: '/routine',
     icon: Calendar,
     title: 'Routine',
-    headline: 'Build the life you want, one habit at a time',
+    headline: 'Your daily to-do list',
     description:
-      "Track your morning, midday, and evening rituals. Set custom habits, see your weekly streaks, and celebrate small wins. Consistency isn't about perfection — it's about showing up.",
+      "Add the to-dos that matter to you, tick them off as you go, and watch your weekly streaks grow. Consistency isn't about perfection — it's about showing up.",
   },
   {
     route: '/ubi',

@@ -118,7 +118,7 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
           className="flex items-center gap-2 mb-2"
         >
           <Sparkles size={24} strokeWidth={2.5} className="text-primary" />
-          <h1 className="page-title">Set Your Core Daily Habits</h1>
+          <h1 className="page-title">Build your to-do list</h1>
         </motion.div>
         <motion.p
           initial={{ opacity: 0 }}
@@ -126,7 +126,7 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
           transition={{ delay: 0.1 }}
           className="text-muted-foreground"
         >
-          These habits will appear every day and reset each morning. Choose what matters most to you.
+          These are the to-dos you'll see each day. Add the ones that matter most to you.
         </motion.p>
       </div>
 
@@ -262,7 +262,7 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
                     disabled={!customHabit.trim()}
                     className={`flex-1 soft-button text-sm ${!customHabit.trim() ? 'opacity-50' : ''}`}
                   >
-                    Add Habit
+                    Add to-do
                   </button>
                 </div>
               </motion.div>
@@ -276,7 +276,7 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
                 className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl border-2 border-dashed border-muted-foreground/30 text-muted-foreground hover:border-primary hover:text-primary transition-colors"
               >
                 <Plus size={18} strokeWidth={2.5} />
-                <span className="text-sm">Add Custom Habit</span>
+                <span className="text-sm">Add a to-do</span>
               </motion.button>
             )}
           </AnimatePresence>
@@ -297,7 +297,7 @@ export default function RoutineSetup({ onComplete, onSkip }: RoutineSetupProps) 
             className="flex-1 soft-button flex items-center justify-center gap-2"
           >
             <Sparkles size={18} strokeWidth={2.5} />
-            <span>Save Habits</span>
+            <span>Save to-dos</span>
             {selectedHabits.size > 0 && (
               <span className="bg-background/30 px-2 py-0.5 rounded-full text-xs">
                 {selectedHabits.size}

@@ -67,16 +67,16 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="max-h-[85vh]">
         <DrawerHeader>
-          <DrawerTitle className="text-xl">Add Habit</DrawerTitle>
+          <DrawerTitle className="text-xl">Add to-do</DrawerTitle>
           <DrawerDescription className="text-muted-foreground text-sm">
-            Add a new habit to your daily routine
+            Add a new item to your to-do list
           </DrawerDescription>
         </DrawerHeader>
 
         <div className="px-4 pb-2 space-y-5 overflow-y-auto">
           {/* Title */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Task name</label>
+            <label className="text-sm font-medium">To-do name</label>
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -187,7 +187,7 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
             disabled={!title.trim()}
             className="w-full rounded-2xl py-6 text-base font-semibold"
           >
-            Add Habit
+            Add to-do
           </Button>
         </DrawerFooter>
       </DrawerContent>
