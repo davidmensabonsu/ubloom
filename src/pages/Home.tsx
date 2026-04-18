@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Sun, Moon, Cloud, Target, Check } from 'lucide-react';
+import { Heart, Sun, Moon, Cloud, Check } from 'lucide-react';
 import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { useTodaysIntention } from '@/hooks/useTodaysIntention';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -31,7 +31,7 @@ const PHASE_ENERGY: Record<CyclePhase, string> = {
 };
 
 export default function Home() {
-  const { futureSelfMessage, mindsetMessage, focusToday, loading } = useHomeMessages();
+  const { futureSelfMessage, loading } = useHomeMessages();
   const { intention, loading: intentionLoading } = useTodaysIntention();
   const { status, isTrial, isExpired, trialDaysLeft } = useSubscription();
   const habitCompletions = useUserStore((s) => s.profile.habitCompletions);
@@ -256,42 +256,6 @@ export default function Home() {
               </button>
             </>
           )}
-        </motion.div>
-
-        {/* Mindset + Focus combined card */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="glass-card rounded-2xl p-4"
-        >
-          <div>
-            <h2 className="text-sm md:text-base font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-              <Heart size={14} className="text-primary shrink-0" />
-              Mindset
-            </h2>
-            {loading ? (
-              <Skeleton className="h-3 w-3/4" />
-            ) : (
-              <p className="text-sm text-foreground/80 leading-relaxed">
-                {mindsetMessage}
-              </p>
-            )}
-          </div>
-
-          <div className="relative mt-3 pt-3 before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-border before:to-transparent">
-            <h2 className="text-sm md:text-base font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-              <Target size={14} className="text-primary shrink-0" />
-              Focus
-            </h2>
-            {loading ? (
-              <Skeleton className="h-3 w-3/4" />
-            ) : (
-              <p className="text-sm text-foreground/90 leading-relaxed font-normal">
-                {focusToday}
-              </p>
-            )}
-          </div>
         </motion.div>
 
         {/* Quick Actions */}
