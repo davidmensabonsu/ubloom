@@ -30,8 +30,6 @@ const PHASE_ENERGY: Record<CyclePhase, string> = {
   Luteal: 'turn inward, go steady',
 };
 
-const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-
 export default function Home() {
   const { futureSelfMessage, mindsetMessage, focusToday, loading } = useHomeMessages();
   const { intention, loading: intentionLoading } = useTodaysIntention();
