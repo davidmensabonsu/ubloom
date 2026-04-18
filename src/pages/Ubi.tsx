@@ -520,7 +520,7 @@ export default function Ubi() {
   );
 }
 
-function MessageBubble({ message, index, onRate }: { message: UbiMessage; index: number; onRate: (index: number, rating: 'up' | 'down') => void }) {
+function MessageBubble({ message, index, onRate, shimmer }: { message: UbiMessage; index: number; onRate: (index: number, rating: 'up' | 'down') => void; shimmer?: boolean }) {
   const isUser = message.role === 'user';
 
   return (
@@ -540,7 +540,7 @@ function MessageBubble({ message, index, onRate }: { message: UbiMessage; index:
           className={`rounded-2xl px-4 py-3 text-sm ${
             isUser
               ? 'bg-primary/15 text-foreground rounded-tr-sm'
-              : 'bg-white text-foreground border border-primary/20 rounded-tl-sm shadow-soft'
+              : `bg-white text-foreground border border-primary/20 rounded-tl-sm shadow-soft ${shimmer ? 'ubi-bubble-shimmer' : ''}`
           }`}
         >
           {isUser ? (
