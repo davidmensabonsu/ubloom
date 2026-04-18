@@ -41,14 +41,12 @@ function buildUserContext(profile: ReturnType<typeof useUserStore.getState>['pro
   const habitCompletionRate = totalHabits > 0 ? Math.round((completedHabits / totalHabits) * 100) : 0;
   const recentJournal = (profile.journalEntries || []).slice(0, 5).map((j) => j.content.slice(0, 200));
   const todayMood = (profile.moodHistory || []).find((m) => m.date.startsWith(today));
-  const recentMoodHistory = (profile.moodHistory || []).slice(0, 5).map((m) => ({
-    date: m.date,
-    moods: m.moods,
-  }));
 
   return {
     currentFeeling: profile.currentFeeling,
     struggles: profile.struggles,
+    reactionStyle: profile.reactionStyle,
+    interests: profile.interests,
     wantsMoreOf: profile.wantsMoreOf,
     dreamSelfFeels: profile.dreamSelfFeels,
     identityStatement: profile.identityStatement,
@@ -69,7 +67,6 @@ function buildUserContext(profile: ReturnType<typeof useUserStore.getState>['pro
     neverForget: profile.neverForget,
     ubiSummary: profile.ubiSummary,
     cycleData: profile.cycleData,
-    recentMoodHistory,
   };
 }
 
