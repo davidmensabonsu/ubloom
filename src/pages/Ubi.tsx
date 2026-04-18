@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Trash2, Square, Plus, History, ThumbsUp, ThumbsDown, ArrowLeft, X, Search } from 'lucide-react';
+import { Send, Trash2, Square, Plus, History, ThumbsUp, ThumbsDown, ArrowLeft, X, Search, MessageCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useUbiChat, UbiMessage, UbiConversation } from '@/hooks/useUbiChat';
 import { useUserStore } from '@/stores/userStore';
@@ -153,12 +153,12 @@ export default function Ubi() {
       <div className="sticky top-0 z-10 hero-gradient px-4 pt-6 pb-5">
         <div className="flex items-center justify-between max-w-lg mx-auto">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/40 shadow-sm bg-white/20">
-              <img src={ubiAvatar} alt="Ubi" className="w-full h-full object-cover" />
+            <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-white/40 shadow-sm bg-white/20">
+              <MessageCircle size={20} className="text-white" strokeWidth={2} />
             </div>
             <div>
-              <h1 className="text-base font-semibold text-white">Meet Ubi</h1>
-              <p className="text-xs text-white/85">Your personal mentor</p>
+              <h1 className="font-display text-base font-semibold text-white">Meet Ubi</h1>
+              <p className="text-xs text-white/85" style={{ fontFamily: 'DM Sans, sans-serif' }}>Your personal mentor</p>
             </div>
           </div>
           <div className="flex items-center gap-1">
