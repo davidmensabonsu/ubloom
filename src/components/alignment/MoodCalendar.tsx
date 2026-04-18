@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { MessageCircle } from 'lucide-react';
 import { format, subDays, startOfDay } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
 import type { MoodEntry, UserProfile } from '@/stores/userStore';
+import { useUserStore } from '@/stores/userStore';
 import { getLocalDateStr } from '@/lib/dateUtils';
 
 type Range = '7d' | '14d' | '30d';
