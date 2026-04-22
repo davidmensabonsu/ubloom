@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { CoreHabit, TimeOfDay, HabitFrequency } from '@/stores/userStore';
 import { taskIconOptions, getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
-import { Sun, Clock, Moon, Sparkles, Timer } from 'lucide-react';
+import { Sun, Clock, Moon, Sparkles, Timer, Search } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -31,6 +31,7 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
   const [specificDays, setSpecificDays] = useState<number[]>([]);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [scheduledTime, setScheduledTime] = useState('');
+  const [iconSearch, setIconSearch] = useState('');
 
   // Sync state when habit changes
   const [lastHabitId, setLastHabitId] = useState<string | null>(null);
@@ -43,6 +44,7 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
     setScheduledTime(habit.scheduledTime || '');
     setShowTimePicker(!!habit.scheduledTime);
     setLastHabitId(habit.id);
+    setIconSearch('');
   }
   if (!habit && lastHabitId) {
     setLastHabitId(null);
