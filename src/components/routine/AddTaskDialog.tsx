@@ -4,6 +4,7 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter, DrawerD
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sun, Clock, Moon, Timer } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { taskIconOptions, iconCategories, renderTaskIcon, getTaskIcon } from '@/lib/taskIcons';
 import FrequencyPicker from '@/components/routine/FrequencyPicker';
 import { getLocalDateStr } from '@/lib/dateUtils';
@@ -28,6 +29,7 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
   const [specificDays, setSpecificDays] = useState<number[]>([]);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [scheduledTime, setScheduledTime] = useState('');
+  const [iconSearch, setIconSearch] = useState('');
 
   const reset = () => {
     setTitle('');
@@ -37,6 +39,7 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
     setSpecificDays([]);
     setShowTimePicker(false);
     setScheduledTime('');
+    setIconSearch('');
   };
 
   const handleSubmit = () => {
