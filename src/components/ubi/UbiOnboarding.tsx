@@ -265,7 +265,7 @@ export default function UbiOnboarding({ onComplete }: Props) {
                 transition={{ duration: 1.4, repeat: Infinity, ease: 'linear' }}
                 className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full"
               />
-              <p className="text-white/80 text-sm" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+              <p className="text-white/80 text-sm" style={{ fontFamily: 'Jost, sans-serif' }}>
                 Getting to know you…
               </p>
             </motion.div>
@@ -293,7 +293,7 @@ export default function UbiOnboarding({ onComplete }: Props) {
                 <Button
                   onClick={handleBegin}
                   className="bg-white text-rose-600 hover:bg-white/95 rounded-full px-8 py-6 text-base font-medium shadow-lg"
-                  style={{ fontFamily: 'DM Sans, sans-serif' }}
+                  style={{ fontFamily: 'Jost, sans-serif' }}
                 >
                   Let's begin →
                 </Button>
@@ -323,7 +323,7 @@ export default function UbiOnboarding({ onComplete }: Props) {
             {/* Ubi message - left aligned */}
             <div className="flex justify-start">
               <div className="bg-white/20 backdrop-blur-sm rounded-2xl rounded-bl-md px-4 py-3 max-w-[85%] border border-white/20">
-                <p className="text-white text-[15px] leading-relaxed" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                <p className="text-white text-[15px] leading-relaxed" style={{ fontFamily: 'Jost, sans-serif' }}>
                   {step.message}
                 </p>
               </div>
@@ -338,7 +338,7 @@ export default function UbiOnboarding({ onComplete }: Props) {
                     whileTap={{ scale: 0.97 }}
                     onClick={() => handleChoice(opt)}
                     className="bg-white/95 hover:bg-white text-rose-700 rounded-full px-5 py-2.5 text-sm font-medium shadow-sm transition-colors"
-                    style={{ fontFamily: 'DM Sans, sans-serif' }}
+                    style={{ fontFamily: 'Jost, sans-serif' }}
                   >
                     {opt}
                   </motion.button>
@@ -361,7 +361,7 @@ export default function UbiOnboarding({ onComplete }: Props) {
                             ? 'bg-white text-rose-700 border-white shadow-md'
                             : 'bg-white/15 text-white border-white/40 hover:bg-white/25'
                         }`}
-                        style={{ fontFamily: 'DM Sans, sans-serif' }}
+                        style={{ fontFamily: 'Jost, sans-serif' }}
                       >
                         {opt}
                       </motion.button>
@@ -377,7 +377,7 @@ export default function UbiOnboarding({ onComplete }: Props) {
                     <Button
                       onClick={handleMultiSubmit}
                       className="bg-white text-rose-700 hover:bg-white/95 rounded-full px-6"
-                      style={{ fontFamily: 'DM Sans, sans-serif' }}
+                      style={{ fontFamily: 'Jost, sans-serif' }}
                     >
                       Continue →
                     </Button>
@@ -424,7 +424,7 @@ export default function UbiOnboarding({ onComplete }: Props) {
             }}
             placeholder={step.type === 'text' ? step.placeholder : 'Or tell me in your own words...'}
             className="flex-1 bg-transparent text-white placeholder:text-white/60 text-sm focus:outline-none"
-            style={{ fontFamily: 'DM Sans, sans-serif' }}
+            style={{ fontFamily: 'Jost, sans-serif' }}
           />
           <button
             onClick={handleTextSubmit}
@@ -454,7 +454,7 @@ function Header() {
         </h1>
         <p
           className="text-xs text-white/85 mt-1"
-          style={{ fontFamily: 'DM Sans, sans-serif' }}
+          style={{ fontFamily: 'Jost, sans-serif' }}
         >
           Your personal mentor
         </p>
