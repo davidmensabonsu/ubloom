@@ -166,6 +166,8 @@ import snowflakeImg from '@/assets/icons/snowflake.png';
 import treeImg from '@/assets/icons/tree.png';
 import mapImg from '@/assets/icons/map.png';
 import compassImg from '@/assets/icons/compass-icon.png';
+import wallClockImg from '@/assets/icons/wall-clock.png';
+import wristwatchImg from '@/assets/icons/wristwatch.png';
 
 export interface TaskIconOption {
   id: string;
@@ -262,6 +264,8 @@ export const taskIconOptions: TaskIconOption[] = [
   { id: 'tree', label: 'Tree', icon: Trees, imageSrc: treeImg },
   { id: 'map', label: 'Explore', icon: MapIcon, imageSrc: mapImg },
   { id: 'compass', label: 'Adventure', icon: Compass, imageSrc: compassImg },
+  { id: 'wall-clock', label: 'Clock', icon: ClockIcon, imageSrc: wallClockImg },
+  { id: 'watch', label: 'Watch', icon: ClockIcon, imageSrc: wristwatchImg },
 ];
 
 export interface IconCategory {
@@ -284,7 +288,7 @@ export const iconCategories: IconCategory[] = [
   },
   {
     label: 'Work & Learning',
-    iconIds: ['laptop', 'study', 'book', 'book-stack', 'notebook', 'pencil', 'calendar', 'clock', 'target', 'globe', 'puzzle', 'trophy', 'savings', 'lightbulb', 'thought-bubble'],
+    iconIds: ['laptop', 'study', 'book', 'book-stack', 'notebook', 'pencil', 'calendar', 'clock', 'wall-clock', 'watch', 'target', 'globe', 'puzzle', 'trophy', 'savings', 'lightbulb', 'thought-bubble'],
   },
   {
     label: 'Home & Daily',
@@ -355,6 +359,8 @@ const iconKeywords: Record<string, string[]> = {
   pencil: ['pencil', 'write', 'writing', 'draw', 'note', 'sketch', 'journal'],
   calendar: ['calendar', 'schedule', 'date', 'planner', 'agenda', 'plan', 'event', 'time'],
   clock: ['clock', 'time', 'alarm', 'timer', 'schedule', 'morning', 'wake', 'minutes', 'hour'],
+  'wall-clock': ['wall clock', 'clock', 'time', 'alarm', 'timer', 'schedule', 'morning', 'wake', 'minutes', 'hour', 'wall'],
+  watch: ['watch', 'wristwatch', 'time', 'clock', 'wrist', 'timer', 'minutes', 'hour', 'accessory'],
   target: ['target', 'goal', 'goals', 'aim', 'focus', 'objective', 'bullseye'],
   globe: ['globe', 'world', 'language', 'languages', 'travel', 'earth', 'international'],
   puzzle: ['puzzle', 'brain', 'game', 'logic', 'solve', 'problem'],
