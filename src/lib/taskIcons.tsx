@@ -50,6 +50,16 @@ import {
   Drama,
   Puzzle,
   Trophy,
+  MessageCircle,
+  Lightbulb,
+  Moon,
+  Stars,
+  Droplet,
+  FlaskConical,
+  Paintbrush,
+  SprayCan,
+  CupSoda,
+  Hourglass,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -108,6 +118,18 @@ import trophyImg from '@/assets/icons/trophy.png';
 import ubloomImg from '@/assets/ubloom-flower.png';
 import saladImg from '@/assets/icons/salad.png';
 import cookingPanImg from '@/assets/icons/cooking-pan.png';
+import speechBubbleImg from '@/assets/icons/speech-bubble.png';
+import lightbulbImg from '@/assets/icons/lightbulb.png';
+import moonImg from '@/assets/icons/moon.png';
+import moonStarsImg from '@/assets/icons/moon-stars.png';
+import waterBottleImg from '@/assets/icons/water-bottle.png';
+import waterDropImg from '@/assets/icons/water-drop.png';
+import serumImg from '@/assets/icons/serum.png';
+import nailPolishImg from '@/assets/icons/nail-polish.png';
+import perfumeImg from '@/assets/icons/perfume.png';
+import smoothieImg from '@/assets/icons/smoothie.png';
+import teapotImg from '@/assets/icons/teapot.png';
+import hourglassImg from '@/assets/icons/hourglass.png';
 
 export interface TaskIconOption {
   id: string;
