@@ -276,7 +276,7 @@ export const iconCategories: IconCategory[] = [
   },
   {
     label: 'Health & Fitness',
-    iconIds: ['dumbbell', 'running', 'bike', 'yoga', 'swimming', 'hiking', 'dance', 'glass-water', 'water-bottle', 'water-drop', 'smoothie', 'pill', 'dental', 'fruit'],
+    iconIds: ['dumbbell', 'running', 'bike', 'yoga', 'yoga-mat', 'swimming', 'hiking', 'dance', 'glass-water', 'water-bottle', 'water-drop', 'smoothie', 'pill', 'dental', 'fruit'],
   },
   {
     label: 'Wellness & Self-care',
@@ -284,19 +284,19 @@ export const iconCategories: IconCategory[] = [
   },
   {
     label: 'Work & Learning',
-    iconIds: ['laptop', 'study', 'book', 'pencil', 'globe', 'puzzle', 'trophy', 'savings', 'lightbulb', 'thought-bubble'],
+    iconIds: ['laptop', 'study', 'book', 'book-stack', 'notebook', 'pencil', 'calendar', 'clock', 'target', 'globe', 'puzzle', 'trophy', 'savings', 'lightbulb', 'thought-bubble'],
   },
   {
     label: 'Home & Daily',
-    iconIds: ['home', 'cooking', 'cooking-pan', 'utensils', 'salad', 'cleaning', 'shirt', 'cart', 'car', 'plant'],
+    iconIds: ['home', 'cooking', 'cooking-pan', 'utensils', 'salad', 'cleaning', 'vacuum', 'trash', 'shirt', 'cart', 'car', 'key', 'toolbox', 'plant'],
   },
   {
     label: 'Social & Entertainment',
-    iconIds: ['chat', 'phone', 'mail', 'music', 'headphones', 'movie', 'gaming', 'singing', 'camera'],
+    iconIds: ['chat', 'phone', 'mail', 'coffee-chat', 'party', 'music', 'headphones', 'podcast-mic', 'movie', 'tv', 'gaming', 'singing', 'camera', 'gift'],
   },
   {
     label: 'Outdoors & Adventure',
-    iconIds: ['sun', 'leaf', 'plane', 'camping', 'dog', 'baby', 'palette', 'gift'],
+    iconIds: ['sun', 'sunset', 'snowflake', 'leaf', 'tree', 'plane', 'map', 'compass', 'beach', 'camping', 'dog', 'baby', 'palette'],
   },
 ];
 
