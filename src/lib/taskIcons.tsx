@@ -194,6 +194,18 @@ export const taskIconOptions: TaskIconOption[] = [
   { id: 'trophy', label: 'Goals', icon: Trophy, imageSrc: trophyImg },
   { id: 'salad', label: 'Healthy Eating', icon: Apple, imageSrc: saladImg },
   { id: 'cooking-pan', label: 'Cooking Pan', icon: CookingPot, imageSrc: cookingPanImg },
+  { id: 'thought-bubble', label: 'Thoughts', icon: MessageCircle, imageSrc: speechBubbleImg },
+  { id: 'lightbulb', label: 'Ideas', icon: Lightbulb, imageSrc: lightbulbImg },
+  { id: 'moon', label: 'Moon', icon: Moon, imageSrc: moonImg },
+  { id: 'stars', label: 'Stars', icon: Stars, imageSrc: moonStarsImg },
+  { id: 'water-bottle', label: 'Water Bottle', icon: GlassWater, imageSrc: waterBottleImg },
+  { id: 'water-drop', label: 'Water Drop', icon: Droplet, imageSrc: waterDropImg },
+  { id: 'serum', label: 'Skincare', icon: FlaskConical, imageSrc: serumImg },
+  { id: 'nail-polish', label: 'Nail Polish', icon: Paintbrush, imageSrc: nailPolishImg },
+  { id: 'perfume', label: 'Perfume', icon: SprayCan, imageSrc: perfumeImg },
+  { id: 'smoothie', label: 'Smoothie', icon: CupSoda, imageSrc: smoothieImg },
+  { id: 'teapot', label: 'Tea', icon: Coffee, imageSrc: teapotImg },
+  { id: 'hourglass', label: 'Hourglass', icon: Hourglass, imageSrc: hourglassImg },
 ];
 
 export interface IconCategory {
