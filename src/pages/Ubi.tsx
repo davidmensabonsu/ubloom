@@ -580,7 +580,7 @@ function MessageBubble({ message, index, onRate, shimmer }: { message: UbiMessag
           ) : (
             <div
               className="prose prose-sm max-w-none [&>p]:mb-2 [&>p:last-child]:mb-0 [&>ul]:mb-2 [&>ol]:mb-2"
-              style={{ fontFamily: message.content.length > 160 ? 'Cormorant Garamond, serif' : 'DM Sans, sans-serif' }}
+              style={{ fontFamily: message.content.length > 160 ? 'Cormorant Garamond, serif' : 'Jost, sans-serif' }}
             >
               <ReactMarkdown>{message.content}</ReactMarkdown>
             </div>
