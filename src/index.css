@@ -63,7 +63,7 @@
 
     /* Typography */
     --font-display: 'Cormorant Garamond', Georgia, serif;
-    --font-body: 'DM Sans', system-ui, sans-serif;
+    --font-body: 'Jost', system-ui, sans-serif;
 
     /* Sidebar (keeping for shadcn compatibility) */
     --sidebar-background: 0 0% 98%;
