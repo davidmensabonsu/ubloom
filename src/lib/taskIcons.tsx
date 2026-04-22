@@ -220,15 +220,15 @@ export const iconCategories: IconCategory[] = [
   },
   {
     label: 'Health & Fitness',
-    iconIds: ['dumbbell', 'running', 'bike', 'yoga', 'swimming', 'hiking', 'dance', 'glass-water', 'pill', 'dental', 'fruit'],
+    iconIds: ['dumbbell', 'running', 'bike', 'yoga', 'swimming', 'hiking', 'dance', 'glass-water', 'water-bottle', 'water-drop', 'smoothie', 'pill', 'dental', 'fruit'],
   },
   {
     label: 'Wellness & Self-care',
-    iconIds: ['heart', 'brain', 'sparkles', 'bath', 'candle', 'bed', 'prayer', 'coffee'],
+    iconIds: ['heart', 'brain', 'sparkles', 'bath', 'candle', 'bed', 'prayer', 'coffee', 'teapot', 'serum', 'nail-polish', 'perfume', 'moon', 'stars', 'hourglass'],
   },
   {
     label: 'Work & Learning',
-    iconIds: ['laptop', 'study', 'book', 'pencil', 'globe', 'puzzle', 'trophy', 'savings'],
+    iconIds: ['laptop', 'study', 'book', 'pencil', 'globe', 'puzzle', 'trophy', 'savings', 'lightbulb', 'thought-bubble'],
   },
   {
     label: 'Home & Daily',
