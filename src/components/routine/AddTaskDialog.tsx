@@ -4,6 +4,7 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter, DrawerD
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sun, Clock, Moon, Timer } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { taskIconOptions, iconCategories, renderTaskIcon, getTaskIcon } from '@/lib/taskIcons';
 import FrequencyPicker from '@/components/routine/FrequencyPicker';
 import { getLocalDateStr } from '@/lib/dateUtils';
@@ -28,6 +29,7 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
   const [specificDays, setSpecificDays] = useState<number[]>([]);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [scheduledTime, setScheduledTime] = useState('');
+  const [iconSearch, setIconSearch] = useState('');
 
   const reset = () => {
     setTitle('');
@@ -37,6 +39,7 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
     setSpecificDays([]);
     setShowTimePicker(false);
     setScheduledTime('');
+    setIconSearch('');
   };
 
   const handleSubmit = () => {
@@ -89,7 +92,47 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
           {/* Icon */}
           <div className="space-y-3">
             <label className="text-sm font-medium">Icon</label>
-            {iconCategories.map((category) => (
+            <div className="relative">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" strokeWidth={2.5} />
+              <Input
+                value={iconSearch}
+                onChange={(e) => setIconSearch(e.target.value)}
+                placeholder="Search icons…"
+                className="rounded-xl pl-9"
+              />
+            </div>
+            {iconSearch.trim() ? (() => {
+              const q = iconSearch.trim().toLowerCase();
+              const matches = taskIconOptions.filter(
+                (o) => o.label.toLowerCase().includes(q) || o.id.toLowerCase().includes(q)
+              );
+              if (matches.length === 0) {
+                return (
+                  <p className="text-xs text-muted-foreground py-2">No icons match “{iconSearch}”.</p>
+                );
+              }
+              return (
+                <div className="space-y-1.5">
+                  <span className="text-xs text-muted-foreground font-medium">Results</span>
+                  <div className="flex flex-wrap gap-2">
+                    {matches.map((opt) => (
+                      <button
+                        key={opt.id}
+                        onClick={() => setIcon(opt.id)}
+                        className={`transition-all ${
+                          icon === opt.id
+                            ? 'ring-2 ring-primary ring-offset-2'
+                            : 'opacity-60 hover:opacity-100'
+                        }`}
+                        title={opt.label}
+                      >
+                        <div>{renderTaskIcon(opt, 20)}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })() : iconCategories.map((category) => (
               <div key={category.label} className="space-y-1.5">
                 <span className="text-xs text-muted-foreground font-medium">{category.label}</span>
                 <div className="flex flex-wrap gap-2">

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { CoreHabit, TimeOfDay, HabitFrequency } from '@/stores/userStore';
 import { taskIconOptions, getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
-import { Sun, Clock, Moon, Sparkles, Timer } from 'lucide-react';
+import { Sun, Clock, Moon, Sparkles, Timer, Search } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -31,6 +31,7 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
   const [specificDays, setSpecificDays] = useState<number[]>([]);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [scheduledTime, setScheduledTime] = useState('');
+  const [iconSearch, setIconSearch] = useState('');
 
   // Sync state when habit changes
   const [lastHabitId, setLastHabitId] = useState<string | null>(null);
@@ -43,6 +44,7 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
     setScheduledTime(habit.scheduledTime || '');
     setShowTimePicker(!!habit.scheduledTime);
     setLastHabitId(habit.id);
+    setIconSearch('');
   }
   if (!habit && lastHabitId) {
     setLastHabitId(null);
@@ -96,8 +98,28 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
           {/* Icon Picker */}
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-muted-foreground">Icon</label>
+            <div className="relative">
+              <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" strokeWidth={2.5} />
+              <input
+                type="text"
+                value={iconSearch}
+                onChange={(e) => setIconSearch(e.target.value)}
+                placeholder="Search icons…"
+                className="w-full p-2 pl-8 rounded-xl bg-muted border-0 focus:ring-2 focus:ring-primary/30 focus:outline-none text-xs"
+              />
+            </div>
             <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto">
-              {taskIconOptions.map((opt) => (
+              {(() => {
+                const q = iconSearch.trim().toLowerCase();
+                const list = q
+                  ? taskIconOptions.filter(
+                      (o) => o.label.toLowerCase().includes(q) || o.id.toLowerCase().includes(q)
+                    )
+                  : taskIconOptions;
+                if (list.length === 0) {
+                  return <p className="text-xs text-muted-foreground py-2">No icons match.</p>;
+                }
+                return list.map((opt) => (
                 <button
                   key={opt.id}
                   onClick={() => setIcon(opt.id)}
@@ -110,7 +132,8 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
                 >
                   {renderTaskIcon(opt, 18)}
                 </button>
-              ))}
+                ));
+              })()}
             </div>
           </div>
 
