@@ -60,6 +60,22 @@ import {
   SprayCan,
   CupSoda,
   Hourglass,
+  Calendar,
+  NotebookPen,
+  Target,
+  Clock as ClockIcon,
+  Trash2,
+  Key,
+  Wrench,
+  PartyPopper,
+  Tv,
+  Library,
+  Umbrella,
+  Sunset,
+  Snowflake,
+  Trees,
+  Map as MapIcon,
+  Compass,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -130,6 +146,26 @@ import perfumeImg from '@/assets/icons/perfume.png';
 import smoothieImg from '@/assets/icons/smoothie.png';
 import teapotImg from '@/assets/icons/teapot.png';
 import hourglassImg from '@/assets/icons/hourglass.png';
+import yogaMatImg from '@/assets/icons/yoga-mat.png';
+import calendarImg from '@/assets/icons/calendar.png';
+import notebookImg from '@/assets/icons/notebook.png';
+import targetImg from '@/assets/icons/target.png';
+import clockImg from '@/assets/icons/clock.png';
+import vacuumImg from '@/assets/icons/vacuum.png';
+import trashImg from '@/assets/icons/trash.png';
+import keyImg from '@/assets/icons/key.png';
+import toolboxImg from '@/assets/icons/toolbox.png';
+import coffeeChatImg from '@/assets/icons/coffee-chat.png';
+import partyImg from '@/assets/icons/party.png';
+import podcastMicImg from '@/assets/icons/podcast-mic.png';
+import tvImg from '@/assets/icons/tv.png';
+import bookStackImg from '@/assets/icons/book-stack.png';
+import beachImg from '@/assets/icons/beach.png';
+import sunsetImg from '@/assets/icons/sunset.png';
+import snowflakeImg from '@/assets/icons/snowflake.png';
+import treeImg from '@/assets/icons/tree.png';
+import mapImg from '@/assets/icons/map.png';
+import compassImg from '@/assets/icons/compass-icon.png';
 
 export interface TaskIconOption {
   id: string;
@@ -206,6 +242,26 @@ export const taskIconOptions: TaskIconOption[] = [
   { id: 'smoothie', label: 'Smoothie', icon: CupSoda, imageSrc: smoothieImg },
   { id: 'teapot', label: 'Tea', icon: Coffee, imageSrc: teapotImg },
   { id: 'hourglass', label: 'Hourglass', icon: Hourglass, imageSrc: hourglassImg },
+  { id: 'yoga-mat', label: 'Stretching', icon: Flower2, imageSrc: yogaMatImg },
+  { id: 'calendar', label: 'Calendar', icon: Calendar, imageSrc: calendarImg },
+  { id: 'notebook', label: 'Notebook', icon: NotebookPen, imageSrc: notebookImg },
+  { id: 'target', label: 'Target', icon: Target, imageSrc: targetImg },
+  { id: 'clock', label: 'Time', icon: ClockIcon, imageSrc: clockImg },
+  { id: 'vacuum', label: 'Vacuum', icon: Brush, imageSrc: vacuumImg },
+  { id: 'trash', label: 'Take Out Trash', icon: Trash2, imageSrc: trashImg },
+  { id: 'key', label: 'Keys', icon: Key, imageSrc: keyImg },
+  { id: 'toolbox', label: 'DIY', icon: Wrench, imageSrc: toolboxImg },
+  { id: 'coffee-chat', label: 'Coffee Chat', icon: Coffee, imageSrc: coffeeChatImg },
+  { id: 'party', label: 'Celebrate', icon: PartyPopper, imageSrc: partyImg },
+  { id: 'podcast-mic', label: 'Podcasting', icon: Mic, imageSrc: podcastMicImg },
+  { id: 'tv', label: 'TV Time', icon: Tv, imageSrc: tvImg },
+  { id: 'book-stack', label: 'Book Club', icon: Library, imageSrc: bookStackImg },
+  { id: 'beach', label: 'Beach', icon: Umbrella, imageSrc: beachImg },
+  { id: 'sunset', label: 'Sunset', icon: Sunset, imageSrc: sunsetImg },
+  { id: 'snowflake', label: 'Snow', icon: Snowflake, imageSrc: snowflakeImg },
+  { id: 'tree', label: 'Tree', icon: Trees, imageSrc: treeImg },
+  { id: 'map', label: 'Explore', icon: MapIcon, imageSrc: mapImg },
+  { id: 'compass', label: 'Adventure', icon: Compass, imageSrc: compassImg },
 ];
 
 export interface IconCategory {
@@ -220,7 +276,7 @@ export const iconCategories: IconCategory[] = [
   },
   {
     label: 'Health & Fitness',
-    iconIds: ['dumbbell', 'running', 'bike', 'yoga', 'swimming', 'hiking', 'dance', 'glass-water', 'water-bottle', 'water-drop', 'smoothie', 'pill', 'dental', 'fruit'],
+    iconIds: ['dumbbell', 'running', 'bike', 'yoga', 'yoga-mat', 'swimming', 'hiking', 'dance', 'glass-water', 'water-bottle', 'water-drop', 'smoothie', 'pill', 'dental', 'fruit'],
   },
   {
     label: 'Wellness & Self-care',
@@ -228,19 +284,19 @@ export const iconCategories: IconCategory[] = [
   },
   {
     label: 'Work & Learning',
-    iconIds: ['laptop', 'study', 'book', 'pencil', 'globe', 'puzzle', 'trophy', 'savings', 'lightbulb', 'thought-bubble'],
+    iconIds: ['laptop', 'study', 'book', 'book-stack', 'notebook', 'pencil', 'calendar', 'clock', 'target', 'globe', 'puzzle', 'trophy', 'savings', 'lightbulb', 'thought-bubble'],
   },
   {
     label: 'Home & Daily',
-    iconIds: ['home', 'cooking', 'cooking-pan', 'utensils', 'salad', 'cleaning', 'shirt', 'cart', 'car', 'plant'],
+    iconIds: ['home', 'cooking', 'cooking-pan', 'utensils', 'salad', 'cleaning', 'vacuum', 'trash', 'shirt', 'cart', 'car', 'key', 'toolbox', 'plant'],
   },
   {
     label: 'Social & Entertainment',
-    iconIds: ['chat', 'phone', 'mail', 'music', 'headphones', 'movie', 'gaming', 'singing', 'camera'],
+    iconIds: ['chat', 'phone', 'mail', 'coffee-chat', 'party', 'music', 'headphones', 'podcast-mic', 'movie', 'tv', 'gaming', 'singing', 'camera', 'gift'],
   },
   {
     label: 'Outdoors & Adventure',
-    iconIds: ['sun', 'leaf', 'plane', 'camping', 'dog', 'baby', 'palette', 'gift'],
+    iconIds: ['sun', 'sunset', 'snowflake', 'leaf', 'tree', 'plane', 'map', 'compass', 'beach', 'camping', 'dog', 'baby', 'palette'],
   },
 ];
 
