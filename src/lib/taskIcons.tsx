@@ -146,6 +146,26 @@ import perfumeImg from '@/assets/icons/perfume.png';
 import smoothieImg from '@/assets/icons/smoothie.png';
 import teapotImg from '@/assets/icons/teapot.png';
 import hourglassImg from '@/assets/icons/hourglass.png';
+import yogaMatImg from '@/assets/icons/yoga-mat.png';
+import calendarImg from '@/assets/icons/calendar.png';
+import notebookImg from '@/assets/icons/notebook.png';
+import targetImg from '@/assets/icons/target.png';
+import clockImg from '@/assets/icons/clock.png';
+import vacuumImg from '@/assets/icons/vacuum.png';
+import trashImg from '@/assets/icons/trash.png';
+import keyImg from '@/assets/icons/key.png';
+import toolboxImg from '@/assets/icons/toolbox.png';
+import coffeeChatImg from '@/assets/icons/coffee-chat.png';
+import partyImg from '@/assets/icons/party.png';
+import podcastMicImg from '@/assets/icons/podcast-mic.png';
+import tvImg from '@/assets/icons/tv.png';
+import bookStackImg from '@/assets/icons/book-stack.png';
+import beachImg from '@/assets/icons/beach.png';
+import sunsetImg from '@/assets/icons/sunset.png';
+import snowflakeImg from '@/assets/icons/snowflake.png';
+import treeImg from '@/assets/icons/tree.png';
+import mapImg from '@/assets/icons/map.png';
+import compassImg from '@/assets/icons/compass-icon.png';
 
 export interface TaskIconOption {
   id: string;
