@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sun, Clock, Moon, Timer } from 'lucide-react';
 import { Search } from 'lucide-react';
-import { taskIconOptions, iconCategories, renderTaskIcon, getTaskIcon } from '@/lib/taskIcons';
+import { taskIconOptions, iconCategories, renderTaskIcon, getTaskIcon, searchTaskIcons } from '@/lib/taskIcons';
 import FrequencyPicker from '@/components/routine/FrequencyPicker';
 import { getLocalDateStr } from '@/lib/dateUtils';
 
@@ -102,10 +102,7 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
               />
             </div>
             {iconSearch.trim() ? (() => {
-              const q = iconSearch.trim().toLowerCase();
-              const matches = taskIconOptions.filter(
-                (o) => o.label.toLowerCase().includes(q) || o.id.toLowerCase().includes(q)
-              );
+              const matches = searchTaskIcons(iconSearch);
               if (matches.length === 0) {
                 return (
                   <p className="text-xs text-muted-foreground py-2">No icons match “{iconSearch}”.</p>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { CoreHabit, TimeOfDay, HabitFrequency } from '@/stores/userStore';
-import { taskIconOptions, getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
+import { taskIconOptions, getTaskIcon, renderTaskIcon, searchTaskIcons } from '@/lib/taskIcons';
 import { Sun, Clock, Moon, Sparkles, Timer, Search } from 'lucide-react';
 import {
   Dialog,
@@ -110,12 +110,7 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
             </div>
             <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto">
               {(() => {
-                const q = iconSearch.trim().toLowerCase();
-                const list = q
-                  ? taskIconOptions.filter(
-                      (o) => o.label.toLowerCase().includes(q) || o.id.toLowerCase().includes(q)
-                    )
-                  : taskIconOptions;
+                const list = searchTaskIcons(iconSearch);
                 if (list.length === 0) {
                   return <p className="text-xs text-muted-foreground py-2">No icons match.</p>;
                 }
