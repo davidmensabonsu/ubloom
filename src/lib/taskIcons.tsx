@@ -50,6 +50,16 @@ import {
   Drama,
   Puzzle,
   Trophy,
+  MessageCircle,
+  Lightbulb,
+  Moon,
+  Stars,
+  Droplet,
+  FlaskConical,
+  Paintbrush,
+  SprayCan,
+  CupSoda,
+  Hourglass,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -108,6 +118,18 @@ import trophyImg from '@/assets/icons/trophy.png';
 import ubloomImg from '@/assets/ubloom-flower.png';
 import saladImg from '@/assets/icons/salad.png';
 import cookingPanImg from '@/assets/icons/cooking-pan.png';
+import speechBubbleImg from '@/assets/icons/speech-bubble.png';
+import lightbulbImg from '@/assets/icons/lightbulb.png';
+import moonImg from '@/assets/icons/moon.png';
+import moonStarsImg from '@/assets/icons/moon-stars.png';
+import waterBottleImg from '@/assets/icons/water-bottle.png';
+import waterDropImg from '@/assets/icons/water-drop.png';
+import serumImg from '@/assets/icons/serum.png';
+import nailPolishImg from '@/assets/icons/nail-polish.png';
+import perfumeImg from '@/assets/icons/perfume.png';
+import smoothieImg from '@/assets/icons/smoothie.png';
+import teapotImg from '@/assets/icons/teapot.png';
+import hourglassImg from '@/assets/icons/hourglass.png';
 
 export interface TaskIconOption {
   id: string;
@@ -172,6 +194,18 @@ export const taskIconOptions: TaskIconOption[] = [
   { id: 'trophy', label: 'Goals', icon: Trophy, imageSrc: trophyImg },
   { id: 'salad', label: 'Healthy Eating', icon: Apple, imageSrc: saladImg },
   { id: 'cooking-pan', label: 'Cooking Pan', icon: CookingPot, imageSrc: cookingPanImg },
+  { id: 'thought-bubble', label: 'Thoughts', icon: MessageCircle, imageSrc: speechBubbleImg },
+  { id: 'lightbulb', label: 'Ideas', icon: Lightbulb, imageSrc: lightbulbImg },
+  { id: 'moon', label: 'Moon', icon: Moon, imageSrc: moonImg },
+  { id: 'stars', label: 'Stars', icon: Stars, imageSrc: moonStarsImg },
+  { id: 'water-bottle', label: 'Water Bottle', icon: GlassWater, imageSrc: waterBottleImg },
+  { id: 'water-drop', label: 'Water Drop', icon: Droplet, imageSrc: waterDropImg },
+  { id: 'serum', label: 'Skincare', icon: FlaskConical, imageSrc: serumImg },
+  { id: 'nail-polish', label: 'Nail Polish', icon: Paintbrush, imageSrc: nailPolishImg },
+  { id: 'perfume', label: 'Perfume', icon: SprayCan, imageSrc: perfumeImg },
+  { id: 'smoothie', label: 'Smoothie', icon: CupSoda, imageSrc: smoothieImg },
+  { id: 'teapot', label: 'Tea', icon: Coffee, imageSrc: teapotImg },
+  { id: 'hourglass', label: 'Hourglass', icon: Hourglass, imageSrc: hourglassImg },
 ];
 
 export interface IconCategory {
@@ -186,15 +220,15 @@ export const iconCategories: IconCategory[] = [
   },
   {
     label: 'Health & Fitness',
-    iconIds: ['dumbbell', 'running', 'bike', 'yoga', 'swimming', 'hiking', 'dance', 'glass-water', 'pill', 'dental', 'fruit'],
+    iconIds: ['dumbbell', 'running', 'bike', 'yoga', 'swimming', 'hiking', 'dance', 'glass-water', 'water-bottle', 'water-drop', 'smoothie', 'pill', 'dental', 'fruit'],
   },
   {
     label: 'Wellness & Self-care',
-    iconIds: ['heart', 'brain', 'sparkles', 'bath', 'candle', 'bed', 'prayer', 'coffee'],
+    iconIds: ['heart', 'brain', 'sparkles', 'bath', 'candle', 'bed', 'prayer', 'coffee', 'teapot', 'serum', 'nail-polish', 'perfume', 'moon', 'stars', 'hourglass'],
   },
   {
     label: 'Work & Learning',
-    iconIds: ['laptop', 'study', 'book', 'pencil', 'globe', 'puzzle', 'trophy', 'savings'],
+    iconIds: ['laptop', 'study', 'book', 'pencil', 'globe', 'puzzle', 'trophy', 'savings', 'lightbulb', 'thought-bubble'],
   },
   {
     label: 'Home & Daily',
