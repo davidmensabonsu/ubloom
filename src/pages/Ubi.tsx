@@ -213,11 +213,11 @@ export default function Ubi() {
             </div>
             <div>
               <h1 className="font-display text-2xl font-semibold text-white leading-tight">Ubi</h1>
-              <p className="text-xs text-white/80" style={{ fontFamily: 'DM Sans, sans-serif' }}>Your personal mentor</p>
+              <p className="text-xs text-white/80" style={{ fontFamily: 'Jost, sans-serif' }}>Your personal mentor</p>
               {conversationActive && contextPill && (
                 <span
                   className="inline-block mt-1.5 bg-white/20 text-white rounded-full px-3 py-1 text-[11px] backdrop-blur-sm"
-                  style={{ fontFamily: 'DM Sans, sans-serif' }}
+                  style={{ fontFamily: 'Jost, sans-serif' }}
                 >
                   {contextPill}
                 </span>
@@ -384,7 +384,7 @@ export default function Ubi() {
                         key={`${text}-${i}`}
                         onClick={() => handlePreset(text)}
                         className="px-3 py-1.5 rounded-full bg-white border border-primary/30 hover:bg-primary/5 transition-colors whitespace-nowrap shrink-0 text-xs text-foreground/90 shadow-sm"
-                        style={{ fontFamily: 'DM Sans, sans-serif' }}
+                        style={{ fontFamily: 'Jost, sans-serif' }}
                       >
                         {text}
                       </button>
@@ -409,7 +409,7 @@ export default function Ubi() {
                   <p className="font-display italic text-foreground/85 text-lg leading-snug">
                     What's on your mind today?
                   </p>
-                  <p className="text-xs text-muted-foreground mt-2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                  <p className="text-xs text-muted-foreground mt-2" style={{ fontFamily: 'Jost, sans-serif' }}>
                     Your conversations are private and just for you
                   </p>
                 </motion.div>
@@ -472,7 +472,7 @@ export default function Ubi() {
                   onClick={() => handlePreset(prompt.text)}
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-white border border-primary/20 hover:border-primary/40 hover:bg-white transition-all text-left shadow-soft"
                 >
-                  <span className="text-sm text-foreground flex-1" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                  <span className="text-sm text-foreground flex-1" style={{ fontFamily: 'Jost, sans-serif' }}>
                     {prompt.text}
                   </span>
                 </motion.button>
@@ -512,7 +512,7 @@ export default function Ubi() {
               rows={1}
               disabled={!canUse('ubi_chat')}
               className="flex-1 resize-none rounded-full border border-primary/30 bg-white/80 px-5 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 max-h-[120px] disabled:opacity-50"
-              style={{ fontFamily: 'DM Sans, sans-serif' }}
+              style={{ fontFamily: 'Jost, sans-serif' }}
             />
             {isStreaming ? (
               <Button
@@ -541,7 +541,7 @@ export default function Ubi() {
           {!conversationActive && (
             <div className="flex items-center justify-center gap-1 mt-2 text-muted-foreground/70">
               <Lock size={10} />
-              <span className="text-[10px]" style={{ fontFamily: 'DM Sans, sans-serif' }}>Private &amp; secure</span>
+              <span className="text-[10px]" style={{ fontFamily: 'Jost, sans-serif' }}>Private &amp; secure</span>
             </div>
           )}
         </div>
@@ -576,7 +576,7 @@ function MessageBubble({ message, index, onRate, shimmer }: { message: UbiMessag
           }`}
         >
           {isUser ? (
-            <p className="whitespace-pre-wrap" style={{ fontFamily: 'DM Sans, sans-serif' }}>{message.content}</p>
+            <p className="whitespace-pre-wrap" style={{ fontFamily: 'Jost, sans-serif' }}>{message.content}</p>
           ) : (
             <div
               className="prose prose-sm max-w-none [&>p]:mb-2 [&>p:last-child]:mb-0 [&>ul]:mb-2 [&>ol]:mb-2"
