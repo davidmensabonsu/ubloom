@@ -1,11 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
-import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
-import { Check, Sparkles, ImagePlus, X, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const dreamCategories = [
   {
@@ -84,13 +81,9 @@ const dreamCategories = [
 
 export default function DreamLife() {
   const navigate = useNavigate();
-  const { updateProfile, profile } = useUserStore();
-  const { user } = useAuth();
+  const { updateProfile } = useUserStore();
   const [currentCategory, setCurrentCategory] = useState(0);
   const [selections, setSelections] = useState<Record<string, string[]>>({});
-  const [categoryImages, setCategoryImages] = useState<Record<string, string>>(profile.dreamImages || {});
-  const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const category = dreamCategories[currentCategory];
   const progress = ((currentCategory + 1) / dreamCategories.length) * 100;
@@ -116,65 +109,6 @@ export default function DreamLife() {
     return (selections[category.id] || []).includes(statement);
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
-
-    setUploading(true);
-    try {
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${user.id}/${category.id}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('vision-images')
-        .upload(filePath, file, { upsert: true });
-
-      if (uploadError) throw uploadError;
-
-      const { data: signedData } = await supabase.storage
-        .from('vision-images')
-        .createSignedUrl(filePath, 31536000); // 1 year
-
-      const signedUrl = signedData?.signedUrl;
-      if (!signedUrl) throw new Error('Failed to get signed URL');
-
-      setCategoryImages({
-        ...categoryImages,
-        [category.id]: signedUrl,
-      });
-    } catch (err) {
-      console.error('Image upload failed:', err);
-      toast.error('Failed to upload image');
-    } finally {
-      setUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }
-  };
-
-  const removeImage = async () => {
-    if (!user) return;
-    const currentUrl = categoryImages[category.id];
-    
-    // Try to delete from storage if it's a storage URL
-    if (currentUrl && currentUrl.includes('vision-images')) {
-      try {
-        const pathMatch = currentUrl.split('vision-images/')[1];
-        if (pathMatch) {
-          await supabase.storage.from('vision-images').remove([pathMatch]);
-        }
-      } catch (err) {
-        console.error('Failed to delete image from storage:', err);
-      }
-    }
-
-    const newImages = { ...categoryImages };
-    delete newImages[category.id];
-    setCategoryImages(newImages);
-  };
-
-
   const handleNext = () => {
     if (currentCategory < dreamCategories.length - 1) {
       setCurrentCategory(currentCategory + 1);
@@ -188,14 +122,16 @@ export default function DreamLife() {
           lifestyle: selections.lifestyle || [],
           love: selections.love || [],
         },
-        dreamImages: categoryImages,
       });
       navigate('/choose-aesthetic');
     }
   };
 
-  const hasSelections = (selections[category.id] || []).length > 0;
-  const currentImage = categoryImages[category.id];
+  const handleBack = () => {
+    if (currentCategory > 0) {
+      setCurrentCategory(currentCategory - 1);
+    }
+  };
 
   return (
     <div className="min-h-screen gradient-background px-5 py-8 flex flex-col">
@@ -209,13 +145,16 @@ export default function DreamLife() {
         />
       </div>
 
-      {/* Header */}
-      <div className="mb-6">
-        <p className="subtle-text mb-1">Design your dream life</p>
-        <h1 className="text-2xl font-display font-medium text-foreground">
-          What kind of life are you building?
-        </h1>
-      </div>
+      {/* Back button */}
+      {currentCategory > 0 && (
+        <button
+          onClick={handleBack}
+          className="flex items-center gap-1 text-muted-foreground mb-6 -ml-1"
+        >
+          <ChevronLeft size={20} />
+          <span className="text-sm">Back</span>
+        </button>
+      )}
 
       <AnimatePresence mode="wait">
         <motion.div
@@ -226,100 +165,32 @@ export default function DreamLife() {
           transition={{ duration: 0.3 }}
           className="flex-1 flex flex-col"
         >
-          {/* Category header */}
-          <div className="glass-card rounded-2xl p-4 mb-4 flex items-center gap-3">
-            
-            <div>
-              <h2 className="font-display text-lg font-medium text-foreground">
-                {category.title}
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                Choose up to 2 that resonate most
-              </p>
-            </div>
-          </div>
-
-          {/* Image upload section */}
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleImageUpload}
-            accept="image/*"
-            className="hidden"
-          />
-          
-          {currentImage ? (
-            <div className="relative mb-4 rounded-2xl overflow-hidden">
-              <img
-                src={currentImage}
-                alt={`${category.title} vision`}
-                className="w-full h-32 object-cover"
-              />
-              <button
-                onClick={removeImage}
-                className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center text-foreground hover:bg-background transition-colors"
-              >
-                <X size={16} />
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading}
-              className="w-full mb-4 py-4 rounded-2xl border-2 border-dashed border-primary/30 bg-glow/30 flex items-center justify-center gap-2 text-primary/70 hover:border-primary/50 hover:text-primary transition-colors disabled:opacity-50"
-            >
-              {uploading ? <Loader2 size={20} className="animate-spin" /> : <ImagePlus size={20} />}
-              <span className="text-sm font-medium">{uploading ? 'Uploading...' : 'Add vision image'}</span>
-            </button>
-          )}
+          {/* Question */}
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-foreground mb-2">
+            {category.title}
+          </h1>
+          <p className="subtle-text mb-8 text-sm">Choose up to 2 that resonate most</p>
 
           {/* Statements */}
           <div className="space-y-3 flex-1">
-            {category.statements.map((statement, index) => (
+            {category.statements.map((statement) => (
               <motion.button
                 key={statement}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
                 onClick={() => handleSelect(statement)}
                 className={`option-card w-full text-left flex items-center gap-3 ${
                   isSelected(statement) ? 'selected' : ''
                 }`}
                 whileTap={{ scale: 0.98 }}
               >
-                <div
-                  className={`check-circle flex-shrink-0 ${
-                    isSelected(statement) ? 'checked' : ''
-                  }`}
-                >
-                  {isSelected(statement) && <Check size={14} />}
-                </div>
-                <span className="text-sm font-medium">{statement}</span>
+                <span className="font-medium">{statement}</span>
               </motion.button>
-            ))}
-          </div>
-
-          {/* Category indicators */}
-          <div className="flex justify-center gap-2 my-6">
-            {dreamCategories.map((cat, index) => (
-              <button
-                key={cat.id}
-                onClick={() => setCurrentCategory(index)}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  index === currentCategory
-                    ? 'bg-primary w-6'
-                    : index < currentCategory
-                    ? 'bg-primary/60'
-                    : 'bg-muted'
-                }`}
-              />
             ))}
           </div>
 
           {/* Continue button */}
           <motion.button
             onClick={handleNext}
-            className="soft-button w-full flex items-center justify-center gap-2"
+            className="soft-button w-full mt-6 flex items-center justify-center gap-2"
             whileTap={{ scale: 0.98 }}
           >
             <span>
@@ -327,7 +198,7 @@ export default function DreamLife() {
                 ? 'Choose my aesthetic'
                 : 'Next'}
             </span>
-            <Sparkles size={18} />
+            <ChevronRight size={18} />
           </motion.button>
         </motion.div>
       </AnimatePresence>
