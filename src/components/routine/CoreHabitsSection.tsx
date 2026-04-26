@@ -242,7 +242,7 @@ export default function CoreHabitsSection() {
                   isCompleted={isHabitCompletedToday(habit.id)}
                   onToggle={() => {
                     toggleHabitCompletion(habit.id);
-                    track('habit_completed', { habitId: habit.id, timeOfDay: habit.timeOfDay });
+                    track('habit_completed', { habitId: habit.id, timeOfDay: habit.timeOfDay, source: 'routine_core_habits' });
                   }}
                   onEdit={() => setHabitToEdit(habit)}
                   onDelete={() => setHabitToDelete({ id: habit.id, title: habit.title })}
