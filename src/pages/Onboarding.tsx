@@ -167,12 +167,12 @@ export default function Onboarding() {
       setAnswers({ ...answers, [step.id]: textValue });
     }
 
-    track('onboarding_step', { step: step.id, stepIndex: currentStep });
+    track('onboarding_step', { step: step.id, stepIndex: currentStep, source: 'onboarding_flow' });
 
     if (currentStep < onboardingSteps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      track('onboarding_complete', { aesthetic: answers.identity, struggles: answers.struggles });
+      track('onboarding_complete', { aesthetic: answers.identity, struggles: answers.struggles, source: 'onboarding_flow' });
       updateProfile({
         currentFeeling: answers.feeling as string,
         struggles: answers.struggles as string[],

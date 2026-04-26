@@ -1,4 +1,3 @@
-import { useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface AnalyticsEvent {
@@ -40,8 +39,86 @@ function scheduleFlush() {
   }, BATCH_INTERVAL);
 }
 
-export function track(eventName: string, eventData: Record<string, any> = {}) {
-  eventQueue.push({ event_name: eventName, event_data: eventData });
+/* ----------------------------------------------------------------------
+ * Event schema / validator
+ *
+ * Every track() call MUST satisfy three rules:
+ *   1. `eventName` is non-empty snake_case (lowercase letters, digits, _).
+ *   2. `page` is present in eventData. If omitted, we auto-inject the
+ *      current window.location.pathname.
+ *   3. `source` is present in eventData (a short identifier of where the
+ *      event was triggered, e.g. "home_future_self_letter", "trial_banner",
+ *      "page_view_tracker"). Cannot be auto-derived.
+ *
+ * In development the validator THROWS on any violation so misuse surfaces
+ * immediately. In production it console.warns and drops the event so
+ * malformed data never pollutes analytics.
+ * -------------------------------------------------------------------- */
+
+const EVENT_NAME_RE = /^[a-z][a-z0-9_]*$/;
+const isDev =
+  typeof import.meta !== 'undefined' &&
+  (import.meta as any).env?.DEV === true;
+
+function currentPage(): string | undefined {
+  if (typeof window === 'undefined') return undefined;
+  return window.location.pathname;
+}
+
+function fail(message: string, payload: unknown) {
+  const full = `[analytics] ${message}`;
+  if (isDev) {
+    // Loud failure in dev so the bad call site is fixed.
+    console.error(full, payload);
+    throw new Error(full);
+  }
+  console.warn(full, payload);
+}
+
+function validateEvent(
+  eventName: string,
+  eventData: Record<string, any>,
+): { valid: boolean; data: Record<string, any> } {
+  // 1. Event name shape
+  if (typeof eventName !== 'string' || !EVENT_NAME_RE.test(eventName)) {
+    fail(
+      `Invalid event name "${eventName}". Use snake_case: lowercase letters, digits and underscores, starting with a letter.`,
+      { eventName, eventData },
+    );
+    return { valid: false, data: eventData };
+  }
+
+  // 2. page — auto-inject if missing
+  const page = eventData.page ?? currentPage();
+  if (!page || typeof page !== 'string') {
+    fail(
+      `Event "${eventName}" is missing required property "page" and none could be derived.`,
+      { eventName, eventData },
+    );
+    return { valid: false, data: eventData };
+  }
+
+  // 3. source — must be supplied by the caller
+  const source = eventData.source;
+  if (!source || typeof source !== 'string') {
+    fail(
+      `Event "${eventName}" is missing required property "source" (a short identifier of where the event was triggered).`,
+      { eventName, eventData },
+    );
+    return { valid: false, data: eventData };
+  }
+
+  return { valid: true, data: { ...eventData, page, source } };
+}
+
+export function track(
+  eventName: string,
+  eventData: Record<string, any> = {},
+) {
+  const { valid, data } = validateEvent(eventName, eventData);
+  if (!valid) return; // dropped (or already threw in dev)
+
+  eventQueue.push({ event_name: eventName, event_data: data });
   if (eventQueue.length >= MAX_BATCH) {
     flushEvents();
   } else {

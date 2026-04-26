@@ -66,7 +66,7 @@ export default function JournalModes() {
   const handleSaveWrite = () => {
     if (!text.trim()) return;
     addJournalEntry({ content: text, date: new Date().toISOString() });
-    track('journal_created', { mode: 'write', wordCount: text.trim().split(/\s+/).length });
+    track('journal_created', { mode: 'write', wordCount: text.trim().split(/\s+/).length, source: 'journal_modes' });
     setText('');
     setSavedFlash(true);
     setTimeout(() => setSavedFlash(false), 2400);
@@ -152,7 +152,7 @@ export default function JournalModes() {
         audioPath: path,
         audioDurationSec: Math.round(duration),
       });
-      track('journal_created', { mode: 'voice', durationSec: Math.round(duration) });
+      track('journal_created', { mode: 'voice', durationSec: Math.round(duration), source: 'journal_modes' });
       resetVoice();
       setSavedFlash(true);
       setTimeout(() => setSavedFlash(false), 2400);

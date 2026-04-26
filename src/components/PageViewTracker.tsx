@@ -8,14 +8,14 @@ export default function PageViewTracker() {
 
   useEffect(() => {
     if (location.pathname !== prevPath.current) {
-      track('page_view', { page: location.pathname });
+      track('page_view', { page: location.pathname, source: 'router' });
       prevPath.current = location.pathname;
     }
   }, [location.pathname]);
 
   // Track session start once
   useEffect(() => {
-    track('session_start', { timestamp: Date.now() });
+    track('session_start', { timestamp: Date.now(), source: 'app_init' });
   }, []);
 
   return null;

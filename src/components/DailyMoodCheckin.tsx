@@ -55,7 +55,7 @@ export default function DailyMoodCheckin() {
       lastMoodCheckinDate: getLocalDateStr(),
       dailyCheckinState: state.value,
     });
-    track('mood_checkin', { mood: state.value, date: getLocalDateStr() });
+    track('mood_checkin', { mood: state.value, date: getLocalDateStr(), source: 'daily_checkin' });
 
     setTimeout(() => {
       navigate('/home', { replace: true });
