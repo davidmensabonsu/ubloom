@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bookmark, Sparkles, Lock } from 'lucide-react';
+import { Bookmark, Sparkles } from 'lucide-react';
 import { wonderResources, type WonderResource } from '@/lib/wonderResources';
 import { useUserStore } from '@/stores/userStore';
 import { useSubscription } from '@/hooks/useSubscription';
-import { useNavigate } from 'react-router-dom';
 import ResourceCard from './ResourceCard';
 import ResourceDetailSheet from './ResourceDetailSheet';
+import UnlockLibraryCard from './UnlockLibraryCard';
 
 const hygieneTopics = [
   { key: 'all', label: 'All' },
@@ -38,18 +38,21 @@ export default function HygieneSection() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const { profile, saveResource, unsaveResource } = useUserStore();
   const { isActive } = useSubscription();
-  const navigate = useNavigate();
 
   const allHygiene = wonderResources.filter((r) => r.category === 'hygiene');
   const savedIds = profile.savedResources || [];
 
-  const filtered = activeTopic === 'saved'
+  const allFiltered = activeTopic === 'saved'
     ? allHygiene.filter((r) => savedIds.includes(r.id))
     : activeTopic === 'all'
       ? allHygiene
       : allHygiene.filter((r) =>
           r.tags.some((t) => topicTagMap[activeTopic]?.includes(t))
         );
+
+  const isGated = !isActive && activeTopic !== 'saved';
+  const filtered = isGated ? allFiltered.slice(0, FREE_RESOURCE_LIMIT) : allFiltered;
+  const hiddenCount = isGated ? Math.max(allFiltered.length - FREE_RESOURCE_LIMIT, 0) : 0;
 
   const handleSelect = (r: WonderResource) => {
     setSelectedResource(r);
@@ -111,7 +114,6 @@ export default function HygieneSection() {
             className="grid grid-cols-2 gap-3"
           >
             {filtered.map((resource, i) => {
-              const isLocked = !isActive && activeTopic !== 'saved' && i >= FREE_RESOURCE_LIMIT;
               return (
                 <motion.div
                   key={resource.id}
@@ -120,33 +122,20 @@ export default function HygieneSection() {
                   transition={{ delay: Math.min(i * 0.03, 0.2) }}
                   className="relative"
                 >
-                  <div className={isLocked ? 'pointer-events-none select-none' : ''} style={isLocked ? { filter: 'blur(4px)', opacity: 0.5 } : undefined}>
-                    <ResourceCard
-                      resource={resource}
-                      onTap={() => !isLocked && handleSelect(resource)}
-                      compact
+                  <ResourceCard
+                    resource={resource}
+                    onTap={() => handleSelect(resource)}
+                    compact
+                  />
+                  <button
+                    onClick={(e) => handleToggleSave(e, resource.id)}
+                    className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-background z-10"
+                  >
+                    <Bookmark
+                      size={14}
+                      className={savedIds.includes(resource.id) ? 'text-primary fill-primary' : 'text-muted-foreground'}
                     />
-                  </div>
-                  {isLocked && (
-                    <button
-                      onClick={() => navigate('/upgrade')}
-                      className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-background/30 backdrop-blur-[1px] rounded-xl z-10"
-                    >
-                      <Lock size={16} className="text-primary" />
-                      <span className="text-[10px] text-primary font-medium">Upgrade</span>
-                    </button>
-                  )}
-                  {!isLocked && (
-                    <button
-                      onClick={(e) => handleToggleSave(e, resource.id)}
-                      className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-background z-10"
-                    >
-                      <Bookmark
-                        size={14}
-                        className={savedIds.includes(resource.id) ? 'text-primary fill-primary' : 'text-muted-foreground'}
-                      />
-                    </button>
-                  )}
+                  </button>
                 </motion.div>
               );
             })}
@@ -154,7 +143,11 @@ export default function HygieneSection() {
         )}
       </AnimatePresence>
 
-      {activeTopic !== 'saved' && filtered.length === 0 && (
+      {isGated && hiddenCount > 0 && (
+        <UnlockLibraryCard category="hygiene" hiddenCount={hiddenCount} />
+      )}
+
+      {activeTopic !== 'saved' && allFiltered.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">No tips in this category yet.</p>
       )}
 
