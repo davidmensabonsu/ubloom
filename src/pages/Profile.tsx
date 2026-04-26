@@ -61,6 +61,7 @@ export default function Profile() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isOpeningPortal, setIsOpeningPortal] = useState(false);
 
   // Load profile data from Supabase
   useEffect(() => {
@@ -212,6 +213,46 @@ export default function Profile() {
     await supabase.from('user_data').delete().eq('user_id', user.id);
     toast({ title: 'Data reset complete' });
     navigate('/');
+  };
+
+  const handleManageSubscription = async () => {
+    if (isOpeningPortal) return;
+
+    setIsOpeningPortal(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('customer-portal');
+
+      if (data?.url) {
+        window.open(data.url, '_blank', 'noopener,noreferrer');
+        return;
+      }
+
+      if (data?.error === 'no_customer') {
+        toast({
+          title: 'No billing record yet',
+          description: data.message ?? 'Once your subscription is active, you’ll be able to manage billing here.',
+        });
+        return;
+      }
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: 'Portal unavailable',
+        description: 'We couldn’t open billing right now. Please try again in a moment.',
+        variant: 'destructive',
+      });
+    } catch (error) {
+      toast({
+        title: 'Portal unavailable',
+        description: error instanceof Error ? error.message : 'Please try again in a moment.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsOpeningPortal(false);
+    }
   };
 
   const initials = (displayName || user?.email || '?')

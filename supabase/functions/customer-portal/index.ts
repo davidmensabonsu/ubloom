@@ -35,8 +35,12 @@ serve(async (req) => {
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     if (customers.data.length === 0) {
       return new Response(
-        JSON.stringify({ error: "no_customer", message: "No active subscription found for this account." }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 404 }
+        JSON.stringify({
+          url: null,
+          error: "no_customer",
+          message: "We couldn't find a billing record for this account yet.",
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
       );
     }
 
