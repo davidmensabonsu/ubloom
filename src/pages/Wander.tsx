@@ -11,16 +11,16 @@ import { wonderResources, mealRecipes, fitnessWorkouts } from '@/lib/wonderResou
 import type { WonderResource } from '@/lib/wonderResources';
 import { getCurrentCycleDay, getCurrentPhase, type CyclePhase } from '@/lib/cycleUtils';
 
-import booksBanner from '@/assets/wonder/book-imperfection.jpg';
-import fitnessImg from '@/assets/wonder/fitness.jpg';
-import skincareImg from '@/assets/wonder/skincare.jpg';
-import podcastImg from '@/assets/wonder/podcast.jpg';
-import mindsetImg from '@/assets/wonder/mindset.jpg';
-import wellnessImg from '@/assets/wonder/wellness.jpg';
-import nutritionImg from '@/assets/wonder/nutrition.jpg';
-import calmImg from '@/assets/wonder/calm.jpg';
-import vitaminsImg from '@/assets/wonder/vitamins.jpg';
-import lifestyleImg from '@/assets/wonder/lifestyle.jpg';
+import booksBanner from '@/assets/wonder/icons/books-banner.png';
+import fitnessImg from '@/assets/wonder/icons/fitness.png';
+import skincareImg from '@/assets/wonder/icons/hygiene.png';
+import podcastImg from '@/assets/wonder/icons/podcasts.png';
+import mindsetImg from '@/assets/wonder/icons/mindset.png';
+import wellnessImg from '@/assets/wonder/icons/wellness.png';
+import nutritionImg from '@/assets/wonder/icons/nutrition.png';
+import calmImg from '@/assets/wonder/icons/calm.png';
+import vitaminsImg from '@/assets/wonder/icons/vitamins.png';
+import lifestyleImg from '@/assets/wonder/icons/lifestyle.png';
 
 interface CategoryCard {
   key: string;
@@ -28,18 +28,19 @@ interface CategoryCard {
   subtitle: string;
   image: string;
   tall?: boolean;
+  tint: string;
 }
 
 const categoryCards: CategoryCard[] = [
-  { key: 'fitness', label: 'Fitness', subtitle: 'Move your body', image: fitnessImg, tall: true },
-  { key: 'wellness', label: 'Wellness', subtitle: 'Feel your best', image: wellnessImg },
-  { key: 'calm', label: 'Calm', subtitle: 'Find your peace', image: calmImg },
-  { key: 'mindset', label: 'Mindset', subtitle: 'Level up your mind', image: mindsetImg, tall: true },
-  { key: 'nutrition', label: 'Food & Recipes', subtitle: 'Nourish yourself', image: nutritionImg, tall: true },
-  { key: 'podcasts', label: 'Podcasts', subtitle: 'Listen & learn', image: podcastImg },
-  { key: 'vitamins', label: 'Vitamins', subtitle: 'Boost from within', image: vitaminsImg },
-  { key: 'hygiene', label: 'Skincare & Hygiene', subtitle: 'Glow up tips', image: skincareImg, tall: true },
-  { key: 'lifestyle', label: 'Lifestyle', subtitle: 'Design your life', image: lifestyleImg },
+  { key: 'fitness', label: 'Fitness', subtitle: 'Move your body', image: fitnessImg, tall: true, tint: '#fce7ef' },
+  { key: 'wellness', label: 'Wellness', subtitle: 'Feel your best', image: wellnessImg, tint: '#e8f0e4' },
+  { key: 'calm', label: 'Calm', subtitle: 'Find your peace', image: calmImg, tint: '#e6eef7' },
+  { key: 'mindset', label: 'Mindset', subtitle: 'Level up your mind', image: mindsetImg, tall: true, tint: '#efe7f7' },
+  { key: 'nutrition', label: 'Food & Recipes', subtitle: 'Nourish yourself', image: nutritionImg, tall: true, tint: '#fdeede' },
+  { key: 'podcasts', label: 'Podcasts', subtitle: 'Listen & learn', image: podcastImg, tint: '#f5e7f0' },
+  { key: 'vitamins', label: 'Vitamins', subtitle: 'Boost from within', image: vitaminsImg, tint: '#fcf1dc' },
+  { key: 'hygiene', label: 'Skincare & Hygiene', subtitle: 'Glow up tips', image: skincareImg, tall: true, tint: '#fbe7e7' },
+  { key: 'lifestyle', label: 'Lifestyle', subtitle: 'Design your life', image: lifestyleImg, tint: '#e7f1ee' },
 ];
 
 // Category cards include 'books' via the dedicated banner — for ordering we treat banner separately.
@@ -284,8 +285,11 @@ export default function Wonder2() {
                   See all →
                 </button>
               </div>
-              <div className="w-40 h-32 shrink-0">
-                <img src={booksBanner} alt="Books" className="w-full h-full object-cover rounded-r-2xl" />
+              <div
+                className="w-40 h-32 shrink-0 flex items-center justify-center rounded-r-2xl"
+                style={{ backgroundColor: '#fce7ef' }}
+              >
+                <img src={booksBanner} alt="Books" className="w-24 h-24 object-contain" loading="lazy" />
               </div>
             </div>
           </motion.div>
@@ -304,12 +308,17 @@ export default function Wonder2() {
                 className="break-inside-avoid rounded-2xl overflow-hidden bg-card border border-border/30 relative cursor-pointer"
                 onClick={() => { track('wander_category_tap', { category: card.key }); navigate(`/wander/${card.key}`); }}
               >
-                <img
-                  src={card.image}
-                  alt={card.label}
-                  className={`w-full object-cover ${card.tall ? 'aspect-[3/4]' : 'aspect-square'}`}
-                  loading="lazy"
-                />
+                <div
+                  className={`w-full flex items-center justify-center ${card.tall ? 'aspect-[3/4]' : 'aspect-square'}`}
+                  style={{ backgroundColor: card.tint }}
+                >
+                  <img
+                    src={card.image}
+                    alt={card.label}
+                    className="w-1/2 h-1/2 object-contain"
+                    loading="lazy"
+                  />
+                </div>
                 <div className="p-3 flex items-end justify-between gap-2">
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-foreground leading-tight truncate">{card.label}</p>
