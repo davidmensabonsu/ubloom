@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Lock } from 'lucide-react';
 import { format, subDays, startOfDay } from 'date-fns';
 import type { MoodEntry, UserProfile } from '@/stores/userStore';
 import { useUserStore } from '@/stores/userStore';
 import { getLocalDateStr } from '@/lib/dateUtils';
+import { useSubscription } from '@/hooks/useSubscription';
+import UpgradeModal from '@/components/UpgradeModal';
 
 type Range = '7d' | '14d' | '30d';
 
@@ -37,7 +39,10 @@ const LEGEND: { label: string; classes: string }[] = [
 
 export default function MoodCalendar({ moodHistory, profile }: Props) {
   const updateProfile = useUserStore((s) => s.updateProfile);
-  const [range, setRange] = useState<Range>('14d');
+  const { isPremium } = useSubscription();
+  // Free users are forced to 7d; premium defaults to the 14d view.
+  const [range, setRange] = useState<Range>(isPremium ? '14d' : '7d');
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
   const days = range === '7d' ? 7 : range === '14d' ? 14 : 30;
 
   // Build mood-by-date map (yyyy-MM-dd → primary mood string)
@@ -101,19 +106,35 @@ export default function MoodCalendar({ moodHistory, profile }: Props) {
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-display text-xl tracking-tight text-foreground">{monthName} mood map</h2>
         <div className="flex gap-1">
-          {ranges.map((r) => (
-            <button
-              key={r.value}
-              onClick={() => setRange(r.value)}
-              className={`px-2.5 py-1 rounded-full text-xs transition-all ${
-                range === r.value
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-background/50 text-muted-foreground hover:bg-primary/10'
-              }`}
-            >
-              {r.label}
-            </button>
-          ))}
+          {ranges.map((r) => {
+            const locked = !isPremium && r.value !== '7d';
+            return (
+              <button
+                key={r.value}
+                onClick={() => {
+                  if (locked) {
+                    setUpgradeOpen(true);
+                    return;
+                  }
+                  setRange(r.value);
+                }}
+                className={`relative px-2.5 py-1 rounded-full text-xs transition-all inline-flex items-center gap-1 ${
+                  range === r.value
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-background/50 text-muted-foreground hover:bg-primary/10'
+                }`}
+                aria-label={locked ? `${r.label} — Premium` : r.label}
+              >
+                {locked && <Lock size={9} />}
+                {r.label}
+                {locked && (
+                  <span className="ml-0.5 text-[8px] uppercase font-bold tracking-wider text-primary">
+                    Premium
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -178,6 +199,7 @@ export default function MoodCalendar({ moodHistory, profile }: Props) {
           </button>
         </motion.div>
       )}
+      <UpgradeModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
     </motion.div>
   );
 }
