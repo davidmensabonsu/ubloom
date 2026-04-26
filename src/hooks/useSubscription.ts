@@ -32,6 +32,11 @@ const PLANS = {
 
 export { PLANS };
 
+// Module-level guard so multiple useSubscription instances mounted in the
+// same render cycle don't all fire `subscription_success` before the
+// localStorage write lands. Keyed by `${userId}:${periodEnd}`.
+const trackedSuccessKeys = new Set<string>();
+
 export function useSubscription() {
   const { user } = useAuth();
   // Single subscription with useShallow returns a stable reference unless
@@ -201,15 +206,23 @@ export function useSubscription() {
     if (isLoading || !user || !stripeSubscribed) return;
     if (typeof window === 'undefined') return;
 
-    const key = `analytics:subscription_success:${user.id}`;
     const periodEnd = subscriptionEnd ?? '';
+    const memKey = `${user.id}:${periodEnd}`;
+    if (trackedSuccessKeys.has(memKey)) return;
+
+    const storageKey = `analytics:subscription_success:${user.id}`;
     let prev: string | null = null;
     try {
-      prev = window.localStorage.getItem(key);
+      prev = window.localStorage.getItem(storageKey);
     } catch {
       // Storage unavailable — fall through and fire (best-effort).
     }
-    if (prev === periodEnd) return; // already tracked this subscription period
+    if (prev === periodEnd) {
+      trackedSuccessKeys.add(memKey);
+      return; // already tracked this subscription period
+    }
+
+    trackedSuccessKeys.add(memKey);
 
     track('subscription_success', {
       source: 'subscription_check',
@@ -219,7 +232,7 @@ export function useSubscription() {
     });
 
     try {
-      window.localStorage.setItem(key, periodEnd);
+      window.localStorage.setItem(storageKey, periodEnd);
     } catch {
       // ignore
     }
