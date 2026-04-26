@@ -32,7 +32,12 @@ export { PLANS };
 
 export function useSubscription() {
   const { user } = useAuth();
-  const { profile, updateProfile } = useUserStore();
+  // Use individual selectors so each subscription returns a stable reference.
+  // Destructuring the whole store returns a new object every render, which
+  // would recreate `checkSubscription` and trigger an update loop (surfaced
+  // by React as "Should have a queue" / "getSnapshot" errors during HMR).
+  const profile = useUserStore((s) => s.profile);
+  const updateProfile = useUserStore((s) => s.updateProfile);
   const { isAdmin } = useAdminCheck();
   // Seed from the cached snapshot in the Zustand store so premium gating
   // renders instantly on cold start (no flash of "free" UI).
