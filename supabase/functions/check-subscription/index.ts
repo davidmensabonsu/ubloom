@@ -74,14 +74,47 @@ serve(async (req) => {
     const hasActiveSub = subscriptions.data.length > 0;
     let subscriptionEnd = null;
     let priceId = null;
+    let subscriptionId: string | null = null;
+    let stripeStatus: string | null = null;
 
     if (hasActiveSub) {
       const subscription = subscriptions.data[0];
       subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
       priceId = subscription.items.data[0]?.price?.id || null;
+      subscriptionId = subscription.id;
+      stripeStatus = subscription.status;
       logStep("Active subscription found", { subscriptionId: subscription.id, priceId, endDate: subscriptionEnd });
     } else {
       logStep("No active subscription found");
+    }
+
+    // Persist to subscribers table so future reads are instant.
+    try {
+      const mappedStatus = hasActiveSub
+        ? (stripeStatus === "trialing" ? "trialing" : "active")
+        : "inactive";
+      const plan = hasActiveSub ? "premium" : "free";
+      const { error: upsertError } = await supabaseClient
+        .from("subscribers")
+        .upsert(
+          {
+            user_id: user.id,
+            stripe_customer_id: customerId,
+            stripe_subscription_id: subscriptionId,
+            plan,
+            status: mappedStatus,
+            current_period_end: subscriptionEnd,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "user_id" },
+        );
+      if (upsertError) {
+        logStep("Subscriber upsert failed (non-fatal)", { error: upsertError.message });
+      } else {
+        logStep("Subscriber row persisted", { userId: user.id, plan, status: mappedStatus });
+      }
+    } catch (e) {
+      logStep("Subscriber upsert threw (non-fatal)", { error: e instanceof Error ? e.message : String(e) });
     }
 
     return new Response(JSON.stringify({
