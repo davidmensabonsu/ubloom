@@ -102,6 +102,14 @@ export interface UserProfile {
   bloomScore?: number;
   cachedJournalPrompt?: { prompt: string; dateKey: string };
   cachedWeeklySummary?: { letter: string; weekKey: string };
+  // Cached snapshot of the user's subscription so premium gating can render
+  // instantly on cold start, before the live DB fetch completes.
+  subscription?: {
+    plan: 'free' | 'premium';
+    status: 'active' | 'inactive' | 'cancelled' | 'past_due' | 'trialing';
+    currentPeriodEnd: string | null;
+    updatedAt: string; // ISO
+  };
 }
 
 export interface PeriodLogEntry {
