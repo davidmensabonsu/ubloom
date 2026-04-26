@@ -210,10 +210,17 @@ export default function JournalModes() {
       <div className="flex gap-1.5 mb-4">
         {tabs.map(({ value, label, Icon }) => {
           const active = mode === value;
+          const locked = !isPremium && (value === 'voice' || value === 'video');
           return (
             <button
               key={value}
-              onClick={() => setMode(value)}
+              onClick={() => {
+                if (locked) {
+                  setUpgradeOpen(true);
+                  return;
+                }
+                setMode(value);
+              }}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                 active
                   ? 'bg-primary text-primary-foreground shadow-sm'
@@ -222,6 +229,12 @@ export default function JournalModes() {
             >
               <Icon size={14} />
               {label}
+              {locked && (
+                <span className="ml-0.5 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-primary/15 text-primary text-[8px] font-semibold uppercase tracking-wider">
+                  <Lock size={8} />
+                  Premium
+                </span>
+              )}
             </button>
           );
         })}
@@ -249,12 +262,25 @@ export default function JournalModes() {
               </button>
               <button
                 onClick={handleSaveWrite}
-                disabled={!text.trim()}
+                disabled={!text.trim() || reachedFreeJournalCap}
                 className="px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium disabled:opacity-40 transition-all hover:shadow-md"
               >
                 {savedFlash ? 'Saved ✓' : 'Save entry'}
               </button>
             </div>
+            {reachedFreeJournalCap && (
+              <div className="mt-3 rounded-2xl bg-primary/8 border border-primary/15 p-3">
+                <p className="text-xs text-foreground/80 leading-relaxed">
+                  You've reached the free journal limit. Upgrade to Premium for unlimited entries.
+                </p>
+                <button
+                  onClick={() => navigate('/upgrade')}
+                  className="mt-1.5 text-xs font-semibold text-primary hover:underline"
+                >
+                  Upgrade to Premium →
+                </button>
+              </div>
+            )}
           </motion.div>
         )}
 
@@ -339,6 +365,7 @@ export default function JournalModes() {
           </motion.div>
         )}
       </AnimatePresence>
+      <UpgradeModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
     </motion.div>
   );
 }
