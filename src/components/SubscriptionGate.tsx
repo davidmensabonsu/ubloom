@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useUserStore } from '@/stores/userStore';
+import { track } from '@/hooks/useAnalytics';
 import UpgradeModal from './UpgradeModal';
 
 /**
@@ -41,7 +42,13 @@ export default function SubscriptionGate() {
             initial={{ y: -32, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -32, opacity: 0 }}
-            onClick={() => setBannerModalOpen(true)}
+            onClick={() => {
+              track('trial_banner_click', {
+                page: location.pathname,
+                trial_days_left: trialDaysLeft,
+              });
+              setBannerModalOpen(true);
+            }}
             className="fixed top-0 inset-x-0 z-[60] w-full px-4 py-2 text-center bg-primary/10 backdrop-blur-sm border-b border-primary/15 hover:bg-primary/15 transition-colors"
             style={{ fontFamily: 'Jost, sans-serif' }}
           >
@@ -52,13 +59,18 @@ export default function SubscriptionGate() {
         )}
       </AnimatePresence>
 
-      <UpgradeModal open={bannerModalOpen} onClose={() => setBannerModalOpen(false)} />
+      <UpgradeModal
+        open={bannerModalOpen}
+        onClose={() => setBannerModalOpen(false)}
+        source="trial_banner"
+      />
 
       {/* Post-trial lockout — non-dismissible upgrade modal */}
       <UpgradeModal
         open={showLockout}
         lockout
         title="Your free trial has ended"
+        source="trial_expired_lockout"
       />
     </>
   );

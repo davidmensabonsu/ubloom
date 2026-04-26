@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Check, Sparkles, Crown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { PLANS } from '@/hooks/useSubscription';
+import { track } from '@/hooks/useAnalytics';
 import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
 
@@ -21,8 +22,17 @@ export default function Upgrade() {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly');
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    track('paywall_open', { source: 'upgrade_page', page: '/upgrade' });
+  }, []);
+
   const handleSubscribe = async () => {
     setIsLoading(true);
+    track('upgrade_checkout_start', {
+      plan: selectedPlan,
+      source: 'upgrade_page',
+      page: '/upgrade',
+    });
     try {
       const plan = PLANS[selectedPlan];
       const { data, error } = await supabase.functions.invoke('create-checkout', {

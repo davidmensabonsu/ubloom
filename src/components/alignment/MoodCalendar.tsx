@@ -199,7 +199,11 @@ export default function MoodCalendar({ moodHistory, profile }: Props) {
           </button>
         </motion.div>
       )}
-      <UpgradeModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
+      <UpgradeModal
+        open={upgradeOpen}
+        onClose={() => setUpgradeOpen(false)}
+        source="mood_calendar_range"
+      />
     </motion.div>
   );
 }

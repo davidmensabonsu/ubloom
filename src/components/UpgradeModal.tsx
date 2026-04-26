@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, Sparkles } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { PLANS } from '@/hooks/useSubscription';
 import { useUserStore } from '@/stores/userStore';
+import { track } from '@/hooks/useAnalytics';
 import { toast } from 'sonner';
 import logo from '@/assets/ubloom-flower.png';
 
@@ -24,15 +25,33 @@ interface UpgradeModalProps {
   lockout?: boolean;
   /** Optional headline override (e.g. for trial-expired screen). */
   title?: string;
+  /** Where this paywall was triggered from (e.g. 'wander_unlock_card', 'journal_voice', 'trial_banner'). */
+  source?: string;
 }
 
-export default function UpgradeModal({ open, onClose, lockout = false, title }: UpgradeModalProps) {
+export default function UpgradeModal({ open, onClose, lockout = false, title, source }: UpgradeModalProps) {
   const [selected, setSelected] = useState<'monthly' | 'yearly'>('yearly');
   const [loading, setLoading] = useState<'monthly' | 'yearly' | null>(null);
   const updateProfile = useUserStore((s) => s.updateProfile);
 
+  // Track paywall opens (one event per open transition)
+  useEffect(() => {
+    if (open) {
+      track('paywall_open', {
+        source: source || (lockout ? 'trial_expired_lockout' : 'unknown'),
+        page: typeof window !== 'undefined' ? window.location.pathname : undefined,
+        lockout,
+      });
+    }
+  }, [open, source, lockout]);
+
   const startCheckout = async (plan: 'monthly' | 'yearly') => {
     setLoading(plan);
+    track('upgrade_checkout_start', {
+      plan,
+      source: source || (lockout ? 'trial_expired_lockout' : 'upgrade_modal'),
+      page: typeof window !== 'undefined' ? window.location.pathname : undefined,
+    });
     try {
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: { priceId: PLANS[plan].priceId },
