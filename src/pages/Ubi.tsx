@@ -482,21 +482,28 @@ export default function Ubi() {
         })()}
 
         {/* Ubi limit notice */}
-        {!isActive && (
+        {!isActive && ubiMessagesRemaining > 0 && (
           <div className="max-w-lg mx-auto px-4 py-1.5 flex items-center justify-between">
             <span className="text-[11px] text-muted-foreground">
-              {ubiMessagesRemaining > 0
-                ? `${ubiMessagesRemaining} of ${DAILY_UBI_LIMIT} messages left today`
-                : 'Daily limit reached'}
+              {ubiMessagesRemaining} of {DAILY_UBI_LIMIT} messages left today
             </span>
-            {ubiMessagesRemaining === 0 && (
+          </div>
+        )}
+
+        {/* Soft upgrade card — once free user is fully blocked from sending */}
+        {!isActive && ubiMessagesRemaining === 0 && (
+          <div className="max-w-lg mx-auto px-4 pt-2 pb-1">
+            <div className="dark-accent-card p-4 text-center">
+              <p className="font-display italic text-white text-base leading-snug">
+                You've used your {DAILY_UBI_LIMIT} free messages today. Upgrade to Premium for unlimited access to Ubi.
+              </p>
               <button
                 onClick={() => navigate('/upgrade')}
-                className="text-[11px] font-medium text-primary"
+                className="mt-3 inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-primary text-primary-foreground text-xs font-semibold shadow-md hover:opacity-90 transition-opacity"
               >
-                Upgrade
+                Upgrade to Premium →
               </button>
-            )}
+            </div>
           </div>
         )}
 
