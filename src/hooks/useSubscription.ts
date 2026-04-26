@@ -9,7 +9,7 @@ import { useAdminCheck } from '@/hooks/useAdminCheck';
 export type SubscriptionStatus = 'trial' | 'active' | 'expired' | 'loading';
 
 const TRIAL_DAYS = 3;
-const DAILY_UBI_LIMIT = 5;
+const DAILY_UBI_LIMIT = 3;
 
 export type SubscriptionPlan = 'free' | 'premium';
 export type SubscriberStatus = 'active' | 'inactive' | 'cancelled' | 'past_due' | 'trialing';
