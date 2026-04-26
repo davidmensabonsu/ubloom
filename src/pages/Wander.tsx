@@ -98,14 +98,14 @@ export default function Wonder2() {
   const cycleData = useUserStore((s) => s.profile.cycleData);
   const { saveResource, unsaveResource } = useUserStore();
 
-  useEffect(() => { track('feature_used', { feature: 'wander' }); }, []);
+  useEffect(() => { track('feature_used', { feature: 'wander', source: 'wander_page' }); }, []);
 
   // Debounced search tracking
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const trackSearch = useCallback((q: string) => {
     if (searchTimer.current) clearTimeout(searchTimer.current);
     searchTimer.current = setTimeout(() => {
-      if (q.trim()) track('wander_search', { query: q.trim() });
+      if (q.trim()) track('wander_search', { query: q.trim(), source: 'wander_search_bar' });
     }, 800);
   }, []);
 
@@ -131,7 +131,7 @@ export default function Wonder2() {
     e.stopPropagation();
     const action = savedSet.has(id) ? 'unsave' : 'save';
     savedSet.has(id) ? unsaveResource(id) : saveResource(id);
-    track('wander_save_toggle', { resourceId: id, action });
+    track('wander_save_toggle', { resourceId: id, action, source: 'wander_explore_grid' });
   };
 
   // Count saved per category
@@ -208,7 +208,7 @@ export default function Wonder2() {
                   transition={{ delay: 0.05 + i * 0.05 }}
                   onClick={() => {
                     const resource = wonderResources.find((r) => r.id === card.resourceId);
-                    track('wander_curated_tap', { category: card.categoryKey, phase: currentPhase, resourceId: card.resourceId, opened: !!resource });
+                    track('wander_curated_tap', { category: card.categoryKey, phase: currentPhase, resourceId: card.resourceId, opened: !!resource, source: 'wander_curated_for_you' });
                     if (resource) {
                       setSelectedResource(resource);
                       setSheetOpen(true);
@@ -229,7 +229,7 @@ export default function Wonder2() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          track('wander_curated_setup_cycle_tap');
+                          track('wander_curated_setup_cycle_tap', { source: 'wander_curated_for_you' });
                           navigate('/health?redirect=/wander');
                         }}
                         className="text-[10px] text-primary/70 hover:text-primary underline underline-offset-2 decoration-primary/30 text-left"
@@ -306,7 +306,7 @@ export default function Wonder2() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.05 + i * 0.04 }}
                 className="break-inside-avoid rounded-2xl overflow-hidden bg-card border border-border/30 relative cursor-pointer"
-                onClick={() => { track('wander_category_tap', { category: card.key }); navigate(`/wander/${card.key}`); }}
+                onClick={() => { track('wander_category_tap', { category: card.key, source: 'wander_explore_grid' }); navigate(`/wander/${card.key}`); }}
               >
                 <div
                   className={`w-full flex items-center justify-center ${card.tall ? 'aspect-[3/4]' : 'aspect-square'}`}
