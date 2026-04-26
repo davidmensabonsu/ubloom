@@ -365,7 +365,11 @@ export default function JournalModes() {
           </motion.div>
         )}
       </AnimatePresence>
-      <UpgradeModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
+      <UpgradeModal
+        open={upgradeOpen}
+        onClose={() => setUpgradeOpen(false)}
+        source="journal_locked_mode"
+      />
     </motion.div>
   );
 }
