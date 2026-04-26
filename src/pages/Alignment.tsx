@@ -8,6 +8,8 @@ import BottomNav from '@/components/BottomNav';
 import MoodCalendar from '@/components/alignment/MoodCalendar';
 import JournalModes from '@/components/alignment/JournalModes';
 import WeeklySummaryCard from '@/components/alignment/WeeklySummaryCard';
+import LockedOverlay from '@/components/LockedOverlay';
+import { useSubscription } from '@/hooks/useSubscription';
 
 import JournalAudioPlayer from '@/components/alignment/JournalAudioPlayer';
 import JournalHistorySheet from '@/components/alignment/JournalHistorySheet';
@@ -19,6 +21,7 @@ export default function Alignment() {
   const navigate = useNavigate();
   const profile = useUserStore((s) => s.profile);
   const updateProfile = useUserStore((s) => s.updateProfile);
+  const { isPremium } = useSubscription();
   
   const [historyOpen, setHistoryOpen] = useState(false);
 
@@ -167,7 +170,12 @@ export default function Alignment() {
         {/* Weekly summary */}
         <div>
           <div className="section-label mb-3">Ubi's weekly summary</div>
-          <WeeklySummaryCard />
+          <LockedOverlay
+            locked={!isPremium}
+            message="Your weekly insights are a Premium feature. Upgrade to see Ubi's letter to you."
+          >
+            <WeeklySummaryCard />
+          </LockedOverlay>
         </div>
       </div>
 

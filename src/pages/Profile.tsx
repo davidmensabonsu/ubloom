@@ -287,15 +287,42 @@ export default function Profile() {
               </button>
             </div>
           ) : (
-            <button
-              onClick={() => setIsEditingName(true)}
-              className="flex items-center gap-2 group"
-            >
-              <span className="text-xl font-display font-medium text-foreground">
-                {displayName}
-              </span>
-              <Pencil size={14} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-            </button>
+            <div className="flex flex-col items-center gap-1.5">
+              <button
+                onClick={() => setIsEditingName(true)}
+                className="flex items-center gap-2 group"
+              >
+                <span className="text-xl font-display font-medium text-foreground">
+                  {displayName}
+                </span>
+                <Pencil size={14} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+              </button>
+              {/* Plan badge */}
+              {status !== 'loading' && (
+                isActive && !isTrial ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary/15 text-primary text-[10px] font-semibold uppercase tracking-wider">
+                    <Crown size={10} />
+                    Premium
+                  </span>
+                ) : isTrial ? (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-semibold uppercase tracking-wider">
+                    Trial — {trialDaysLeft} day{trialDaysLeft !== 1 ? 's' : ''} left
+                  </span>
+                ) : (
+                  <div className="inline-flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 rounded-full bg-muted text-muted-foreground text-[10px] font-semibold uppercase tracking-wider">
+                      Free tier
+                    </span>
+                    <button
+                      onClick={() => navigate('/upgrade')}
+                      className="text-[10px] font-semibold text-primary hover:underline"
+                    >
+                      Upgrade →
+                    </button>
+                  </div>
+                )
+              )}
+            </div>
           )}
 
           <p className="text-sm text-muted-foreground mt-1">{user?.email}</p>
@@ -557,6 +584,10 @@ export default function Profile() {
             </div>
             <span className="text-[10px] font-medium px-2.5 py-1 rounded-full bg-background/50 text-primary backdrop-blur-sm">
               Coming Soon
+            </span>
+            <span className="ml-1 inline-flex items-center gap-0.5 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/20 text-primary backdrop-blur-sm uppercase tracking-wider">
+              <Crown size={9} />
+              Premium
             </span>
           </button>
         </motion.div>
