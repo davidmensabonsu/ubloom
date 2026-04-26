@@ -10,6 +10,9 @@ export type SubscriptionStatus = 'trial' | 'active' | 'expired' | 'loading';
 const TRIAL_DAYS = 3;
 const DAILY_UBI_LIMIT = 5;
 
+export type SubscriptionPlan = 'free' | 'premium';
+export type SubscriberStatus = 'active' | 'inactive' | 'cancelled' | 'past_due' | 'trialing';
+
 const PLANS = {
   monthly: {
     priceId: 'price_1TKMZaAni5cThJuscqeltmFP',
@@ -31,9 +34,21 @@ export function useSubscription() {
   const { user } = useAuth();
   const { profile, updateProfile } = useUserStore();
   const { isAdmin } = useAdminCheck();
-  const [stripeSubscribed, setStripeSubscribed] = useState(false);
-  const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // Seed from the cached snapshot in the Zustand store so premium gating
+  // renders instantly on cold start (no flash of "free" UI).
+  const cached = profile.subscription;
+  const [plan, setPlan] = useState<SubscriptionPlan>(cached?.plan ?? 'free');
+  const [subscriberStatus, setSubscriberStatus] = useState<SubscriberStatus>(
+    cached?.status ?? 'inactive',
+  );
+  const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(
+    cached?.currentPeriodEnd ?? null,
+  );
+  // Only show "loading" if we have no cached snapshot to render from.
+  const [isLoading, setIsLoading] = useState(!cached);
+
+  const stripeSubscribed =
+    plan === 'premium' && (subscriberStatus === 'active' || subscriberStatus === 'trialing');
 
   // Ensure trial_started_at is set on first load
   useEffect(() => {
@@ -48,10 +63,20 @@ export function useSubscription() {
     if (!user) { setIsLoading(false); return; }
 
     const applyFromDb = (row: { plan: string; status: string; current_period_end: string | null }) => {
-      const isPaid = row.plan === 'premium' &&
-        (row.status === 'active' || row.status === 'trialing');
-      setStripeSubscribed(isPaid);
+      const nextPlan: SubscriptionPlan = row.plan === 'premium' ? 'premium' : 'free';
+      const nextStatus = (row.status as SubscriberStatus) ?? 'inactive';
+      setPlan(nextPlan);
+      setSubscriberStatus(nextStatus);
       setSubscriptionEnd(row.current_period_end);
+      // Persist snapshot for instant render on next cold start.
+      updateProfile({
+        subscription: {
+          plan: nextPlan,
+          status: nextStatus,
+          currentPeriodEnd: row.current_period_end,
+          updatedAt: new Date().toISOString(),
+        },
+      });
     };
 
     try {
@@ -73,15 +98,26 @@ export function useSubscription() {
       // The edge function will persist the result to subscribers for next time.
       const { data, error } = await supabase.functions.invoke('check-subscription');
       if (!error && data) {
-        setStripeSubscribed(data.subscribed === true);
+        const nextPlan: SubscriptionPlan = data.subscribed ? 'premium' : 'free';
+        const nextStatus: SubscriberStatus = data.subscribed ? 'active' : 'inactive';
+        setPlan(nextPlan);
+        setSubscriberStatus(nextStatus);
         setSubscriptionEnd(data.subscription_end || null);
+        updateProfile({
+          subscription: {
+            plan: nextPlan,
+            status: nextStatus,
+            currentPeriodEnd: data.subscription_end || null,
+            updatedAt: new Date().toISOString(),
+          },
+        });
       }
     } catch (e) {
       console.error('Failed to check subscription:', e);
     } finally {
       setIsLoading(false);
     }
-  }, [user]);
+  }, [user, updateProfile]);
 
   // Initial load: read from DB (cheap), fall back to Stripe if absent.
   useEffect(() => {
@@ -104,15 +140,24 @@ export function useSubscription() {
         (payload) => {
           const row = payload.new as { plan?: string; status?: string; current_period_end?: string | null } | null;
           if (!row) return;
-          const isPaid = row.plan === 'premium' &&
-            (row.status === 'active' || row.status === 'trialing');
-          setStripeSubscribed(isPaid);
+          const nextPlan: SubscriptionPlan = row.plan === 'premium' ? 'premium' : 'free';
+          const nextStatus = (row.status as SubscriberStatus) ?? 'inactive';
+          setPlan(nextPlan);
+          setSubscriberStatus(nextStatus);
           setSubscriptionEnd(row.current_period_end ?? null);
+          updateProfile({
+            subscription: {
+              plan: nextPlan,
+              status: nextStatus,
+              currentPeriodEnd: row.current_period_end ?? null,
+              updatedAt: new Date().toISOString(),
+            },
+          });
         },
       )
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [user]);
+  }, [user, updateProfile]);
 
   const status: SubscriptionStatus = useMemo(() => {
     if (isLoading) return 'loading';
@@ -178,6 +223,8 @@ export function useSubscription() {
     isLoading,
     trialDaysLeft,
     subscriptionEnd,
+    plan,
+    subscriberStatus,
     canUse,
     ubiMessagesRemaining,
     incrementUbiMessageCount,
