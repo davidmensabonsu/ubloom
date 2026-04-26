@@ -352,7 +352,7 @@ export function useUbiChat() {
       }
 
       const userMsg: UbiMessage = { role: 'user', content: input };
-      track('ubi_message_sent', { conversationId: convoId });
+      track('ubi_message_sent', { conversationId: convoId, source: 'ubi_chat' });
 
       // Insert user message into DB
       if (!options?.hideUserMessage) {
