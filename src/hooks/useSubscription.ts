@@ -32,7 +32,12 @@ export { PLANS };
 
 export function useSubscription() {
   const { user } = useAuth();
-  const { profile, updateProfile } = useUserStore();
+  // IMPORTANT: subscribe with selectors so we don't get a new object reference
+  // every render (which would re-create checkSubscription and re-trigger the
+  // initial-load effect, causing an update loop and React's
+  // "Should have a queue" error during HMR).
+  const profile = useUserStore((s) => s.profile);
+  const updateProfile = useUserStore((s) => s.updateProfile);
   const { isAdmin } = useAdminCheck();
   // Seed from the cached snapshot in the Zustand store so premium gating
   // renders instantly on cold start (no flash of "free" UI).
@@ -117,7 +122,9 @@ export function useSubscription() {
     } finally {
       setIsLoading(false);
     }
-  }, [user, updateProfile]);
+    // updateProfile is a stable Zustand action — safe to omit from deps.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   // Initial load: read from DB (cheap), fall back to Stripe if absent.
   useEffect(() => {
@@ -157,7 +164,9 @@ export function useSubscription() {
       )
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [user, updateProfile]);
+    // updateProfile is a stable Zustand action — safe to omit from deps.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const status: SubscriptionStatus = useMemo(() => {
     if (isLoading) return 'loading';
