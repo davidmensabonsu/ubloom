@@ -103,7 +103,7 @@ export default function AppWalkthrough() {
           <div className="glass-card rounded-3xl p-6 shadow-2xl border border-primary/20">
             {/* Logo */}
             <div className="flex justify-center mb-4">
-              <img src={ubloomFlower} alt="ubloom" className="w-10 h-10 clay-icon" />
+              <img src={ubloomFlower} alt="uBloom" className="w-10 h-10 clay-icon" />
             </div>
             <div className="flex items-center justify-center gap-1.5 mb-5">
               {walkthroughSteps.map((_, i) => (
