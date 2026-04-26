@@ -61,7 +61,7 @@ export default function ChooseAesthetic() {
     <div className="min-h-screen gradient-background px-5 py-8 flex flex-col">
       <div className="text-center mb-8">
         <h1 className="page-title mb-2">Choose Your Aesthetic</h1>
-        <p className="subtle-text">This will color your entire ubloom experience</p>
+        <p className="subtle-text">This will color your entire uBloom experience</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 flex-1">

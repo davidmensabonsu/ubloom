@@ -38,12 +38,12 @@ export default function TrialWelcomeModal({ open, onDismiss }: TrialWelcomeModal
                 animate={{ scale: [1, 1.1, 1] }}
                 transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
               >
-                <img src={ubloomFlower} alt="ubloom" className="w-14 h-14 clay-icon" />
+                <img src={ubloomFlower} alt="uBloom" className="w-14 h-14 clay-icon" />
               </motion.div>
 
               {/* Headline */}
               <h2 className="font-display text-2xl font-semibold text-foreground mb-2">
-                Welcome to ubloom
+                Welcome to uBloom
               </h2>
 
               {/* Sparkle accent */}

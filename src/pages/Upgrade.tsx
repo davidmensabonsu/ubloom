@@ -68,7 +68,7 @@ export default function Upgrade() {
             </div>
           </div>
           <h1 className="font-display text-3xl font-bold text-foreground tracking-tight">
-            ubloom Premium
+            uBloom Premium
           </h1>
           <p className="text-muted-foreground text-sm max-w-xs mx-auto leading-relaxed">
             Unlock the full power of your personal growth journey with unlimited access to everything uBloom offers
