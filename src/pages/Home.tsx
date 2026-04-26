@@ -310,6 +310,8 @@ export default function Home() {
         </SheetContent>
       </Sheet>
 
+      <UpgradeModal open={letterModalOpen} onClose={() => setLetterModalOpen(false)} />
+
       <BottomNav />
     </div>
   );
