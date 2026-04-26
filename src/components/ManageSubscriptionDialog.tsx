@@ -118,7 +118,7 @@ export default function ManageSubscriptionDialog({
               {[
                 'Unlimited Ubi conversations',
                 'Mood trends & cycle insights',
-                'All Wonder resources unlocked',
+                'All Wander resources unlocked',
               ].map((perk) => (
                 <li
                   key={perk}
