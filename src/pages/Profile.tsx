@@ -737,6 +737,13 @@ export default function Profile() {
       </div>
 
       <BottomNav />
+
+      <ManageSubscriptionDialog
+        open={manageOpen}
+        onOpenChange={setManageOpen}
+        subscriptionEnd={subscriptionEnd}
+        planLabel="uBloom Premium"
+      />
     </div>
   );
 }
