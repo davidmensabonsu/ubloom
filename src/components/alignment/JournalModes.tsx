@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Pen, Mic, Video, Square, Play, Pause, RefreshCw, Sparkles, Loader2 } from 'lucide-react';
+import { Pen, Mic, Video, Square, Play, Pause, RefreshCw, Sparkles, Loader2, Lock } from 'lucide-react';
 import { useUbiJournalPrompt } from '@/hooks/useUbiJournalPrompt';
 import { useUserStore } from '@/stores/userStore';
 import { useAuth } from '@/hooks/useAuth';
@@ -8,6 +8,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { track } from '@/hooks/useAnalytics';
 import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
+import { useSubscription } from '@/hooks/useSubscription';
+import UpgradeModal from '@/components/UpgradeModal';
+import { useNavigate } from 'react-router-dom';
+
+const FREE_JOURNAL_MONTHLY_CAP = 10;
 
 type Mode = 'write' | 'voice' | 'video';
 
@@ -19,7 +24,19 @@ function formatDuration(s: number) {
 
 export default function JournalModes() {
   const addJournalEntry = useUserStore((s) => s.addJournalEntry);
+  const journalEntries = useUserStore((s) => s.profile.journalEntries) || [];
   const { prompt, loading, refresh, context } = useUbiJournalPrompt();
+  const { isPremium } = useSubscription();
+  const navigate = useNavigate();
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+
+  // Count entries created in the current calendar month
+  const monthlyCount = (() => {
+    const now = new Date();
+    const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    return journalEntries.filter((e) => (e.date || '').startsWith(ym)).length;
+  })();
+  const reachedFreeJournalCap = !isPremium && monthlyCount >= FREE_JOURNAL_MONTHLY_CAP;
 
   const [mode, setMode] = useState<Mode>('write');
   const [text, setText] = useState('');
