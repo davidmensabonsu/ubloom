@@ -285,8 +285,11 @@ export default function Wonder2() {
                   See all →
                 </button>
               </div>
-              <div className="w-40 h-32 shrink-0">
-                <img src={booksBanner} alt="Books" className="w-full h-full object-cover rounded-r-2xl" />
+              <div
+                className="w-40 h-32 shrink-0 flex items-center justify-center rounded-r-2xl"
+                style={{ backgroundColor: '#fce7ef' }}
+              >
+                <img src={booksBanner} alt="Books" className="w-24 h-24 object-contain" loading="lazy" />
               </div>
             </div>
           </motion.div>
@@ -305,12 +308,17 @@ export default function Wonder2() {
                 className="break-inside-avoid rounded-2xl overflow-hidden bg-card border border-border/30 relative cursor-pointer"
                 onClick={() => { track('wander_category_tap', { category: card.key }); navigate(`/wander/${card.key}`); }}
               >
-                <img
-                  src={card.image}
-                  alt={card.label}
-                  className={`w-full object-cover ${card.tall ? 'aspect-[3/4]' : 'aspect-square'}`}
-                  loading="lazy"
-                />
+                <div
+                  className={`w-full flex items-center justify-center ${card.tall ? 'aspect-[3/4]' : 'aspect-square'}`}
+                  style={{ backgroundColor: card.tint }}
+                >
+                  <img
+                    src={card.image}
+                    alt={card.label}
+                    className="w-1/2 h-1/2 object-contain"
+                    loading="lazy"
+                  />
+                </div>
                 <div className="p-3 flex items-end justify-between gap-2">
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-foreground leading-tight truncate">{card.label}</p>
