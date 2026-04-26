@@ -466,8 +466,18 @@ export default function Profile() {
               )}
               <button
                 onClick={async () => {
-                  const { data } = await supabase.functions.invoke('customer-portal');
-                  if (data?.url) window.open(data.url, '_blank');
+                  const { data, error } = await supabase.functions.invoke('customer-portal');
+                  if (data?.url) {
+                    window.open(data.url, '_blank');
+                    return;
+                  }
+                  if (data?.error === 'no_customer' || error) {
+                    toast({
+                      title: 'No active subscription found',
+                      description: 'We couldn\u2019t find a billing record for this account. Try refreshing or contact support.',
+                      variant: 'destructive',
+                    });
+                  }
                 }}
                 className="text-sm text-primary font-medium hover:underline"
               >
