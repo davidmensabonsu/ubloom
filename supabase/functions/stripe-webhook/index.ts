@@ -72,39 +72,6 @@ serve(async (req) => {
 
   log("Event received", { type: event.type, id: event.id });
 
-  // Log every Stripe event to subscriber_events for debugging.
-  // Best-effort: never throw out of here; uses stripe_event_id as a unique key
-  // so retries from Stripe don't create duplicates.
-  async function logEvent(args: {
-    userId: string | null;
-    customerId: string | null;
-    subscriptionId: string | null;
-    plan: string | null;
-    status: string | null;
-    currentPeriodEnd: string | null;
-  }) {
-    try {
-      const { error } = await supabase.from("subscriber_events").insert({
-        user_id: args.userId,
-        stripe_event_id: event.id,
-        event_type: event.type,
-        stripe_customer_id: args.customerId,
-        stripe_subscription_id: args.subscriptionId,
-        plan: args.plan,
-        status: args.status,
-        current_period_end: args.currentPeriodEnd,
-        raw: event as unknown as Record<string, unknown>,
-      });
-      if (error && !/duplicate key/i.test(error.message)) {
-        log("Event log insert failed (non-fatal)", { error: error.message });
-      }
-    } catch (e) {
-      log("Event log insert threw (non-fatal)", {
-        error: e instanceof Error ? e.message : String(e),
-      });
-    }
-  }
-
   // Resolve a Supabase user_id from a Stripe customer (email lookup)
   async function userIdForCustomer(customerId: string): Promise<string | null> {
     try {
@@ -133,28 +100,15 @@ serve(async (req) => {
   async function upsertFromSubscription(sub: Stripe.Subscription) {
     const customerId = typeof sub.customer === "string" ? sub.customer : sub.customer.id;
     const userId = await userIdForCustomer(customerId);
+    if (!userId) {
+      log("No matching user for customer; skipping", { customerId });
+      return;
+    }
+
     const priceId = sub.items.data[0]?.price?.id ?? null;
     const status = mapStripeStatus(sub.status);
     const isPaid = status === "active" || status === "trialing";
     const plan = isPaid ? planFromPriceId(priceId) : "free";
-    const currentPeriodEnd = sub.current_period_end
-      ? new Date(sub.current_period_end * 1000).toISOString()
-      : null;
-
-    // Always log the event, even if we can't resolve a user yet.
-    await logEvent({
-      userId,
-      customerId,
-      subscriptionId: sub.id,
-      plan,
-      status,
-      currentPeriodEnd,
-    });
-
-    if (!userId) {
-      log("No matching user for customer; skipping subscriber upsert", { customerId });
-      return;
-    }
 
     const payload = {
       user_id: userId,
@@ -162,7 +116,9 @@ serve(async (req) => {
       stripe_subscription_id: sub.id,
       plan,
       status,
-      current_period_end: currentPeriodEnd,
+      current_period_end: sub.current_period_end
+        ? new Date(sub.current_period_end * 1000).toISOString()
+        : null,
       updated_at: new Date().toISOString(),
     };
 
@@ -187,17 +143,6 @@ serve(async (req) => {
         const sub = event.data.object as Stripe.Subscription;
         const customerId = typeof sub.customer === "string" ? sub.customer : sub.customer.id;
         const userId = await userIdForCustomer(customerId);
-        const currentPeriodEnd = sub.current_period_end
-          ? new Date(sub.current_period_end * 1000).toISOString()
-          : null;
-        await logEvent({
-          userId,
-          customerId,
-          subscriptionId: sub.id,
-          plan: "free",
-          status: "cancelled",
-          currentPeriodEnd,
-        });
         if (userId) {
           const { error } = await supabase
             .from("subscribers")
@@ -208,7 +153,9 @@ serve(async (req) => {
                 stripe_subscription_id: sub.id,
                 plan: "free",
                 status: "cancelled",
-                current_period_end: currentPeriodEnd,
+                current_period_end: sub.current_period_end
+                  ? new Date(sub.current_period_end * 1000).toISOString()
+                  : null,
                 updated_at: new Date().toISOString(),
               },
               { onConflict: "user_id" },
@@ -226,19 +173,6 @@ serve(async (req) => {
             typeof subId === "string" ? subId : subId.id,
           );
           await upsertFromSubscription(subscription);
-        } else {
-          const customerId = typeof invoice.customer === "string"
-            ? invoice.customer
-            : invoice.customer?.id ?? null;
-          const userId = customerId ? await userIdForCustomer(customerId) : null;
-          await logEvent({
-            userId,
-            customerId,
-            subscriptionId: null,
-            plan: null,
-            status: null,
-            currentPeriodEnd: null,
-          });
         }
         break;
       }
@@ -247,16 +181,8 @@ serve(async (req) => {
         const customerId = typeof invoice.customer === "string"
           ? invoice.customer
           : invoice.customer?.id;
-        const userId = customerId ? await userIdForCustomer(customerId) : null;
-        await logEvent({
-          userId,
-          customerId: customerId ?? null,
-          subscriptionId: null,
-          plan: null,
-          status: "past_due",
-          currentPeriodEnd: null,
-        });
         if (customerId) {
+          const userId = await userIdForCustomer(customerId);
           if (userId) {
             const { error } = await supabase
               .from("subscribers")
@@ -268,18 +194,8 @@ serve(async (req) => {
         }
         break;
       }
-      default: {
+      default:
         log("Unhandled event type", { type: event.type });
-        // Still log unknown event types so debugging is complete.
-        await logEvent({
-          userId: null,
-          customerId: null,
-          subscriptionId: null,
-          plan: null,
-          status: null,
-          currentPeriodEnd: null,
-        });
-      }
     }
 
     return new Response(JSON.stringify({ received: true }), {
