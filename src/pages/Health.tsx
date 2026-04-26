@@ -50,7 +50,7 @@ export default function Health() {
   const totalHabits = (profile.coreHabits || []).length;
   const bloom = useMemo(() => computeBloomScore(profile, totalHabits), [profile, totalHabits]);
 
-  useEffect(() => { track('feature_used', { feature: 'health' }); }, []);
+  useEffect(() => { track('feature_used', { feature: 'health', source: 'health_page' }); }, []);
 
   useEffect(() => {
     if (profile.bloomScore !== bloom.total) {
