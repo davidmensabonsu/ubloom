@@ -68,6 +68,48 @@ export type Database = {
         }
         Relationships: []
       }
+      subscriber_events: {
+        Row: {
+          created_at: string
+          current_period_end: string | null
+          event_type: string
+          id: string
+          plan: string | null
+          raw: Json
+          status: string | null
+          stripe_customer_id: string | null
+          stripe_event_id: string | null
+          stripe_subscription_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          current_period_end?: string | null
+          event_type: string
+          id?: string
+          plan?: string | null
+          raw?: Json
+          status?: string | null
+          stripe_customer_id?: string | null
+          stripe_event_id?: string | null
+          stripe_subscription_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          current_period_end?: string | null
+          event_type?: string
+          id?: string
+          plan?: string | null
+          raw?: Json
+          status?: string | null
+          stripe_customer_id?: string | null
+          stripe_event_id?: string | null
+          stripe_subscription_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       subscribers: {
         Row: {
           created_at: string
