@@ -468,11 +468,10 @@ export default function Profile() {
                 </p>
               )}
               <button
-                onClick={handleManageSubscription}
-                disabled={isOpeningPortal}
-                className="text-sm text-primary font-medium hover:underline disabled:opacity-60 disabled:no-underline"
+                onClick={() => setManageOpen(true)}
+                className="text-sm text-primary font-medium hover:underline"
               >
-                {isOpeningPortal ? 'Opening billing…' : 'Manage subscription →'}
+                Manage subscription →
               </button>
             </div>
           ) : isTrial ? (
