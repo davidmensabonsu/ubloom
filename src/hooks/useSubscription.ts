@@ -9,22 +9,22 @@ import { useAdminCheck } from '@/hooks/useAdminCheck';
 export type SubscriptionStatus = 'trial' | 'active' | 'expired' | 'loading';
 
 const TRIAL_DAYS = 3;
-const DAILY_UBI_LIMIT = 5;
+const DAILY_UBI_LIMIT = 3;
 
 export type SubscriptionPlan = 'free' | 'premium';
 export type SubscriberStatus = 'active' | 'inactive' | 'cancelled' | 'past_due' | 'trialing';
 
 const PLANS = {
   monthly: {
-    priceId: 'price_1TKMZaAni5cThJuscqeltmFP',
-    label: '£4.99/month',
-    amount: '£4.99',
+    priceId: 'price_1TQYfhAni5cThJusEXsVkv2X',
+    label: '£12.99/month',
+    amount: '£12.99',
     interval: 'month' as const,
   },
   yearly: {
-    priceId: 'price_1TKMaJAni5cThJus9hNowIo0',
-    label: '£45/year',
-    amount: '£45',
+    priceId: 'price_1TQYgDAni5cThJus4onBfI7s',
+    label: '£79.99/year',
+    amount: '£79.99',
     interval: 'year' as const,
   },
 };
@@ -189,19 +189,56 @@ export function useSubscription() {
   const isActive = status === 'active' || status === 'trial';
   const isTrial = status === 'trial';
   const isExpired = status === 'expired';
+  // True premium (paid or in Stripe trial) — distinguished from in-app free trial
+  const isPremium = status === 'active';
 
-  // Daily Ubi message tracking
+  // Compute trial end ISO from in-app trial start
+  const trialEndsAt = useMemo(() => {
+    if (!profile.trialStartedAt) return undefined;
+    const d = new Date(profile.trialStartedAt);
+    d.setDate(d.getDate() + TRIAL_DAYS);
+    return d.toISOString();
+  }, [profile.trialStartedAt]);
+
+  // Mirror subscription flags into the Zustand store so other parts of the
+  // app (and non-hook code) can read premium state without re-running the
+  // live check. Skipped while loading.
+  useEffect(() => {
+    if (isLoading) return;
+    const next = {
+      isPremium,
+      isTrialing: isTrial,
+      trialEndsAt,
+      subscriptionStatus: subscriberStatus,
+    };
+    const cur = profile;
+    if (
+      cur.isPremium !== next.isPremium ||
+      cur.isTrialing !== next.isTrialing ||
+      cur.trialEndsAt !== next.trialEndsAt ||
+      cur.subscriptionStatus !== next.subscriptionStatus
+    ) {
+      updateProfile(next);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, isPremium, isTrial, trialEndsAt, subscriberStatus]);
+
+  // Daily Ubi message tracking — backed by Zustand so the count survives
+  // navigation and is shared across components without any DB hits.
   const getUbiMessageCount = useCallback(() => {
-    const key = `ubi-msg-count-${getLocalDateStr()}`;
-    return parseInt(localStorage.getItem(key) || '0', 10);
-  }, []);
+    const today = getLocalDateStr();
+    const stored = profile.dailyUbiMessageCount;
+    if (!stored || stored.date !== today) return 0;
+    return stored.count;
+  }, [profile.dailyUbiMessageCount]);
 
   const incrementUbiMessageCount = useCallback(() => {
-    const key = `ubi-msg-count-${getLocalDateStr()}`;
-    const count = parseInt(localStorage.getItem(key) || '0', 10) + 1;
-    localStorage.setItem(key, String(count));
+    const today = getLocalDateStr();
+    const stored = profile.dailyUbiMessageCount;
+    const count = stored && stored.date === today ? stored.count + 1 : 1;
+    updateProfile({ dailyUbiMessageCount: { count, date: today } });
     return count;
-  }, []);
+  }, [profile.dailyUbiMessageCount, updateProfile]);
 
   const canUse = useCallback((feature: string): boolean => {
     if (isLoading || isActive) return true;
@@ -228,6 +265,8 @@ export function useSubscription() {
     isActive,
     isTrial,
     isExpired,
+    isPremium,
+    trialEndsAt,
     isLoading,
     trialDaysLeft,
     subscriptionEnd,

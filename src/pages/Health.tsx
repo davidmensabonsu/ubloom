@@ -277,8 +277,8 @@ export default function Health() {
         {/* Today's Cycle Insight */}
         <CycleInsightCard phase={currentPhase} />
 
-        {/* Ubi Insights — consolidated */}
-        <LockedOverlay locked={!canUse('ubi_insights')} message="Upgrade for personalised health insights">
+        {/* Ubi Insights — consolidated, premium only */}
+        <LockedOverlay locked={!canUse('ubi_insights')} message="Cycle-synced insights are a Premium feature.">
           <UbiInsightsCard insights={insights} loading={loadingInsights} />
         </LockedOverlay>
       </div>

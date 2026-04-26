@@ -5,10 +5,10 @@ import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { useTodaysIntention } from '@/hooks/useTodaysIntention';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/BottomNav';
-import TrialBanner from '@/components/TrialBanner';
 import { useSubscription } from '@/hooks/useSubscription';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useUserStore } from '@/stores/userStore';
+import UpgradeModal from '@/components/UpgradeModal';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import { getCurrentCycleDay, getCurrentPhase, type CyclePhase } from '@/lib/cycleUtils';
 
@@ -33,13 +33,14 @@ const PHASE_ENERGY: Record<CyclePhase, string> = {
 export default function Home() {
   const { futureSelfMessage, loading } = useHomeMessages();
   const { intention, loading: intentionLoading } = useTodaysIntention();
-  const { status, isTrial, isExpired, trialDaysLeft } = useSubscription();
+  const { isPremium } = useSubscription();
   const habitCompletions = useUserStore((s) => s.profile.habitCompletions);
   const preferredName = useUserStore((s) => s.profile.preferredName);
   const cycleData = useUserStore((s) => s.profile.cycleData);
   const dailyCheckinState = useUserStore((s) => s.profile.dailyCheckinState);
   const intentionCompletedDate = useUserStore((s) => s.profile.intentionCompletedDate);
   const updateProfile = useUserStore((s) => s.updateProfile);
+  const [letterModalOpen, setLetterModalOpen] = useState(false);
 
   const [letterOpen, setLetterOpen] = useState(false);
   const greeting = timeGreetings();
@@ -53,16 +54,16 @@ export default function Home() {
     day: 'numeric',
   });
 
-  // Subtitle: cycle phase or daily check-in state
+  // Subtitle: cycle phase (premium only) or daily check-in state
   const subtitle = useMemo(() => {
-    if (cycleData?.setupComplete && cycleData.lastPeriodStart) {
+    if (isPremium && cycleData?.setupComplete && cycleData.lastPeriodStart) {
       const day = getCurrentCycleDay(cycleData.lastPeriodStart, cycleData.cycleLength);
       const phase = getCurrentPhase(day, cycleData.periodLength, cycleData.cycleLength);
       return `Day ${day} · ${phase} — ${PHASE_ENERGY[phase]}`;
     }
     if (dailyCheckinState) return `Feeling ${dailyCheckinState} today`;
     return null;
-  }, [cycleData, dailyCheckinState]);
+  }, [isPremium, cycleData, dailyCheckinState]);
 
   // Weekly consistency: Sunday → Saturday of current week
   const week = useMemo(() => {
@@ -175,11 +176,6 @@ export default function Home() {
 
       {/* Main content */}
       <div className="flex-1 px-5 pb-24 pt-3 flex flex-col gap-3">
-        {/* Trial / Expired Banner */}
-        {(isTrial || isExpired) && status !== 'loading' && (
-          <TrialBanner status={isTrial ? 'trial' : 'expired'} trialDaysLeft={trialDaysLeft} />
-        )}
-
         {/* Today's Intention — chosen by Ubi */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
@@ -244,16 +240,33 @@ export default function Home() {
             </div>
           ) : (
             <>
-              <p className="font-display text-xs md:text-sm leading-relaxed text-white/95 italic line-clamp-2">
-                "{futureSelfMessage}"
-              </p>
-              <button
-                onClick={() => setLetterOpen(true)}
-                className="mt-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
-                style={{ color: 'hsl(var(--primary))' }}
-              >
-                Read full letter →
-              </button>
+              {isPremium ? (
+                <>
+                  <p className="font-display text-xs md:text-sm leading-relaxed text-white/95 italic line-clamp-2">
+                    "{futureSelfMessage}"
+                  </p>
+                  <button
+                    onClick={() => setLetterOpen(true)}
+                    className="mt-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+                    style={{ color: 'hsl(var(--primary))' }}
+                  >
+                    Read full letter →
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="font-display text-xs md:text-sm leading-relaxed text-white/95 italic">
+                    "{(futureSelfMessage || '').split(/(?<=[.!?])\s+/)[0]}"
+                  </p>
+                  <button
+                    onClick={() => setLetterModalOpen(true)}
+                    className="mt-2 text-xs font-medium transition-colors"
+                    style={{ color: 'hsl(var(--primary))' }}
+                  >
+                    Unlock full letter — Upgrade to Premium →
+                  </button>
+                </>
+              )}
             </>
           )}
         </motion.div>
@@ -296,6 +309,8 @@ export default function Home() {
           </button>
         </SheetContent>
       </Sheet>
+
+      <UpgradeModal open={letterModalOpen} onClose={() => setLetterModalOpen(false)} />
 
       <BottomNav />
     </div>

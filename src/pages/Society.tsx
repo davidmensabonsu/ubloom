@@ -41,6 +41,10 @@ export default function Society() {
             <Sparkles size={12} />
             Coming Soon
           </div>
+          <div className="inline-flex items-center gap-1.5 mt-2 ml-2 px-4 py-1.5 rounded-full bg-primary/15 text-primary text-xs font-semibold">
+            <Star size={12} />
+            Premium
+          </div>
         </motion.div>
 
         {/* Description */}

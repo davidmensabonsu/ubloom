@@ -110,6 +110,21 @@ export interface UserProfile {
     currentPeriodEnd: string | null;
     updatedAt: string; // ISO
   };
+
+  // Convenience flags mirrored from the live useSubscription hook so any
+  // component (or non-hook code) can read premium state from the store.
+  isPremium?: boolean;
+  isTrialing?: boolean;
+  trialEndsAt?: string;
+  subscriptionStatus?: string;
+
+  // Per-day Ubi message counter for free users
+  dailyUbiMessageCount?: { count: number; date: string };
+
+  // Set to true once the user has dismissed the post-trial lockout modal
+  // and chosen to "Continue with free tier". Lets us suppress the gate
+  // until trial state changes.
+  acknowledgedFreeTier?: boolean;
 }
 
 export interface PeriodLogEntry {
@@ -310,6 +325,9 @@ const initialProfile: UserProfile = {
   bloomScore: undefined,
   cachedJournalPrompt: undefined,
   cachedWeeklySummary: undefined,
+  isPremium: false,
+  isTrialing: false,
+  dailyUbiMessageCount: { count: 0, date: '' },
 };
 
 /** Convert a legacy CustomTask into the unified CoreHabit shape. */
