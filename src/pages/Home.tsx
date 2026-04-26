@@ -118,7 +118,7 @@ export default function Home() {
           <div className="flex items-center gap-2">
             <ProfileButton />
             <motion.img
-              alt="ubloom"
+              alt="uBloom"
               className="h-10 w-10 object-contain clay-icon"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
