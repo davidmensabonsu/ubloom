@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/collapsible';
 import ReminderSettings from '@/components/routine/ReminderSettings';
 import BottomNav from '@/components/BottomNav';
+import ManageSubscriptionDialog from '@/components/ManageSubscriptionDialog';
 
 const aesthetics = [
   { id: 'rose', name: 'Warm Rose', preview: 'bg-gradient-to-br from-rose-100 to-pink-200', accent: 'bg-rose-300', gradient: 'linear-gradient(135deg, hsl(344 40% 57%), hsl(344 55% 78%))' },
@@ -61,7 +62,7 @@ export default function Profile() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const [isOpeningPortal, setIsOpeningPortal] = useState(false);
+  const [manageOpen, setManageOpen] = useState(false);
 
   // Load profile data from Supabase
   useEffect(() => {
@@ -215,45 +216,6 @@ export default function Profile() {
     navigate('/');
   };
 
-  const handleManageSubscription = async () => {
-    if (isOpeningPortal) return;
-
-    setIsOpeningPortal(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('customer-portal');
-
-      if (data?.url) {
-        window.open(data.url, '_blank', 'noopener,noreferrer');
-        return;
-      }
-
-      if (data?.error === 'no_customer') {
-        toast({
-          title: 'No billing record yet',
-          description: data.message ?? 'Once your subscription is active, you’ll be able to manage billing here.',
-        });
-        return;
-      }
-
-      if (error) {
-        throw error;
-      }
-
-      toast({
-        title: 'Portal unavailable',
-        description: 'We couldn’t open billing right now. Please try again in a moment.',
-        variant: 'destructive',
-      });
-    } catch (error) {
-      toast({
-        title: 'Portal unavailable',
-        description: error instanceof Error ? error.message : 'Please try again in a moment.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsOpeningPortal(false);
-    }
-  };
 
   const initials = (displayName || user?.email || '?')
     .split(/[\s@]/)
@@ -506,11 +468,10 @@ export default function Profile() {
                 </p>
               )}
               <button
-                onClick={handleManageSubscription}
-                disabled={isOpeningPortal}
-                className="text-sm text-primary font-medium hover:underline disabled:opacity-60 disabled:no-underline"
+                onClick={() => setManageOpen(true)}
+                className="text-sm text-primary font-medium hover:underline"
               >
-                {isOpeningPortal ? 'Opening billing…' : 'Manage subscription →'}
+                Manage subscription →
               </button>
             </div>
           ) : isTrial ? (
@@ -776,6 +737,13 @@ export default function Profile() {
       </div>
 
       <BottomNav />
+
+      <ManageSubscriptionDialog
+        open={manageOpen}
+        onOpenChange={setManageOpen}
+        subscriptionEnd={subscriptionEnd}
+        planLabel="uBloom Premium"
+      />
     </div>
   );
 }

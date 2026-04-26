@@ -47,9 +47,38 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     const origin = req.headers.get("origin") || "https://ubloom.lovable.app";
 
+    let flow: "cancel" | undefined;
+    if (req.method !== "GET") {
+      try {
+        const body = await req.json().catch(() => ({}));
+        if (body?.flow === "cancel") flow = "cancel";
+      } catch (_e) {
+        // ignore body parse errors
+      }
+    }
+
+    // Look up the active subscription if we need a cancel flow
+    let subscriptionId: string | undefined;
+    if (flow === "cancel") {
+      const subs = await stripe.subscriptions.list({
+        customer: customerId,
+        status: "active",
+        limit: 1,
+      });
+      subscriptionId = subs.data[0]?.id;
+    }
+
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: customerId,
       return_url: `${origin}/profile`,
+      ...(flow === "cancel" && subscriptionId
+        ? {
+            flow_data: {
+              type: "subscription_cancel",
+              subscription_cancel: { subscription: subscriptionId },
+            },
+          }
+        : {}),
     });
 
     return new Response(JSON.stringify({ url: portalSession.url }), {
