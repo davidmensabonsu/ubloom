@@ -5,7 +5,6 @@ import { useHomeMessages } from '@/hooks/useHomeMessages';
 import { useTodaysIntention } from '@/hooks/useTodaysIntention';
 import { Skeleton } from '@/components/ui/skeleton';
 import BottomNav from '@/components/BottomNav';
-import TrialBanner from '@/components/TrialBanner';
 import { useSubscription } from '@/hooks/useSubscription';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useUserStore } from '@/stores/userStore';
@@ -33,13 +32,14 @@ const PHASE_ENERGY: Record<CyclePhase, string> = {
 export default function Home() {
   const { futureSelfMessage, loading } = useHomeMessages();
   const { intention, loading: intentionLoading } = useTodaysIntention();
-  const { status, isTrial, isExpired, trialDaysLeft } = useSubscription();
+  const { isPremium } = useSubscription();
   const habitCompletions = useUserStore((s) => s.profile.habitCompletions);
   const preferredName = useUserStore((s) => s.profile.preferredName);
   const cycleData = useUserStore((s) => s.profile.cycleData);
   const dailyCheckinState = useUserStore((s) => s.profile.dailyCheckinState);
   const intentionCompletedDate = useUserStore((s) => s.profile.intentionCompletedDate);
   const updateProfile = useUserStore((s) => s.updateProfile);
+  const [letterModalOpen, setLetterModalOpen] = useState(false);
 
   const [letterOpen, setLetterOpen] = useState(false);
   const greeting = timeGreetings();
@@ -53,16 +53,16 @@ export default function Home() {
     day: 'numeric',
   });
 
-  // Subtitle: cycle phase or daily check-in state
+  // Subtitle: cycle phase (premium only) or daily check-in state
   const subtitle = useMemo(() => {
-    if (cycleData?.setupComplete && cycleData.lastPeriodStart) {
+    if (isPremium && cycleData?.setupComplete && cycleData.lastPeriodStart) {
       const day = getCurrentCycleDay(cycleData.lastPeriodStart, cycleData.cycleLength);
       const phase = getCurrentPhase(day, cycleData.periodLength, cycleData.cycleLength);
       return `Day ${day} · ${phase} — ${PHASE_ENERGY[phase]}`;
     }
     if (dailyCheckinState) return `Feeling ${dailyCheckinState} today`;
     return null;
-  }, [cycleData, dailyCheckinState]);
+  }, [isPremium, cycleData, dailyCheckinState]);
 
   // Weekly consistency: Sunday → Saturday of current week
   const week = useMemo(() => {
