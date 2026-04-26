@@ -206,7 +206,7 @@ export default function ResourceDetailSheet({ resource, open, onOpenChange, book
   if (open && resource && resource.id !== lastViewedId) {
     setLastViewedId(resource.id);
     viewResource(resource.id);
-    track('resource_viewed', { resourceId: resource.id, category: resource.category });
+    track('resource_viewed', { resourceId: resource.id, category: resource.category, source: 'resource_detail_sheet' });
   }
   if (!open && lastViewedId) {
     setLastViewedId(null);
