@@ -430,7 +430,7 @@ export default function Profile() {
           ) : isActive && !isTrial ? (
             <div className="space-y-3">
               <p className="text-sm text-foreground/90">
-                You're on <span className="font-semibold text-primary">uBloom Pro</span>
+                You're on <span className="font-semibold text-primary">uBloom Premium</span>
               </p>
               {subscriptionEnd && (
                 <p className="text-xs text-muted-foreground">
@@ -456,7 +456,7 @@ export default function Profile() {
                 onClick={() => navigate('/upgrade')}
                 className="px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium"
               >
-                Upgrade to Pro
+                Upgrade to Premium
               </button>
             </div>
           ) : (
@@ -466,7 +466,7 @@ export default function Profile() {
                 onClick={() => navigate('/upgrade')}
                 className="px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium"
               >
-                Upgrade to Pro
+                Upgrade to Premium
               </button>
             </div>
           )}

@@ -27,7 +27,7 @@ export default function LockedOverlay({ children, locked, message }: LockedOverl
           <Lock size={20} className="text-primary" />
         </div>
         <p className="text-sm text-foreground/80 text-center px-4 max-w-[220px]">
-          {message || 'Unlock with uBloom Pro'}
+          {message || 'Unlock with uBloom Premium'}
         </p>
         <button
           onClick={() => navigate('/upgrade')}
