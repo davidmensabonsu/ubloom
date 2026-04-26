@@ -16,15 +16,15 @@ export type SubscriberStatus = 'active' | 'inactive' | 'cancelled' | 'past_due' 
 
 const PLANS = {
   monthly: {
-    priceId: 'price_1TKMZaAni5cThJuscqeltmFP',
-    label: '£4.99/month',
-    amount: '£4.99',
+    priceId: 'price_1TQYfhAni5cThJusEXsVkv2X',
+    label: '£12.99/month',
+    amount: '£12.99',
     interval: 'month' as const,
   },
   yearly: {
-    priceId: 'price_1TKMaJAni5cThJus9hNowIo0',
-    label: '£45/year',
-    amount: '£45',
+    priceId: 'price_1TQYgDAni5cThJus4onBfI7s',
+    label: '£79.99/year',
+    amount: '£79.99',
     interval: 'year' as const,
   },
 };
