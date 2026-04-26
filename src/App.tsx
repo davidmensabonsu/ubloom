@@ -14,6 +14,7 @@ import DailyMoodCheckin from "@/components/DailyMoodCheckin";
 import AppWalkthrough from "@/components/AppWalkthrough";
 import TrialWelcomeModal from "@/components/TrialWelcomeModal";
 import PageViewTracker from "@/components/PageViewTracker";
+import SubscriptionGate from "@/components/SubscriptionGate";
 import { getLocalDateStr } from "@/lib/dateUtils";
 
 // Pages
@@ -138,6 +139,7 @@ function AnimatedRoutes() {
   return (
     <>
       <PageViewTracker />
+      <SubscriptionGate />
       <MoodCheckinGate>
         <AnimatePresence mode="wait" initial={false}>
           <Routes location={location} key={location.pathname}>
