@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserStore } from '@/stores/userStore';
@@ -32,12 +33,14 @@ export { PLANS };
 
 export function useSubscription() {
   const { user } = useAuth();
-  // Use individual selectors so each subscription returns a stable reference.
-  // Destructuring the whole store returns a new object every render, which
-  // would recreate `checkSubscription` and trigger an update loop (surfaced
-  // by React as "Should have a queue" / "getSnapshot" errors during HMR).
-  const profile = useUserStore((s) => s.profile);
-  const updateProfile = useUserStore((s) => s.updateProfile);
+  // Single subscription with useShallow returns a stable reference unless
+  // profile/updateProfile actually change. Destructuring the whole store
+  // returns a new object every render, which recreates `checkSubscription`
+  // and triggers an update loop (surfaced by React as "Should have a queue"
+  // / "getSnapshot" errors during HMR).
+  const { profile, updateProfile } = useUserStore(
+    useShallow((s) => ({ profile: s.profile, updateProfile: s.updateProfile })),
+  );
   const { isAdmin } = useAdminCheck();
   // Seed from the cached snapshot in the Zustand store so premium gating
   // renders instantly on cold start (no flash of "free" UI).
