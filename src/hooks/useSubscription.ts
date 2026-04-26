@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useUserStore } from '@/stores/userStore';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import { useAdminCheck } from '@/hooks/useAdminCheck';
+import { track } from '@/hooks/useAnalytics';
 
 export type SubscriptionStatus = 'trial' | 'active' | 'expired' | 'loading';
 
@@ -191,6 +192,38 @@ export function useSubscription() {
   const isExpired = status === 'expired';
   // True premium (paid or in Stripe trial) — distinguished from in-app free trial
   const isPremium = status === 'active';
+
+  // Fire `subscription_success` exactly once per (user, subscription start) when
+  // we first observe an active premium subscription. Guarded in localStorage so
+  // it survives the redirect back from Stripe Checkout and only fires on the
+  // *transition* — not on every poll for already-subscribed users.
+  useEffect(() => {
+    if (isLoading || !user || !stripeSubscribed) return;
+    if (typeof window === 'undefined') return;
+
+    const key = `analytics:subscription_success:${user.id}`;
+    const periodEnd = subscriptionEnd ?? '';
+    let prev: string | null = null;
+    try {
+      prev = window.localStorage.getItem(key);
+    } catch {
+      // Storage unavailable — fall through and fire (best-effort).
+    }
+    if (prev === periodEnd) return; // already tracked this subscription period
+
+    track('subscription_success', {
+      source: 'subscription_check',
+      plan,
+      subscriber_status: subscriberStatus,
+      subscription_end: subscriptionEnd,
+    });
+
+    try {
+      window.localStorage.setItem(key, periodEnd);
+    } catch {
+      // ignore
+    }
+  }, [isLoading, user, stripeSubscribed, plan, subscriberStatus, subscriptionEnd]);
 
   // Compute trial end ISO from in-app trial start
   const trialEndsAt = useMemo(() => {
