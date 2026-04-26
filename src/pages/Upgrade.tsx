@@ -12,7 +12,7 @@ const features = [
   'Unlimited Ubi conversations',
   'Personalised health & cycle insights',
   'Mood trends & analytics',
-  'All Wonder resources unlocked',
+  'All Wander resources unlocked',
   'Full personalisation experience',
   'Priority access to new features',
 ];
