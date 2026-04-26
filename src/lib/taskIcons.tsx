@@ -177,7 +177,7 @@ export interface TaskIconOption {
 }
 
 export const taskIconOptions: TaskIconOption[] = [
-  { id: 'ubloom', label: 'ubloom', icon: Sparkles, imageSrc: ubloomImg },
+  { id: 'ubloom', label: 'uBloom', icon: Sparkles, imageSrc: ubloomImg },
   { id: 'dumbbell', label: 'Exercise', icon: Dumbbell, imageSrc: dumbbellImg },
   { id: 'glass-water', label: 'Hydration', icon: GlassWater, imageSrc: glassWaterImg },
   { id: 'utensils', label: 'Meals', icon: UtensilsCrossed, imageSrc: utensilsImg },
@@ -275,7 +275,7 @@ export interface IconCategory {
 
 export const iconCategories: IconCategory[] = [
   {
-    label: 'ubloom',
+    label: 'uBloom',
     iconIds: ['ubloom'],
   },
   {

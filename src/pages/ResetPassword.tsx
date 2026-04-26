@@ -74,7 +74,7 @@ export default function ResetPassword() {
 
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <img alt="ubloom logo" className="w-[190px] h-[190px] mx-auto mb-0 drop-shadow-lg saturate-150 brightness-105 object-contain clay-icon" src={ubloomLogo} />
+          <img alt="uBloom logo" className="w-[190px] h-[190px] mx-auto mb-0 drop-shadow-lg saturate-150 brightness-105 object-contain clay-icon" src={ubloomLogo} />
           <h1 className="text-4xl font-display font-light tracking-tight text-foreground">
             New password
           </h1>
