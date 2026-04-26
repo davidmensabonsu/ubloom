@@ -1,14 +1,14 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bookmark, Headphones, Sparkles, Lock } from 'lucide-react';
+import { Bookmark, Headphones, Sparkles } from 'lucide-react';
 import { wonderResources, type WonderResource } from '@/lib/wonderResources';
 import { useUserStore } from '@/stores/userStore';
 import { useSubscription } from '@/hooks/useSubscription';
-import { useNavigate } from 'react-router-dom';
 import { usePodcastArtwork } from '@/hooks/usePodcastArtwork';
 import { supabase } from '@/integrations/supabase/client';
 import ResourceCard from './ResourceCard';
 import ResourceDetailSheet from './ResourceDetailSheet';
+import UnlockLibraryCard from './UnlockLibraryCard';
 
 const podcastTopics = [
   { key: 'all', label: 'All' },
@@ -69,7 +69,6 @@ export default function PodcastsSection() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const { profile, saveResource, unsaveResource } = useUserStore();
   const { isActive } = useSubscription();
-  const navigate = useNavigate();
 
   const allPodcasts = wonderResources.filter((r) => r.category === 'podcasts');
   const savedIds = profile.savedResources || [];
@@ -128,7 +127,7 @@ export default function PodcastsSection() {
     return map;
   }, [forYouRecs]);
 
-  const filtered = activeTopic === 'saved'
+  const allFiltered = activeTopic === 'saved'
     ? allPodcasts.filter((r) => savedIds.includes(r.id))
     : activeTopic === 'for-you'
       ? allPodcasts.filter((r) => forYouRecs.some((rec) => rec.id === r.id))
@@ -137,6 +136,10 @@ export default function PodcastsSection() {
         : allPodcasts.filter((p) =>
             p.tags.some((t) => topicTagMap[activeTopic]?.includes(t))
           );
+
+  const isGated = !isActive && activeTopic !== 'saved' && activeTopic !== 'for-you';
+  const filtered = isGated ? allFiltered.slice(0, FREE_RESOURCE_LIMIT) : allFiltered;
+  const hiddenCount = isGated ? Math.max(allFiltered.length - FREE_RESOURCE_LIMIT, 0) : 0;
 
   const handleSelect = (r: WonderResource, reason?: string) => {
     setSelectedResource(r);
@@ -220,7 +223,6 @@ export default function PodcastsSection() {
             {filtered.map((resource, i) => {
               const artwork = artworks[resource.title];
               const reason = activeTopic === 'for-you' ? reasonMap[resource.id] : undefined;
-              const isLocked = !isActive && activeTopic !== 'saved' && activeTopic !== 'for-you' && i >= FREE_RESOURCE_LIMIT;
               return (
                 <motion.div
                   key={resource.id}
@@ -229,10 +231,9 @@ export default function PodcastsSection() {
                   transition={{ delay: Math.min(i * 0.03, 0.2) }}
                   className="relative"
                 >
-                  <div className={isLocked ? 'pointer-events-none select-none' : ''} style={isLocked ? { filter: 'blur(4px)', opacity: 0.5 } : undefined}>
-                    {artwork ? (
+                  {artwork ? (
                       <motion.button
-                        onClick={() => !isLocked && handleSelect(resource, reason)}
+                        onClick={() => handleSelect(resource, reason)}
                         className="w-full text-left rounded-2xl bg-muted/30 hover:bg-muted/50 transition-colors relative overflow-hidden"
                         whileTap={{ scale: 0.97 }}
                       >
@@ -267,37 +268,29 @@ export default function PodcastsSection() {
                     ) : (
                       <ResourceCard
                         resource={resource}
-                        onTap={() => !isLocked && handleSelect(resource, reason)}
+                        onTap={() => handleSelect(resource, reason)}
                         compact
                       />
                     )}
-                  </div>
-                  {isLocked && (
-                    <button
-                      onClick={() => navigate('/upgrade')}
-                      className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-background/30 backdrop-blur-[1px] rounded-xl z-10"
-                    >
-                      <Lock size={16} className="text-primary" />
-                      <span className="text-[10px] text-primary font-medium">Upgrade</span>
-                    </button>
-                  )}
-                  {!isLocked && (
-                    <button
-                      onClick={(e) => handleToggleSave(e, resource.id)}
-                      className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-background z-10"
-                    >
-                      <Bookmark
-                        size={14}
-                        className={savedIds.includes(resource.id) ? 'text-primary fill-primary' : 'text-muted-foreground'}
-                      />
-                    </button>
-                  )}
+                  <button
+                    onClick={(e) => handleToggleSave(e, resource.id)}
+                    className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-background z-10"
+                  >
+                    <Bookmark
+                      size={14}
+                      className={savedIds.includes(resource.id) ? 'text-primary fill-primary' : 'text-muted-foreground'}
+                    />
+                  </button>
                 </motion.div>
               );
             })}
           </motion.div>
         )}
       </AnimatePresence>
+
+      {isGated && hiddenCount > 0 && (
+        <UnlockLibraryCard category="podcasts" hiddenCount={hiddenCount} />
+      )}
 
       {activeTopic === 'for-you' && !forYouLoading && filtered.length === 0 && forYouRecs.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">Complete your profile to get personalised recommendations.</p>

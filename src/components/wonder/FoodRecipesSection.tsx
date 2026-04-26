@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bookmark, UtensilsCrossed, Lock } from 'lucide-react';
+import { Bookmark, UtensilsCrossed } from 'lucide-react';
 import { mealRecipes, type MealRecipe, type MealType } from '@/lib/wonderResources';
 import { useUserStore } from '@/stores/userStore';
 import { useSubscription } from '@/hooks/useSubscription';
-import { useNavigate } from 'react-router-dom';
 import MealRecipeCard from './MealRecipeCard';
 import RecipeDetailSheet from './RecipeDetailSheet';
+import UnlockLibraryCard from './UnlockLibraryCard';
 import heartIcon from '@/assets/icons/heart.png';
 import sunriseIcon from '@/assets/icons/sunrise.png';
 import sunIcon from '@/assets/icons/sun.png';
@@ -31,13 +31,16 @@ export default function FoodRecipesSection() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const { profile, saveResource, unsaveResource } = useUserStore();
   const { isActive } = useSubscription();
-  const navigate = useNavigate();
 
   const savedIds = profile.savedResources || [];
 
-  const filtered = activeMeal === 'saved'
+  const allFiltered = activeMeal === 'saved'
     ? mealRecipes.filter((r) => savedIds.includes(r.id))
     : mealRecipes.filter((r) => r.mealType === activeMeal);
+
+  const isGated = !isActive && activeMeal !== 'saved';
+  const filtered = isGated ? allFiltered.slice(0, FREE_RESOURCE_LIMIT) : allFiltered;
+  const hiddenCount = isGated ? Math.max(allFiltered.length - FREE_RESOURCE_LIMIT, 0) : 0;
 
   const handleSelect = (recipe: MealRecipe) => {
     setSelectedRecipe(recipe);
@@ -99,7 +102,6 @@ export default function FoodRecipesSection() {
             className="grid grid-cols-2 gap-3"
           >
             {filtered.map((recipe, i) => {
-              const isLocked = !isActive && activeMeal !== 'saved' && i >= FREE_RESOURCE_LIMIT;
               return (
                 <motion.div
                   key={recipe.id}
@@ -108,35 +110,26 @@ export default function FoodRecipesSection() {
                   transition={{ delay: i * 0.05 }}
                   className="relative"
                 >
-                  <div className={isLocked ? 'pointer-events-none select-none' : ''} style={isLocked ? { filter: 'blur(4px)', opacity: 0.5 } : undefined}>
-                    <MealRecipeCard recipe={recipe} onTap={() => !isLocked && handleSelect(recipe)} />
-                  </div>
-                  {isLocked && (
-                    <button
-                      onClick={() => navigate('/upgrade')}
-                      className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-background/30 backdrop-blur-[1px] rounded-xl z-10"
-                    >
-                      <Lock size={16} className="text-primary" />
-                      <span className="text-[10px] text-primary font-medium">Upgrade</span>
-                    </button>
-                  )}
-                  {!isLocked && (
-                    <button
-                      onClick={(e) => handleToggleSave(e, recipe.id)}
-                      className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-background z-10"
-                    >
-                      <Bookmark
-                        size={14}
-                        className={savedIds.includes(recipe.id) ? 'text-primary fill-primary' : 'text-muted-foreground'}
-                      />
-                    </button>
-                  )}
+                  <MealRecipeCard recipe={recipe} onTap={() => handleSelect(recipe)} />
+                  <button
+                    onClick={(e) => handleToggleSave(e, recipe.id)}
+                    className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-background z-10"
+                  >
+                    <Bookmark
+                      size={14}
+                      className={savedIds.includes(recipe.id) ? 'text-primary fill-primary' : 'text-muted-foreground'}
+                    />
+                  </button>
                 </motion.div>
               );
             })}
           </motion.div>
         )}
       </AnimatePresence>
+
+      {isGated && hiddenCount > 0 && (
+        <UnlockLibraryCard category="recipes" hiddenCount={hiddenCount} />
+      )}
 
       <RecipeDetailSheet
         recipe={selectedRecipe}

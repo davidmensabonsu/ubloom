@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bookmark, Dumbbell, Lock } from 'lucide-react';
+import { Bookmark, Dumbbell } from 'lucide-react';
 import { fitnessWorkouts, type FitnessWorkout, type FitnessType } from '@/lib/wonderResources';
 import { useSubscription } from '@/hooks/useSubscription';
-import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 import FitnessWorkoutCard from './FitnessWorkoutCard';
 import FitnessDetailSheet from './FitnessDetailSheet';
+import UnlockLibraryCard from './UnlockLibraryCard';
 import heartIcon from '@/assets/icons/heart.png';
 import dumbbellIcon from '@/assets/icons/dumbbell.png';
 import runningIcon from '@/assets/icons/running.png';
@@ -33,13 +33,16 @@ export default function FitnessSection() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const { profile, saveResource, unsaveResource } = useUserStore();
   const { isActive } = useSubscription();
-  const navigate = useNavigate();
 
   const savedIds = profile.savedResources || [];
 
-  const filtered = activeTab === 'saved'
+  const allFiltered = activeTab === 'saved'
     ? fitnessWorkouts.filter((w) => savedIds.includes(w.id))
     : fitnessWorkouts.filter((w) => w.fitnessType === activeTab);
+
+  const isGated = !isActive && activeTab !== 'saved';
+  const filtered = isGated ? allFiltered.slice(0, FREE_RESOURCE_LIMIT) : allFiltered;
+  const hiddenCount = isGated ? Math.max(allFiltered.length - FREE_RESOURCE_LIMIT, 0) : 0;
 
   const handleSelect = (workout: FitnessWorkout) => {
     setSelectedWorkout(workout);
@@ -77,7 +80,7 @@ export default function FitnessSection() {
       </div>
 
       <AnimatePresence mode="wait">
-        {activeTab === 'saved' && filtered.length === 0 ? (
+        {activeTab === 'saved' && allFiltered.length === 0 ? (
           <motion.div
             key="empty-saved"
             initial={{ opacity: 0, y: 8 }}
@@ -101,7 +104,6 @@ export default function FitnessSection() {
             className="grid grid-cols-2 gap-3"
           >
             {filtered.map((workout, i) => {
-              const isLocked = !isActive && activeTab !== 'saved' && i >= FREE_RESOURCE_LIMIT;
               return (
                 <motion.div
                   key={workout.id}
@@ -110,35 +112,26 @@ export default function FitnessSection() {
                   transition={{ delay: i * 0.05 }}
                   className="relative"
                 >
-                  <div className={isLocked ? 'pointer-events-none select-none' : ''} style={isLocked ? { filter: 'blur(4px)', opacity: 0.5 } : undefined}>
-                    <FitnessWorkoutCard workout={workout} onTap={() => !isLocked && handleSelect(workout)} />
-                  </div>
-                  {isLocked && (
-                    <button
-                      onClick={() => navigate('/upgrade')}
-                      className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-background/30 backdrop-blur-[1px] rounded-xl z-10"
-                    >
-                      <Lock size={16} className="text-primary" />
-                      <span className="text-[10px] text-primary font-medium">Upgrade</span>
-                    </button>
-                  )}
-                  {!isLocked && (
-                    <button
-                      onClick={(e) => handleToggleSave(e, workout.id)}
-                      className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-background z-10"
-                    >
-                      <Bookmark
-                        size={14}
-                        className={savedIds.includes(workout.id) ? 'text-primary fill-primary' : 'text-muted-foreground'}
-                      />
-                    </button>
-                  )}
+                  <FitnessWorkoutCard workout={workout} onTap={() => handleSelect(workout)} />
+                  <button
+                    onClick={(e) => handleToggleSave(e, workout.id)}
+                    className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors hover:bg-background z-10"
+                  >
+                    <Bookmark
+                      size={14}
+                      className={savedIds.includes(workout.id) ? 'text-primary fill-primary' : 'text-muted-foreground'}
+                    />
+                  </button>
                 </motion.div>
               );
             })}
           </motion.div>
         )}
       </AnimatePresence>
+
+      {isGated && hiddenCount > 0 && (
+        <UnlockLibraryCard category="fitness" hiddenCount={hiddenCount} />
+      )}
 
       <FitnessDetailSheet
         workout={selectedWorkout}
