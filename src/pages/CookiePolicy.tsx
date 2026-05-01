@@ -1,5 +1,5 @@
 import { ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 export default function CookiePolicy() {
@@ -23,9 +23,9 @@ export default function CookiePolicy() {
 
           {/* 1 */}
           <section className="space-y-2">
-            <h2 className="text-base font-semibold text-foreground">1. What Are Cookies?</h2>
+            <h2 className="text-base font-semibold text-foreground">1. What are cookies?</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Cookies are small text files that websites place on your device to store information. They are widely used to make websites and applications work efficiently and to provide information to the owners of the site.
+              Cookies are small text files that websites place on your device to store information. They are widely used to make websites and applications work efficiently and to provide information to site owners.
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
               "Local storage" is a similar browser technology that allows websites to store data locally on your device. It works like cookies but can hold more data and does not expire automatically.
@@ -39,7 +39,13 @@ export default function CookiePolicy() {
               uBloom does <strong>not</strong> use traditional HTTP cookies for tracking, advertising, or analytics purposes. We do not set any third-party cookies.
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Instead, uBloom uses <strong>browser local storage</strong> — a privacy-friendly alternative — to store the minimum data needed to keep you logged in and to remember your preferences. This data never leaves your device unless you explicitly sync it with your account.
+              Instead, uBloom uses <strong>browser local storage</strong> — a privacy-friendly alternative — to store the minimum data needed to keep you logged in and to remember your preferences. This data never leaves your device unless you explicitly sync it with your account through the uBloom service.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              All locally stored data in the current version of uBloom is strictly necessary for the app to function. We do not store any optional or non-essential data locally. If this changes in a future version we will update this policy and notify you accordingly.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              For full details on how we collect and process your personal data beyond local storage, please see our <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
             </p>
           </section>
 
@@ -58,7 +64,7 @@ export default function CookiePolicy() {
                 <tbody className="divide-y divide-border">
                   <tr>
                     <td className="py-2 pr-3">Authentication token</td>
-                    <td className="py-2 pr-3">Keeps you securely logged in so you don't have to sign in every time</td>
+                    <td className="py-2 pr-3">Keeps you securely logged in. Managed by Supabase Auth and subject to their session expiration rules</td>
                     <td className="py-2">Until you log out or the token expires</td>
                   </tr>
                   <tr>
@@ -68,15 +74,12 @@ export default function CookiePolicy() {
                   </tr>
                   <tr>
                     <td className="py-2 pr-3">Profile data cache</td>
-                    <td className="py-2 pr-3">Caches your profile locally so the app loads faster</td>
+                    <td className="py-2 pr-3">Caches your profile locally so the app loads faster and works more reliably</td>
                     <td className="py-2">Until you clear browser storage or delete your account</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              All locally stored data is strictly necessary for the app to function. We do not store any optional or non-essential data.
-            </p>
           </section>
 
           {/* 4 */}
@@ -89,13 +92,16 @@ export default function CookiePolicy() {
               <li>Google Analytics or any analytics cookies</li>
               <li>Facebook Pixel or any social media tracking pixels</li>
               <li>Advertising cookies or retargeting cookies</li>
-              <li>Any behavioural tracking technology</li>
+              <li>Any behavioral tracking or profiling technology</li>
             </ul>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              When you sign in with Google, Google may set its own cookies on the Google sign-in page. These are governed by <a href="https://policies.google.com/privacy" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Google's Privacy Policy</a> and are not controlled by uBloom.
+              <strong>Google sign-in:</strong> When you choose to sign in with Google, Google may set its own cookies on the Google sign-in page. These are governed by <a href="https://policies.google.com/privacy" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Google's Privacy Policy</a> and are not controlled by uBloom.
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              When you make a payment, Stripe may set cookies on the Stripe checkout page. These are governed by <a href="https://stripe.com/privacy" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Stripe's Privacy Policy</a> and are not controlled by uBloom.
+              <strong>Stripe payments:</strong> When you make a payment, Stripe may set cookies on the Stripe checkout page. These are governed by <a href="https://stripe.com/privacy" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Stripe's Privacy Policy</a> and are not controlled by uBloom.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              <strong>Supabase:</strong> Our database and authentication provider Supabase may use technical cookies or local storage as part of managing your authenticated session. These are strictly necessary for the service to function.
             </p>
           </section>
 
@@ -108,10 +114,11 @@ export default function CookiePolicy() {
             <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 ml-2">
               <li><strong>Chrome</strong> — Settings → Privacy and Security → Clear Browsing Data → select "Cookies and other site data"</li>
               <li><strong>Safari</strong> — Settings → Privacy → Manage Website Data → find uBloom and remove</li>
-              <li><strong>Firefox</strong> — Settings → Privacy & Security → Cookies and Site Data → Manage Data</li>
+              <li><strong>Firefox</strong> — Settings → Privacy &amp; Security → Cookies and Site Data → Manage Data</li>
+              <li><strong>Edge</strong> — Settings → Privacy, Search and Services → Clear Browsing Data → select "Cookies and other site data"</li>
             </ul>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Please note that clearing local storage will log you out of uBloom. Your data is safely stored in the cloud and will reload when you sign back in.
+              Please note that clearing local storage will log you out of uBloom. Your personal data is safely stored in the cloud and will reload automatically when you sign back in.
             </p>
           </section>
 
@@ -125,17 +132,25 @@ export default function CookiePolicy() {
 
           {/* 7 */}
           <section className="space-y-2">
-            <h2 className="text-base font-semibold text-foreground">7. Changes to This Policy</h2>
+            <h2 className="text-base font-semibold text-foreground">7. Age Restriction</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              We may update this Cookie Policy from time to time. Where changes are material we will notify you by email or via an in-app notification. The date at the top of this document shows when it was last updated.
+              uBloom is intended for users aged 18 and over. If you are under 18 you must not use uBloom. Please see our <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link> for full details on our approach to children's data.
             </p>
           </section>
 
           {/* 8 */}
           <section className="space-y-2">
-            <h2 className="text-base font-semibold text-foreground">8. Contact Us</h2>
+            <h2 className="text-base font-semibold text-foreground">8. Changes to This Policy</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              If you have any questions about this Cookie Policy please contact us at:
+              We may update this Cookie Policy from time to time to reflect changes in how we use local storage or in response to regulatory guidance. Where changes are material we will notify you by email or via an in-app notification at least 30 days before the changes take effect. The date at the top of this document shows when it was last updated.
+            </p>
+          </section>
+
+          {/* 9 */}
+          <section className="space-y-2">
+            <h2 className="text-base font-semibold text-foreground">9. Contact Us</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              If you have any questions about this Cookie Policy or how we use local storage, please contact us at:
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
               [COMPANY NAME]<br />
