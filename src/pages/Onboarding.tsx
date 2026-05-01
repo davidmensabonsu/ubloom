@@ -309,12 +309,11 @@ export default function Onboarding() {
             
             </div>
           }
-          }
 
           {/* Continue button */}
           <motion.button
             onClick={handleNext}
-            disabled={!canContinue() && step.type !== 'text'}
+            disabled={!canContinue()}
             className={`soft-button w-full mt-6 flex items-center justify-center gap-2 ${
             !canContinue() ? 'opacity-50' : ''}`
             }
