@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import { useState } from 'react';
 import { useUserStore, CoreHabit } from '@/stores/userStore';
-import { Check, Sparkles, Pencil, Trash2, Settings2, GripVertical } from 'lucide-react';
+import { Check, Sparkles, Pencil, Trash2, Settings2 } from 'lucide-react';
 import { getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
 import EditHabitDialog from '@/components/routine/EditHabitDialog';
 import { isHabitScheduledForDate, getFrequencyLabel } from '@/components/routine/FrequencyPicker';
@@ -80,16 +80,10 @@ function SortableRow({ habit, editMode, isCompleted, onToggle, onEdit, onDelete 
       <div
         ref={setNodeRef}
         style={style}
-        className={`check-item w-full ${isDragging ? 'shadow-elevated' : ''}`}
+        className={`check-item w-full cursor-grab active:cursor-grabbing ${isDragging ? 'shadow-elevated' : ''}`}
+        {...attributes}
+        {...listeners}
       >
-        <button
-          {...attributes}
-          {...listeners}
-          className="touch-none p-1 -ml-1 text-primary/40 hover:text-primary/70 transition-colors cursor-grab active:cursor-grabbing"
-          aria-label="Drag to reorder"
-        >
-          <GripVertical size={16} strokeWidth={2.5} />
-        </button>
         <span className="text-sm font-medium flex items-center gap-2 flex-1">
           <HabitIcon iconId={habit.icon} />
           {habit.title}
@@ -116,18 +110,11 @@ function SortableRow({ habit, editMode, isCompleted, onToggle, onEdit, onDelete 
     <motion.div
       ref={setNodeRef}
       style={style}
-      className={`check-item w-full ${isDragging ? 'shadow-elevated' : ''}`}
+      className={`check-item w-full cursor-grab active:cursor-grabbing ${isDragging ? 'shadow-elevated' : ''}`}
       whileTap={{ scale: 0.98 }}
+      {...attributes}
+      {...listeners}
     >
-      <button
-        {...attributes}
-        {...listeners}
-        className="touch-none p-1 -ml-1 text-primary/40 hover:text-primary/70 transition-colors cursor-grab active:cursor-grabbing"
-        aria-label="Drag to reorder"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <GripVertical size={16} strokeWidth={2.5} />
-      </button>
       <button
         onClick={onToggle}
         className="flex items-center gap-3 flex-1 min-w-0 text-left"
