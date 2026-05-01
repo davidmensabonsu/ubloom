@@ -39,7 +39,6 @@ import Upgrade from "./pages/Upgrade";
 import NotFound from "./pages/NotFound";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
-import DataProtection from "./pages/DataProtection";
 import LegalConsent from "./pages/LegalConsent";
 
 const queryClient = new QueryClient();
@@ -168,7 +167,6 @@ function AnimatedRoutes() {
             <Route path="/legal-consent" element={<ProtectedRoute><PageTransition direction={direction}><LegalConsent /></PageTransition></ProtectedRoute>} />
             <Route path="/terms" element={<PageTransition direction={direction}><Terms /></PageTransition>} />
             <Route path="/privacy" element={<PageTransition direction={direction}><Privacy /></PageTransition>} />
-            <Route path="/data-protection" element={<PageTransition direction={direction}><DataProtection /></PageTransition>} />
             <Route path="*" element={<PageTransition direction={direction}><NotFound /></PageTransition>} />
           </Routes>
         </AnimatePresence>
