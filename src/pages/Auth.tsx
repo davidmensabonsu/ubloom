@@ -214,6 +214,8 @@ export default function Auth() {
           <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
           <span>·</span>
           <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
+          <span>·</span>
+          <Link to="/data-protection" className="hover:text-foreground transition-colors">Data Protection</Link>
         </div>
 
         {/* Toggle */}
