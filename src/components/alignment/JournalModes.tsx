@@ -169,17 +169,27 @@ export default function JournalModes() {
     if (videoPreviewRef.current) videoPreviewRef.current.srcObject = null;
   };
 
+  // Determine best supported video MIME type (iOS Safari only supports mp4)
+  const getVideoMimeType = () => {
+    if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')) return 'video/webm;codecs=vp9,opus';
+    if (MediaRecorder.isTypeSupported('video/webm')) return 'video/webm';
+    if (MediaRecorder.isTypeSupported('video/mp4')) return 'video/mp4';
+    return '';
+  };
+
   const startVideoRecording = () => {
     const stream = videoStreamRef.current;
     if (!stream) return;
-    const recorder = new MediaRecorder(stream, { mimeType: MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus') ? 'video/webm;codecs=vp9,opus' : 'video/webm' });
+    const mimeType = getVideoMimeType();
+    const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
     videoMediaRecorderRef.current = recorder;
     videoChunksRef.current = [];
     recorder.ondataavailable = (e) => {
       if (e.data.size > 0) videoChunksRef.current.push(e.data);
     };
     recorder.onstop = () => {
-      const blob = new Blob(videoChunksRef.current, { type: 'video/webm' });
+      const actualType = mimeType.startsWith('video/mp4') ? 'video/mp4' : 'video/webm';
+      const blob = new Blob(videoChunksRef.current, { type: actualType });
       setVideoBlob(blob);
       const url = URL.createObjectURL(blob);
       setVideoPreviewUrl(url);
@@ -217,11 +227,13 @@ export default function JournalModes() {
     }
     setVideoUploading(true);
     try {
-      const fileName = `${Date.now()}.webm`;
+      const isMp4 = videoBlob.type === 'video/mp4';
+      const ext = isMp4 ? 'mp4' : 'webm';
+      const fileName = `${Date.now()}.${ext}`;
       const path = `${user.id}/${fileName}`;
       const { error } = await supabase.storage
         .from('video-journals')
-        .upload(path, videoBlob, { contentType: 'video/webm', upsert: false });
+        .upload(path, videoBlob, { contentType: videoBlob.type || 'video/webm', upsert: false });
       if (error) throw error;
 
       const tag = `🎬 Video journal · ${formatDuration(videoDuration)}`;
