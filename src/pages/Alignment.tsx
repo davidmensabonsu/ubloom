@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
-import { Pen, Mic } from 'lucide-react';
+import { Pen, Mic, Video } from 'lucide-react';
 import ProfileButton from '@/components/ProfileButton';
 import BottomNav from '@/components/BottomNav';
 import MoodCalendar from '@/components/alignment/MoodCalendar';
@@ -12,6 +12,7 @@ import LockedOverlay from '@/components/LockedOverlay';
 import { useSubscription } from '@/hooks/useSubscription';
 
 import JournalAudioPlayer from '@/components/alignment/JournalAudioPlayer';
+import JournalVideoPlayer from '@/components/alignment/JournalVideoPlayer';
 import JournalHistorySheet from '@/components/alignment/JournalHistorySheet';
 import heartPulseIcon from '@/assets/icons/heart-pulse.png';
 import { getCurrentCycleDay, getCurrentPhase } from '@/lib/cycleUtils';
@@ -122,11 +123,13 @@ export default function Alignment() {
               <div className="space-y-2">
                 {recentEntries.map((entry, i) => {
                   const isVoice = entry.content.startsWith('🎙️');
-                  const Icon = isVoice ? Mic : Pen;
-                  // Strip leading voice marker line for the preview
-                  const previewSource = isVoice
-                    ? entry.content.replace(/^🎙️[^\n]*\n?/, '').replace(/^Prompt:[^\n]*\n?/, '').trim() || 'Voice memo'
-                    : entry.content;
+                  const isVideo = entry.content.startsWith('🎬') || !!entry.videoPath;
+                  const Icon = isVideo ? Video : isVoice ? Mic : Pen;
+                  const previewSource = isVideo
+                    ? entry.content.replace(/^🎬[^\n]*\n?/, '').replace(/^Prompt:[^\n]*\n?/, '').trim() || 'Video journal'
+                    : isVoice
+                      ? entry.content.replace(/^🎙️[^\n]*\n?/, '').replace(/^Prompt:[^\n]*\n?/, '').trim() || 'Voice memo'
+                      : entry.content;
                   const preview = previewSource.slice(0, 80) + (previewSource.length > 80 ? '…' : '');
                   return (
                     <motion.div
@@ -144,6 +147,9 @@ export default function Alignment() {
                         </p>
                         {isVoice && entry.audioPath && (
                           <JournalAudioPlayer path={entry.audioPath} durationSec={entry.audioDurationSec} />
+                        )}
+                        {isVideo && entry.videoPath && (
+                          <JournalVideoPlayer path={entry.videoPath} durationSec={entry.videoDurationSec} />
                         )}
                       </div>
                     </motion.div>
