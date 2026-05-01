@@ -207,8 +207,15 @@ export default function Auth() {
           </p>
         }
 
+        {/* Legal links */}
+        <div className="flex justify-center gap-3 mt-4 text-xs text-muted-foreground">
+          <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
+          <span>·</span>
+          <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
+        </div>
+
         {/* Toggle */}
-        <p className="text-center mt-4 text-sm text-muted-foreground">
+        <p className="text-center mt-3 text-sm text-muted-foreground">
           {isForgot ?
           <>
               <button
