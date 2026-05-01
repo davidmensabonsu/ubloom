@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 import { useAuth } from '@/hooks/useAuth';
 import { Heart, ArrowRight, Sparkles, Infinity, Flower2 } from 'lucide-react';
@@ -88,8 +88,14 @@ export default function Welcome() {
         <ArrowRight size={18} />
       </motion.button>
 
-      {/* Footer note */}
-      <p className="mt-8 text-xs text-muted-foreground">
+      {/* Legal links */}
+      <div className="mt-8 flex items-center gap-3 text-xs text-muted-foreground">
+        <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
+        <span>·</span>
+        <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
+      </div>
+
+      <p className="mt-3 text-xs text-muted-foreground">
         Made with love for women who dare to bloom
       </p>
     </div>);
