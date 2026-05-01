@@ -90,7 +90,7 @@ serve(async (req) => {
     if (rolesErr) logStep("Error deleting user_roles", { error: rolesErr.message });
 
     // 3. Delete storage files
-    const buckets = ["vision-images", "voice-journals"];
+    const buckets = ["vision-images", "voice-journals", "video-journals"];
     for (const bucket of buckets) {
       try {
         const { data: files } = await supabaseAdmin.storage.from(bucket).list(userId);

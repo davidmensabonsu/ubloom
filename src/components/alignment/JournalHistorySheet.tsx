@@ -1,16 +1,17 @@
 import { useMemo, useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Input } from '@/components/ui/input';
-import { Search, Pen, Mic, X } from 'lucide-react';
+import { Search, Pen, Mic, Video, X } from 'lucide-react';
 import { useUserStore, type JournalEntry } from '@/stores/userStore';
 import JournalAudioPlayer from './JournalAudioPlayer';
+import JournalVideoPlayer from './JournalVideoPlayer';
 
 interface JournalHistorySheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-type Filter = 'all' | 'write' | 'voice';
+type Filter = 'all' | 'write' | 'voice' | 'video';
 
 function formatDate(dateString: string) {
   const d = new Date(dateString);
@@ -21,6 +22,10 @@ function isVoiceEntry(entry: JournalEntry) {
   return entry.content.startsWith('🎙️') || !!entry.audioPath;
 }
 
+function isVideoEntry(entry: JournalEntry) {
+  return entry.content.startsWith('🎬') || !!entry.videoPath;
+}
+
 function entryPreview(entry: JournalEntry) {
   if (isVoiceEntry(entry)) {
     const stripped = entry.content
@@ -28,6 +33,13 @@ function entryPreview(entry: JournalEntry) {
       .replace(/^Prompt:[^\n]*\n?/, '')
       .trim();
     return stripped || 'Voice memo';
+  }
+  if (isVideoEntry(entry)) {
+    const stripped = entry.content
+      .replace(/^🎬[^\n]*\n?/, '')
+      .replace(/^Prompt:[^\n]*\n?/, '')
+      .trim();
+    return stripped || 'Video journal';
   }
   return entry.content;
 }
@@ -42,8 +54,11 @@ export default function JournalHistorySheet({ open, onOpenChange }: JournalHisto
     const q = query.trim().toLowerCase();
     return entries.filter((e) => {
       const isVoice = isVoiceEntry(e);
+      const isVideo = isVideoEntry(e);
       if (filter === 'write' && isVoice) return false;
+      if (filter === 'write' && isVideo) return false;
       if (filter === 'voice' && !isVoice) return false;
+      if (filter === 'video' && !isVideo) return false;
       if (!q) return true;
       return entryPreview(e).toLowerCase().includes(q);
     });
@@ -53,6 +68,7 @@ export default function JournalHistorySheet({ open, onOpenChange }: JournalHisto
     { value: 'all', label: `All · ${entries.length}` },
     { value: 'write', label: 'Written' },
     { value: 'voice', label: 'Voice' },
+    { value: 'video', label: 'Video' },
   ];
 
   return (
@@ -112,7 +128,8 @@ export default function JournalHistorySheet({ open, onOpenChange }: JournalHisto
             <div className="space-y-2">
               {filtered.map((entry) => {
                 const isVoice = isVoiceEntry(entry);
-                const Icon = isVoice ? Mic : Pen;
+                const isVideo = isVideoEntry(entry);
+                const Icon = isVideo ? Video : isVoice ? Mic : Pen;
                 const preview = entryPreview(entry);
                 return (
                   <div
@@ -138,6 +155,9 @@ export default function JournalHistorySheet({ open, onOpenChange }: JournalHisto
                       </p>
                       {isVoice && entry.audioPath && (
                         <JournalAudioPlayer path={entry.audioPath} durationSec={entry.audioDurationSec} />
+                      )}
+                      {isVideo && entry.videoPath && (
+                        <JournalVideoPlayer path={entry.videoPath} durationSec={entry.videoDurationSec} />
                       )}
                     </div>
                   </div>

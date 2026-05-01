@@ -170,6 +170,9 @@ export interface JournalEntry {
   // Voice mode
   audioPath?: string;       // storage path within voice-journals bucket
   audioDurationSec?: number;
+  // Video mode
+  videoPath?: string;       // storage path within video-journals bucket
+  videoDurationSec?: number;
 }
 
 export interface MoodEntry {
