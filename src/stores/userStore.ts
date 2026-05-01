@@ -125,6 +125,7 @@ export interface UserProfile {
   // and chosen to "Continue with free tier". Lets us suppress the gate
   // until trial state changes.
   acknowledgedFreeTier?: boolean;
+  legalConsentDate?: string; // ISO date when user accepted Terms/Privacy/Data Protection
 }
 
 export interface PeriodLogEntry {
