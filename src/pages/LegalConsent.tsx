@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Shield, FileText, Lock, ArrowRight } from 'lucide-react';
+import { Shield, FileText, ArrowRight } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import logo from '@/assets/logo.png';
 
@@ -17,12 +17,6 @@ const SECTIONS = [
     title: 'Privacy Policy',
     summary: 'What personal data we collect, why we collect it, and how we keep it safe. You are always in control.',
     link: '/privacy',
-  },
-  {
-    icon: Lock,
-    title: 'Data Protection',
-    summary: 'How we store, secure, and handle your most sensitive information — including mood, health, and journal data.',
-    link: '/data-protection',
   },
 ];
 
@@ -97,7 +91,7 @@ export default function LegalConsent() {
               I have read and agree to the{' '}
               <Link to="/terms" target="_blank" className="text-primary hover:underline">Terms & Conditions</Link>,{' '}
               <Link to="/privacy" target="_blank" className="text-primary hover:underline">Privacy Policy</Link>, and{' '}
-              <Link to="/data-protection" target="_blank" className="text-primary hover:underline">Data Protection Policy</Link>.
+              <Link to="/privacy" target="_blank" className="text-primary hover:underline">Privacy Policy</Link>.
             </span>
           </label>
 
