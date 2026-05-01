@@ -13,7 +13,7 @@ import { User } from 'lucide-react';
 const onboardingSteps = [
 {
   id: 'name',
-  question: "What should we call you?",
+  question: "What should I call you?",
   subtitle: "This is how you will appear in uBloom.",
   type: 'name'
 },
