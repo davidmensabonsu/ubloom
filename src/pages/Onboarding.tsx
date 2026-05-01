@@ -1,13 +1,22 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ubloomFlower from '@/assets/ubloom-flower.png';
 import { track } from '@/hooks/useAnalytics';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { User } from 'lucide-react';
 
 
 const onboardingSteps = [
+{
+  id: 'name',
+  question: "What should we call you?",
+  subtitle: "This is how you will appear in uBloom.",
+  type: 'name'
+},
 {
   id: 'feeling',
   question: "How do you feel about your life right now?",
@@ -124,9 +133,20 @@ const onboardingSteps = [
 export default function Onboarding() {
   const navigate = useNavigate();
   const { updateProfile } = useUserStore();
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
   const [textValue, setTextValue] = useState('');
+  const [nameValue, setNameValue] = useState('');
+
+  // Pre-fill name from Google metadata or existing profile
+  useEffect(() => {
+    if (!user) return;
+    const googleName = user.user_metadata?.full_name || user.user_metadata?.name || user.user_metadata?.display_name || '';
+    if (googleName) {
+      setNameValue(googleName);
+    }
+  }, [user]);
 
   const step = onboardingSteps[currentStep];
   const progress = (currentStep + 1) / onboardingSteps.length * 100;
@@ -155,14 +175,32 @@ export default function Onboarding() {
   };
 
   const canContinue = () => {
-    if (step.type === 'text') return true;
+    if (step.type === 'text') return true; 
+    if (step.type === 'name') return nameValue.trim().length > 0;
     const answer = answers[step.id];
     if (step.type === 'single') return !!answer;
     if (step.type === 'multi') return Array.isArray(answer) && answer.length > 0;
     return false;
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    if (step.type === 'name') {
+      // Save display name to profiles
+      if (user) {
+        const { data: existing } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('user_id', user.id)
+          .single();
+        if (existing) {
+          await supabase.from('profiles').update({ display_name: nameValue.trim() }).eq('user_id', user.id);
+        } else {
+          await supabase.from('profiles').insert({ user_id: user.id, display_name: nameValue.trim() });
+        }
+      }
+      setAnswers({ ...answers, [step.id]: nameValue.trim() });
+    }
+
     if (step.type === 'text') {
       setAnswers({ ...answers, [step.id]: textValue });
     }
@@ -230,7 +268,21 @@ export default function Onboarding() {
           <p className="subtle-text mb-8 text-sm">{step.subtitle}</p>
 
           {/* Options */}
-          {step.type !== 'text' ?
+          {step.type === 'name' ?
+          <div className="flex-1">
+              <div className="relative">
+                <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  type="text"
+                  value={nameValue}
+                  onChange={(e) => setNameValue(e.target.value)}
+                  placeholder="Your name"
+                  className="w-full rounded-xl border border-border bg-background pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                  autoFocus
+                />
+              </div>
+            </div> :
+          step.type !== 'text' ?
           <div className="space-y-3 flex-1">
               {step.options?.map((option) => {
               return (
@@ -247,7 +299,6 @@ export default function Onboarding() {
 
             })}
             </div> :
-
           <div className="flex-1">
               <textarea
               value={textValue}
@@ -258,13 +309,14 @@ export default function Onboarding() {
             
             </div>
           }
+          }
 
           {/* Continue button */}
           <motion.button
             onClick={handleNext}
             disabled={!canContinue() && step.type !== 'text'}
             className={`soft-button w-full mt-6 flex items-center justify-center gap-2 ${
-            !canContinue() && step.type !== 'text' ? 'opacity-50' : ''}`
+            !canContinue() ? 'opacity-50' : ''}`
             }
             whileTap={{ scale: 0.98 }}>
             
