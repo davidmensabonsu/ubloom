@@ -15,6 +15,7 @@ import AppWalkthrough from "@/components/AppWalkthrough";
 import TrialWelcomeModal from "@/components/TrialWelcomeModal";
 import PageViewTracker from "@/components/PageViewTracker";
 import SubscriptionGate from "@/components/SubscriptionGate";
+import CookieConsentBanner from "@/components/CookieConsentBanner";
 import { getLocalDateStr } from "@/lib/dateUtils";
 
 // Pages
@@ -173,6 +174,7 @@ function AnimatedRoutes() {
           </Routes>
         </AnimatePresence>
       </MoodCheckinGate>
+      <CookieConsentBanner />
     </>
   );
 }
