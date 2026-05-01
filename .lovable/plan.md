@@ -1,37 +1,59 @@
-## Goal
 
-Replace the photographic thumbnails on each Wander category card with clean, cohesive line-icon illustrations so the explore grid looks unified and intentional rather than a collage of stock photos.
+## What we're building
 
-## Categories needing icons
+1. **Legal pages** — `/terms` and `/privacy` routes with draft content tailored to uBloom's actual data collection
+2. **Signup consent** — checkbox on the Auth sign-up form linking to Terms and Privacy Policy
+3. **Delete my account** — button on Profile that wipes all user data from the database, cancels any active Stripe subscription, and deletes the auth account
 
-Fitness, Wellness, Calm, Mindset, Food & Recipes, Podcasts, Vitamins, Skincare & Hygiene, Lifestyle (9 cards), plus the "Books to Level Up Your Mindset" featured banner (which currently uses a book photo).
+---
 
-## Visual direction
+## 1. Legal pages
 
-- Single-style **line illustrations** (1.5–2px stroke, rounded caps, no fills or photos)
-- Soft, ubloom-friendly palette: a muted lavender / dusky-pink stroke (`hsl(var(--primary))`) on a tinted pastel background per card so the grid feels cohesive but each card has a gentle hue
-- Each card keeps its existing rounded shape and label/subtitle row — only the top imagery changes
-- Icons are conceptual, not literal: e.g. Calm = lotus + soft waves, Mindset = head with a sprouting plant, Podcasts = headphones with sound waves, Vitamins = capsule + leaf, Lifestyle = sun over mountains, Books banner = open book with bookmark
+Create two new page components:
 
-## Implementation
+- **`src/pages/Terms.tsx`** — Terms and Conditions covering: app purpose (wellness/self-growth, not medical advice), user-generated content, AI disclaimer (Ubi mentor is not a therapist), subscription/billing terms, account termination.
+- **`src/pages/Privacy.tsx`** — Privacy Policy covering: data collected (mood logs, journal entries, habits, cycle data, AI chat history, vision board images, profile info), Stripe billing data, analytics events, cookies/local storage, data retention, GDPR rights (access, erasure, portability), contact details placeholder for the solicitor to fill in.
 
-1. Generate 9 PNG line-illustration assets (transparent background) into `src/assets/wonder/icons/`:
-   `fitness.png, wellness.png, calm.png, mindset.png, nutrition.png, podcasts.png, vitamins.png, hygiene.png, lifestyle.png` — all drawn in the same line-art style for cohesion.
-2. Generate 1 wider banner illustration `books-banner-line.png` for the "Books to Level Up Your Mindset" card.
-3. Update `src/pages/Wander.tsx`:
-   - Swap the photographic imports (`fitnessImg`, `calmImg`, etc.) for the new icon assets.
-   - Replace the `<img>` inside each explore card with a tinted pastel container that centers the line illustration. Keep the existing `tall` vs square aspect ratios so the masonry layout stays the same.
-   - Assign each card a soft pastel background tint (lavender, blush, sage, peach, sky, cream, mauve, mint, butter) for variety while the strokes remain unified.
-   - Replace the books banner image with the new line-illustration banner on the same card.
-4. Leave category detail pages, hero gradient, search, curated-for-you, and recently-viewed sections untouched.
+Both pages will use the app's existing glass-card styling and be publicly accessible (no auth required). Routes added to `App.tsx`.
 
-## Out of scope
+A footer link to both pages will be added to the Auth page so users can review them before signing up.
 
-- No changes to navigation, data, or detail pages
-- No change to the routine icon picker
-- The existing `.jpg` assets are kept on disk (still used inside detail pages / resource cards) — only the Wander explore grid stops referencing them
+## 2. Signup consent checkbox
 
-## Files touched
+On the Auth sign-up form, add a required checkbox: "I agree to the Terms and Conditions and Privacy Policy" with inline links. The sign-up button will be disabled until checked. Login form is unaffected.
 
-- `src/pages/Wander.tsx` (edited)
-- `src/assets/wonder/icons/*.png` (10 new assets)
+## 3. Delete my account (Profile page)
+
+Add a "Delete my account" section below the existing "Reset all data" button on Profile:
+
+- Confirmation dialog explaining the action is permanent and listing what will be deleted
+- Requires typing "DELETE" to confirm
+- On confirm, calls a new **`delete-account`** edge function that:
+  1. Authenticates the user via JWT
+  2. Cancels any active Stripe subscription (looks up customer by email)
+  3. Deletes rows from: `user_data`, `profiles`, `ubi_messages`, `ubi_conversations`, `ubi_memory`, `ubi_ratings`, `analytics_events`, `subscriber_events`, `subscribers` (all where `user_id` matches)
+  4. Deletes files from `vision-images` and `voice-journals` storage buckets
+  5. Deletes the auth user via `supabase.auth.admin.deleteUser()`
+  6. Returns success
+- Frontend signs the user out and redirects to `/` on success
+
+## 4. Database migration
+
+A migration to add a service-role INSERT policy on `subscriber_events` (needed for the delete-account function to log the cancellation if desired) is not required since the edge function uses the service role key directly.
+
+## 5. Edge function config
+
+Add `[functions.delete-account]` with `verify_jwt = false` to `supabase/config.toml` (JWT validated in code as per project pattern).
+
+---
+
+### Files to create
+- `src/pages/Terms.tsx`
+- `src/pages/Privacy.tsx`
+- `supabase/functions/delete-account/index.ts`
+
+### Files to edit
+- `src/App.tsx` — add `/terms` and `/privacy` routes (public)
+- `src/pages/Auth.tsx` — add consent checkbox + legal links on sign-up
+- `src/pages/Profile.tsx` — add "Delete my account" button + confirmation dialog
+- `supabase/config.toml` — add delete-account function config
