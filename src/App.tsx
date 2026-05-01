@@ -37,6 +37,8 @@ import Health from "./pages/Health";
 import Society from "./pages/Society";
 import Upgrade from "./pages/Upgrade";
 import NotFound from "./pages/NotFound";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 
 const queryClient = new QueryClient();
 
@@ -161,6 +163,8 @@ function AnimatedRoutes() {
             <Route path="/health" element={<ProtectedRoute><PageTransition direction={direction}><Health /></PageTransition></ProtectedRoute>} />
             <Route path="/society" element={<ProtectedRoute><PageTransition direction={direction}><Society /></PageTransition></ProtectedRoute>} />
             <Route path="/upgrade" element={<ProtectedRoute><PageTransition direction={direction}><Upgrade /></PageTransition></ProtectedRoute>} />
+            <Route path="/terms" element={<PageTransition direction={direction}><Terms /></PageTransition>} />
+            <Route path="/privacy" element={<PageTransition direction={direction}><Privacy /></PageTransition>} />
             <Route path="*" element={<PageTransition direction={direction}><NotFound /></PageTransition>} />
           </Routes>
         </AnimatePresence>

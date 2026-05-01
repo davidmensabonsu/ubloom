@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import logo from '@/assets/logo.png';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -15,6 +16,7 @@ export default function Auth() {
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const { signIn, signUp, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -126,9 +128,26 @@ export default function Auth() {
             </div>
           }
 
+          {isSignUp && !isForgot && (
+            <label className="flex items-start gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={agreedToTerms}
+                onChange={(e) => setAgreedToTerms(e.target.checked)}
+                className="mt-1 h-4 w-4 rounded border-border accent-primary"
+              />
+              <span className="text-xs text-muted-foreground leading-snug">
+                I agree to the{' '}
+                <Link to="/terms" className="text-primary hover:underline" target="_blank">Terms &amp; Conditions</Link>
+                {' '}and{' '}
+                <Link to="/privacy" className="text-primary hover:underline" target="_blank">Privacy Policy</Link>
+              </span>
+            </label>
+          )}
+
           <motion.button
             type="submit"
-            disabled={loading}
+            disabled={loading || (isSignUp && !isForgot && !agreedToTerms)}
             className="soft-button w-full flex items-center justify-center gap-2"
             whileTap={{ scale: 0.98 }}>
             
