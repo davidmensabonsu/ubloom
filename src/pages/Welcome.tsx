@@ -93,6 +93,8 @@ export default function Welcome() {
         <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
         <span>·</span>
         <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
+        <span>·</span>
+        <Link to="/data-protection" className="hover:text-foreground transition-colors">Data Protection</Link>
       </div>
 
       <p className="mt-3 text-xs text-muted-foreground">
