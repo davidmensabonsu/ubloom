@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Search, Pen, Mic, Video, X } from 'lucide-react';
 import { useUserStore, type JournalEntry } from '@/stores/userStore';
 import JournalAudioPlayer from './JournalAudioPlayer';
+import JournalVideoPlayer from './JournalVideoPlayer';
 
 interface JournalHistorySheetProps {
   open: boolean;
