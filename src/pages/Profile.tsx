@@ -7,7 +7,7 @@ import { useUserStore } from '@/stores/userStore';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { Check, Camera, LogOut, Trash2, Pencil, BookOpen, Target, Lock, KeyRound, Sparkles, Eye, EyeOff, Shield, Heart, Crown } from 'lucide-react';
+import { Check, Camera, LogOut, Trash2, Pencil, BookOpen, Target, Lock, KeyRound, Sparkles, Eye, EyeOff, Shield, Heart, Crown, AlertTriangle } from 'lucide-react';
 import { useAdminCheck } from '@/hooks/useAdminCheck';
 import ubloomLogo from '@/assets/ubloom-flower.png';
 import flameIcon from '@/assets/icons/flame.png';
@@ -63,6 +63,39 @@ export default function Profile() {
   const [showPassword, setShowPassword] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [manageOpen, setManageOpen] = useState(false);
+
+  // Delete account state
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirm !== 'DELETE' || !user) return;
+    setIsDeleting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error('No session');
+
+      const { data, error } = await supabase.functions.invoke('delete-account', {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      // Clear local state
+      resetProfile();
+      await signOut();
+      navigate('/');
+      toast({ title: 'Account deleted', description: 'All your data has been permanently removed.' });
+    } catch (err: any) {
+      toast({ title: 'Could not delete account', description: err?.message || 'Please try again.', variant: 'destructive' });
+    } finally {
+      setIsDeleting(false);
+      setDeleteOpen(false);
+      setDeleteConfirm('');
+    }
+  };
 
   // Load profile data from Supabase
   useEffect(() => {
@@ -733,6 +766,65 @@ export default function Profile() {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+
+          {/* Delete account */}
+          <AlertDialog open={deleteOpen} onOpenChange={(open) => { setDeleteOpen(open); if (!open) setDeleteConfirm(''); }}>
+            <AlertDialogTrigger asChild>
+              <button className="w-full glass-card rounded-2xl p-4 flex items-center gap-3 text-left transition-all active:scale-[0.98] border border-destructive/30">
+                <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center">
+                  <AlertTriangle size={18} className="text-destructive" />
+                </div>
+                <div>
+                  <span className="font-medium text-destructive">Delete my account</span>
+                  <p className="text-xs text-muted-foreground">Permanently remove all data and cancel subscription</p>
+                </div>
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="rounded-3xl">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-destructive">Delete your account?</AlertDialogTitle>
+                <AlertDialogDescription className="space-y-3">
+                  <p>This action is <strong>permanent and irreversible</strong>. The following will be deleted:</p>
+                  <ul className="list-disc list-inside text-sm space-y-1 ml-1">
+                    <li>All journal entries &amp; mood data</li>
+                    <li>Habits, routines &amp; streaks</li>
+                    <li>Vision board &amp; moodboard</li>
+                    <li>AI conversation history &amp; memories</li>
+                    <li>Health &amp; cycle data</li>
+                    <li>Profile &amp; account information</li>
+                  </ul>
+                  <p>If you have an active subscription, it will be cancelled immediately.</p>
+                  <div className="pt-2">
+                    <label className="text-sm font-medium text-foreground">Type <span className="font-mono text-destructive">DELETE</span> to confirm</label>
+                    <Input
+                      value={deleteConfirm}
+                      onChange={(e) => setDeleteConfirm(e.target.value)}
+                      placeholder="DELETE"
+                      className="mt-1 rounded-xl"
+                      autoComplete="off"
+                    />
+                  </div>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="rounded-xl" disabled={isDeleting}>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeleteAccount}
+                  disabled={deleteConfirm !== 'DELETE' || isDeleting}
+                  className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  {isDeleting ? 'Deleting...' : 'Delete my account forever'}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          {/* Legal links */}
+          <div className="flex justify-center gap-4 pt-2 pb-4">
+            <button onClick={() => navigate('/terms')} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Terms &amp; Conditions</button>
+            <span className="text-xs text-muted-foreground">·</span>
+            <button onClick={() => navigate('/privacy')} className="text-xs text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</button>
+          </div>
         </motion.div>
       </div>
 
