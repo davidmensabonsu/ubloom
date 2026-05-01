@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Shield, FileText, ArrowRight } from 'lucide-react';
+import { Shield, FileText, Cookie, ArrowRight } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import logo from '@/assets/logo.png';
 
@@ -11,6 +11,12 @@ const SECTIONS = [
     title: 'Terms & Conditions',
     summary: 'The ground rules for using uBloom — your rights, our responsibilities, and how the service works.',
     link: '/terms',
+  },
+  {
+    icon: Cookie,
+    title: 'Cookie Policy',
+    summary: 'How we use local storage to keep you logged in — and what we don\'t track (spoiler: nothing).',
+    link: '/cookie-policy',
   },
   {
     icon: Shield,
@@ -90,7 +96,7 @@ export default function LegalConsent() {
             <span className="text-sm text-muted-foreground leading-snug">
               I have read and agree to the{' '}
               <Link to="/terms" target="_blank" className="text-primary hover:underline">Terms & Conditions</Link>,{' '}
-              <Link to="/privacy" target="_blank" className="text-primary hover:underline">Privacy Policy</Link>, and{' '}
+              <Link to="/cookie-policy" target="_blank" className="text-primary hover:underline">Cookie Policy</Link>, and{' '}
               <Link to="/privacy" target="_blank" className="text-primary hover:underline">Privacy Policy</Link>.
             </span>
           </label>
