@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Pen, Mic, Video, Square, Play, Pause, RefreshCw, Sparkles, Loader2, Lock } from 'lucide-react';
+import { Pen, Mic, Video, Square, Play, Pause, RefreshCw, Sparkles, Loader2, Lock, RotateCcw } from 'lucide-react';
 import { useUbiJournalPrompt } from '@/hooks/useUbiJournalPrompt';
 import { useUserStore } from '@/stores/userStore';
 import { useAuth } from '@/hooks/useAuth';
@@ -56,12 +56,32 @@ export default function JournalModes() {
   const startTimeRef = useRef<number>(0);
   const tickRef = useRef<number | null>(null);
 
+  // Video
+  const [videoRecording, setVideoRecording] = useState(false);
+  const [videoBlob, setVideoBlob] = useState<Blob | null>(null);
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null);
+  const [videoDuration, setVideoDuration] = useState(0);
+  const [videoPlaying, setVideoPlaying] = useState(false);
+  const [videoUploading, setVideoUploading] = useState(false);
+  const [videoSavedFlash, setVideoSavedFlash] = useState(false);
+  const videoMediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const videoChunksRef = useRef<Blob[]>([]);
+  const videoPreviewRef = useRef<HTMLVideoElement | null>(null);
+  const videoPlaybackRef = useRef<HTMLVideoElement | null>(null);
+  const videoStreamRef = useRef<MediaStream | null>(null);
+  const videoStartTimeRef = useRef<number>(0);
+  const videoTickRef = useRef<number | null>(null);
+  const [cameraFacing, setCameraFacing] = useState<'user' | 'environment'>('user');
+
   useEffect(() => {
     return () => {
       if (recordedUrl) URL.revokeObjectURL(recordedUrl);
       if (tickRef.current) window.clearInterval(tickRef.current);
+      if (videoPreviewUrl) URL.revokeObjectURL(videoPreviewUrl);
+      if (videoTickRef.current) window.clearInterval(videoTickRef.current);
+      videoStreamRef.current?.getTracks().forEach((t) => t.stop());
     };
-  }, [recordedUrl]);
+  }, [recordedUrl, videoPreviewUrl]);
 
   const handleSaveWrite = () => {
     if (!text.trim()) return;
@@ -124,6 +144,122 @@ export default function JournalModes() {
     setDuration(0);
     setPlaying(false);
   };
+
+  // --- Video helpers ---
+  const startVideoPreview = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: cameraFacing, width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: true,
+      });
+      videoStreamRef.current = stream;
+      if (videoPreviewRef.current) {
+        videoPreviewRef.current.srcObject = stream;
+        videoPreviewRef.current.play().catch(() => {});
+      }
+    } catch (e) {
+      console.error('Could not access camera:', e);
+      toast.error('Camera and microphone access is needed for video journaling.');
+    }
+  };
+
+  const stopVideoPreview = () => {
+    videoStreamRef.current?.getTracks().forEach((t) => t.stop());
+    videoStreamRef.current = null;
+    if (videoPreviewRef.current) videoPreviewRef.current.srcObject = null;
+  };
+
+  const startVideoRecording = () => {
+    const stream = videoStreamRef.current;
+    if (!stream) return;
+    const recorder = new MediaRecorder(stream, { mimeType: MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus') ? 'video/webm;codecs=vp9,opus' : 'video/webm' });
+    videoMediaRecorderRef.current = recorder;
+    videoChunksRef.current = [];
+    recorder.ondataavailable = (e) => {
+      if (e.data.size > 0) videoChunksRef.current.push(e.data);
+    };
+    recorder.onstop = () => {
+      const blob = new Blob(videoChunksRef.current, { type: 'video/webm' });
+      setVideoBlob(blob);
+      const url = URL.createObjectURL(blob);
+      setVideoPreviewUrl(url);
+      stopVideoPreview();
+    };
+    recorder.start(1000);
+    videoStartTimeRef.current = Date.now();
+    setVideoDuration(0);
+    videoTickRef.current = window.setInterval(() => {
+      setVideoDuration((Date.now() - videoStartTimeRef.current) / 1000);
+    }, 250);
+    setVideoRecording(true);
+  };
+
+  const stopVideoRecording = () => {
+    videoMediaRecorderRef.current?.stop();
+    if (videoTickRef.current) window.clearInterval(videoTickRef.current);
+    setVideoRecording(false);
+  };
+
+  const resetVideo = () => {
+    if (videoPreviewUrl) URL.revokeObjectURL(videoPreviewUrl);
+    setVideoBlob(null);
+    setVideoPreviewUrl(null);
+    setVideoDuration(0);
+    setVideoPlaying(false);
+    // Restart preview
+    startVideoPreview();
+  };
+
+  const handleSaveVideo = async () => {
+    if (!videoBlob || !user) {
+      if (!user) toast.error('Please sign in to save your video journal.');
+      return;
+    }
+    setVideoUploading(true);
+    try {
+      const fileName = `${Date.now()}.webm`;
+      const path = `${user.id}/${fileName}`;
+      const { error } = await supabase.storage
+        .from('video-journals')
+        .upload(path, videoBlob, { contentType: 'video/webm', upsert: false });
+      if (error) throw error;
+
+      const tag = `🎬 Video journal · ${formatDuration(videoDuration)}`;
+      const note = prompt ? `${tag}\nPrompt: ${prompt}` : tag;
+      addJournalEntry({
+        content: note,
+        date: new Date().toISOString(),
+        videoPath: path,
+        videoDurationSec: Math.round(videoDuration),
+      });
+      track('journal_created', { mode: 'video', durationSec: Math.round(videoDuration), source: 'journal_modes' });
+      if (videoPreviewUrl) URL.revokeObjectURL(videoPreviewUrl);
+      setVideoBlob(null);
+      setVideoPreviewUrl(null);
+      setVideoDuration(0);
+      setVideoSavedFlash(true);
+      setTimeout(() => setVideoSavedFlash(false), 2400);
+    } catch (e) {
+      console.error('Video upload failed:', e);
+      toast.error('Could not save your video. Please try again.');
+    } finally {
+      setVideoUploading(false);
+    }
+  };
+
+  // Start/stop camera when switching to/from video mode
+  useEffect(() => {
+    if (mode === 'video' && !videoBlob) {
+      startVideoPreview();
+    } else if (mode !== 'video') {
+      stopVideoPreview();
+    }
+    return () => {
+      if (mode !== 'video') return;
+      // cleanup handled by top-level cleanup
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, cameraFacing]);
 
   const handleSaveVoice = async () => {
     if (!recordedBlob) return;
@@ -357,10 +493,107 @@ export default function JournalModes() {
 
         {mode === 'video' && (
           <motion.div key="video" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <div className="rounded-2xl bg-muted/50 border border-dashed border-border p-8 flex flex-col items-center text-center opacity-70">
-              <Video size={32} className="text-muted-foreground mb-2" />
-              <p className="text-sm text-muted-foreground">Video journalling coming soon</p>
-              <p className="text-xs text-muted-foreground/70 mt-1">We're cooking it gently — your face will be safe here.</p>
+            {PromptCard}
+            <div className="flex flex-col items-center">
+              {!videoBlob ? (
+                <>
+                  <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-black mb-4">
+                    <video
+                      ref={videoPreviewRef}
+                      autoPlay
+                      muted
+                      playsInline
+                      className="w-full h-full object-cover"
+                      style={{ transform: cameraFacing === 'user' ? 'scaleX(-1)' : undefined }}
+                    />
+                    {videoRecording && (
+                      <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-destructive/90 text-white px-2.5 py-1 rounded-full text-xs font-medium">
+                        <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                        {formatDuration(videoDuration)}
+                      </div>
+                    )}
+                    {/* Flip camera */}
+                    {!videoRecording && (
+                      <button
+                        onClick={() => {
+                          stopVideoPreview();
+                          setCameraFacing((f) => f === 'user' ? 'environment' : 'user');
+                        }}
+                        className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/40 backdrop-blur flex items-center justify-center text-white"
+                        aria-label="Flip camera"
+                      >
+                        <RotateCcw size={14} />
+                      </button>
+                    )}
+                  </div>
+                  <motion.button
+                    onClick={videoRecording ? stopVideoRecording : startVideoRecording}
+                    whileTap={{ scale: 0.95 }}
+                    className={`w-16 h-16 rounded-full flex items-center justify-center text-primary-foreground shadow-lg transition-colors ${
+                      videoRecording ? 'bg-destructive' : 'bg-primary'
+                    }`}
+                  >
+                    {videoRecording ? <Square size={24} fill="currentColor" /> : <Video size={28} />}
+                  </motion.button>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {videoRecording ? 'Recording…' : 'Tap to record'}
+                  </p>
+                </>
+              ) : (
+                <div className="w-full">
+                  <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-black mb-3">
+                    <video
+                      ref={videoPlaybackRef}
+                      src={videoPreviewUrl || undefined}
+                      playsInline
+                      className="w-full h-full object-cover"
+                      style={{ transform: cameraFacing === 'user' ? 'scaleX(-1)' : undefined }}
+                      onEnded={() => setVideoPlaying(false)}
+                    />
+                    <button
+                      onClick={() => {
+                        if (!videoPlaybackRef.current) return;
+                        if (videoPlaying) {
+                          videoPlaybackRef.current.pause();
+                          setVideoPlaying(false);
+                        } else {
+                          videoPlaybackRef.current.play();
+                          setVideoPlaying(true);
+                        }
+                      }}
+                      className="absolute inset-0 flex items-center justify-center bg-black/20"
+                    >
+                      {!videoPlaying && (
+                        <div className="w-14 h-14 rounded-full bg-primary/90 flex items-center justify-center text-primary-foreground">
+                          <Play size={24} className="ml-1" />
+                        </div>
+                      )}
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={resetVideo}
+                      className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+                    >
+                      <RotateCcw size={12} />
+                      Re-record
+                    </button>
+                    <span className="text-xs text-muted-foreground tabular-nums">{formatDuration(videoDuration)}</span>
+                    <button
+                      onClick={handleSaveVideo}
+                      disabled={videoUploading}
+                      className="px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium disabled:opacity-40 transition-all hover:shadow-md inline-flex items-center gap-1.5"
+                    >
+                      {videoUploading ? (
+                        <>
+                          <Loader2 size={14} className="animate-spin" />
+                          Saving…
+                        </>
+                      ) : videoSavedFlash ? 'Saved ✓' : 'Save entry'}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </motion.div>
         )}
