@@ -128,26 +128,9 @@ export default function Auth() {
             </div>
           }
 
-          {isSignUp && !isForgot && (
-            <label className="flex items-start gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={agreedToTerms}
-                onChange={(e) => setAgreedToTerms(e.target.checked)}
-                className="mt-1 h-4 w-4 rounded border-border accent-primary"
-              />
-              <span className="text-xs text-muted-foreground leading-snug">
-                I agree to the{' '}
-                <Link to="/terms" className="text-primary hover:underline" target="_blank">Terms &amp; Conditions</Link>
-                {' '}and{' '}
-                <Link to="/privacy" className="text-primary hover:underline" target="_blank">Privacy Policy</Link>
-              </span>
-            </label>
-          )}
-
           <motion.button
             type="submit"
-            disabled={loading || (isSignUp && !isForgot && !agreedToTerms)}
+            disabled={loading || (!isForgot && !agreedToTerms)}
             className="soft-button w-full flex items-center justify-center gap-2"
             whileTap={{ scale: 0.98 }}>
             
@@ -164,7 +147,7 @@ export default function Auth() {
         </motion.form>
 
         {/* Google sign-in */}
-        {!isForgot &&
+        {!isForgot && (
         <div className="mt-4">
             <div className="flex items-center gap-3 mb-4">
               <div className="flex-1 h-px bg-border" />
@@ -173,6 +156,7 @@ export default function Auth() {
             </div>
             <motion.button
             type="button"
+            disabled={!agreedToTerms}
             onClick={async () => {
               const { error } = await lovable.auth.signInWithOAuth("google", {
                 redirect_uri: window.location.origin
@@ -181,7 +165,7 @@ export default function Auth() {
                 toast({ title: 'Google sign-in failed', description: String(error), variant: 'destructive' });
               }
             }}
-            className="w-full glass-card rounded-xl p-3 flex items-center justify-center gap-3 text-sm font-medium text-foreground transition-all active:scale-[0.98] hover:bg-muted/50"
+            className="w-full glass-card rounded-xl p-3 flex items-center justify-center gap-3 text-sm font-medium text-foreground transition-all active:scale-[0.98] hover:bg-muted/50 disabled:opacity-50 disabled:pointer-events-none"
             whileTap={{ scale: 0.98 }}>
             
               <svg width="18" height="18" viewBox="0 0 24 24">
@@ -193,7 +177,25 @@ export default function Auth() {
               <span>Continue with Google</span>
             </motion.button>
           </div>
-        }
+        )}
+
+        {/* Consent checkbox — always visible, gates all auth actions */}
+        {!isForgot && (
+          <label className="flex items-start gap-2 cursor-pointer mt-4">
+            <input
+              type="checkbox"
+              checked={agreedToTerms}
+              onChange={(e) => setAgreedToTerms(e.target.checked)}
+              className="mt-1 h-4 w-4 rounded border-border accent-primary"
+            />
+            <span className="text-xs text-muted-foreground leading-snug">
+              I agree to the{' '}
+              <Link to="/terms" className="text-primary hover:underline" target="_blank">Terms &amp; Conditions</Link>
+              {' '}and{' '}
+              <Link to="/privacy" className="text-primary hover:underline" target="_blank">Privacy Policy</Link>
+            </span>
+          </label>
+        )}
 
         {/* Forgot password link */}
         {!isSignUp && !isForgot &&
