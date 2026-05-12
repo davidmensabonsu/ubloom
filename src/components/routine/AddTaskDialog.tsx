@@ -51,6 +51,7 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
       timeOfDay,
       icon,
       frequency,
+      createdDate: getLocalDateStr(),
       ...(scheduledTime ? { scheduledTime } : {}),
     };
 
