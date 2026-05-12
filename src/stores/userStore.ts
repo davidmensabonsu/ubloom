@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { getLocalDateStr } from '@/lib/dateUtils';
+import { isHabitScheduledForDate } from '@/components/routine/FrequencyPicker';
 
 export type TimeOfDay = 'morning' | 'midday' | 'evening';
 export type HabitFrequency = 'daily' | 'specific-days' | 'one-off';
@@ -26,6 +27,14 @@ export interface HabitCompletion {
   habitId: string;
   date: string; // yyyy-MM-dd format
   completed: boolean;
+}
+
+export interface DailyTaskSnapshotItem {
+  taskId: string;
+  title: string;
+  completed: boolean;
+  icon?: string;
+  time?: string;
 }
 
 export interface UserProfile {
@@ -69,6 +78,8 @@ export interface UserProfile {
   coreHabits: CoreHabit[];
   habitCompletions: HabitCompletion[];
   routineSetupComplete: boolean;
+  dailyTaskSnapshots?: { [dateKey: string]: DailyTaskSnapshotItem[] };
+  lastSnapshotDate?: string; // yyyy-MM-dd of the last day we ran the snapshot pass
    reminderSettings: ReminderSettings;
   savedResources: string[];
   savedRecipes: string[]; // "resourceId::recipeIndex"
@@ -280,6 +291,7 @@ interface UserStore {
   reorderHabit: (habitId: string, direction: 'up' | 'down') => void;
    updateReminderSettings: (settings: Partial<ReminderSettings>) => void;
     markReminderSent: (timeOfDay: TimeOfDay) => void;
+  ensureDailySnapshots: () => void;
   addMoodboardItem: (item: Omit<MoodboardItem, 'id' | 'createdAt'>) => void;
   removeMoodboardItem: (id: string) => void;
   reorderMoodboardItems: (items: MoodboardItem[]) => void;
@@ -327,6 +339,8 @@ const initialProfile: UserProfile = {
   moodboardItems: [],
   onboardingComplete: false,
   intentionCompletedDate: undefined,
+  dailyTaskSnapshots: undefined,
+  lastSnapshotDate: undefined,
   bloomScore: undefined,
   cachedJournalPrompt: undefined,
   cachedWeeklySummary: undefined,
