@@ -561,6 +561,35 @@ export default function Ubi() {
 
 function MessageBubble({ message, index, onRate, shimmer }: { message: UbiMessage; index: number; onRate: (index: number, rating: 'up' | 'down') => void; shimmer?: boolean }) {
   const isUser = message.role === 'user';
+  const [revealed, setRevealed] = useState(message.content.length);
+  const revealedRef = useRef(message.content.length);
+
+  // Typewriter reveal while streaming (assistant only)
+  useEffect(() => {
+    if (isUser) return;
+    if (!shimmer) {
+      // Streaming finished — show full content immediately
+      revealedRef.current = message.content.length;
+      setRevealed(message.content.length);
+      return;
+    }
+    // While streaming, progressively catch up to message.content
+    let raf: number;
+    const tick = () => {
+      const target = message.content.length;
+      if (revealedRef.current < target) {
+        // Reveal a few chars per frame for smooth typewriter
+        const step = Math.max(2, Math.ceil((target - revealedRef.current) / 18));
+        revealedRef.current = Math.min(target, revealedRef.current + step);
+        setRevealed(revealedRef.current);
+      }
+      raf = window.setTimeout(tick, 28) as unknown as number;
+    };
+    raf = window.setTimeout(tick, 28) as unknown as number;
+    return () => clearTimeout(raf);
+  }, [shimmer, message.content, isUser]);
+
+  const displayedContent = isUser || !shimmer ? message.content : message.content.slice(0, revealed);
 
   return (
     <motion.div
@@ -589,11 +618,17 @@ function MessageBubble({ message, index, onRate, shimmer }: { message: UbiMessag
               className="prose prose-sm max-w-none [&>p]:mb-2 [&>p:last-child]:mb-0 [&>ul]:mb-2 [&>ol]:mb-2"
               style={{ fontFamily: message.content.length > 160 ? 'Cormorant Garamond, serif' : 'Jost, sans-serif' }}
             >
-              <ReactMarkdown>{message.content}</ReactMarkdown>
+              <ReactMarkdown>{displayedContent}</ReactMarkdown>
+              {shimmer && (
+                <span
+                  aria-hidden
+                  className="inline-block w-[2px] h-[1em] -mb-[2px] ml-0.5 bg-primary align-middle animate-pulse"
+                />
+              )}
             </div>
           )}
         </div>
-        {!isUser && (
+        {!isUser && !shimmer && (
           <div className="flex items-center gap-1 mt-1 ml-1">
             <button
               onClick={() => onRate(index, 'up')}
