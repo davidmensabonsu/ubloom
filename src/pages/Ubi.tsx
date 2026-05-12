@@ -618,7 +618,13 @@ function MessageBubble({ message, index, onRate, shimmer }: { message: UbiMessag
               className="prose prose-sm max-w-none [&>p]:mb-2 [&>p:last-child]:mb-0 [&>ul]:mb-2 [&>ol]:mb-2"
               style={{ fontFamily: message.content.length > 160 ? 'Cormorant Garamond, serif' : 'Jost, sans-serif' }}
             >
-              <ReactMarkdown>{displayedContent + (shimmer ? ' ▍' : '')}</ReactMarkdown>
+              <ReactMarkdown>{displayedContent}</ReactMarkdown>
+              {shimmer && (
+                <span
+                  aria-hidden
+                  className="inline-block w-[2px] h-[1em] -mb-[2px] ml-0.5 bg-primary align-middle animate-pulse"
+                />
+              )}
             </div>
           )}
         </div>
