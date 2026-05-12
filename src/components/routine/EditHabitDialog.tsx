@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import FrequencyPicker from '@/components/routine/FrequencyPicker';
+import { getLocalDateStr } from '@/lib/dateUtils';
 
 const timeOptions: { value: TimeOfDay; label: string; emoji: string }[] = [
   { value: 'morning', label: 'Morning', emoji: '☀️' },
@@ -54,7 +55,11 @@ export default function EditHabitDialog({ habit, open, onOpenChange, onSave }: E
     if (!habit || !title.trim()) return;
     const updates: Partial<Omit<CoreHabit, 'id'>> = { title: title.trim(), icon, timeOfDay, frequency, scheduledTime: scheduledTime || undefined };
     if (frequency === 'specific-days') updates.specificDays = specificDays;
-    if (frequency === 'one-off') updates.oneOffDate = habit.oneOffDate;
+    if (frequency === 'one-off') {
+      // Preserve existing scheduled date, or fall back to today's local date
+      // so the task appears on a single, well-defined day.
+      updates.oneOffDate = habit.oneOffDate || getLocalDateStr();
+    }
     onSave(habit.id, updates);
     onOpenChange(false);
   };
