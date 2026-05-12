@@ -670,6 +670,67 @@ export const useUserStore = create<UserStore>()(
           };
         });
       },
+
+      ensureDailySnapshots: () => {
+        const today = getLocalDateStr();
+        set((state) => {
+          const profile = state.profile;
+          if (profile.lastSnapshotDate === today) return state;
+
+          const habits = profile.coreHabits || [];
+          const completions = profile.habitCompletions || [];
+          const existing = profile.dailyTaskSnapshots || {};
+          const next: { [k: string]: DailyTaskSnapshotItem[] } = { ...existing };
+
+          // Determine the range of past days to snapshot. Default to just yesterday
+          // when we have no prior anchor; otherwise snapshot every day since the
+          // last pass up to (and including) yesterday.
+          const todayDate = new Date();
+          todayDate.setHours(0, 0, 0, 0);
+
+          const daysBack: string[] = [];
+          if (profile.lastSnapshotDate) {
+            // Walk forward from the day after lastSnapshotDate up to yesterday.
+            const start = new Date(profile.lastSnapshotDate + 'T00:00:00');
+            start.setDate(start.getDate() + 1);
+            const cur = new Date(start);
+            // cap at 30 days to avoid huge loops
+            let safety = 30;
+            while (cur < todayDate && safety-- > 0) {
+              daysBack.push(getLocalDateStr(cur));
+              cur.setDate(cur.getDate() + 1);
+            }
+          } else {
+            const yest = new Date(todayDate);
+            yest.setDate(yest.getDate() - 1);
+            daysBack.push(getLocalDateStr(yest));
+          }
+
+          for (const dateStr of daysBack) {
+            if (next[dateStr]) continue; // do not overwrite an existing snapshot
+            const scheduled = habits.filter((h) => isHabitScheduledForDate(h, dateStr));
+            if (scheduled.length === 0) continue;
+            next[dateStr] = scheduled.map((h) => {
+              const c = completions.find((x) => x.habitId === h.id && x.date === dateStr);
+              return {
+                taskId: h.id,
+                title: h.title,
+                completed: !!c?.completed,
+                icon: h.icon,
+                time: h.scheduledTime,
+              };
+            });
+          }
+
+          return {
+            profile: {
+              ...profile,
+              dailyTaskSnapshots: next,
+              lastSnapshotDate: today,
+            },
+          };
+        });
+      },
     }),
     {
       name: 'ubloom-user-storage',
