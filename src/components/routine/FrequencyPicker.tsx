@@ -77,15 +77,28 @@ export default function FrequencyPicker({
 }
 
 /** Check if a habit should be visible on a given date */
-export function isHabitScheduledForDate(habit: { frequency?: HabitFrequency; specificDays?: number[]; oneOffDate?: string }, dateStr: string): boolean {
-  const freq = habit.frequency || 'daily';
+export function isHabitScheduledForDate(
+  habit: { frequency?: HabitFrequency; specificDays?: number[]; oneOffDate?: string; createdDate?: string },
+  dateStr: string,
+): boolean {
+  const freq = habit.frequency;
+  // Tasks with no recurrence setting should only appear on the day they were
+  // scheduled for (oneOffDate) or, if missing, the day they were created.
+  if (!freq) {
+    const anchor = habit.oneOffDate || habit.createdDate;
+    return anchor ? anchor === dateStr : false;
+  }
   if (freq === 'daily') return true;
-  if (freq === 'one-off') return (habit.oneOffDate || '') === dateStr;
+  if (freq === 'one-off') {
+    const anchor = habit.oneOffDate || habit.createdDate;
+    return !!anchor && anchor === dateStr;
+  }
   if (freq === 'specific-days') {
-    const date = new Date(dateStr + 'T12:00:00');
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const date = new Date(y, (m || 1) - 1, d || 1);
     return (habit.specificDays || []).includes(date.getDay());
   }
-  return true;
+  return false;
 }
 
 /** Get a short label for frequency display */
