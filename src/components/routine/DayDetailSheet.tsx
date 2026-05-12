@@ -3,6 +3,7 @@ import { Check, X, Calendar } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import { format, parse } from 'date-fns';
 import { getTaskIcon, renderTaskIcon } from '@/lib/taskIcons';
+import { getLocalDateStr } from '@/lib/dateUtils';
 
 interface DayDetailSheetProps {
   dateStr: string | null;
@@ -13,24 +14,34 @@ export default function DayDetailSheet({ dateStr, onClose }: DayDetailSheetProps
   const { profile } = useUserStore();
   const coreHabits = profile.coreHabits || [];
   const habitCompletions = profile.habitCompletions || [];
+  const snapshots = profile.dailyTaskSnapshots || {};
 
   if (!dateStr) return null;
 
   const date = parse(dateStr, 'yyyy-MM-dd', new Date());
   const formattedDate = format(date, 'EEEE, MMM d');
+  const today = getLocalDateStr();
+  const isPast = dateStr < today;
+  const snapshot = isPast ? snapshots[dateStr] : null;
 
   const dayCompletions = habitCompletions.filter(
     (c) => c.date === dateStr && c.completed
   );
   const completedIds = new Set(dayCompletions.map((c) => c.habitId));
 
-  const allItems = coreHabits.map((h) => ({
-    id: h.id,
-    title: h.title,
-    icon: h.icon || 'sparkles',
-    completed: completedIds.has(h.id),
-    type: 'habit' as const,
-  }));
+  const allItems = isPast
+    ? (snapshot || []).map((s) => ({
+        id: s.taskId,
+        title: s.title,
+        icon: s.icon || 'sparkles',
+        completed: s.completed,
+      }))
+    : coreHabits.map((h) => ({
+        id: h.id,
+        title: h.title,
+        icon: h.icon || 'sparkles',
+        completed: completedIds.has(h.id),
+      }));
 
   const completedCount = allItems.filter((i) => i.completed).length;
 
@@ -75,7 +86,17 @@ export default function DayDetailSheet({ dateStr, onClose }: DayDetailSheetProps
                 </span>
               </div>
 
-              {allItems.length === 0 ? (
+              {isPast && (
+                <div className="mb-3 px-3 py-2 rounded-2xl bg-muted/60 text-xs text-muted-foreground text-center">
+                  Viewing a past day — this cannot be edited
+                </div>
+              )}
+
+              {isPast && !snapshot ? (
+                <p className="text-sm italic text-muted-foreground/70 text-center py-6">
+                  No record found for this day
+                </p>
+              ) : allItems.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-4">
                   No habits tracked this day
                 </p>
@@ -92,8 +113,8 @@ export default function DayDetailSheet({ dateStr, onClose }: DayDetailSheetProps
                       <span
                         className={`flex-1 text-sm ${
                           item.completed
-                            ? 'text-foreground'
-                            : 'text-muted-foreground line-through'
+                            ? 'text-foreground line-through'
+                            : 'text-foreground'
                         }`}
                       >
                         {item.title}

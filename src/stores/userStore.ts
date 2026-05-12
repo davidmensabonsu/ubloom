@@ -2,6 +2,26 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { getLocalDateStr } from '@/lib/dateUtils';
 
+/** Inlined to avoid a circular import with FrequencyPicker. */
+function isHabitScheduledForDateLocal(habit: CoreHabit, dateStr: string): boolean {
+  const freq = habit.frequency;
+  if (!freq) {
+    const anchor = habit.oneOffDate || habit.createdDate;
+    return anchor ? anchor === dateStr : false;
+  }
+  if (freq === 'daily') return true;
+  if (freq === 'one-off') {
+    const anchor = habit.oneOffDate || habit.createdDate;
+    return !!anchor && anchor === dateStr;
+  }
+  if (freq === 'specific-days') {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const date = new Date(y, (m || 1) - 1, d || 1);
+    return (habit.specificDays || []).includes(date.getDay());
+  }
+  return false;
+}
+
 export type TimeOfDay = 'morning' | 'midday' | 'evening';
 export type HabitFrequency = 'daily' | 'specific-days' | 'one-off';
 
@@ -26,6 +46,14 @@ export interface HabitCompletion {
   habitId: string;
   date: string; // yyyy-MM-dd format
   completed: boolean;
+}
+
+export interface DailyTaskSnapshotItem {
+  taskId: string;
+  title: string;
+  completed: boolean;
+  icon?: string;
+  time?: string;
 }
 
 export interface UserProfile {
@@ -69,6 +97,8 @@ export interface UserProfile {
   coreHabits: CoreHabit[];
   habitCompletions: HabitCompletion[];
   routineSetupComplete: boolean;
+  dailyTaskSnapshots?: { [dateKey: string]: DailyTaskSnapshotItem[] };
+  lastSnapshotDate?: string; // yyyy-MM-dd of the last day we ran the snapshot pass
    reminderSettings: ReminderSettings;
   savedResources: string[];
   savedRecipes: string[]; // "resourceId::recipeIndex"
@@ -280,6 +310,7 @@ interface UserStore {
   reorderHabit: (habitId: string, direction: 'up' | 'down') => void;
    updateReminderSettings: (settings: Partial<ReminderSettings>) => void;
     markReminderSent: (timeOfDay: TimeOfDay) => void;
+  ensureDailySnapshots: () => void;
   addMoodboardItem: (item: Omit<MoodboardItem, 'id' | 'createdAt'>) => void;
   removeMoodboardItem: (id: string) => void;
   reorderMoodboardItems: (items: MoodboardItem[]) => void;
@@ -327,6 +358,8 @@ const initialProfile: UserProfile = {
   moodboardItems: [],
   onboardingComplete: false,
   intentionCompletedDate: undefined,
+  dailyTaskSnapshots: undefined,
+  lastSnapshotDate: undefined,
   bloomScore: undefined,
   cachedJournalPrompt: undefined,
   cachedWeeklySummary: undefined,
@@ -652,6 +685,67 @@ export const useUserStore = create<UserStore>()(
                   [timeOfDay]: today,
                 },
               },
+            },
+          };
+        });
+      },
+
+      ensureDailySnapshots: () => {
+        const today = getLocalDateStr();
+        set((state) => {
+          const profile = state.profile;
+          if (profile.lastSnapshotDate === today) return state;
+
+          const habits = profile.coreHabits || [];
+          const completions = profile.habitCompletions || [];
+          const existing = profile.dailyTaskSnapshots || {};
+          const next: { [k: string]: DailyTaskSnapshotItem[] } = { ...existing };
+
+          // Determine the range of past days to snapshot. Default to just yesterday
+          // when we have no prior anchor; otherwise snapshot every day since the
+          // last pass up to (and including) yesterday.
+          const todayDate = new Date();
+          todayDate.setHours(0, 0, 0, 0);
+
+          const daysBack: string[] = [];
+          if (profile.lastSnapshotDate) {
+            // Walk forward from the day after lastSnapshotDate up to yesterday.
+            const start = new Date(profile.lastSnapshotDate + 'T00:00:00');
+            start.setDate(start.getDate() + 1);
+            const cur = new Date(start);
+            // cap at 30 days to avoid huge loops
+            let safety = 30;
+            while (cur < todayDate && safety-- > 0) {
+              daysBack.push(getLocalDateStr(cur));
+              cur.setDate(cur.getDate() + 1);
+            }
+          } else {
+            const yest = new Date(todayDate);
+            yest.setDate(yest.getDate() - 1);
+            daysBack.push(getLocalDateStr(yest));
+          }
+
+          for (const dateStr of daysBack) {
+            if (next[dateStr]) continue; // do not overwrite an existing snapshot
+            const scheduled = habits.filter((h) => isHabitScheduledForDateLocal(h, dateStr));
+            if (scheduled.length === 0) continue;
+            next[dateStr] = scheduled.map((h) => {
+              const c = completions.find((x) => x.habitId === h.id && x.date === dateStr);
+              return {
+                taskId: h.id,
+                title: h.title,
+                completed: !!c?.completed,
+                icon: h.icon,
+                time: h.scheduledTime,
+              };
+            });
+          }
+
+          return {
+            profile: {
+              ...profile,
+              dailyTaskSnapshots: next,
+              lastSnapshotDate: today,
             },
           };
         });
