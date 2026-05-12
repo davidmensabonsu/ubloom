@@ -1,7 +1,26 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { getLocalDateStr } from '@/lib/dateUtils';
-import { isHabitScheduledForDate } from '@/components/routine/FrequencyPicker';
+
+/** Inlined to avoid a circular import with FrequencyPicker. */
+function isHabitScheduledForDateLocal(habit: CoreHabit, dateStr: string): boolean {
+  const freq = habit.frequency;
+  if (!freq) {
+    const anchor = habit.oneOffDate || habit.createdDate;
+    return anchor ? anchor === dateStr : false;
+  }
+  if (freq === 'daily') return true;
+  if (freq === 'one-off') {
+    const anchor = habit.oneOffDate || habit.createdDate;
+    return !!anchor && anchor === dateStr;
+  }
+  if (freq === 'specific-days') {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const date = new Date(y, (m || 1) - 1, d || 1);
+    return (habit.specificDays || []).includes(date.getDay());
+  }
+  return false;
+}
 
 export type TimeOfDay = 'morning' | 'midday' | 'evening';
 export type HabitFrequency = 'daily' | 'specific-days' | 'one-off';
@@ -708,7 +727,7 @@ export const useUserStore = create<UserStore>()(
 
           for (const dateStr of daysBack) {
             if (next[dateStr]) continue; // do not overwrite an existing snapshot
-            const scheduled = habits.filter((h) => isHabitScheduledForDate(h, dateStr));
+            const scheduled = habits.filter((h) => isHabitScheduledForDateLocal(h, dateStr));
             if (scheduled.length === 0) continue;
             next[dateStr] = scheduled.map((h) => {
               const c = completions.find((x) => x.habitId === h.id && x.date === dateStr);
