@@ -19,6 +19,7 @@ export interface CoreHabit {
   specificDays?: number[];           // 0=Sun, 1=Mon, ... 6=Sat
   oneOffDate?: string;               // yyyy-MM-dd for one-off habits
   scheduledTime?: string;            // HH:mm format, optional specific time
+  createdDate?: string;              // yyyy-MM-dd local date when the habit was added
 }
 
 export interface HabitCompletion {
