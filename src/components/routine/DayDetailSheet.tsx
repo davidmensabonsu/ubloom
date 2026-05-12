@@ -114,7 +114,7 @@ export default function DayDetailSheet({ dateStr, onClose }: DayDetailSheetProps
                         className={`flex-1 text-sm ${
                           item.completed
                             ? 'text-foreground line-through'
-                            : 'text-muted-foreground line-through'
+                            : 'text-foreground'
                         }`}
                       >
                         {item.title}
