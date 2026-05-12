@@ -20,8 +20,13 @@ import { useReminders } from '@/hooks/useReminders';
 
 
 export default function Routine() {
-   const { profile, setCoreHabits, completeRoutineSetup, isHabitCompletedToday } = useUserStore();
+   const { profile, setCoreHabits, completeRoutineSetup, isHabitCompletedToday, ensureDailySnapshots } = useUserStore();
   const [showAddTask, setShowAddTask] = useState(false);
+
+  // Capture a snapshot of any past days before the user views them.
+  useEffect(() => {
+    ensureDailySnapshots();
+  }, [ensureDailySnapshots]);
   
    const [celebration, setCelebration] = useState<{
      show: boolean;
