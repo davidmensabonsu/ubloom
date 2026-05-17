@@ -275,6 +275,7 @@ export function useUbiChat() {
   }
 
   const loadConversation = useCallback(async (convoId: string) => {
+    setMessages([]);
     setCurrentConversationId(convoId);
     setSuggestedPrompts([]);
     usedPromptsRef.current.clear();

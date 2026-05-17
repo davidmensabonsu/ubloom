@@ -406,7 +406,7 @@ export default function Ubi() {
                     const isLast = i === messages.length - 1;
                     const shimmer = isStreaming && isLast && msg.role === 'assistant';
                     return (
-                      <div key={i}>
+                      <div key={msg.id || `idx-${i}-${msg.role}`}>
                         <MessageBubble
                           message={{ ...msg, content: msg.role === 'assistant' ? stripPlanMarkers(msg.content) : msg.content }}
                           index={i}
