@@ -210,7 +210,15 @@ export function useUbiChat() {
       if (convos && convos.length > 0) {
         setConversations(convos.map((c: any) => ({ ...c, preview: '' })));
 
-        // Don't auto-load latest — always start with a fresh chat
+        // Resume the most recent conversation unless 12+ hours have passed
+        // since its last message — in which case start fresh.
+        const latest = convos[0];
+        const lastActivity = new Date(latest.updated_at).getTime();
+        const TWELVE_HOURS = 12 * 60 * 60 * 1000;
+        if (Date.now() - lastActivity < TWELVE_HOURS) {
+          setCurrentConversationId(latest.id);
+          await loadMessagesForConversation(latest.id);
+        }
       } else if (!migrationDoneRef.current) {
         // Migrate old messages if any
         migrationDoneRef.current = true;
