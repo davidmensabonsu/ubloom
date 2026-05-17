@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -10,9 +11,15 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { messages, userContext, chatHistory } = await req.json();
+    const { messages, userContext, chatHistory, conversationId, userId } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const admin = (SUPABASE_URL && SERVICE_ROLE)
+      ? createClient(SUPABASE_URL, SERVICE_ROLE)
+      : null;
 
     const chatHistorySection = chatHistory
       ? `\n\n## Past Conversations\nThe user has had previous chats with you. Here are recent conversation summaries:\n${chatHistory}\nIf the user references a past conversation, use this context naturally. Don't mention these unless relevant.`
@@ -192,6 +199,7 @@ Keep them casual, first person, as if the user is naturally responding.`,
               const promptContent = `<!--PROMPTS:${JSON.stringify(prompts)}-->`;
               const promptBlock = `\n\ndata: ${JSON.stringify({ choices: [{ delta: { content: promptContent } }] })}\n\n`;
               await writer.write(encoder.encode(promptBlock));
+              fullContent += promptContent;
             }
           }
         } catch (e) {
@@ -199,6 +207,26 @@ Keep them casual, first person, as if the user is naturally responding.`,
         }
 
         await writer.write(encoder.encode("data: [DONE]\n\n"));
+
+        // Persist the assistant message server-side (RLS blocks the client
+        // from inserting role='assistant'). Save the raw content including
+        // the <!--PROMPTS:...--> marker so the prompt chips can be restored
+        // when the conversation is reloaded.
+        if (admin && conversationId && userId && fullContent.trim()) {
+          try {
+            await admin.from("ubi_messages").insert({
+              conversation_id: conversationId,
+              user_id: userId,
+              role: "assistant",
+              content: fullContent,
+            });
+            await admin.from("ubi_conversations")
+              .update({ updated_at: new Date().toISOString() })
+              .eq("id", conversationId);
+          } catch (e) {
+            console.error("Failed to persist assistant message:", e);
+          }
+        }
       } catch (e) {
         console.error("Stream processing error:", e);
       } finally {

@@ -277,14 +277,28 @@ export function useUbiChat() {
       .order('created_at', { ascending: true });
 
     if (data) {
-      setMessages(data.map((m: any) => ({
-        id: m.id,
-        role: m.role,
-        content: m.content,
-        rating: m.rating,
-      })));
+      const mapped = data.map((m: any) => {
+        if (m.role === 'assistant') {
+          const { cleanContent } = extractPrompts(m.content || '');
+          return { id: m.id, role: m.role, content: cleanContent, rating: m.rating };
+        }
+        return { id: m.id, role: m.role, content: m.content, rating: m.rating };
+      });
+      setMessages(mapped);
+
+      // Restore suggested prompts from the last assistant message so the
+      // horizontal chip strip reappears exactly as it was when the user left.
+      const lastAssistant = [...data].reverse().find((m: any) => m.role === 'assistant');
+      if (lastAssistant) {
+        const { prompts } = extractPrompts(lastAssistant.content || '');
+        const filtered = prompts.filter((p) => !usedPromptsRef.current.has(p));
+        setSuggestedPrompts(filtered);
+      } else {
+        setSuggestedPrompts([]);
+      }
     } else {
       setMessages([]);
+      setSuggestedPrompts([]);
     }
   }
 
@@ -434,6 +448,8 @@ export function useUbiChat() {
             messages: apiMessages.map((m) => ({ role: m.role, content: m.content })),
             userContext,
             chatHistory,
+            conversationId: convoId,
+            userId,
           }),
           signal: controller.signal,
         });
@@ -517,13 +533,9 @@ export function useUbiChat() {
         const filtered = prompts.filter(p => !usedPromptsRef.current.has(p));
         if (filtered.length > 0) setSuggestedPrompts(filtered);
 
-        // Save assistant message to DB
-        await (supabase as any).from('ubi_messages').insert({
-          conversation_id: convoId,
-          user_id: userId,
-          role: 'assistant',
-          content: cleanContent,
-        });
+        // Assistant message is persisted server-side by the ubi-chat edge
+        // function (RLS blocks client-side assistant inserts). We only need
+        // to handle local UI state, memory extraction, and title updates.
 
         // Fire-and-forget memory extraction (silent background task)
         const assistantMsg: UbiMessage = { role: 'assistant', content: cleanContent };
@@ -533,9 +545,6 @@ export function useUbiChat() {
           conversationId: convoId,
           messages: fullThread,
         });
-        await (supabase as any).from('ubi_conversations')
-          .update({ updated_at: new Date().toISOString() })
-          .eq('id', convoId);
 
         // Auto-title on first assistant response if title is 'New chat'
         const convo = conversations.find(c => c.id === convoId);
@@ -568,18 +577,8 @@ export function useUbiChat() {
         // sees Ubi's reply when they revisit this conversation later.
         if (assistantSoFar.trim()) {
           try {
-            const { cleanContent } = extractPrompts(assistantSoFar);
-            if (cleanContent.trim()) {
-              await (supabase as any).from('ubi_messages').insert({
-                conversation_id: convoId,
-                user_id: userId,
-                role: 'assistant',
-                content: cleanContent,
-              });
-              await (supabase as any).from('ubi_conversations')
-                .update({ updated_at: new Date().toISOString() })
-                .eq('id', convoId);
-            }
+            // The edge function persists assistant messages itself; nothing
+            // to do here when the stream was aborted mid-flight.
           } catch (saveErr) {
             console.error('Failed to persist partial assistant reply:', saveErr);
           }
