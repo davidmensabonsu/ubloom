@@ -174,6 +174,16 @@ export default function Ubi() {
     autoOpenerSent.current = false;
   }, [currentConversationId]);
 
+  // While routine planning is active, persist the current conversation id so
+  // leaving Ubi and returning resumes the same chat.
+  useEffect(() => {
+    if (!routinePlanningRef.current) return;
+    if (!currentConversationId) return;
+    try {
+      localStorage.setItem('ubi-pending-routine-convo-id', currentConversationId);
+    } catch { /* ignore */ }
+  }, [currentConversationId]);
+
   // Handle journal entry passed from Reflect page
   useEffect(() => {
     if (isLoading || journalHandled.current) return;
