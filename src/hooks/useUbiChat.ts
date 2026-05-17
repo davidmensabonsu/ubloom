@@ -632,5 +632,6 @@ export function useUbiChat() {
     startNewChat,
     deleteConversation,
     refreshConversations,
+    loadPreviews,
   };
 }
