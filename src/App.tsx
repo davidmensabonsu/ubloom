@@ -55,17 +55,24 @@ function ThemeManager() {
       'theme-rose', 'theme-sage', 'theme-sand', 'theme-lavender', 'theme-arctic',
       'theme-beige', 'theme-lilac', 'theme-sky', 'theme-coral', 'theme-teal',
       'theme-mocha', 'theme-midnight', 'theme-peach', 'theme-mauve', 'theme-grey', 'theme-blush',
+      'theme-yellow', 'theme-brown', 'theme-cream', 'theme-blue', 'theme-purple',
+      'theme-green', 'theme-pink', 'theme-orange',
     ];
     themeClasses.forEach(cls => document.documentElement.classList.remove(cls));
 
-    // Map legacy themes onto the new 5-theme palette so existing users still render
+    // Map legacy themes and all new themes to their CSS classes
     const aestheticMap: Record<string, string> = {
-      // new
+      // existing 5
       rose: '', sage: 'theme-sage', sand: 'theme-sand', lavender: 'theme-lavender', arctic: 'theme-arctic',
-      // legacy → closest new theme
-      blush: '', mauve: '', peach: 'theme-sand', coral: 'theme-sand', beige: 'theme-sand', mocha: 'theme-sand',
+      // legacy → closest existing theme
+      blush: '', mauve: '', peach: 'theme-sand', coral: 'theme-sand', mocha: 'theme-sand',
       lilac: 'theme-lavender', midnight: 'theme-lavender',
-      sky: 'theme-arctic', teal: 'theme-arctic', grey: 'theme-arctic',
+      sky: 'theme-arctic', teal: 'theme-arctic',
+      // new 10
+      grey: 'theme-grey', beige: 'theme-beige', yellow: 'theme-yellow',
+      brown: 'theme-brown', cream: 'theme-cream', blue: 'theme-blue',
+      purple: 'theme-purple', green: 'theme-green', pink: 'theme-pink',
+      orange: 'theme-orange',
     };
     const cls = aestheticMap[profile.aesthetic ?? 'rose'];
     if (cls) document.documentElement.classList.add(cls);

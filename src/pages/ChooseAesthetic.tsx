@@ -36,6 +36,66 @@ const aesthetics = [
     class: 'theme-arctic',
     gradient: 'linear-gradient(135deg, hsl(210 35% 45%), hsl(210 35% 70%))',
   },
+  {
+    id: 'grey',
+    name: 'Silver Mist',
+    class: 'theme-grey',
+    gradient: 'linear-gradient(135deg, hsl(0 0% 78%), hsl(36 9% 89%))',
+  },
+  {
+    id: 'yellow',
+    name: 'Golden Hour',
+    class: 'theme-yellow',
+    gradient: 'linear-gradient(135deg, hsl(40 100% 65%), hsl(44 100% 82%))',
+  },
+  {
+    id: 'beige',
+    name: 'Oat Milk',
+    class: 'theme-beige',
+    gradient: 'linear-gradient(135deg, hsl(33 27% 67%), hsl(37 46% 85%))',
+  },
+  {
+    id: 'brown',
+    name: 'Cocoa',
+    class: 'theme-brown',
+    gradient: 'linear-gradient(135deg, hsl(27 28% 52%), hsl(32 28% 72%))',
+  },
+  {
+    id: 'cream',
+    name: 'Cashmere',
+    class: 'theme-cream',
+    gradient: 'linear-gradient(135deg, hsl(33 49% 71%), hsl(31 63% 92%))',
+  },
+  {
+    id: 'blue',
+    name: 'Ocean Calm',
+    class: 'theme-blue',
+    gradient: 'linear-gradient(135deg, hsl(213 42% 30%), hsl(211 59% 78%))',
+  },
+  {
+    id: 'purple',
+    name: 'Moon Violet',
+    class: 'theme-purple',
+    gradient: 'linear-gradient(135deg, hsl(272 30% 55%), hsl(266 57% 87%))',
+  },
+  {
+    id: 'green',
+    name: 'Matcha',
+    class: 'theme-green',
+    gradient: 'linear-gradient(135deg, hsl(102 15% 51%), hsl(100 29% 86%))',
+  },
+  {
+    id: 'pink',
+    name: 'Ballet',
+    class: 'theme-pink',
+    gradient: 'linear-gradient(135deg, hsl(344 100% 78%), hsl(343 100% 92%))',
+  },
+  {
+    id: 'orange',
+    name: 'Apricot',
+    class: 'theme-orange',
+    gradient: 'linear-gradient(135deg, hsl(24 100% 62%), hsl(24 100% 85%))',
+  },
 ];
 
 export default function ChooseAesthetic() {
