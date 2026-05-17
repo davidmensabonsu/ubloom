@@ -17,6 +17,7 @@ import ubiAvatar from '@/assets/ubi-avatar-bloom.png';
 import speechBubbleIcon from '@/assets/icons/speech-bubble.png';
 import ubloomFlower from '@/assets/ubloom-flower.png';
 import UbiOnboarding from '@/components/ubi/UbiOnboarding';
+import PlanPreviewCard from '@/components/ubi/PlanPreviewCard';
 
 import crystalBallIcon from '@/assets/icons/crystal-ball.png';
 import sparklesIcon from '@/assets/icons/sparkles.png';
@@ -412,23 +413,11 @@ export default function Ubi() {
                           const plan = parseRoutinePlan(msg.content);
                           if (plan && !planConsumed.has(markerKey)) {
                             return (
-                              <div className="mt-2 ml-9 space-y-2 max-w-[85%]">
-                                <Button
-                                  onClick={() => approvePlan(plan, markerKey)}
-                                  className="w-full rounded-full bg-rose-400 hover:bg-rose-500 text-white"
-                                  style={{ fontFamily: 'Jost, sans-serif' }}
-                                >
-                                  Looks good, add to my routine
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  onClick={requestChanges}
-                                  className="w-full rounded-full border-rose-300 text-rose-500 hover:bg-rose-50"
-                                  style={{ fontFamily: 'Jost, sans-serif' }}
-                                >
-                                  I'd like to change something
-                                </Button>
-                              </div>
+                              <PlanPreviewCard
+                                tasks={plan}
+                                onApprove={() => approvePlan(plan, markerKey)}
+                                onRequestChanges={requestChanges}
+                              />
                             );
                           }
                           if (options && isLast) {
