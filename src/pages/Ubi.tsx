@@ -508,7 +508,7 @@ export default function Ubi() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.15 }}
-                  className="overflow-x-auto scrollbar-hide -mx-1 mt-3"
+                  className="overflow-x-auto scrollbar-hide -mx-1 mt-3 mb-4"
                 >
                   <div className="flex gap-2 px-1 py-1 w-max">
                     {suggestedPrompts.map((text, i) => (
