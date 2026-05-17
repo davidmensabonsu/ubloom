@@ -130,7 +130,7 @@ export default function Auth() {
 
           <motion.button
             type="submit"
-            disabled={loading || (!isForgot && !agreedToTerms)}
+            disabled={loading || (isSignUp && !agreedToTerms)}
             className="soft-button w-full flex items-center justify-center gap-2"
             whileTap={{ scale: 0.98 }}>
             
@@ -156,7 +156,7 @@ export default function Auth() {
             </div>
             <motion.button
             type="button"
-            disabled={!agreedToTerms}
+            disabled={isSignUp && !agreedToTerms}
             onClick={async () => {
               const { error } = await lovable.auth.signInWithOAuth("google", {
                 redirect_uri: window.location.origin
@@ -179,8 +179,8 @@ export default function Auth() {
           </div>
         )}
 
-        {/* Consent checkbox — always visible, gates all auth actions */}
-        {!isForgot && (
+        {/* Consent checkbox — only required for sign-up */}
+        {isSignUp && (
           <label className="flex items-start gap-2 cursor-pointer mt-4">
             <input
               type="checkbox"
@@ -195,6 +195,16 @@ export default function Auth() {
               <Link to="/privacy" className="text-primary hover:underline" target="_blank">Privacy Policy</Link>
             </span>
           </label>
+        )}
+
+        {/* Sign-in reminder text */}
+        {!isSignUp && !isForgot && (
+          <p className="text-center mt-4 text-xs text-muted-foreground">
+            By signing in, you agree to our{' '}
+            <Link to="/terms" className="text-primary hover:underline" target="_blank">Terms</Link>
+            {' '}and{' '}
+            <Link to="/privacy" className="text-primary hover:underline" target="_blank">Privacy Policy</Link>.
+          </p>
         )}
 
         {/* Forgot password link */}
