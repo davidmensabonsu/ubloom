@@ -210,19 +210,7 @@ export function useUbiChat() {
       if (convos && convos.length > 0) {
         setConversations(convos.map((c: any) => ({ ...c, preview: '' })));
 
-        // If the most recent conversation has no user messages yet (Ubi
-        // sent an opener but the user never replied), resume it instead
-        // of spinning up a fresh chat — saves a wasted AI generation.
-        const latest = convos[0];
-        const { count: userMsgCount } = await (supabase as any)
-          .from('ubi_messages')
-          .select('id', { count: 'exact', head: true })
-          .eq('conversation_id', latest.id)
-          .eq('role', 'user');
-        if ((userMsgCount ?? 0) === 0) {
-          setCurrentConversationId(latest.id);
-          await loadMessagesForConversation(latest.id);
-        }
+        // Don't auto-load latest — always start with a fresh chat
       } else if (!migrationDoneRef.current) {
         // Migrate old messages if any
         migrationDoneRef.current = true;
