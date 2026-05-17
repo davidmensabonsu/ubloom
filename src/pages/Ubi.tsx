@@ -151,7 +151,7 @@ export default function Ubi() {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, isStreaming]);
 
   const handleSend = () => {
     const text = input.trim();
