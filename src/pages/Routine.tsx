@@ -154,7 +154,8 @@ export default function Routine() {
           animate={{ opacity: 1, y: 0 }}
           className="page-title text-white"
         >
-          Your Routine
+          {typedTitle}
+          <span className="inline-block w-[2px] h-[0.9em] bg-white/80 ml-0.5 align-middle animate-[pulse_1s_ease-in-out_infinite]" />
         </motion.h1>
         <motion.div
           initial={{ opacity: 0 }}
