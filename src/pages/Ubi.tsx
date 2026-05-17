@@ -149,6 +149,10 @@ export default function Ubi() {
   }, [isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    // Don't auto-scroll for the initial assistant greeting (no user messages yet).
+    // The first message should be viewed from the top so the user sees it and the preset prompts.
+    const hasUserMessage = messages.some((m) => m.role === 'user');
+    if (!hasUserMessage) return;
     bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, [messages, isStreaming]);
 
