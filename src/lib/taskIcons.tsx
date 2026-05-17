@@ -11,6 +11,7 @@ import {
   Map as MapIcon, Compass, Stethoscope, CreditCard, Receipt, Wallet, Coins,
   Banknote, LineChart, BarChart3, Image as ImageIcon, Video, Lightbulb as LightbulbIcon,
   Wind, Briefcase, Croissant, Wine, Flower, RefreshCw,
+  Archive, Cake, Users,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -166,6 +167,35 @@ export const taskIconOptions: TaskIconOption[] = [
   { id: 'softlife-massage', label: 'Massage', icon: HandHeart, imageSrc: b('softlife-massage.png') },
 ];
 
+// ===== Newly added clay icons =====
+taskIconOptions.push(
+  // Health & Fitness
+  { id: 'health-iceface', label: 'Ice Facial', icon: Snowflake, imageSrc: b('health-iceface.png') },
+  { id: 'health-sauna', label: 'Sauna', icon: Flame, imageSrc: b('health-sauna.png') },
+  { id: 'health-icebath', label: 'Ice Bath', icon: Snowflake, imageSrc: b('health-icebath.png') },
+  { id: 'health-massagetable', label: 'Massage Table', icon: HandHeart, imageSrc: b('health-massagetable.png') },
+  { id: 'health-tonguescraper', label: 'Tongue Scraper', icon: Smile, imageSrc: b('health-tonguescraper.png') },
+  // Home & Daily
+  { id: 'home-kitchen', label: 'Kitchen Clean', icon: CookingPot, imageSrc: b('home-kitchen.png') },
+  { id: 'home-toilet', label: 'Bathroom Clean', icon: Bath, imageSrc: b('home-toilet.png') },
+  { id: 'home-bins', label: 'Take Bins Out', icon: Trash2, imageSrc: b('home-bins.png') },
+  { id: 'home-washingmachine', label: 'Laundry Wash', icon: Shirt, imageSrc: b('home-washingmachine.png') },
+  { id: 'home-bedsheets', label: 'Change Bedsheets', icon: Bed, imageSrc: b('home-bedsheets.png') },
+  { id: 'home-storagebox', label: 'Declutter', icon: Archive, imageSrc: b('home-storagebox.png') },
+  // Work & Learning
+  { id: 'work-weeklyplanner', label: 'Weekly Planning', icon: NotebookPen, imageSrc: b('work-weeklyplanner.png') },
+  { id: 'work-monthlycalendar', label: 'Monthly Reset', icon: Calendar, imageSrc: b('work-monthlycalendar.png') },
+  { id: 'work-goalcheck', label: 'Goal Check-in', icon: Target, imageSrc: b('work-goalcheck.png') },
+  { id: 'work-braindump', label: 'Brain Dump', icon: Brain, imageSrc: b('work-braindump.png') },
+  { id: 'work-visionboard', label: 'Vision Board', icon: ImageIcon, imageSrc: b('work-visionboard.png') },
+  { id: 'work-rewrite', label: 'Rewrite Vision', icon: RefreshCw, imageSrc: b('work-rewrite.png') },
+  // Social & Entertainment
+  { id: 'social-birthdaycake', label: 'Birthday', icon: Cake, imageSrc: b('social-birthdaycake.png') },
+  { id: 'social-twohearts', label: 'Date Night', icon: Heart, imageSrc: b('social-twohearts.png') },
+  { id: 'social-family', label: 'Family Time', icon: Users, imageSrc: b('social-family.png') },
+  { id: 'social-twocoffees', label: 'Catch Up', icon: Coffee, imageSrc: b('social-twocoffees.png') },
+);
+
 export interface IconCategory {
   label: string;
   iconIds: string[];
@@ -178,7 +208,7 @@ export const iconCategories: IconCategory[] = [
   },
   {
     label: 'Health & Fitness',
-    iconIds: ['dumbbell', 'running', 'bike', 'yoga', 'yoga-mat', 'swimming', 'hiking', 'dance', 'glass-water', 'water-bottle', 'water-drop', 'smoothie', 'pill', 'dental', 'fruit', 'health-stethoscope', 'health-tooth', 'health-thermometer', 'health-bandaid', 'health-scissors', 'health-nailfile', 'health-mirror'],
+    iconIds: ['dumbbell', 'running', 'bike', 'yoga', 'yoga-mat', 'swimming', 'hiking', 'dance', 'glass-water', 'water-bottle', 'water-drop', 'smoothie', 'pill', 'dental', 'fruit', 'health-stethoscope', 'health-tooth', 'health-thermometer', 'health-bandaid', 'health-scissors', 'health-nailfile', 'health-mirror', 'health-iceface', 'health-sauna', 'health-icebath', 'health-massagetable', 'health-tonguescraper'],
   },
   {
     label: 'Wellness & Self-care',
@@ -198,15 +228,15 @@ export const iconCategories: IconCategory[] = [
   },
   {
     label: 'Work & Learning',
-    iconIds: ['laptop', 'study', 'book', 'book-stack', 'notebook', 'pencil', 'calendar', 'clock', 'wall-clock', 'watch', 'target', 'globe', 'puzzle', 'trophy', 'lightbulb', 'thought-bubble'],
+    iconIds: ['laptop', 'study', 'book', 'book-stack', 'notebook', 'pencil', 'calendar', 'clock', 'wall-clock', 'watch', 'target', 'globe', 'puzzle', 'trophy', 'lightbulb', 'thought-bubble', 'work-weeklyplanner', 'work-monthlycalendar', 'work-goalcheck', 'work-braindump', 'work-visionboard', 'work-rewrite'],
   },
   {
     label: 'Home & Daily',
-    iconIds: ['home', 'cooking', 'cooking-pan', 'utensils', 'salad', 'cleaning', 'vacuum', 'trash', 'shirt', 'cart', 'car', 'key', 'toolbox', 'plant'],
+    iconIds: ['home', 'cooking', 'cooking-pan', 'utensils', 'salad', 'cleaning', 'vacuum', 'trash', 'shirt', 'cart', 'car', 'key', 'toolbox', 'plant', 'home-kitchen', 'home-toilet', 'home-bins', 'home-washingmachine', 'home-bedsheets', 'home-storagebox'],
   },
   {
     label: 'Social & Entertainment',
-    iconIds: ['chat', 'phone', 'mail', 'coffee-chat', 'party', 'music', 'headphones', 'podcast-mic', 'movie', 'tv', 'gaming', 'singing', 'camera', 'gift'],
+    iconIds: ['chat', 'phone', 'mail', 'coffee-chat', 'party', 'music', 'headphones', 'podcast-mic', 'movie', 'tv', 'gaming', 'singing', 'camera', 'gift', 'social-birthdaycake', 'social-twohearts', 'social-family', 'social-twocoffees'],
   },
   {
     label: 'Outdoors & Adventure',
@@ -348,6 +378,28 @@ const iconKeywords: Record<string, string[]> = {
   'softlife-rest': ['rest', 'nap', 'eye mask', 'sleep', 'recharge', 'cozy', 'soft life'],
   'softlife-spa': ['spa', 'towel', 'pamper', 'self care', 'wellness', 'soft life'],
   'softlife-massage': ['massage', 'spa', 'relax', 'unwind', 'body', 'self care', 'soft life'],
+  // New additions
+  'health-iceface': ['ice', 'face', 'facial', 'cold', 'roller', 'globe', 'beauty', 'skin'],
+  'health-sauna': ['sauna', 'heat', 'steam', 'hot', 'wellness', 'detox'],
+  'health-icebath': ['ice', 'bath', 'cold', 'plunge', 'tub', 'recovery', 'wim hof'],
+  'health-massagetable': ['massage', 'table', 'spa', 'bodywork', 'therapy', 'physio'],
+  'health-tonguescraper': ['tongue', 'scraper', 'oral', 'ayurveda', 'mouth', 'hygiene'],
+  'home-kitchen': ['kitchen', 'stove', 'cooktop', 'clean', 'cleaning', 'chores', 'hob'],
+  'home-toilet': ['toilet', 'bathroom', 'clean', 'cleaning', 'chores', 'loo', 'wc'],
+  'home-bins': ['bin', 'bins', 'trash', 'rubbish', 'garbage', 'take out', 'chores'],
+  'home-washingmachine': ['laundry', 'washing', 'machine', 'wash', 'clothes', 'chores'],
+  'home-bedsheets': ['bedsheets', 'sheets', 'bedding', 'change sheets', 'laundry', 'bed'],
+  'home-storagebox': ['storage', 'organise', 'declutter', 'tidy', 'box', 'home', 'chores'],
+  'work-weeklyplanner': ['weekly', 'planner', 'planning', 'plan week', 'spiral', 'notebook'],
+  'work-monthlycalendar': ['monthly', 'calendar', 'reset', 'review', 'month', 'plan'],
+  'work-goalcheck': ['goal', 'check-in', 'target', 'review', 'progress', 'milestone'],
+  'work-braindump': ['brain dump', 'thoughts', 'notebook', 'journal', 'ideas', 'reflect'],
+  'work-visionboard': ['vision board', 'corkboard', 'inspiration', 'goals', 'dream', 'moodboard'],
+  'work-rewrite': ['rewrite', 'refresh', 'reset', 'redo', 'vision', 'pencil'],
+  'social-birthdaycake': ['birthday', 'cake', 'celebrate', 'candles', 'party'],
+  'social-twohearts': ['date night', 'quality time', 'love', 'partner', 'hearts', 'romance'],
+  'social-family': ['family', 'family time', 'parents', 'kids', 'together', 'home'],
+  'social-twocoffees': ['coffee', 'catch up', 'friend', 'friends', 'cafe', 'meet', 'cups'],
 };
 
 /** Search across id, label and curated keywords. Returns matching options in their declared order. */
