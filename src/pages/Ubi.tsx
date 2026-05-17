@@ -716,6 +716,7 @@ export default function Ubi() {
       </div>
 
       <BottomNav />
+      <UpgradeModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} source="ubi_routine_plan" />
     </div>
   );
 }
