@@ -442,7 +442,7 @@ export default function Ubi() {
                       </div>
                     );
                   })}
-                  {isStreaming && messages[messages.length - 1]?.role !== 'assistant' && (
+                  {isStreaming && messages.length > 0 && messages[messages.length - 1]?.role !== 'assistant' && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -548,34 +548,6 @@ export default function Ubi() {
                 </motion.div>
               )}
 
-              {/* Warm-up state: Ubi is preparing to greet — inline typing bubble */}
-              {messages.length === 0 && profile.ubiOnboardingComplete && profile.ubiIntroSeen && !currentConversationId && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="flex gap-2 items-start"
-                >
-                  <div className="w-7 h-7 rounded-full overflow-hidden border border-primary/20 shrink-0 mt-0.5 flex items-center justify-center bg-primary/10">
-                    <img src={speechBubbleIcon} alt="Ubi" className="w-4 h-4 object-contain clay-icon" />
-                  </div>
-                  <div className="bg-white border border-primary/20 shadow-soft rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-1.5 ubi-bubble-shimmer">
-                    {[0, 1, 2].map((i) => (
-                      <motion.span
-                        key={i}
-                        className="w-2 h-2 rounded-full bg-primary"
-                        animate={{ opacity: [0.3, 1, 0.3], y: [0, -4, 0] }}
-                        transition={{
-                          duration: 0.9,
-                          repeat: Infinity,
-                          delay: i * 0.15,
-                          ease: 'easeInOut',
-                        }}
-                      />
-                    ))}
-                  </div>
-                </motion.div>
-              )}
             </>
           )}
         </div>
