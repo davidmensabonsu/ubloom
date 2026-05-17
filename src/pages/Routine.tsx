@@ -19,6 +19,7 @@ import ReminderSettings from '@/components/routine/ReminderSettings';
 import { useReminders } from '@/hooks/useReminders';
 import PastDayView from '@/components/routine/PastDayView';
 import { parse, format } from 'date-fns';
+import { useTypewriter } from '@/hooks/useTypewriter';
 
 
 export default function Routine() {
