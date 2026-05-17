@@ -399,7 +399,57 @@ export default function Ubi() {
                     const isLast = i === messages.length - 1;
                     const shimmer = isStreaming && isLast && msg.role === 'assistant';
                     return (
-                      <MessageBubble key={i} message={msg} index={i} onRate={rateMessage} shimmer={shimmer} />
+                      <div key={i}>
+                        <MessageBubble
+                          message={{ ...msg, content: msg.role === 'assistant' ? stripPlanMarkers(msg.content) : msg.content }}
+                          index={i}
+                          onRate={rateMessage}
+                          shimmer={shimmer}
+                        />
+                        {msg.role === 'assistant' && !shimmer && (() => {
+                          const markerKey = `${i}:${msg.id || ''}`;
+                          const options = parseOptions(msg.content);
+                          const plan = parseRoutinePlan(msg.content);
+                          if (plan && !planConsumed.has(markerKey)) {
+                            return (
+                              <div className="mt-2 ml-9 space-y-2 max-w-[85%]">
+                                <Button
+                                  onClick={() => approvePlan(plan, markerKey)}
+                                  className="w-full rounded-full bg-rose-400 hover:bg-rose-500 text-white"
+                                  style={{ fontFamily: 'Jost, sans-serif' }}
+                                >
+                                  Looks good, add to my routine
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  onClick={requestChanges}
+                                  className="w-full rounded-full border-rose-300 text-rose-500 hover:bg-rose-50"
+                                  style={{ fontFamily: 'Jost, sans-serif' }}
+                                >
+                                  I'd like to change something
+                                </Button>
+                              </div>
+                            );
+                          }
+                          if (options && isLast) {
+                            return (
+                              <div className="mt-2 ml-9 flex flex-wrap gap-2 max-w-[85%]">
+                                {options.map((opt) => (
+                                  <button
+                                    key={opt}
+                                    onClick={() => sendOptionReply(opt)}
+                                    className="px-3 py-1.5 rounded-full bg-white border border-rose-300/80 text-rose-600 hover:bg-rose-50 text-xs shadow-sm"
+                                    style={{ fontFamily: 'Jost, sans-serif' }}
+                                  >
+                                    {opt}
+                                  </button>
+                                ))}
+                              </div>
+                            );
+                          }
+                          return null;
+                        })()}
+                      </div>
                     );
                   })}
                   {isStreaming && messages[messages.length - 1]?.role !== 'assistant' && (
