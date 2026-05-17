@@ -593,6 +593,24 @@ export default function Ubi() {
 
       {/* Input area with prompts strip */}
       <div className="fixed bottom-16 left-0 right-0 bg-background/90 backdrop-blur-md border-t border-border/50 z-10">
+        {/* Plan my routine chip — always visible at empty state */}
+        {!isStreaming && messages.length === 0 && !confirmation && (
+          <div className="max-w-lg mx-auto px-4 pt-1.5">
+            <motion.button
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              onClick={handlePlanRoutineChip}
+              disabled={!canUse('ubi_chat')}
+              className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-rose-50/60 border border-rose-300/80 hover:border-rose-400 hover:bg-rose-50 transition-all text-left shadow-soft disabled:opacity-50"
+            >
+              <span className="text-sm text-rose-700 flex-1" style={{ fontFamily: 'Jost, sans-serif' }}>
+                Plan my routine
+              </span>
+              <span className="text-rose-500">◆</span>
+            </motion.button>
+          </div>
+        )}
+
         {/* Horizontal scrollable prompts */}
         {!isStreaming && (() => {
           const hasMessages = messages.length > 0;
