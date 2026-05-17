@@ -182,7 +182,9 @@ export default function Ubi() {
     if (!canUse('ubi_chat')) return;
     incrementUbiMessageCount();
     // Sentinel prefix locks the edge function into Routine Planning Mode.
-    sendMessage(`[SYSTEM: ROUTINE_PLANNING_FLOW] I'd like help planning my routine`, { hideUserMessage: false });
+    sendMessage(`[SYSTEM: ROUTINE_PLANNING_FLOW] I'd like help planning my routine`, {
+      displayContent: "I'd like help planning my routine",
+    });
   };
 
   const sendOptionReply = (text: string) => {
