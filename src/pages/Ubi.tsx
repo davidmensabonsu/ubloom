@@ -94,6 +94,10 @@ export default function Ubi() {
   const welcomeSent = useRef(false);
   const autoOpenerSent = useRef(false);
   const journalHandled = useRef(false);
+  // True from the moment the user taps "Plan my routine" until the plan is
+  // written to their routine. While true, the current conversation id is
+  // persisted to localStorage so leaving/returning to Ubi resumes the same chat.
+  const routinePlanningRef = useRef(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -170,6 +174,16 @@ export default function Ubi() {
     autoOpenerSent.current = false;
   }, [currentConversationId]);
 
+  // While routine planning is active, persist the current conversation id so
+  // leaving Ubi and returning resumes the same chat.
+  useEffect(() => {
+    if (!routinePlanningRef.current) return;
+    if (!currentConversationId) return;
+    try {
+      localStorage.setItem('ubi-pending-routine-convo-id', currentConversationId);
+    } catch { /* ignore */ }
+  }, [currentConversationId]);
+
   // Handle journal entry passed from Reflect page
   useEffect(() => {
     if (isLoading || journalHandled.current) return;
@@ -219,6 +233,7 @@ export default function Ubi() {
     if (isStreaming) return;
     if (!canUse('ubi_chat')) return;
     incrementUbiMessageCount();
+    routinePlanningRef.current = true;
     // Sentinel prefix locks the edge function into Routine Planning Mode.
     sendMessage(`[SYSTEM: ROUTINE_PLANNING_FLOW] I'd like help planning my routine`, {
       displayContent: "I'd like help planning my routine",
@@ -260,6 +275,10 @@ export default function Ubi() {
     });
     setPlanConsumed((prev) => new Set(prev).add(markerKey));
     setDuplicatePrompt(null);
+    // Routine plan is now committed — clear the resume pointer so the next
+    // visit to Ubi starts a fresh chat.
+    routinePlanningRef.current = false;
+    try { localStorage.removeItem('ubi-pending-routine-convo-id'); } catch { /* ignore */ }
     setConfirmation(
       `Done — I've added ${added} task${added === 1 ? '' : 's'} to your routine${
         replaced ? ` and replaced ${replaced}` : ''
@@ -287,11 +306,17 @@ export default function Ubi() {
 
   const handleNewChat = () => {
     startNewChat();
+    // Starting a brand-new chat manually ends any in-progress routine planning resume.
+    routinePlanningRef.current = false;
+    try { localStorage.removeItem('ubi-pending-routine-convo-id'); } catch { /* ignore */ }
     setHistoryOpen(false);
   };
 
   const handleSelectConversation = (convoId: string) => {
     loadConversation(convoId);
+    // Picking a different conversation manually also ends the resume pointer.
+    routinePlanningRef.current = false;
+    try { localStorage.removeItem('ubi-pending-routine-convo-id'); } catch { /* ignore */ }
     setHistoryOpen(false);
   };
 

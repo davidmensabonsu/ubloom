@@ -210,7 +210,16 @@ export function useUbiChat() {
       if (convos && convos.length > 0) {
         setConversations(convos.map((c: any) => ({ ...c, preview: '' })));
 
-        // Don't auto-load latest — always start with a fresh chat
+        // Don't auto-load latest by default — always start with a fresh chat,
+        // UNLESS the user has an in-progress routine planning conversation.
+        // In that case, resume it so they can pick up where they left off.
+        try {
+          const pendingId = localStorage.getItem('ubi-pending-routine-convo-id');
+          if (pendingId && convos.some((c: any) => c.id === pendingId)) {
+            setCurrentConversationId(pendingId);
+            await loadMessagesForConversation(pendingId);
+          }
+        } catch { /* ignore */ }
       } else if (!migrationDoneRef.current) {
         // Migrate old messages if any
         migrationDoneRef.current = true;
