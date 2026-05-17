@@ -379,7 +379,7 @@ export default function Ubi() {
       </div>
 
       {/* Messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 pb-36 pt-4">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 pb-52 pt-4">
         <div className="max-w-lg mx-auto space-y-4">
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
@@ -508,7 +508,7 @@ export default function Ubi() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.15 }}
-                  className="overflow-x-auto scrollbar-hide -mx-1 mt-3"
+                  className="overflow-x-auto scrollbar-hide -mx-1 mt-3 mb-4"
                 >
                   <div className="flex gap-2 px-1 py-1 w-max">
                     {suggestedPrompts.map((text, i) => (
@@ -567,7 +567,7 @@ export default function Ubi() {
           // "Beginning of a new chat" = the user hasn't sent anything yet in this conversation
           if (messages.some((m) => m.role === 'user')) return null;
           return (
-            <div className="max-w-lg mx-auto px-4 pt-1.5">
+            <div className="max-w-lg mx-auto px-4 pt-1.5 pb-2">
               <motion.button
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
