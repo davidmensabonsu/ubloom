@@ -1,72 +1,42 @@
-## Ubi Routine Planning Integration — Build Plan
+## Why Ubi thinks you're not on Premium
 
-A premium-only conversational flow inside the Ubi chat that lets Ubi build a structured routine and write it straight to the Routine page. Everything lives within the existing Ubi page — no new routes, no new pages, no changes to the Routine page itself.
+The chat edge function decides whether to build the routine based on a single field, `userContext.isPremium`, that the client passes in. That flag is computed inside `buildUserContext` in `src/hooks/useUbiChat.ts` (lines 67–82) with this logic:
 
-### High-level approach
+```ts
+const { data: sub } = await supabase
+  .from('subscribers')
+  .select('status')
+  .eq('user_id', userId)
+  .maybeSingle();
+isPremium = sub?.status === 'active';
+isTrial   = sub?.status === 'trial';   // wrong string — Stripe uses "trialing"
+```
 
-Instead of hard-coding 5 question steps in the client (which fights the natural conversational tone of Ubi), the planning flow is driven by **the LLM itself**, with the client only doing three things:
+This is the only premium signal Ubi ever sees, and it has four problems that all converge on "false":
 
-1. **Detecting** when a planning conversation is active (intent or chip).
-2. **Rendering tap-options** when Ubi emits a structured marker.
-3. **Parsing the final `<routine_plan>` JSON** block and turning it into real to-dos in the store.
+1. It re-queries `subscribers` on every send instead of using the already-loaded `useSubscription()` state the rest of the app trusts. If the query is slow, blocked by a stale session, or the row hasn't been re-read yet after a webhook, the result is `null` and the user is treated as free.
+2. It checks `status === 'trial'`, but the actual status value persisted from Stripe is `'trialing'` — so anyone on a real Stripe trial is also misclassified.
+3. It ignores `isAdmin`, even though admins are treated as premium everywhere else.
+4. It ignores the in-app 3-day trial driven by `profile.trialStartedAt`, which `useSubscription` already resolves into `isActive`.
 
-This keeps the chat warm and personal (per memory: grounded "self-talk" tone) instead of feeling like a form.
+Meanwhile the rest of the app gates Premium correctly through `useSubscription()` — for example `src/pages/Ubi.tsx:201` uses `isActive` (admin + Stripe active + Stripe trialing + in-app trial) for the "approve plan" gate. So the UI sees you as Premium, but the edge function sees you as free, and Ubi follows its system prompt and refuses to emit the `<routine_plan>` JSON block. That's why the conversation looks complete but the routine never gets built.
 
-### File-by-file changes
+(For confirmation: your `subscribers` row is `plan='premium', status='active'` — so the higher-level hook resolves correctly, only the duplicated logic inside `buildUserContext` is wrong.)
 
-**1. `supabase/functions/ubi-chat/index.ts`** — extend the system prompt only.
-- Add a "Routine Planning Mode" section. Triggers: user taps the "Plan my routine" chip (we send a sentinel `[SYSTEM: ROUTINE_PLANNING_FLOW]` prefix the same way the existing welcome opener does) **or** any of the natural-language phrases listed in the brief.
-- Inside the mode, Ubi must:
-  - Ask the 5 scripted questions one at a time, in Ubi's voice, referencing `primaryFocusArea` / `lifeStage` naturally.
-  - For Step 1, emit a marker `<options>Daily routine|Weekly plan|Monthly reset|All three</options>` at the end of the message. Free-tier responses skip the JSON-emitting final step.
-  - After Step 5, generate the plan and append a `<routine_plan>[…JSON…]</routine_plan>` block, then close warmly.
-  - If `isPremium` is false in `userContext`, never emit `<routine_plan>` — instead deliver the scripted free-tier message.
-- Pass the full icon name list (from `taskIconOptions`) into the system prompt so Ubi picks valid icons.
-- `userContext` now carries `isPremium` (added on the client).
-- Deploy via the existing autodeploy.
+## Fix
 
-**2. `src/lib/routinePlanParser.ts`** *(new)*
-- `parseOptions(content)` → `string[] | null` from `<options>…</options>`
-- `parseRoutinePlan(content)` → `RoutinePlanTask[] | null` from `<routine_plan>…</routine_plan>`
-- `stripMarkers(content)` so the markers never render in the bubble
+Make the chat hook use the single source of truth instead of re-querying.
 
-**3. `src/hooks/useRoutinePlanner.ts`** *(new)*
-- Local UI state: `mode: 'idle' | 'planning' | 'awaiting_approval' | 'awaiting_duplicate' | 'done'`, `pendingPlan`, `duplicates`
-- `addTasksToRoutine(tasks, duplicateMode)` — calls `addCoreHabit` for each task (mapping `recurrence`+`days` → `frequency`/`specificDays`, `time` → `reminderTime`, `icon` → existing taskIcon id with fallback)
-- `findDuplicates(tasks, existingHabits)` — case-insensitive title similarity (Levenshtein ≥ 0.8 or shared keyword)
-- Fires `track('ubi_routine_plan_created', …)` analytics event
+### `src/hooks/useUbiChat.ts`
+- Remove the inline `subscribers` query in `buildUserContext` (lines 67–82).
+- Accept `isPremium` and `isTrial` as arguments to `buildUserContext`.
+- In the `useUbiChat` hook, read `isActive`, `isPremium`, `isTrial` from `useSubscription()` and pass them through to every `buildUserContext` call (there is one call site around line 404).
+- Map them as: `isPremium = isActive` (treat admin, Stripe paid, Stripe trialing, and in-app trial all as premium for the planner) and keep `isTrial` for telemetry only.
 
-**4. `src/pages/Ubi.tsx`** — UI integration
-- Add a 4th preset chip "Plan my routine ◆" with rose border (`border-rose-300 bg-rose-50/40`), sent message: `"I'd like help planning my routine"` (prefixed with the `[SYSTEM: ROUTINE_PLANNING_FLOW]` marker so the edge function locks into the mode).
-- After each assistant message: render parsed `<options>` as inline tap chips, and parsed `<routine_plan>` as **two rose buttons** ("Looks good, add to my routine" / "I'd like to change something").
-- "Looks good" handler:
-  - If free → triggers `UpgradeModal` (already imported via `useSubscription`).
-  - If premium → runs duplicate check; either shows the 3 duplicate-resolution buttons or writes immediately.
-- After write: confirmation message + "Go to Routine →" navigation button.
-- Hide the original preset chips when in planning mode to avoid clutter.
+### Verification
+- Open Ubi, tap "Plan my routine", walk through the 5 questions, confirm the `<routine_plan>` block appears and "Looks good, add to my routine" writes tasks to the Routine page.
+- Spot-check the edge function logs (`ubi-chat`) to confirm `userContext.isPremium` is `true` for your user on the next send.
 
-**5. Free-tier gating**
-- Reuse `useSubscription().isActive` (premium or trialing).
-- The chip itself is visible to everyone (so they discover the feature). The gate fires only when the user taps "Looks good, add to my routine".
-- Free-tier branch also triggers `<UpgradeModal source="ubi_routine_plan">` (existing component, no changes needed).
-
-### Technical details
-
-- Tasks are written via the existing `coreHabits` store (per `mem://features/routine/todo-list` — `customTasks` is deprecated). Mapping:
-  - `recurrence: "daily"` → `frequency: "daily"`
-  - `recurrence: "weekly" + days:[...]` → `frequency: "specific-days"`, `specificDays: [0–6]`
-  - `recurrence: "one-off"` → `frequency: "one-off"`, `oneOffDate: today`
-- `icon` from the LLM is matched against `taskIconOptions[].id`; unknown icons fall back to a sensible default (`'star'`).
-- Cloud sync is automatic via `useCloudSync` — no extra calls needed.
-- Analytics event uses the existing `track()` helper (already validates `page` + `source`).
-
-### Out of scope (per the brief)
-
-- No Routine page changes
-- No changes to chat code paths for non-planning messages
-- No new Supabase tables (analytics_events already exists)
-- No edits to `useSubscription` or the upgrade modal
-
-### Open question
-
-The brief says "small rose border" — I'll use `border-rose-300/80` + a `◆` glyph in primary rose to keep it on-brand with the existing pink/rose accent. If you want a different accent (e.g. gold), say the word and I'll swap it.
+### Out of scope
+- No changes to `subscribers`, RLS, Stripe, or `useSubscription` itself.
+- No changes to the system prompt or to the planning UX — only the premium signal feeding it.
