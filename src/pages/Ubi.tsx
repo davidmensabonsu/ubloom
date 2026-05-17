@@ -662,7 +662,7 @@ export default function Ubi() {
               placeholder={!canUse('ubi_chat') ? 'Daily limit reached — upgrade for unlimited' : 'Talk to Ubi...'}
               rows={1}
               disabled={!canUse('ubi_chat')}
-              className="flex-1 resize-none rounded-full border border-primary/30 bg-white/80 px-5 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 max-h-[120px] disabled:opacity-50"
+              className="flex-1 resize-none rounded-2xl border border-primary/30 bg-white/80 px-5 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 min-h-[44px] max-h-[96px] overflow-y-auto disabled:opacity-50"
               style={{ fontFamily: 'Jost, sans-serif' }}
             />
             {isStreaming ? (
