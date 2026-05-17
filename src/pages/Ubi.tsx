@@ -41,6 +41,7 @@ export default function Ubi() {
     messages, isStreaming, isLoading, sendMessage, clearChat, stopStreaming,
     rateMessage, suggestedPrompts, markPromptUsed,
     conversations, currentConversationId, loadConversation, startNewChat, deleteConversation
+    , loadPreviews
   } = useUbiChat();
   const profile = useUserStore((s) => s.profile);
   const { canUse, ubiMessagesRemaining, incrementUbiMessageCount, isActive, DAILY_UBI_LIMIT } = useSubscription();
@@ -290,7 +291,7 @@ export default function Ubi() {
             </div>
           </div>
           <div className="flex items-center gap-1">
-            <Sheet open={historyOpen} onOpenChange={(open) => { setHistoryOpen(open); if (!open) setHistorySearch(''); }}>
+            <Sheet open={historyOpen} onOpenChange={(open) => { setHistoryOpen(open); if (open) loadPreviews?.(); if (!open) setHistorySearch(''); }}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="text-white hover:text-white hover:bg-white/15" title="Chat history">
                   <History size={18} />
