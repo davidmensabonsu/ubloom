@@ -626,7 +626,7 @@ export default function Ubi() {
         })()}
 
         {/* Ubi limit notice */}
-        {!isActive && ubiMessagesRemaining > 0 && (
+        {!isActive && ubiMessagesRemaining > 0 && messages.length > 0 && (
           <div className="max-w-lg mx-auto px-4 py-1.5 flex items-center justify-between">
             <span className="text-[11px] text-muted-foreground">
               {ubiMessagesRemaining} of {DAILY_UBI_LIMIT} messages left today
@@ -635,7 +635,7 @@ export default function Ubi() {
         )}
 
         {/* Soft upgrade card — once free user is fully blocked from sending */}
-        {!isActive && ubiMessagesRemaining === 0 && (
+        {!isActive && ubiMessagesRemaining === 0 && messages.length > 0 && (
           <div className="max-w-lg mx-auto px-4 pt-2 pb-1">
             <div className="dark-accent-card p-4 text-center">
               <p className="font-display italic text-white text-base leading-snug">
