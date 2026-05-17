@@ -95,6 +95,25 @@ export function useCloudSync() {
     };
   }, [profile, user, saveToCloud]);
 
+  // Flush save immediately when the aesthetic/theme changes so the
+  // selected theme persists across sessions and devices even if the
+  // user closes the tab before the debounce fires.
+  const lastAestheticRef = useRef<string | undefined>(undefined);
+  useEffect(() => {
+    if (!user || isSyncingFromCloud.current || !hasLoadedFromCloud.current) return;
+    if (lastAestheticRef.current === undefined) {
+      lastAestheticRef.current = profile.aesthetic;
+      return;
+    }
+    if (lastAestheticRef.current === profile.aesthetic) return;
+    lastAestheticRef.current = profile.aesthetic;
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+      debounceRef.current = null;
+    }
+    saveToCloud(profile);
+  }, [profile.aesthetic, user, saveToCloud, profile]);
+
   return { cloudSyncLoaded };
 }
 
