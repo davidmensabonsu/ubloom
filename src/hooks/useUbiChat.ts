@@ -181,6 +181,7 @@ async function getCurrentUserId(): Promise<string | null> {
 export function useUbiChat() {
   const profile = useUserStore((s) => s.profile);
   const updateProfile = useUserStore((s) => s.updateProfile);
+  const { isActive, isTrial } = useSubscription();
   const [messages, setMessages] = useState<UbiMessage[]>([]);
   const [conversations, setConversations] = useState<UbiConversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
@@ -391,7 +392,10 @@ export function useUbiChat() {
       setIsStreaming(true);
       setSuggestedPrompts([]);
 
-      const userContext = await buildUserContext(profile, userId);
+      const userContext = await buildUserContext(profile, userId, {
+        isPremium: isActive,
+        isTrial,
+      });
       const chatHistory = buildChatHistorySummary();
       const controller = new AbortController();
       abortRef.current = controller;
