@@ -48,7 +48,7 @@ export default function Ubi() {
   const planner = useRoutinePlanner();
   const [upgradeOpen, setUpgradeOpen] = useState(false);
   const [planConsumed, setPlanConsumed] = useState<Set<string>>(new Set());
-  const [duplicatePrompt, setDuplicatePrompt] = useState<{ tasks: PlannedTask[]; duplicateTitles: string[] } | null>(null);
+  const [duplicatePrompt, setDuplicatePrompt] = useState<{ tasks: PlannedTask[]; duplicateTitles: string[]; markerKey: string } | null>(null);
   const [confirmation, setConfirmation] = useState<string | null>(null);
   const updateProfile = useUserStore((s) => s.updateProfile);
   const [input, setInput] = useState('');
@@ -207,6 +207,7 @@ export default function Ubi() {
       setDuplicatePrompt({
         tasks,
         duplicateTitles: dupes.map((d) => d.existing.title),
+        markerKey,
       });
       return;
     }
@@ -486,9 +487,9 @@ export default function Ubi() {
                     <div className="bg-white border border-primary/20 shadow-soft rounded-2xl rounded-tl-sm px-4 py-3 text-sm" style={{ fontFamily: 'Jost, sans-serif' }}>
                       Before I add everything, I noticed you already have <strong>{duplicatePrompt.duplicateTitles.join(', ')}</strong> in your routine. Should I replace those with the new versions, keep both, or skip adding those ones?
                     </div>
-                    <Button onClick={() => writePlan(duplicatePrompt.tasks, 'replace', `dup-${Date.now()}`)} className="rounded-full bg-rose-400 hover:bg-rose-500 text-white">Replace the existing ones</Button>
-                    <Button variant="outline" onClick={() => writePlan(duplicatePrompt.tasks, 'keep-both', `dup-${Date.now()}`)} className="rounded-full border-rose-300 text-rose-500 hover:bg-rose-50">Keep both</Button>
-                    <Button variant="outline" onClick={() => writePlan(duplicatePrompt.tasks, 'skip', `dup-${Date.now()}`)} className="rounded-full border-rose-300 text-rose-500 hover:bg-rose-50">Skip those ones</Button>
+                    <Button onClick={() => writePlan(duplicatePrompt.tasks, 'replace', duplicatePrompt.markerKey)} className="rounded-full bg-rose-400 hover:bg-rose-500 text-white">Replace the existing ones</Button>
+                    <Button variant="outline" onClick={() => writePlan(duplicatePrompt.tasks, 'keep-both', duplicatePrompt.markerKey)} className="rounded-full border-rose-300 text-rose-500 hover:bg-rose-50">Keep both</Button>
+                    <Button variant="outline" onClick={() => writePlan(duplicatePrompt.tasks, 'skip', duplicatePrompt.markerKey)} className="rounded-full border-rose-300 text-rose-500 hover:bg-rose-50">Skip those ones</Button>
                   </div>
                 </div>
               )}
