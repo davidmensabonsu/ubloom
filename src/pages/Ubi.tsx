@@ -155,7 +155,6 @@ export default function Ubi() {
     if (isLoading) return;
     if (!profile.ubiOnboardingComplete) return;
     if (!profile.ubiIntroSeen) return; // first-ever uses the welcomePrompt above
-    if (currentConversationId) return;
     if (messages.length > 0) return;
     if (isStreaming) return;
     if (autoOpenerSent.current) return;
