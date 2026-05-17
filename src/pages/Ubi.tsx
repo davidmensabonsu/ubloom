@@ -379,7 +379,7 @@ export default function Ubi() {
       </div>
 
       {/* Messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 pb-36 pt-4">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 pb-52 pt-4">
         <div className="max-w-lg mx-auto space-y-4">
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
