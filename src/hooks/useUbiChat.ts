@@ -207,30 +207,17 @@ export function useUbiChat() {
       const userId = await getCurrentUserId();
       if (!userId) { setIsLoading(false); return; }
 
-      // Load conversations
+      // Load conversations (no per-row preview fetch — previews load lazily
+      // when the history sheet opens, so the page paints instantly).
       const { data: convos } = await (supabase as any)
         .from('ubi_conversations')
         .select('id, title, created_at, updated_at')
         .eq('user_id', userId)
-        .order('updated_at', { ascending: false });
+        .order('updated_at', { ascending: false })
+        .limit(50);
 
       if (convos && convos.length > 0) {
-        // Get preview for each (last message)
-        const withPreviews: UbiConversation[] = await Promise.all(
-          convos.map(async (c: any) => {
-            const { data: lastMsg } = await (supabase as any)
-              .from('ubi_messages')
-              .select('content')
-              .eq('conversation_id', c.id)
-              .order('created_at', { ascending: false })
-              .limit(1);
-            return {
-              ...c,
-              preview: lastMsg?.[0]?.content?.slice(0, 80) || '',
-            };
-          })
-        );
-        setConversations(withPreviews);
+        setConversations(convos.map((c: any) => ({ ...c, preview: '' })));
 
         // Don't auto-load latest — always start with a fresh chat
       } else if (!migrationDoneRef.current) {
@@ -310,22 +297,43 @@ export function useUbiChat() {
       .from('ubi_conversations')
       .select('id, title, created_at, updated_at')
       .eq('user_id', userId)
-      .order('updated_at', { ascending: false });
+      .order('updated_at', { ascending: false })
+      .limit(50);
 
     if (convos) {
-      const withPreviews: UbiConversation[] = await Promise.all(
-        convos.map(async (c: any) => {
-          const { data: lastMsg } = await (supabase as any)
-            .from('ubi_messages')
-            .select('content')
-            .eq('conversation_id', c.id)
-            .order('created_at', { ascending: false })
-            .limit(1);
-          return { ...c, preview: lastMsg?.[0]?.content?.slice(0, 80) || '' };
-        })
-      );
-      setConversations(withPreviews);
+      setConversations((prev) => {
+        const previewById = new Map(prev.map((c) => [c.id, c.preview || '']));
+        return convos.map((c: any) => ({ ...c, preview: previewById.get(c.id) || '' }));
+      });
     }
+  }, []);
+
+  const loadPreviews = useCallback(async () => {
+    setConversations((prev) => {
+      const missing = prev.filter((c) => !c.preview).map((c) => c.id);
+      if (missing.length === 0) return prev;
+      // Fire single batched query (one round-trip instead of N).
+      (async () => {
+        const { data } = await (supabase as any)
+          .from('ubi_messages')
+          .select('conversation_id, content, created_at')
+          .in('conversation_id', missing)
+          .order('created_at', { ascending: false });
+        if (!data) return;
+        const latestByConvo = new Map<string, string>();
+        for (const row of data as any[]) {
+          if (!latestByConvo.has(row.conversation_id)) {
+            latestByConvo.set(row.conversation_id, (row.content || '').slice(0, 80));
+          }
+        }
+        setConversations((current) =>
+          current.map((c) =>
+            c.preview ? c : { ...c, preview: latestByConvo.get(c.id) || '' },
+          ),
+        );
+      })();
+      return prev;
+    });
   }, []);
 
   const startNewChat = useCallback(async () => {
