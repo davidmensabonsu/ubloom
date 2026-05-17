@@ -5,6 +5,7 @@ import { getCurrentCycleDay, getCurrentPhase } from '@/lib/cycleUtils';
 import { supabase } from '@/integrations/supabase/client';
 import { track } from '@/hooks/useAnalytics';
 import { taskIconOptions } from '@/lib/taskIcons';
+import { useSubscription } from '@/hooks/useSubscription';
 
 export interface UbiMessage {
   id?: string;
@@ -28,6 +29,7 @@ const PROMPTS_REGEX = /<!--PROMPTS:(.*?)-->/;
 async function buildUserContext(
   profile: ReturnType<typeof useUserStore.getState>['profile'],
   userId: string | null,
+  subscriptionFlags: { isPremium: boolean; isTrial: boolean },
 ) {
   const today = getLocalDateStr();
   const recentMoods = (profile.moodHistory || []).slice(0, 14).map((m) => ({
@@ -64,22 +66,10 @@ async function buildUserContext(
     }
   }
 
-  // Subscription status — so the planning mode knows whether to emit <routine_plan>.
-  let isPremium = false;
-  let isTrial = false;
-  if (userId) {
-    try {
-      const { data: sub } = await (supabase as any)
-        .from('subscribers')
-        .select('status')
-        .eq('user_id', userId)
-        .maybeSingle();
-      isPremium = sub?.status === 'active';
-      isTrial = sub?.status === 'trial';
-    } catch (e) {
-      // ignore — default to free
-    }
-  }
+  // Subscription status — driven by useSubscription (admin + Stripe paid +
+  // Stripe trialing + in-app trial), the same source of truth the rest of
+  // the app uses. Re-querying here previously misclassified Premium users.
+  const { isPremium, isTrial } = subscriptionFlags;
 
   // Compute cycle phase + day using the SAME util the rest of the app uses,
   // so Ubi's opener never disagrees with the on-screen context pill.
@@ -191,6 +181,7 @@ async function getCurrentUserId(): Promise<string | null> {
 export function useUbiChat() {
   const profile = useUserStore((s) => s.profile);
   const updateProfile = useUserStore((s) => s.updateProfile);
+  const { isActive, isTrial } = useSubscription();
   const [messages, setMessages] = useState<UbiMessage[]>([]);
   const [conversations, setConversations] = useState<UbiConversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
@@ -401,7 +392,10 @@ export function useUbiChat() {
       setIsStreaming(true);
       setSuggestedPrompts([]);
 
-      const userContext = await buildUserContext(profile, userId);
+      const userContext = await buildUserContext(profile, userId, {
+        isPremium: isActive,
+        isTrial,
+      });
       const chatHistory = buildChatHistorySummary();
       const controller = new AbortController();
       abortRef.current = controller;
