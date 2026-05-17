@@ -28,6 +28,7 @@ export default function Routine() {
   const today = getLocalDateStr();
   const [viewDate, setViewDate] = useState<string>(today);
   const isPast = viewDate < today;
+  const typedTitle = useTypewriter('Your Routine', 45, 200);
 
   // Capture a snapshot of any past days before the user views them.
   useEffect(() => {
