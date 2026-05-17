@@ -39,6 +39,16 @@ const aesthetics = [
   { id: 'sand', name: 'Sand', preview: 'bg-gradient-to-br from-amber-50 to-orange-100', accent: 'bg-amber-400', gradient: 'linear-gradient(135deg, hsl(25 55% 50%), hsl(25 55% 75%))' },
   { id: 'lavender', name: 'Lavender', preview: 'bg-gradient-to-br from-purple-50 to-violet-100', accent: 'bg-violet-300', gradient: 'linear-gradient(135deg, hsl(270 30% 48%), hsl(270 35% 73%))' },
   { id: 'arctic', name: 'Arctic', preview: 'bg-gradient-to-br from-sky-50 to-blue-100', accent: 'bg-sky-400', gradient: 'linear-gradient(135deg, hsl(210 35% 45%), hsl(210 35% 70%))' },
+  { id: 'grey', name: 'Silver Mist', preview: 'bg-gradient-to-br from-gray-100 to-gray-200', accent: 'bg-gray-400', gradient: 'linear-gradient(135deg, hsl(0 0% 78%), hsl(36 9% 89%))' },
+  { id: 'yellow', name: 'Golden Hour', preview: 'bg-gradient-to-br from-yellow-50 to-amber-100', accent: 'bg-amber-300', gradient: 'linear-gradient(135deg, hsl(40 100% 65%), hsl(44 100% 82%))' },
+  { id: 'beige', name: 'Oat Milk', preview: 'bg-gradient-to-br from-stone-100 to-stone-200', accent: 'bg-stone-400', gradient: 'linear-gradient(135deg, hsl(33 27% 67%), hsl(37 46% 85%))' },
+  { id: 'brown', name: 'Cocoa', preview: 'bg-gradient-to-br from-stone-200 to-stone-300', accent: 'bg-stone-500', gradient: 'linear-gradient(135deg, hsl(27 28% 52%), hsl(32 28% 72%))' },
+  { id: 'cream', name: 'Cashmere', preview: 'bg-gradient-to-br from-orange-50 to-amber-100', accent: 'bg-amber-200', gradient: 'linear-gradient(135deg, hsl(33 49% 71%), hsl(31 63% 92%))' },
+  { id: 'blue', name: 'Ocean Calm', preview: 'bg-gradient-to-br from-sky-50 to-blue-100', accent: 'bg-sky-400', gradient: 'linear-gradient(135deg, hsl(213 42% 30%), hsl(211 59% 78%))' },
+  { id: 'purple', name: 'Moon Violet', preview: 'bg-gradient-to-br from-violet-50 to-purple-100', accent: 'bg-violet-400', gradient: 'linear-gradient(135deg, hsl(272 30% 55%), hsl(266 57% 87%))' },
+  { id: 'green', name: 'Matcha', preview: 'bg-gradient-to-br from-green-50 to-emerald-100', accent: 'bg-emerald-400', gradient: 'linear-gradient(135deg, hsl(102 15% 51%), hsl(100 29% 86%))' },
+  { id: 'pink', name: 'Ballet', preview: 'bg-gradient-to-br from-pink-50 to-rose-100', accent: 'bg-rose-300', gradient: 'linear-gradient(135deg, hsl(344 100% 78%), hsl(343 100% 92%))' },
+  { id: 'orange', name: 'Apricot', preview: 'bg-gradient-to-br from-orange-50 to-orange-100', accent: 'bg-orange-400', gradient: 'linear-gradient(135deg, hsl(24 100% 62%), hsl(24 100% 85%))' },
 ];
 
 export default function Profile() {

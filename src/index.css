@@ -158,6 +158,216 @@
     --glow-strong: 210 40% 82%;
   }
 
+  /* Theme: Silver Mist (Grey) */
+  .theme-grey {
+    --theme-hue: 0;
+    --theme-sat: 0%;
+    --primary: 0 0% 78%;
+    --ring: 0 0% 78%;
+    --accent: 0 0% 78%;
+    --background: 0 0% 95%;
+    --foreground: 0 0% 20%;
+    --secondary: 0 0% 94%;
+    --muted: 0 0% 93%;
+    --border: 0 0% 88%;
+    --input: 0 0% 95%;
+    --gradient-hero-from: 0 0% 78%;
+    --gradient-hero-to: 36 9% 89%;
+    --gradient-dark-from: 0 0% 23%;
+    --gradient-dark-to: 0 0% 35%;
+    --glow: 0 0% 93%;
+    --glow-strong: 0 0% 85%;
+  }
+
+  /* Theme: Golden Hour (Yellow) */
+  .theme-yellow {
+    --theme-hue: 44;
+    --theme-sat: 80%;
+    --primary: 44 100% 71%;
+    --ring: 44 100% 71%;
+    --accent: 44 100% 71%;
+    --background: 48 100% 92%;
+    --foreground: 35 30% 20%;
+    --secondary: 44 30% 94%;
+    --muted: 44 20% 93%;
+    --border: 44 20% 88%;
+    --input: 44 20% 95%;
+    --gradient-hero-from: 40 100% 65%;
+    --gradient-hero-to: 44 100% 82%;
+    --gradient-dark-from: 43 75% 31%;
+    --gradient-dark-to: 42 75% 41%;
+    --glow: 44 60% 92%;
+    --glow-strong: 44 60% 82%;
+  }
+
+  /* Theme: Oat Milk (Beige) */
+  .theme-beige {
+    --theme-hue: 33;
+    --theme-sat: 30%;
+    --primary: 31 40% 77%;
+    --ring: 31 40% 77%;
+    --accent: 31 40% 77%;
+    --background: 36 48% 94%;
+    --foreground: 30 25% 20%;
+    --secondary: 33 25% 94%;
+    --muted: 33 20% 93%;
+    --border: 33 20% 88%;
+    --input: 33 20% 95%;
+    --gradient-hero-from: 33 27% 67%;
+    --gradient-hero-to: 37 46% 85%;
+    --gradient-dark-from: 32 27% 28%;
+    --gradient-dark-to: 32 26% 38%;
+    --glow: 33 40% 92%;
+    --glow-strong: 33 40% 82%;
+  }
+
+  /* Theme: Cocoa (Brown) */
+  .theme-brown {
+    --theme-hue: 28;
+    --theme-sat: 25%;
+    --primary: 27 28% 52%;
+    --ring: 27 28% 52%;
+    --accent: 27 28% 52%;
+    --background: 31 39% 88%;
+    --foreground: 20 25% 18%;
+    --secondary: 28 20% 94%;
+    --muted: 28 15% 93%;
+    --border: 28 15% 88%;
+    --input: 28 15% 95%;
+    --gradient-hero-from: 27 28% 52%;
+    --gradient-hero-to: 32 28% 72%;
+    --gradient-dark-from: 20 32% 18%;
+    --gradient-dark-to: 18 31% 27%;
+    --glow: 28 30% 92%;
+    --glow-strong: 28 30% 82%;
+  }
+
+  /* Theme: Cashmere (Cream) */
+  .theme-cream {
+    --theme-hue: 33;
+    --theme-sat: 50%;
+    --primary: 31 63% 92%;
+    --ring: 31 63% 92%;
+    --accent: 31 63% 92%;
+    --background: 32 100% 97%;
+    --foreground: 30 30% 20%;
+    --secondary: 33 30% 94%;
+    --muted: 33 20% 93%;
+    --border: 33 20% 88%;
+    --input: 33 20% 95%;
+    --gradient-hero-from: 33 49% 71%;
+    --gradient-hero-to: 31 63% 92%;
+    --gradient-dark-from: 29 48% 24%;
+    --gradient-dark-to: 29 44% 33%;
+    --glow: 33 50% 93%;
+    --glow-strong: 33 50% 85%;
+  }
+
+  /* Theme: Ocean Calm (Blue) */
+  .theme-blue {
+    --theme-hue: 211;
+    --theme-sat: 50%;
+    --primary: 211 59% 78%;
+    --ring: 211 59% 78%;
+    --accent: 211 59% 78%;
+    --background: 212 68% 95%;
+    --foreground: 213 35% 22%;
+    --secondary: 211 30% 94%;
+    --muted: 211 20% 93%;
+    --border: 211 20% 88%;
+    --input: 211 20% 95%;
+    --gradient-hero-from: 213 42% 30%;
+    --gradient-hero-to: 211 59% 78%;
+    --gradient-dark-from: 212 43% 18%;
+    --gradient-dark-to: 213 42% 30%;
+    --glow: 211 50% 93%;
+    --glow-strong: 211 50% 85%;
+  }
+
+  /* Theme: Moon Violet (Purple) */
+  .theme-purple {
+    --theme-hue: 270;
+    --theme-sat: 35%;
+    --primary: 267 36% 71%;
+    --ring: 267 36% 71%;
+    --accent: 267 36% 71%;
+    --background: 264 45% 94%;
+    --foreground: 270 30% 22%;
+    --secondary: 270 25% 94%;
+    --muted: 270 20% 93%;
+    --border: 270 20% 88%;
+    --input: 270 20% 95%;
+    --gradient-hero-from: 272 30% 55%;
+    --gradient-hero-to: 266 57% 87%;
+    --gradient-dark-from: 267 50% 25%;
+    --gradient-dark-to: 272 42% 35%;
+    --glow: 270 40% 92%;
+    --glow-strong: 270 40% 82%;
+  }
+
+  /* Theme: Matcha (Green) */
+  .theme-green {
+    --theme-hue: 102;
+    --theme-sat: 20%;
+    --primary: 102 23% 75%;
+    --ring: 102 23% 75%;
+    --accent: 102 23% 75%;
+    --background: 113 26% 93%;
+    --foreground: 102 25% 18%;
+    --secondary: 102 20% 94%;
+    --muted: 102 15% 93%;
+    --border: 102 15% 88%;
+    --input: 102 15% 95%;
+    --gradient-hero-from: 102 15% 51%;
+    --gradient-hero-to: 100 29% 86%;
+    --gradient-dark-from: 108 24% 19%;
+    --gradient-dark-to: 107 26% 28%;
+    --glow: 102 25% 92%;
+    --glow-strong: 102 25% 82%;
+  }
+
+  /* Theme: Ballet (Pink) */
+  .theme-pink {
+    --theme-hue: 344;
+    --theme-sat: 80%;
+    --primary: 340 100% 88%;
+    --ring: 340 100% 88%;
+    --accent: 340 100% 88%;
+    --background: 340 100% 96%;
+    --foreground: 340 30% 22%;
+    --secondary: 340 30% 94%;
+    --muted: 340 20% 93%;
+    --border: 340 20% 88%;
+    --input: 340 20% 95%;
+    --gradient-hero-from: 344 100% 78%;
+    --gradient-hero-to: 343 100% 92%;
+    --gradient-dark-from: 343 54% 36%;
+    --gradient-dark-to: 343 49% 47%;
+    --glow: 340 60% 93%;
+    --glow-strong: 340 60% 85%;
+  }
+
+  /* Theme: Apricot (Orange) */
+  .theme-orange {
+    --theme-hue: 24;
+    --theme-sat: 90%;
+    --primary: 28 100% 71%;
+    --ring: 28 100% 71%;
+    --accent: 28 100% 71%;
+    --background: 28 100% 92%;
+    --foreground: 24 35% 20%;
+    --secondary: 24 30% 94%;
+    --muted: 24 20% 93%;
+    --border: 24 20% 88%;
+    --input: 24 20% 95%;
+    --gradient-hero-from: 24 100% 62%;
+    --gradient-hero-to: 24 100% 85%;
+    --gradient-dark-from: 20 79% 31%;
+    --gradient-dark-to: 20 77% 41%;
+    --glow: 24 60% 92%;
+    --glow-strong: 24 60% 82%;
+  }
+
   * {
     @apply border-border;
   }
