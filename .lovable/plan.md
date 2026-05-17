@@ -1,59 +1,40 @@
+# One bucket, one picker
 
-## What we're building
+Make `routine-icons` the single source of truth for every habit icon. The picker reads from the bucket; you manage icons from Cloud → Storage with no code changes.
 
-1. **Legal pages** — `/terms` and `/privacy` routes with draft content tailored to uBloom's actual data collection
-2. **Signup consent** — checkbox on the Auth sign-up form linking to Terms and Privacy Policy
-3. **Delete my account** — button on Profile that wipes all user data from the database, cancels any active Stripe subscription, and deletes the auth account
+## Steps
 
----
+**1. Generate the 30 new clay icons**
+Create them in the same 3D pastel clay style as your existing set (`src/assets/icons/`), transparent background, square.
 
-## 1. Legal pages
+Filenames use `category-name.png` so the picker auto-groups them:
+- Health (4): `health-stethoscope.png`, `health-tooth.png`, `health-scissors.png`, `health-nailfile.png`
+- Content (6): `content-filmcamera.png`, `content-clapperboard.png`, `content-phonepost.png`, `content-analytics.png`, `content-visionboard.png`, `content-monthlyreset.png`
+- Finance (3): `finance-creditcard.png`, `finance-piggybank.png`, `finance-receipt.png`
+- Soft Life (5): `softlife-croissant.png`, `softlife-wine.png`, `softlife-flowers.png`, `softlife-suitcase.png`, `softlife-rest.png`
+- + 12 more spread across these categories to reach 30 (I'll round out the gaps based on what's missing in your current set)
 
-Create two new page components:
+**2. Upload everything to `routine-icons`**
+- Upload the 30 new PNGs to the bucket.
+- Upload the existing 114 bundled icons from `src/assets/icons/` to the same bucket (prefixed with their existing category from `iconCategories` in `src/lib/taskIcons.tsx` so grouping is preserved, e.g. `wellness-dumbbell.png`, `nature-leaf.png`).
 
-- **`src/pages/Terms.tsx`** — Terms and Conditions covering: app purpose (wellness/self-growth, not medical advice), user-generated content, AI disclaimer (Ubi mentor is not a therapist), subscription/billing terms, account termination.
-- **`src/pages/Privacy.tsx`** — Privacy Policy covering: data collected (mood logs, journal entries, habits, cycle data, AI chat history, vision board images, profile info), Stripe billing data, analytics events, cookies/local storage, data retention, GDPR rights (access, erasure, portability), contact details placeholder for the solicitor to fill in.
+**3. Rewire the icon picker (`src/lib/taskIcons.tsx` + `EditHabitDialog.tsx`)**
+- Replace the hardcoded `taskIconOptions` array with a runtime list fetched from `supabase.storage.from('routine-icons').list()`.
+- Parse `category-name.png` filenames into `{ id, category, label, url }`.
+- Cache the list in Zustand for 24h so the picker opens instantly; refresh in background.
+- Render with the existing `clay-icon` CSS class (hue-rotate filter still works on bucket URLs).
+- Keep current search + category-tab UI exactly the same.
 
-Both pages will use the app's existing glass-card styling and be publicly accessible (no auth required). Routes added to `App.tsx`.
+**4. Backward compatibility**
+Existing habits store an icon `id` string. The new loader maps old IDs → new bucket URLs by filename match. Nothing in saved routines breaks.
 
-A footer link to both pages will be added to the Auth page so users can review them before signing up.
+## Technical details
 
-## 2. Signup consent checkbox
+- Bucket is already public, so URLs render directly via `getPublicUrl()`.
+- No DB migration needed — icons aren't a table, just storage objects.
+- The 30 generations use `imagegen--generate_image` (transparent PNG, 512x512, premium model for clay fidelity).
+- Existing `src/assets/icons/*.png` files stay in the repo as a fallback during the transition, then can be deleted in a follow-up once you confirm the bucket version looks right.
 
-On the Auth sign-up form, add a required checkbox: "I agree to the Terms and Conditions and Privacy Policy" with inline links. The sign-up button will be disabled until checked. Login form is unaffected.
+## Result
 
-## 3. Delete my account (Profile page)
-
-Add a "Delete my account" section below the existing "Reset all data" button on Profile:
-
-- Confirmation dialog explaining the action is permanent and listing what will be deleted
-- Requires typing "DELETE" to confirm
-- On confirm, calls a new **`delete-account`** edge function that:
-  1. Authenticates the user via JWT
-  2. Cancels any active Stripe subscription (looks up customer by email)
-  3. Deletes rows from: `user_data`, `profiles`, `ubi_messages`, `ubi_conversations`, `ubi_memory`, `ubi_ratings`, `analytics_events`, `subscriber_events`, `subscribers` (all where `user_id` matches)
-  4. Deletes files from `vision-images` and `voice-journals` storage buckets
-  5. Deletes the auth user via `supabase.auth.admin.deleteUser()`
-  6. Returns success
-- Frontend signs the user out and redirects to `/` on success
-
-## 4. Database migration
-
-A migration to add a service-role INSERT policy on `subscriber_events` (needed for the delete-account function to log the cancellation if desired) is not required since the edge function uses the service role key directly.
-
-## 5. Edge function config
-
-Add `[functions.delete-account]` with `verify_jwt = false` to `supabase/config.toml` (JWT validated in code as per project pattern).
-
----
-
-### Files to create
-- `src/pages/Terms.tsx`
-- `src/pages/Privacy.tsx`
-- `supabase/functions/delete-account/index.ts`
-
-### Files to edit
-- `src/App.tsx` — add `/terms` and `/privacy` routes (public)
-- `src/pages/Auth.tsx` — add consent checkbox + legal links on sign-up
-- `src/pages/Profile.tsx` — add "Delete my account" button + confirmation dialog
-- `supabase/config.toml` — add delete-account function config
+- One bucket holds all icons. Add a PNG named `health-newthing.png` from Cloud → Storage and it appears in the Health tab of the picker on next open. No code edits, no redeploy.
