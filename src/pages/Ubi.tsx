@@ -630,12 +630,11 @@ export default function Ubi() {
 
         {/* Horizontal scrollable prompts */}
         {!isStreaming && (() => {
-          const hasMessages = messages.length > 0;
-          if (hasMessages) return null; // AI suggestions now shown inline in chat
-          // Suppress preset prompts whenever the auto-opener is about to fire
-          // (i.e. onboarding is complete — every fresh chat gets a personal greeting).
-          if (profile.ubiOnboardingComplete && profile.ubiIntroSeen) return null;
-          // No messages yet — show presets filtered by today's used list
+          // Show presets whenever the user hasn't replied yet in this
+          // conversation — even if Ubi's opener message is already on screen.
+          const userHasReplied = messages.some((m) => m.role === 'user');
+          if (userHasReplied) return null; // AI suggestions take over after first reply
+          // Filter by today's used list
           const usedToday: string[] = JSON.parse(localStorage.getItem(`ubi-used-presets-${getLocalDateStr()}`) || '[]');
           const filtered = presetPrompts.filter(p => !usedToday.includes(p.text));
           if (filtered.length === 0) return null;
