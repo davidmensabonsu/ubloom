@@ -361,14 +361,15 @@ export function useUbiChat() {
   }, [conversations]);
 
   const sendMessage = useCallback(
-    async (input: string, options?: { hideUserMessage?: boolean }) => {
+    async (input: string, options?: { hideUserMessage?: boolean; displayContent?: string }) => {
       const userId = await getCurrentUserId();
       if (!userId) return;
 
       // Create conversation if needed
       let convoId = currentConversationId;
       if (!convoId) {
-        const title = options?.hideUserMessage ? 'New chat' : input.slice(0, 40) + (input.length > 40 ? '…' : '');
+        const titleSource = options?.displayContent ?? input;
+        const title = options?.hideUserMessage ? 'New chat' : titleSource.slice(0, 40) + (titleSource.length > 40 ? '…' : '');
         const { data: newConvo } = await (supabase as any)
           .from('ubi_conversations')
           .insert({ user_id: userId, title })
@@ -380,7 +381,8 @@ export function useUbiChat() {
         setConversations((prev) => [{ ...newConvo, preview: '' }, ...prev]);
       }
 
-      const userMsg: UbiMessage = { role: 'user', content: input };
+      const displayedContent = options?.displayContent ?? input;
+      const userMsg: UbiMessage = { role: 'user', content: displayedContent };
       track('ubi_message_sent', { conversationId: convoId, source: 'ubi_chat' });
 
       // Insert user message into DB
@@ -389,12 +391,12 @@ export function useUbiChat() {
           conversation_id: convoId,
           user_id: userId,
           role: 'user',
-          content: input,
+          content: displayedContent,
         });
       }
 
-      const apiMessages = [...messages, userMsg];
-      const displayMessages = options?.hideUserMessage ? [...messages] : apiMessages;
+      const apiMessages = [...messages, { role: 'user' as const, content: input }];
+      const displayMessages = options?.hideUserMessage ? [...messages] : [...messages, userMsg];
       setMessages(displayMessages);
       setIsStreaming(true);
       setSuggestedPrompts([]);
