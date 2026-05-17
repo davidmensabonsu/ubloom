@@ -277,14 +277,28 @@ export function useUbiChat() {
       .order('created_at', { ascending: true });
 
     if (data) {
-      setMessages(data.map((m: any) => ({
-        id: m.id,
-        role: m.role,
-        content: m.content,
-        rating: m.rating,
-      })));
+      const mapped = data.map((m: any) => {
+        if (m.role === 'assistant') {
+          const { cleanContent } = extractPrompts(m.content || '');
+          return { id: m.id, role: m.role, content: cleanContent, rating: m.rating };
+        }
+        return { id: m.id, role: m.role, content: m.content, rating: m.rating };
+      });
+      setMessages(mapped);
+
+      // Restore suggested prompts from the last assistant message so the
+      // horizontal chip strip reappears exactly as it was when the user left.
+      const lastAssistant = [...data].reverse().find((m: any) => m.role === 'assistant');
+      if (lastAssistant) {
+        const { prompts } = extractPrompts(lastAssistant.content || '');
+        const filtered = prompts.filter((p) => !usedPromptsRef.current.has(p));
+        setSuggestedPrompts(filtered);
+      } else {
+        setSuggestedPrompts([]);
+      }
     } else {
       setMessages([]);
+      setSuggestedPrompts([]);
     }
   }
 
