@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Trash2, Square, Plus, History, ThumbsUp, ThumbsDown, ArrowLeft, X, Search, MessageCircle, Lock } from 'lucide-react';
+import { Send, Trash2, Square, Plus, History, ThumbsUp, ThumbsDown, ArrowLeft, X, Search, MessageCircle, Lock, Mic } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useUbiChat, UbiMessage, UbiConversation } from '@/hooks/useUbiChat';
 import { useUserStore } from '@/stores/userStore';
+import { useSpeechToText } from '@/hooks/useSpeechToText';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
@@ -54,6 +55,39 @@ export default function Ubi() {
   const [input, setInput] = useState('');
   const [historyOpen, setHistoryOpen] = useState(false);
   const [historySearch, setHistorySearch] = useState('');
+  // Snapshot of the textarea value at the moment recording starts, so
+  // interim transcripts append to (rather than overwrite) what the user
+  // had already typed.
+  const inputBeforeListenRef = useRef<string>('');
+  const {
+    isListening,
+    isSupported: isVoiceSupported,
+    error: voiceError,
+    start: startListening,
+    stop: stopListening,
+  } = useSpeechToText({
+    onTranscriptChange: (transcript) => {
+      const base = inputBeforeListenRef.current;
+      const next = base ? `${base.trimEnd()} ${transcript}` : transcript;
+      setInput(next);
+      // Resize textarea to match new content
+      const el = inputRef.current;
+      if (el) {
+        el.style.height = 'auto';
+        el.style.height = Math.min(el.scrollHeight, 96) + 'px';
+      }
+    },
+  });
+
+  const handleMicToggle = () => {
+    if (isListening) {
+      stopListening();
+      return;
+    }
+    if (!canUse('ubi_chat')) return;
+    inputBeforeListenRef.current = input;
+    startListening();
+  };
   const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
