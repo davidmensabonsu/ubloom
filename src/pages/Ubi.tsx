@@ -337,15 +337,15 @@ export default function Ubi() {
                   <History size={18} />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="bottom" className="h-[70vh] rounded-t-2xl">
-                <SheetHeader className="flex flex-row items-center justify-between pb-2">
+              <SheetContent side="bottom" className="h-[80vh] rounded-t-2xl flex flex-col">
+                <SheetHeader className="flex flex-row items-center justify-between pb-2 shrink-0">
                   <SheetTitle className="text-base">Chat History</SheetTitle>
                   <Button size="sm" variant="outline" className="gap-1.5 rounded-full" onClick={handleNewChat}>
                     <Plus size={14} />
                     New Chat
                   </Button>
                 </SheetHeader>
-                <div className="relative mb-2">
+                <div className="relative mb-2 shrink-0">
                   <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                   <input
                     type="text"
@@ -355,7 +355,7 @@ export default function Ubi() {
                     className="w-full pl-8 pr-3 py-2 rounded-xl border border-input bg-secondary/50 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
                   />
                 </div>
-                <div className="overflow-y-auto flex-1 -mx-2">
+                <div className="overflow-y-auto flex-1 min-h-0 -mx-2 pb-4">
                   {(() => {
                     const q = historySearch.toLowerCase().trim();
                     const filtered = q

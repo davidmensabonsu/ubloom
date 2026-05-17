@@ -543,6 +543,27 @@ export function useUbiChat() {
           const errorMsg: UbiMessage = { role: 'assistant', content: "I couldn't connect right now. Try again in a moment 💛" };
           setMessages((prev) => [...prev, errorMsg]);
         }
+        // Safety net: if streaming was aborted or interrupted but we already
+        // received partial assistant content, persist it so the user still
+        // sees Ubi's reply when they revisit this conversation later.
+        if (assistantSoFar.trim()) {
+          try {
+            const { cleanContent } = extractPrompts(assistantSoFar);
+            if (cleanContent.trim()) {
+              await (supabase as any).from('ubi_messages').insert({
+                conversation_id: convoId,
+                user_id: userId,
+                role: 'assistant',
+                content: cleanContent,
+              });
+              await (supabase as any).from('ubi_conversations')
+                .update({ updated_at: new Date().toISOString() })
+                .eq('id', convoId);
+            }
+          } catch (saveErr) {
+            console.error('Failed to persist partial assistant reply:', saveErr);
+          }
+        }
       } finally {
         setIsStreaming(false);
         abortRef.current = null;
