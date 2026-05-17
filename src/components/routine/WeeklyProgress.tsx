@@ -5,12 +5,15 @@ import { TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import flameImg from '@/assets/icons/flame.png';
 import { format, subDays, startOfDay, addDays } from 'date-fns';
 import { isHabitScheduledForDate } from '@/components/routine/FrequencyPicker';
-import DayDetailSheet from './DayDetailSheet';
 import ubloomLogo from '@/assets/ubloom-flower.png';
 
-export default function WeeklyProgress() {
+interface WeeklyProgressProps {
+  selectedDate?: string;
+  onSelectDate?: (dateStr: string) => void;
+}
+
+export default function WeeklyProgress({ selectedDate, onSelectDate }: WeeklyProgressProps = {}) {
   const { profile } = useUserStore();
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [weekOffset, setWeekOffset] = useState(0); // 0 = current week, -1 = last week, etc.
   const coreHabits = profile.coreHabits || [];
   const habitCompletions = profile.habitCompletions || [];
@@ -206,7 +209,7 @@ export default function WeeklyProgress() {
             transition={{ delay: index * 0.05, duration: 0.3 }}
             className="flex-1 flex flex-col items-center gap-2 cursor-pointer"
             style={{ originY: 1 }}
-            onClick={() => setSelectedDate(day.date)}
+            onClick={() => onSelectDate?.(day.date)}
           >
             {/* Bar */}
             <div className="relative w-full h-20 bg-muted rounded-xl overflow-hidden">
@@ -215,7 +218,7 @@ export default function WeeklyProgress() {
                 animate={{ height: `${day.percentage}%` }}
                 transition={{ delay: index * 0.05 + 0.2, duration: 0.4, ease: 'easeOut' }}
                 className={`absolute bottom-0 left-0 right-0 rounded-xl ${
-                  day.isToday
+                  day.date === selectedDate
                     ? 'bg-primary'
                     : day.percentage >= 100
                     ? 'bg-primary/80'
@@ -247,7 +250,11 @@ export default function WeeklyProgress() {
             {/* Day Label */}
             <span
               className={`text-xs ${
-                day.isToday ? 'font-semibold text-primary' : 'text-muted-foreground'
+                day.date === selectedDate
+                  ? 'font-semibold text-primary'
+                  : day.isToday
+                  ? 'font-semibold text-primary/70'
+                  : 'text-muted-foreground'
               }`}
             >
               {day.dayName}
@@ -272,8 +279,6 @@ export default function WeeklyProgress() {
         </motion.p>
       )}
     </motion.div>
-
-    <DayDetailSheet dateStr={selectedDate} onClose={() => setSelectedDate(null)} />
     </>
   );
 }

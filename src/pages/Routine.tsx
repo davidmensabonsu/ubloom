@@ -17,11 +17,16 @@ import WeeklyProgress from '@/components/routine/WeeklyProgress';
 import CelebrationOverlay from '@/components/routine/CelebrationOverlay';
 import ReminderSettings from '@/components/routine/ReminderSettings';
 import { useReminders } from '@/hooks/useReminders';
+import PastDayView from '@/components/routine/PastDayView';
+import { parse, format } from 'date-fns';
 
 
 export default function Routine() {
    const { profile, setCoreHabits, completeRoutineSetup, isHabitCompletedToday, ensureDailySnapshots } = useUserStore();
   const [showAddTask, setShowAddTask] = useState(false);
+  const today = getLocalDateStr();
+  const [viewDate, setViewDate] = useState<string>(today);
+  const isPast = viewDate < today;
 
   // Capture a snapshot of any past days before the user views them.
   useEffect(() => {
@@ -41,7 +46,6 @@ export default function Routine() {
  
    // Calculate completion status
    const coreHabits = profile.coreHabits || [];
-   const today = getLocalDateStr();
    const todayScheduled = coreHabits.filter((h) => isHabitScheduledForDate(h, today));
    const completedCount = todayScheduled.filter((h) => isHabitCompletedToday(h.id)).length;
    const allCompleted = todayScheduled.length > 0 && completedCount === todayScheduled.length;
@@ -111,11 +115,13 @@ export default function Routine() {
    // Initialize reminders hook
     useReminders();
 
-  const todayFormatted = new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-  });
+  const headerDateFormatted = isPast
+    ? format(parse(viewDate, 'yyyy-MM-dd', new Date()), 'EEEE, d MMM')
+    : new Date().toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+      });
 
   const currentMood = profile.moodHistory[0]?.moods[0] || 'peaceful';
 
@@ -137,7 +143,7 @@ export default function Routine() {
             animate={{ opacity: 1 }}
             className="text-sm text-white/85"
           >
-            {todayFormatted}
+            {headerDateFormatted}
           </motion.p>
           <ProfileButton />
         </div>
@@ -164,13 +170,13 @@ export default function Routine() {
       {/* Content */}
       <div className="px-5 space-y-6">
         {/* Weekly Progress & Streak */}
-        <WeeklyProgress />
+        <WeeklyProgress selectedDate={viewDate} onSelectDate={setViewDate} />
 
-        {/* Core Daily Habits */}
-        <CoreHabitsSection />
+        {/* Core Daily Habits — live today, snapshot for past days */}
+        {isPast ? <PastDayView dateStr={viewDate} /> : <CoreHabitsSection />}
 
         {/* Empty state when no habits */}
-        {(!profile.coreHabits || profile.coreHabits.length === 0) && (
+        {!isPast && (!profile.coreHabits || profile.coreHabits.length === 0) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -233,7 +239,7 @@ export default function Routine() {
       <AddTaskDialog open={showAddTask} onOpenChange={setShowAddTask} />
 
       {/* Floating Action Button */}
-       <motion.button
+       {!isPast && <motion.button
         onClick={() => setShowAddTask(true)}
         className="floating-action"
         whileTap={{ scale: 0.95 }}
@@ -242,7 +248,7 @@ export default function Routine() {
         transition={{ delay: 0.5 }}
       >
         <Plus size={24} strokeWidth={2.5} />
-      </motion.button>
+      </motion.button>}
 
       <BottomNav />
     </div>
