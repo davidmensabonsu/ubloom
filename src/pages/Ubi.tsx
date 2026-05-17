@@ -55,6 +55,7 @@ export default function Ubi() {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [historySearch, setHistorySearch] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const welcomeSent = useRef(false);
   const autoOpenerSent = useRef(false);
@@ -148,9 +149,7 @@ export default function Ubi() {
   }, [isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, [messages, isStreaming]);
 
   const handleSend = () => {
@@ -550,6 +549,12 @@ export default function Ubi() {
 
             </>
           )}
+          <div
+            ref={bottomRef}
+            aria-hidden
+            className="h-1"
+            style={{ scrollMarginBottom: '12rem' }}
+          />
         </div>
       </div>
 
