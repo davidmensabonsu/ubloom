@@ -19,6 +19,7 @@ import ReminderSettings from '@/components/routine/ReminderSettings';
 import { useReminders } from '@/hooks/useReminders';
 import PastDayView from '@/components/routine/PastDayView';
 import { parse, format } from 'date-fns';
+import { useTypewriter } from '@/hooks/useTypewriter';
 
 
 export default function Routine() {
@@ -27,6 +28,7 @@ export default function Routine() {
   const today = getLocalDateStr();
   const [viewDate, setViewDate] = useState<string>(today);
   const isPast = viewDate < today;
+  const typedTitle = useTypewriter('Your Routine', 45, 200);
 
   // Capture a snapshot of any past days before the user views them.
   useEffect(() => {
@@ -152,7 +154,8 @@ export default function Routine() {
           animate={{ opacity: 1, y: 0 }}
           className="page-title text-white"
         >
-          Your Routine
+          {typedTitle}
+          <span className="inline-block w-[2px] h-[0.9em] bg-white/80 ml-0.5 align-middle animate-[pulse_1s_ease-in-out_infinite]" />
         </motion.h1>
         <motion.div
           initial={{ opacity: 0 }}
