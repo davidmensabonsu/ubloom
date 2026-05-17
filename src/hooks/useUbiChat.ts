@@ -212,10 +212,22 @@ export function useUbiChat() {
 
         // Resume the most recent conversation unless 12+ hours have passed
         // since its last message — in which case start fresh.
+        // Exception: if the user never sent a message in the latest chat
+        // (only Ubi's opener exists), always resume it so the opener and
+        // preset prompts reload instead of burning AI credits on a new one.
         const latest = convos[0];
         const lastActivity = new Date(latest.updated_at).getTime();
         const TWELVE_HOURS = 12 * 60 * 60 * 1000;
-        if (Date.now() - lastActivity < TWELVE_HOURS) {
+        const withinWindow = Date.now() - lastActivity < TWELVE_HOURS;
+
+        const { count: userMsgCount } = await (supabase as any)
+          .from('ubi_messages')
+          .select('id', { count: 'exact', head: true })
+          .eq('conversation_id', latest.id)
+          .eq('role', 'user');
+        const hasUserReply = (userMsgCount ?? 0) > 0;
+
+        if (withinWindow || !hasUserReply) {
           setCurrentConversationId(latest.id);
           await loadMessagesForConversation(latest.id);
         }
