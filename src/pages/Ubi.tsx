@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Trash2, Square, Plus, History, ThumbsUp, ThumbsDown, ArrowLeft, X, Search, MessageCircle, Lock } from 'lucide-react';
+import { Send, Trash2, Square, Plus, History, ThumbsUp, ThumbsDown, ArrowLeft, X, Search, MessageCircle, Lock, Mic } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useUbiChat, UbiMessage, UbiConversation } from '@/hooks/useUbiChat';
 import { useUserStore } from '@/stores/userStore';
+import { useSpeechToText } from '@/hooks/useSpeechToText';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
@@ -54,6 +55,39 @@ export default function Ubi() {
   const [input, setInput] = useState('');
   const [historyOpen, setHistoryOpen] = useState(false);
   const [historySearch, setHistorySearch] = useState('');
+  // Snapshot of the textarea value at the moment recording starts, so
+  // interim transcripts append to (rather than overwrite) what the user
+  // had already typed.
+  const inputBeforeListenRef = useRef<string>('');
+  const {
+    isListening,
+    isSupported: isVoiceSupported,
+    error: voiceError,
+    start: startListening,
+    stop: stopListening,
+  } = useSpeechToText({
+    onTranscriptChange: (transcript) => {
+      const base = inputBeforeListenRef.current;
+      const next = base ? `${base.trimEnd()} ${transcript}` : transcript;
+      setInput(next);
+      // Resize textarea to match new content
+      const el = inputRef.current;
+      if (el) {
+        el.style.height = 'auto';
+        el.style.height = Math.min(el.scrollHeight, 96) + 'px';
+      }
+    },
+  });
+
+  const handleMicToggle = () => {
+    if (isListening) {
+      stopListening();
+      return;
+    }
+    if (!canUse('ubi_chat')) return;
+    inputBeforeListenRef.current = input;
+    startListening();
+  };
   const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -659,12 +693,36 @@ export default function Ubi() {
               value={input}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              placeholder={!canUse('ubi_chat') ? 'Daily limit reached — upgrade for unlimited' : 'Talk to Ubi...'}
+              placeholder={
+                !canUse('ubi_chat')
+                  ? 'Daily limit reached — upgrade for unlimited'
+                  : isListening
+                    ? 'Listening… tap the mic again to stop'
+                    : 'Talk to Ubi...'
+              }
               rows={1}
               disabled={!canUse('ubi_chat')}
               className="flex-1 resize-none rounded-2xl border border-primary/30 bg-white/80 px-5 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 min-h-[44px] max-h-[96px] overflow-y-auto disabled:opacity-50"
               style={{ fontFamily: 'Jost, sans-serif' }}
             />
+            {isVoiceSupported && (
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={handleMicToggle}
+                disabled={!canUse('ubi_chat') || isStreaming}
+                title={isListening ? 'Stop recording' : 'Speak your message'}
+                aria-label={isListening ? 'Stop recording' : 'Speak your message'}
+                aria-pressed={isListening}
+                className={`shrink-0 rounded-full h-10 w-10 transition-all ${
+                  isListening
+                    ? 'bg-rose-500 hover:bg-rose-500 border-rose-500 text-white animate-pulse'
+                    : 'border-primary/30 text-primary hover:bg-primary/10'
+                }`}
+              >
+                <Mic size={16} />
+              </Button>
+            )}
             {isStreaming ? (
               <Button
                 size="icon"
@@ -689,6 +747,11 @@ export default function Ubi() {
               </Button>
             )}
           </div>
+          {voiceError && (
+            <p className="mt-2 text-[11px] text-rose-500 text-center" style={{ fontFamily: 'Jost, sans-serif' }}>
+              {voiceError}
+            </p>
+          )}
           {!conversationActive && (
             <div className="flex items-center justify-center gap-1 mt-2 text-muted-foreground/70">
               <Lock size={10} />
