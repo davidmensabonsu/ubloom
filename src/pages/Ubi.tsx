@@ -481,6 +481,38 @@ export default function Ubi() {
                 </AnimatePresence>
               )}
 
+              {/* Duplicate-resolution prompt */}
+              {duplicatePrompt && !isStreaming && (
+                <div className="flex gap-2 items-start">
+                  <div className="w-7 h-7 rounded-full border border-primary/20 shrink-0 mt-0.5 flex items-center justify-center bg-primary/10">
+                    <img src={speechBubbleIcon} alt="Ubi" className="w-4 h-4 object-contain clay-icon" />
+                  </div>
+                  <div className="flex flex-col max-w-[85%] gap-2">
+                    <div className="bg-white border border-primary/20 shadow-soft rounded-2xl rounded-tl-sm px-4 py-3 text-sm" style={{ fontFamily: 'Jost, sans-serif' }}>
+                      Before I add everything, I noticed you already have <strong>{duplicatePrompt.duplicateTitles.join(', ')}</strong> in your routine. Should I replace those with the new versions, keep both, or skip adding those ones?
+                    </div>
+                    <Button onClick={() => writePlan(duplicatePrompt.tasks, 'replace', `dup-${Date.now()}`)} className="rounded-full bg-rose-400 hover:bg-rose-500 text-white">Replace the existing ones</Button>
+                    <Button variant="outline" onClick={() => writePlan(duplicatePrompt.tasks, 'keep-both', `dup-${Date.now()}`)} className="rounded-full border-rose-300 text-rose-500 hover:bg-rose-50">Keep both</Button>
+                    <Button variant="outline" onClick={() => writePlan(duplicatePrompt.tasks, 'skip', `dup-${Date.now()}`)} className="rounded-full border-rose-300 text-rose-500 hover:bg-rose-50">Skip those ones</Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Confirmation after writing tasks */}
+              {confirmation && !isStreaming && (
+                <div className="flex gap-2 items-start">
+                  <div className="w-7 h-7 rounded-full border border-primary/20 shrink-0 mt-0.5 flex items-center justify-center bg-primary/10">
+                    <img src={speechBubbleIcon} alt="Ubi" className="w-4 h-4 object-contain clay-icon" />
+                  </div>
+                  <div className="flex flex-col max-w-[85%] gap-2">
+                    <div className="bg-white border border-primary/20 shadow-soft rounded-2xl rounded-tl-sm px-4 py-3 text-sm" style={{ fontFamily: 'Jost, sans-serif' }}>
+                      {confirmation}
+                    </div>
+                    <Button onClick={() => navigate('/routine')} className="rounded-full bg-rose-400 hover:bg-rose-500 text-white">Go to Routine →</Button>
+                  </div>
+                </div>
+              )}
+
               {/* Inline follow-up prompts below last Ubi message */}
               {!isStreaming && suggestedPrompts.length > 0 && messages.length > 0 && (
                 <motion.div
