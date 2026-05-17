@@ -10,6 +10,9 @@ import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useSubscription } from '@/hooks/useSubscription';
+import UpgradeModal from '@/components/UpgradeModal';
+import { parseOptions, parseRoutinePlan, stripPlanMarkers, type PlannedTask } from '@/lib/routinePlanParser';
+import { useRoutinePlanner } from '@/hooks/useRoutinePlanner';
 import ubiAvatar from '@/assets/ubi-avatar-bloom.png';
 import speechBubbleIcon from '@/assets/icons/speech-bubble.png';
 import ubloomFlower from '@/assets/ubloom-flower.png';
@@ -40,6 +43,11 @@ export default function Ubi() {
   } = useUbiChat();
   const profile = useUserStore((s) => s.profile);
   const { canUse, ubiMessagesRemaining, incrementUbiMessageCount, isActive, DAILY_UBI_LIMIT } = useSubscription();
+  const planner = useRoutinePlanner();
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const [planConsumed, setPlanConsumed] = useState<Set<string>>(new Set());
+  const [duplicatePrompt, setDuplicatePrompt] = useState<{ tasks: PlannedTask[]; duplicateTitles: string[] } | null>(null);
+  const [confirmation, setConfirmation] = useState<string | null>(null);
   const updateProfile = useUserStore((s) => s.updateProfile);
   const [input, setInput] = useState('');
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -166,6 +174,59 @@ export default function Ubi() {
     }
     incrementUbiMessageCount();
     sendMessage(prompt);
+  };
+
+  const handlePlanRoutineChip = () => {
+    if (isStreaming) return;
+    if (!canUse('ubi_chat')) return;
+    incrementUbiMessageCount();
+    // Sentinel prefix locks the edge function into Routine Planning Mode.
+    sendMessage(`[SYSTEM: ROUTINE_PLANNING_FLOW] I'd like help planning my routine`, { hideUserMessage: false });
+  };
+
+  const sendOptionReply = (text: string) => {
+    if (isStreaming || !canUse('ubi_chat')) return;
+    incrementUbiMessageCount();
+    sendMessage(text);
+  };
+
+  const approvePlan = (tasks: PlannedTask[], markerKey: string) => {
+    if (!isActive) {
+      setUpgradeOpen(true);
+      return;
+    }
+    const dupes = planner.findDuplicates(tasks);
+    if (dupes.length) {
+      setDuplicatePrompt({
+        tasks,
+        duplicateTitles: dupes.map((d) => d.existing.title),
+      });
+      return;
+    }
+    writePlan(tasks, 'keep-both', markerKey);
+  };
+
+  const writePlan = (
+    tasks: PlannedTask[],
+    mode: 'replace' | 'keep-both' | 'skip',
+    markerKey: string,
+  ) => {
+    const cyclePhase = profile.cycleData?.setupComplete ? 'tracked' : null;
+    const { added, replaced } = planner.writeTasks(tasks, mode, {
+      planType: 'mixed',
+      cyclePhase,
+    });
+    setPlanConsumed((prev) => new Set(prev).add(markerKey));
+    setDuplicatePrompt(null);
+    setConfirmation(
+      `Done — I've added ${added} task${added === 1 ? '' : 's'} to your routine${
+        replaced ? ` and replaced ${replaced}` : ''
+      }. Head over to the Routine page to see everything in place. You can always edit, reorder, or remove anything that doesn't feel right once you see it in action.`
+    );
+  };
+
+  const requestChanges = () => {
+    sendOptionReply("I'd like to change something about the plan.");
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -338,7 +399,57 @@ export default function Ubi() {
                     const isLast = i === messages.length - 1;
                     const shimmer = isStreaming && isLast && msg.role === 'assistant';
                     return (
-                      <MessageBubble key={i} message={msg} index={i} onRate={rateMessage} shimmer={shimmer} />
+                      <div key={i}>
+                        <MessageBubble
+                          message={{ ...msg, content: msg.role === 'assistant' ? stripPlanMarkers(msg.content) : msg.content }}
+                          index={i}
+                          onRate={rateMessage}
+                          shimmer={shimmer}
+                        />
+                        {msg.role === 'assistant' && !shimmer && (() => {
+                          const markerKey = `${i}:${msg.id || ''}`;
+                          const options = parseOptions(msg.content);
+                          const plan = parseRoutinePlan(msg.content);
+                          if (plan && !planConsumed.has(markerKey)) {
+                            return (
+                              <div className="mt-2 ml-9 space-y-2 max-w-[85%]">
+                                <Button
+                                  onClick={() => approvePlan(plan, markerKey)}
+                                  className="w-full rounded-full bg-rose-400 hover:bg-rose-500 text-white"
+                                  style={{ fontFamily: 'Jost, sans-serif' }}
+                                >
+                                  Looks good, add to my routine
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  onClick={requestChanges}
+                                  className="w-full rounded-full border-rose-300 text-rose-500 hover:bg-rose-50"
+                                  style={{ fontFamily: 'Jost, sans-serif' }}
+                                >
+                                  I'd like to change something
+                                </Button>
+                              </div>
+                            );
+                          }
+                          if (options && isLast) {
+                            return (
+                              <div className="mt-2 ml-9 flex flex-wrap gap-2 max-w-[85%]">
+                                {options.map((opt) => (
+                                  <button
+                                    key={opt}
+                                    onClick={() => sendOptionReply(opt)}
+                                    className="px-3 py-1.5 rounded-full bg-white border border-rose-300/80 text-rose-600 hover:bg-rose-50 text-xs shadow-sm"
+                                    style={{ fontFamily: 'Jost, sans-serif' }}
+                                  >
+                                    {opt}
+                                  </button>
+                                ))}
+                              </div>
+                            );
+                          }
+                          return null;
+                        })()}
+                      </div>
                     );
                   })}
                   {isStreaming && messages[messages.length - 1]?.role !== 'assistant' && (
@@ -368,6 +479,38 @@ export default function Ubi() {
                     </motion.div>
                   )}
                 </AnimatePresence>
+              )}
+
+              {/* Duplicate-resolution prompt */}
+              {duplicatePrompt && !isStreaming && (
+                <div className="flex gap-2 items-start">
+                  <div className="w-7 h-7 rounded-full border border-primary/20 shrink-0 mt-0.5 flex items-center justify-center bg-primary/10">
+                    <img src={speechBubbleIcon} alt="Ubi" className="w-4 h-4 object-contain clay-icon" />
+                  </div>
+                  <div className="flex flex-col max-w-[85%] gap-2">
+                    <div className="bg-white border border-primary/20 shadow-soft rounded-2xl rounded-tl-sm px-4 py-3 text-sm" style={{ fontFamily: 'Jost, sans-serif' }}>
+                      Before I add everything, I noticed you already have <strong>{duplicatePrompt.duplicateTitles.join(', ')}</strong> in your routine. Should I replace those with the new versions, keep both, or skip adding those ones?
+                    </div>
+                    <Button onClick={() => writePlan(duplicatePrompt.tasks, 'replace', `dup-${Date.now()}`)} className="rounded-full bg-rose-400 hover:bg-rose-500 text-white">Replace the existing ones</Button>
+                    <Button variant="outline" onClick={() => writePlan(duplicatePrompt.tasks, 'keep-both', `dup-${Date.now()}`)} className="rounded-full border-rose-300 text-rose-500 hover:bg-rose-50">Keep both</Button>
+                    <Button variant="outline" onClick={() => writePlan(duplicatePrompt.tasks, 'skip', `dup-${Date.now()}`)} className="rounded-full border-rose-300 text-rose-500 hover:bg-rose-50">Skip those ones</Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Confirmation after writing tasks */}
+              {confirmation && !isStreaming && (
+                <div className="flex gap-2 items-start">
+                  <div className="w-7 h-7 rounded-full border border-primary/20 shrink-0 mt-0.5 flex items-center justify-center bg-primary/10">
+                    <img src={speechBubbleIcon} alt="Ubi" className="w-4 h-4 object-contain clay-icon" />
+                  </div>
+                  <div className="flex flex-col max-w-[85%] gap-2">
+                    <div className="bg-white border border-primary/20 shadow-soft rounded-2xl rounded-tl-sm px-4 py-3 text-sm" style={{ fontFamily: 'Jost, sans-serif' }}>
+                      {confirmation}
+                    </div>
+                    <Button onClick={() => navigate('/routine')} className="rounded-full bg-rose-400 hover:bg-rose-500 text-white">Go to Routine →</Button>
+                  </div>
+                </div>
               )}
 
               {/* Inline follow-up prompts below last Ubi message */}
@@ -450,6 +593,24 @@ export default function Ubi() {
 
       {/* Input area with prompts strip */}
       <div className="fixed bottom-16 left-0 right-0 bg-background/90 backdrop-blur-md border-t border-border/50 z-10">
+        {/* Plan my routine chip — always visible at empty state */}
+        {!isStreaming && messages.length === 0 && !confirmation && (
+          <div className="max-w-lg mx-auto px-4 pt-1.5">
+            <motion.button
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              onClick={handlePlanRoutineChip}
+              disabled={!canUse('ubi_chat')}
+              className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-rose-50/60 border border-rose-300/80 hover:border-rose-400 hover:bg-rose-50 transition-all text-left shadow-soft disabled:opacity-50"
+            >
+              <span className="text-sm text-rose-700 flex-1" style={{ fontFamily: 'Jost, sans-serif' }}>
+                Plan my routine
+              </span>
+              <span className="text-rose-500">◆</span>
+            </motion.button>
+          </div>
+        )}
+
         {/* Horizontal scrollable prompts */}
         {!isStreaming && (() => {
           const hasMessages = messages.length > 0;
@@ -555,6 +716,7 @@ export default function Ubi() {
       </div>
 
       <BottomNav />
+      <UpgradeModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} source="ubi_routine_plan" />
     </div>
   );
 }

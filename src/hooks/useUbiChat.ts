@@ -4,6 +4,7 @@ import { getLocalDateStr } from '@/lib/dateUtils';
 import { getCurrentCycleDay, getCurrentPhase } from '@/lib/cycleUtils';
 import { supabase } from '@/integrations/supabase/client';
 import { track } from '@/hooks/useAnalytics';
+import { taskIconOptions } from '@/lib/taskIcons';
 
 export interface UbiMessage {
   id?: string;
@@ -63,6 +64,23 @@ async function buildUserContext(
     }
   }
 
+  // Subscription status — so the planning mode knows whether to emit <routine_plan>.
+  let isPremium = false;
+  let isTrial = false;
+  if (userId) {
+    try {
+      const { data: sub } = await (supabase as any)
+        .from('subscribers')
+        .select('status')
+        .eq('user_id', userId)
+        .maybeSingle();
+      isPremium = sub?.status === 'active';
+      isTrial = sub?.status === 'trial';
+    } catch (e) {
+      // ignore — default to free
+    }
+  }
+
   // Compute cycle phase + day using the SAME util the rest of the app uses,
   // so Ubi's opener never disagrees with the on-screen context pill.
   let cyclePhase: string | null = null;
@@ -105,6 +123,9 @@ async function buildUserContext(
     cyclePhase,
     cycleDay,
     ubiMemories,
+    isPremium,
+    isTrial,
+    validIcons: taskIconOptions.map((o) => o.id),
   };
 }
 

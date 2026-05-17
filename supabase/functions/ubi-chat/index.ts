@@ -18,6 +18,13 @@ serve(async (req) => {
       ? `\n\n## Past Conversations\nThe user has had previous chats with you. Here are recent conversation summaries:\n${chatHistory}\nIf the user references a past conversation, use this context naturally. Don't mention these unless relevant.`
       : "";
 
+    const isPremium = !!(userContext && (userContext.isPremium || userContext.isTrial));
+    const validIcons = (userContext && Array.isArray(userContext.validIcons)) ? userContext.validIcons.join(", ") : "";
+
+    const routinePlanningSection = `\n\n## Routine Planning Mode\nIf the user taps the "Plan my routine" chip (their message will start with [SYSTEM: ROUTINE_PLANNING_FLOW]) OR their message contains phrases like "plan my routine", "build my routine", "create a routine", "help me with my routine", "set up my morning/evening routine", "make me a daily/weekly/monthly plan", "organise my day/week/month", "I need a routine", or "can you create tasks for me" — enter Routine Planning Mode and run this 5-step conversational flow. Ask ONE question per message in your normal warm voice. Reference what you already know about them (primaryFocusArea, lifeStage, cycle phase) when natural.\n\nStep 1 — Plan type. Ask if they want a daily routine, weekly plan, monthly reset, or all three. End the message with this exact marker so the UI can render tap-options:\n<options>Daily routine|Weekly plan|Monthly reset|All three</options>\n\nStep 2 — Free text: ask what their day generally looks like and how much time they realistically have.\n\nStep 3 — Free text: ask what they most want their routine to protect time for (movement, mindset, skincare, work blocks, journalling, nutrition, etc).\n\nStep 4 — Free text: ask what they already do consistently that they want to keep.\n\nStep 5 — Free text: ask if there's anything they want to AVOID putting in their routine.\n\nAfter Step 5, generate the plan. Open with one warm sentence acknowledging what you heard. Then present the plan clearly:\n- Daily plans grouped Morning / Midday / Evening with suggested times.\n- Weekly plans assigned to specific days.\n- Monthly plans as weekly milestones.\nAt the very end of the message, append a machine-readable JSON block — exactly this format (no extra prose between tags):\n<routine_plan>\n[\n  { "title": "Morning walk", "time": "07:00", "recurrence": "daily", "days": [], "icon": "running", "period": "morning" }\n]\n</routine_plan>\n\nRules for the JSON:\n- title: max 5 words.\n- time: HH:mm 24-hour (omit for one-off non-time tasks; use empty string \"\").\n- recurrence: "daily" | "weekly" | "one-off".\n- days: array of lowercase weekday names (only for weekly). Empty array otherwise.\n- icon: MUST be one of these exact ids: ${validIcons}.\n- period: "morning" | "midday" | "evening" (for daily tasks).\nClose after the JSON with a warm one-line question asking if they're happy with the plan or want to adjust anything.\n\n${isPremium
+      ? `The user IS on uBloom Premium — generate the plan with the JSON block at Step 5 as described.`
+      : `The user is on the FREE tier. You can chat naturally about routines through Steps 1-5 and present the plan in a human-readable way, but DO NOT emit the <routine_plan> JSON block. Instead, at Step 5 end with: "I'd love to build this directly into your routine for you — that's a uBloom Premium feature. You can upgrade to Premium to let me handle the setup automatically. For now, I can walk you through it and you can add the tasks yourself." Do not output <routine_plan> tags under any circumstance.`}`;
+
     const systemPrompt = `You are Ubi — a trusted digital mentor, guide, and friend inside a self-growth app called uBloom. You speak like a close, caring friend. Warm but direct. No sugarcoating, no judgement.
 
 ## Your Personality
@@ -54,6 +61,8 @@ Use these memories naturally when relevant. Do not list them back or announce th
 - End with something that makes them feel motivated or seen — never end on a question alone
 - Adapt tone based on communicationTone preference: "Warm & direct" = caring but concise, "Gentle & encouraging" = soft and supportive, "Push me hard" = direct and challenging, "Unfiltered & real" = honest with no filter`;
 
+    const finalSystemPrompt = systemPrompt + routinePlanningSection;
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -63,7 +72,7 @@ Use these memories naturally when relevant. Do not list them back or announce th
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: systemPrompt },
+          { role: "system", content: finalSystemPrompt },
           ...messages,
         ],
         stream: true,
