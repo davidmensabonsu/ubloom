@@ -1,16 +1,19 @@
 import { motion } from 'framer-motion';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import flameImg from '@/assets/icons/flame.png';
 import { format, subDays, startOfDay, addDays } from 'date-fns';
 import { isHabitScheduledForDate } from '@/components/routine/FrequencyPicker';
-import DayDetailSheet from './DayDetailSheet';
 import ubloomLogo from '@/assets/ubloom-flower.png';
 
-export default function WeeklyProgress() {
+interface WeeklyProgressProps {
+  selectedDate?: string;
+  onSelectDate?: (dateStr: string) => void;
+}
+
+export default function WeeklyProgress({ selectedDate, onSelectDate }: WeeklyProgressProps = {}) {
   const { profile } = useUserStore();
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [weekOffset, setWeekOffset] = useState(0); // 0 = current week, -1 = last week, etc.
   const coreHabits = profile.coreHabits || [];
   const habitCompletions = profile.habitCompletions || [];
