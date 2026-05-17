@@ -10,6 +10,9 @@ import BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useSubscription } from '@/hooks/useSubscription';
+import UpgradeModal from '@/components/UpgradeModal';
+import { parseOptions, parseRoutinePlan, stripPlanMarkers, type PlannedTask } from '@/lib/routinePlanParser';
+import { useRoutinePlanner } from '@/hooks/useRoutinePlanner';
 import ubiAvatar from '@/assets/ubi-avatar-bloom.png';
 import speechBubbleIcon from '@/assets/icons/speech-bubble.png';
 import ubloomFlower from '@/assets/ubloom-flower.png';
@@ -40,6 +43,11 @@ export default function Ubi() {
   } = useUbiChat();
   const profile = useUserStore((s) => s.profile);
   const { canUse, ubiMessagesRemaining, incrementUbiMessageCount, isActive, DAILY_UBI_LIMIT } = useSubscription();
+  const planner = useRoutinePlanner();
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const [planConsumed, setPlanConsumed] = useState<Set<string>>(new Set());
+  const [duplicatePrompt, setDuplicatePrompt] = useState<{ tasks: PlannedTask[]; duplicateTitles: string[] } | null>(null);
+  const [confirmation, setConfirmation] = useState<string | null>(null);
   const updateProfile = useUserStore((s) => s.updateProfile);
   const [input, setInput] = useState('');
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -166,6 +174,59 @@ export default function Ubi() {
     }
     incrementUbiMessageCount();
     sendMessage(prompt);
+  };
+
+  const handlePlanRoutineChip = () => {
+    if (isStreaming) return;
+    if (!canUse('ubi_chat')) return;
+    incrementUbiMessageCount();
+    // Sentinel prefix locks the edge function into Routine Planning Mode.
+    sendMessage(`[SYSTEM: ROUTINE_PLANNING_FLOW] I'd like help planning my routine`, { hideUserMessage: false });
+  };
+
+  const sendOptionReply = (text: string) => {
+    if (isStreaming || !canUse('ubi_chat')) return;
+    incrementUbiMessageCount();
+    sendMessage(text);
+  };
+
+  const approvePlan = (tasks: PlannedTask[], markerKey: string) => {
+    if (!isActive) {
+      setUpgradeOpen(true);
+      return;
+    }
+    const dupes = planner.findDuplicates(tasks);
+    if (dupes.length) {
+      setDuplicatePrompt({
+        tasks,
+        duplicateTitles: dupes.map((d) => d.existing.title),
+      });
+      return;
+    }
+    writePlan(tasks, 'keep-both', markerKey);
+  };
+
+  const writePlan = (
+    tasks: PlannedTask[],
+    mode: 'replace' | 'keep-both' | 'skip',
+    markerKey: string,
+  ) => {
+    const cyclePhase = profile.cycleData?.setupComplete ? 'tracked' : null;
+    const { added, replaced } = planner.writeTasks(tasks, mode, {
+      planType: 'mixed',
+      cyclePhase,
+    });
+    setPlanConsumed((prev) => new Set(prev).add(markerKey));
+    setDuplicatePrompt(null);
+    setConfirmation(
+      `Done — I've added ${added} task${added === 1 ? '' : 's'} to your routine${
+        replaced ? ` and replaced ${replaced}` : ''
+      }. Head over to the Routine page to see everything in place. You can always edit, reorder, or remove anything that doesn't feel right once you see it in action.`
+    );
+  };
+
+  const requestChanges = () => {
+    sendOptionReply("I'd like to change something about the plan.");
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
