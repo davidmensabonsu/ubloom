@@ -1,7 +1,8 @@
-import { Clock, Repeat, CalendarDays, Sunrise, Sun, Moon } from 'lucide-react';
+import { Clock, Repeat, CalendarDays, Sunrise, Sun, Moon, Sparkles, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { taskIconOptions } from '@/lib/taskIcons';
-import type { PlannedTask } from '@/lib/routinePlanParser';
+import type { PlannedTask, PlanAction } from '@/lib/routinePlanParser';
+import type { CoreHabit } from '@/stores/userStore';
 
 const ICON_BY_ID = new Map(taskIconOptions.map((o) => [o.id, o]));
 
@@ -24,6 +25,16 @@ function periodFor(t: PlannedTask): 'morning' | 'midday' | 'evening' {
     return 'evening';
   }
   return 'morning';
+}
+
+function periodForHabit(h: CoreHabit): 'morning' | 'midday' | 'evening' {
+  if (h.scheduledTime) {
+    const hr = parseInt(h.scheduledTime.split(':')[0] || '0', 10);
+    if (hr < 11) return 'morning';
+    if (hr < 17) return 'midday';
+    return 'evening';
+  }
+  return h.timeOfDay || 'morning';
 }
 
 function formatTime(time?: string): string {
@@ -53,40 +64,117 @@ const PERIOD_META: Record<string, { label: string; Icon: typeof Sunrise }> = {
   evening: { label: 'Evening', Icon: Moon },
 };
 
+type PreviewItem = {
+  key: string;
+  title: string;
+  time?: string;
+  iconId?: string;
+  recurrenceLabel: string;
+  source: 'existing' | 'new';
+  period: 'morning' | 'midday' | 'evening';
+};
+
 interface Props {
   tasks: PlannedTask[];
+  action?: PlanAction;
+  existingTodayTasks?: CoreHabit[];
   onApprove: () => void;
   onRequestChanges: () => void;
 }
 
-export default function PlanPreviewCard({ tasks, onApprove, onRequestChanges }: Props) {
-  const groups: Record<'morning' | 'midday' | 'evening', PlannedTask[]> = {
+export default function PlanPreviewCard({
+  tasks,
+  action = 'add',
+  existingTodayTasks = [],
+  onApprove,
+  onRequestChanges,
+}: Props) {
+  // Build the resulting day depending on action.
+  const items: PreviewItem[] = [];
+
+  if (action !== 'clear_today') {
+    if (action === 'add') {
+      existingTodayTasks.forEach((h, i) => {
+        items.push({
+          key: `ex-${h.id}-${i}`,
+          title: h.title,
+          time: h.scheduledTime,
+          iconId: h.icon,
+          recurrenceLabel: 'Already in your day',
+          source: 'existing',
+          period: periodForHabit(h),
+        });
+      });
+    }
+    tasks.forEach((t, i) => {
+      items.push({
+        key: `new-${t.title}-${i}`,
+        title: t.title,
+        time: t.time,
+        iconId: t.icon,
+        recurrenceLabel: recurrenceLabel(t),
+        source: 'new',
+        period: periodFor(t),
+      });
+    });
+  }
+
+  const groups: Record<'morning' | 'midday' | 'evening', PreviewItem[]> = {
     morning: [], midday: [], evening: [],
   };
-  tasks.forEach((t) => groups[periodFor(t)].push(t));
-  // Within each group, sort by time if present
+  items.forEach((it) => groups[it.period].push(it));
   (['morning', 'midday', 'evening'] as const).forEach((k) => {
     groups[k].sort((a, b) => (a.time || '99:99').localeCompare(b.time || '99:99'));
   });
+
+  const totalCount = items.length;
+
+  const headerLabel =
+    action === 'replace_today'
+      ? "Today's new plan (replacing your usual)"
+      : action === 'clear_today'
+        ? "Today will be cleared"
+        : "Today's plan with these additions";
+
+  const HeaderIcon = action === 'clear_today' ? Trash2 : CalendarDays;
+
+  const pausedCount =
+    action === 'replace_today' || action === 'clear_today'
+      ? existingTodayTasks.length
+      : 0;
+
+  const approveLabel =
+    action === 'replace_today'
+      ? 'Apply to today only'
+      : action === 'clear_today'
+        ? 'Clear today'
+        : 'Looks good, add to my routine';
 
   return (
     <div className="mt-2 ml-9 max-w-[88%] space-y-3">
       <div className="rounded-2xl border border-rose-200 bg-rose-50/40 shadow-soft overflow-hidden">
         <div className="px-4 py-3 border-b border-rose-200/70 bg-white/60 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <CalendarDays size={14} className="text-rose-500" />
+            <HeaderIcon size={14} className="text-rose-500" />
             <span className="text-xs font-medium text-rose-700" style={{ fontFamily: 'Jost, sans-serif' }}>
-              Your routine plan
+              {headerLabel}
             </span>
           </div>
           <span className="text-[11px] text-rose-600/80" style={{ fontFamily: 'Jost, sans-serif' }}>
-            {tasks.length} task{tasks.length === 1 ? '' : 's'}
+            {totalCount} task{totalCount === 1 ? '' : 's'}
           </span>
         </div>
+        {action === 'clear_today' && (
+          <div className="px-4 py-6 text-center text-sm text-muted-foreground" style={{ fontFamily: 'Jost, sans-serif' }}>
+            Today's list will be empty.
+            <br />
+            Your recurring tasks come back tomorrow.
+          </div>
+        )}
         <div className="divide-y divide-rose-100">
           {(['morning', 'midday', 'evening'] as const).map((period) => {
-            const items = groups[period];
-            if (!items.length) return null;
+            const list = groups[period];
+            if (!list.length) return null;
             const { label, Icon } = PERIOD_META[period];
             return (
               <div key={period} className="px-3 py-2.5">
@@ -95,29 +183,34 @@ export default function PlanPreviewCard({ tasks, onApprove, onRequestChanges }: 
                   <span>{label}</span>
                 </div>
                 <div className="space-y-1.5">
-                  {items.map((t, idx) => {
-                    const iconOpt = t.icon ? ICON_BY_ID.get(t.icon) : undefined;
+                  {list.map((t) => {
+                    const iconOpt = t.iconId ? ICON_BY_ID.get(t.iconId) : undefined;
                     const LucideIcon = iconOpt?.icon;
+                    const isNew = t.source === 'new';
                     return (
                       <div
-                        key={`${t.title}-${idx}`}
-                        className="flex items-center gap-3 px-2.5 py-2 rounded-xl bg-white border border-rose-100"
+                        key={t.key}
+                        className={`flex items-center gap-3 px-2.5 py-2 rounded-xl border ${
+                          isNew
+                            ? 'bg-white border-rose-200'
+                            : 'bg-white/60 border-rose-100/70'
+                        }`}
                       >
-                        <div className="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center shrink-0 overflow-hidden">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 overflow-hidden ${isNew ? 'bg-rose-50' : 'bg-muted/40'}`}>
                           {iconOpt?.imageSrc ? (
                             <img
                               src={iconOpt.imageSrc}
                               alt=""
-                              className="w-6 h-6 object-contain clay-icon"
+                              className={`w-6 h-6 object-contain clay-icon ${isNew ? '' : 'opacity-70'}`}
                             />
                           ) : LucideIcon ? (
-                            <LucideIcon size={16} className="text-rose-500" />
+                            <LucideIcon size={16} className={isNew ? 'text-rose-500' : 'text-muted-foreground'} />
                           ) : (
                             <span className="text-rose-400 text-xs">◆</span>
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm text-foreground truncate" style={{ fontFamily: 'Jost, sans-serif' }}>
+                          <p className={`text-sm truncate ${isNew ? 'text-foreground' : 'text-muted-foreground'}`} style={{ fontFamily: 'Jost, sans-serif' }}>
                             {t.title}
                           </p>
                           <div className="flex items-center gap-2 mt-0.5 flex-wrap">
@@ -128,8 +221,8 @@ export default function PlanPreviewCard({ tasks, onApprove, onRequestChanges }: 
                               </span>
                             )}
                             <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground" style={{ fontFamily: 'Jost, sans-serif' }}>
-                              <Repeat size={10} />
-                              {recurrenceLabel(t)}
+                              {isNew ? <Sparkles size={10} /> : <Repeat size={10} />}
+                              {t.recurrenceLabel}
                             </span>
                           </div>
                         </div>
@@ -141,13 +234,18 @@ export default function PlanPreviewCard({ tasks, onApprove, onRequestChanges }: 
             );
           })}
         </div>
+        {pausedCount > 0 && (
+          <div className="px-4 py-2 border-t border-rose-200/70 bg-white/40 text-[11px] text-muted-foreground" style={{ fontFamily: 'Jost, sans-serif' }}>
+            {pausedCount} recurring {pausedCount === 1 ? 'task is' : 'tasks are'} paused for today only — back tomorrow.
+          </div>
+        )}
       </div>
       <Button
         onClick={onApprove}
         className="w-full rounded-full bg-rose-400 hover:bg-rose-500 text-white"
         style={{ fontFamily: 'Jost, sans-serif' }}
       >
-        Looks good, add to my routine
+        {approveLabel}
       </Button>
       <Button
         variant="outline"
