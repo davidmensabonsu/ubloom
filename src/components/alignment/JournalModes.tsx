@@ -369,7 +369,7 @@ export default function JournalModes() {
                 }
                 setMode(value);
               }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+              className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                 active
                   ? 'bg-primary text-primary-foreground shadow-sm'
                   : 'bg-background/60 text-muted-foreground hover:bg-primary/10'
