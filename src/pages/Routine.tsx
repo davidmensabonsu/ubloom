@@ -18,6 +18,7 @@ import CelebrationOverlay from '@/components/routine/CelebrationOverlay';
 import ReminderSettings from '@/components/routine/ReminderSettings';
 import { useReminders } from '@/hooks/useReminders';
 import PastDayView from '@/components/routine/PastDayView';
+import UndoRoutineBanner from '@/components/routine/UndoRoutineBanner';
 import { parse, format } from 'date-fns';
 import { useTypewriter } from '@/hooks/useTypewriter';
 
@@ -174,6 +175,9 @@ export default function Routine() {
       <div className="px-5 space-y-6">
         {/* Weekly Progress & Streak */}
         <WeeklyProgress selectedDate={viewDate} onSelectDate={setViewDate} />
+
+        {/* Undo most recent Ubi routine change */}
+        {!isPast && <UndoRoutineBanner />}
 
         {/* Core Daily Habits — live today, snapshot for past days */}
         {isPast ? <PastDayView dateStr={viewDate} /> : <CoreHabitsSection />}
