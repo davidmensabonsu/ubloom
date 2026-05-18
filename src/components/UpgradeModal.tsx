@@ -127,7 +127,7 @@ export default function UpgradeModal({ open, onClose, lockout = false, title, so
               }`}
             >
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Monthly</p>
-              <p className="font-display text-2xl text-foreground mt-1">£12.99</p>
+              <p className="font-display text-2xl text-foreground mt-1">£4.99</p>
               <p className="text-[11px] text-muted-foreground">per month</p>
             </button>
 
@@ -142,11 +142,11 @@ export default function UpgradeModal({ open, onClose, lockout = false, title, so
               }`}
             >
               <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-primary text-primary-foreground text-[9px] font-bold uppercase tracking-wider whitespace-nowrap">
-                Save 49%
+                Save 33%
               </span>
               <p className="text-xs font-semibold uppercase tracking-wider text-primary">Annual</p>
-              <p className="font-display text-2xl text-foreground mt-1">£79.99</p>
-              <p className="text-[11px] text-muted-foreground">£6.67/month</p>
+              <p className="font-display text-2xl text-foreground mt-1">£39.99</p>
+              <p className="text-[11px] text-muted-foreground">£3.33/month</p>
             </button>
           </div>
 
