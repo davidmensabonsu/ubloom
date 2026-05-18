@@ -285,6 +285,16 @@ export interface MoodboardItem {
  
 interface UserStore {
   profile: UserProfile;
+  /**
+   * Snapshot of coreHabits taken right before an Ubi-applied routine change
+   * (add / replace_today / clear_today). Used to power the one-step Undo
+   * button on the Routine page. Cleared as soon as it's used or replaced.
+   */
+  routineUndo: {
+    habits: CoreHabit[];
+    action: 'add' | 'replace_today' | 'clear_today';
+    createdAt: number;
+  } | null;
   updateProfile: (updates: Partial<UserProfile>) => void;
   setAesthetic: (theme: string) => void;
   addJournalEntry: (entry: Omit<JournalEntry, 'id'>) => void;
@@ -315,6 +325,12 @@ interface UserStore {
   clearHabitsForDate: (date: string) => void;
   /** Remove a date from a habit's skippedDates list. */
   unskipHabitForDate: (habitId: string, date: string) => void;
+  /** Save current coreHabits so an Ubi routine change can be undone. */
+  snapshotRoutineForUndo: (action: 'add' | 'replace_today' | 'clear_today') => void;
+  /** Restore the last snapshotted coreHabits, if any. */
+  undoRoutineChange: () => boolean;
+  /** Drop the stored undo snapshot without applying it. */
+  clearRoutineUndo: () => void;
    updateReminderSettings: (settings: Partial<ReminderSettings>) => void;
     markReminderSent: (timeOfDay: TimeOfDay) => void;
   ensureDailySnapshots: () => void;
