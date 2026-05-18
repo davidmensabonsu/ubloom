@@ -663,6 +663,28 @@ export const useUserStore = create<UserStore>()(
           },
         })),
 
+      snapshotRoutineForUndo: (action) =>
+        set((state) => ({
+          routineUndo: {
+            // Deep-clone via JSON to insulate from later mutations
+            habits: JSON.parse(JSON.stringify(state.profile.coreHabits || [])),
+            action,
+            createdAt: Date.now(),
+          },
+        })),
+
+      undoRoutineChange: () => {
+        const snap = get().routineUndo;
+        if (!snap) return false;
+        set((state) => ({
+          profile: { ...state.profile, coreHabits: snap.habits },
+          routineUndo: null,
+        }));
+        return true;
+      },
+
+      clearRoutineUndo: () => set({ routineUndo: null }),
+
       updateReminderSettings: (settings) =>
         set((state) => {
           const current = state.profile.reminderSettings ?? initialProfile.reminderSettings;
