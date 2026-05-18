@@ -355,7 +355,7 @@ export default function JournalModes() {
       className="glass-card rounded-3xl p-5"
     >
       {/* Mode tabs */}
-      <div className="flex gap-1.5 mb-4">
+      <div className="flex gap-1.5 mb-4 overflow-x-auto scrollbar-hide">
         {tabs.map(({ value, label, Icon }) => {
           const active = mode === value;
           const locked = !isPremium && (value === 'voice' || value === 'video');
