@@ -66,6 +66,13 @@ export default function Profile() {
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
+  // Username (for the upcoming social feature)
+  const [username, setUsername] = useState<string | null>(null);
+  const [claimUsername, setClaimUsername] = useState('');
+  const [claimStatus, setClaimStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'invalid'>('idle');
+  const [claimError, setClaimError] = useState<string | null>(null);
+  const [isClaiming, setIsClaiming] = useState(false);
+
   // Change password state
   const [passwordOpen, setPasswordOpen] = useState(false);
   const [newPassword, setNewPassword] = useState('');
@@ -113,18 +120,68 @@ export default function Profile() {
     const loadProfile = async () => {
       const { data } = await supabase
         .from('profiles')
-        .select('display_name, avatar_url')
+        .select('display_name, avatar_url, username')
         .eq('user_id', user.id)
         .single();
       if (data) {
         setDisplayName(data.display_name || user.email || '');
         setAvatarUrl(data.avatar_url);
+        setUsername(data.username);
       } else {
         setDisplayName(user.email || '');
       }
     };
     loadProfile();
   }, [user]);
+
+  // Live availability check for username claim (legacy accounts)
+  useEffect(() => {
+    if (username) return; // already claimed
+    const value = claimUsername.trim().toLowerCase();
+    if (!value) {
+      setClaimStatus('idle');
+      setClaimError(null);
+      return;
+    }
+    const USERNAME_REGEX = /^[A-Za-z0-9._]{3,30}$/;
+    let formatError: string | null = null;
+    if (!USERNAME_REGEX.test(value)) formatError = '3–30 chars: letters, numbers, . or _';
+    else if (value.startsWith('.') || value.endsWith('.')) formatError = "Can't start or end with a period";
+    else if (value.includes('..')) formatError = "Can't contain consecutive periods";
+    if (formatError) {
+      setClaimStatus('invalid');
+      setClaimError(formatError);
+      return;
+    }
+    setClaimStatus('checking');
+    setClaimError(null);
+    const handle = window.setTimeout(async () => {
+      const { data, error } = await supabase.rpc('username_available', { _username: value });
+      if (error) { setClaimStatus('idle'); return; }
+      if (data === true) { setClaimStatus('available'); setClaimError(null); }
+      else { setClaimStatus('taken'); setClaimError('That username is taken'); }
+    }, 400);
+    return () => window.clearTimeout(handle);
+  }, [claimUsername, username]);
+
+  const handleClaimUsername = async () => {
+    if (!user || claimStatus !== 'available') return;
+    const value = claimUsername.trim().toLowerCase();
+    setIsClaiming(true);
+    const { error } = await supabase
+      .from('profiles')
+      .update({ username: value })
+      .eq('user_id', user.id);
+    setIsClaiming(false);
+    if (error) {
+      const msg = /unique|duplicate/i.test(error.message) ? 'That username was just taken — try another.' : error.message;
+      toast({ title: 'Could not claim username', description: msg, variant: 'destructive' });
+      setClaimStatus('taken');
+    } else {
+      setUsername(value);
+      toast({ title: 'Username claimed ✨', description: `You're now @${value}` });
+    }
+  };
 
   // Journey stats
   const stats = useMemo(() => {
@@ -371,6 +428,46 @@ export default function Profile() {
             </div>
           )}
 
+          {username ? (
+            <p className="text-sm text-primary font-medium mt-1">@{username}</p>
+          ) : (
+            <div className="w-full max-w-xs mt-3">
+              <p className="text-xs text-muted-foreground text-center mb-2">
+                Claim your unique username for the upcoming social feature
+              </p>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground select-none">@</span>
+                  <Input
+                    value={claimUsername}
+                    onChange={(e) => setClaimUsername(e.target.value.replace(/\s+/g, '').toLowerCase())}
+                    placeholder="username"
+                    maxLength={30}
+                    autoCapitalize="off"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    className="pl-7"
+                  />
+                </div>
+                <button
+                  onClick={handleClaimUsername}
+                  disabled={claimStatus !== 'available' || isClaiming}
+                  className="px-3 h-9 rounded-md bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50 shrink-0"
+                >
+                  Claim
+                </button>
+              </div>
+              {claimError && claimUsername && (
+                <p className="text-xs text-rose-500 mt-1.5 text-center">{claimError}</p>
+              )}
+              {claimStatus === 'available' && (
+                <p className="text-xs text-emerald-600 mt-1.5 text-center">@{claimUsername.trim().toLowerCase()} is available</p>
+              )}
+              {claimStatus === 'checking' && (
+                <p className="text-xs text-muted-foreground mt-1.5 text-center">Checking…</p>
+              )}
+            </div>
+          )}
           <p className="text-sm text-muted-foreground mt-1">{user?.email}</p>
         </motion.div>
 

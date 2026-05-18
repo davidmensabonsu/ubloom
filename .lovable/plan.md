@@ -1,40 +1,42 @@
 ## Goal
-Let users create a "just for today" plan on the Ubi page, alongside the existing daily / weekly / monthly plan types, and surface a "Plan today" preset pill every day once they've made their first plan.
+Add a unique `@username` to signup (for the future social network feature) while keeping the personal first name collected later in Onboarding for greetings.
 
-## 1. Add "Today" as a plan type in the routine planning flow
+## 1. Database
 
-**File:** `supabase/functions/ubi-chat/index.ts` (Routine Planning Mode prompt)
+Add a `username` column to `profiles`, enforce uniqueness case-insensitively, and add a public lookup so the signup form can check availability before submit.
 
-- Update Step 1 options marker to include Today:
-  `<options>Just today|Daily routine|Weekly plan|Monthly reset|All three</options>`
-- Add rule: when the user picks "Just today", every task in the `<routine_plan>` JSON must use `"recurrence": "one-off"` (and an empty `days` array). The existing parser/planner already maps `one-off` to today's date, so no DB or parser changes are needed.
-- Mention "today" / "plan my day" as trigger phrases that enter Routine Planning Mode.
+Migration:
+- `ALTER TABLE public.profiles ADD COLUMN username text;`
+- Validation trigger on insert/update: reject if username is set but does not match `^[a-zA-Z0-9._]{3,30}$`, or starts/ends with `.`, or contains `..`.
+- `CREATE UNIQUE INDEX profiles_username_lower_unique ON public.profiles (lower(username));` — case-insensitive uniqueness.
+- `CREATE INDEX profiles_username_lower_idx ON public.profiles (lower(username));` for fast search later.
+- New RPC `public.username_available(_username text) RETURNS boolean` — `SECURITY DEFINER`, `STABLE`, fixed `search_path = public`. Validates the format and returns `false` if anyone already owns it (case-insensitive). Granted `EXECUTE` to `anon` and `authenticated` so the signup form can call it before the user is logged in. Does NOT expose any other profile fields.
+- Update `handle_new_user()` trigger: read `NEW.raw_user_meta_data->>'username'` and insert it into `profiles.username` alongside the existing `display_name` logic. If a duplicate slips through (race condition), the unique index throws and signup fails cleanly.
+- Do NOT backfill existing rows — `username` stays nullable so existing accounts aren't broken. (Profile page will let them set one later — see step 4.)
 
-## 2. New "Plan today" preset pill on Ubi
+## 2. Signup form (`src/pages/Auth.tsx`)
 
-**File:** `src/pages/Ubi.tsx`
+- Replace the existing "Display name" input with a "Username" input prefixed with `@`.
+- Local validation (zod): `^[a-zA-Z0-9._]+$`, 3–30 chars, no leading/trailing `.`, no `..`.
+- Debounced availability check (~400 ms) calling `supabase.rpc('username_available', { _username })`. Show inline state: checking / available / taken / invalid. Disable the Sign-up button until the username is `available`, email/password are valid, and terms are agreed.
+- On submit, pass the username (lowercased and trimmed) to `signUp` so it lands in `auth.users.raw_user_meta_data.username` and the trigger writes it to `profiles.username`. If the server still rejects (race), surface a friendly "That username was just taken — try another."
+- Keep the existing terms checkbox and toggle behaviour.
 
-State / storage keys (localStorage, per user device — consistent with the existing `ubi-plan-routine-used` flag):
-- `ubi-has-made-first-plan` — set to `'1'` the first time `writePlan` successfully writes any tasks.
-- `ubi-plan-today-used-<YYYY-MM-DD>` — set to `'1'` when the user taps the "Plan today" pill (uses `getLocalDateStr()`).
+## 3. Auth hook (`src/hooks/useAuth.tsx`)
 
-Visibility rules for the pill (rendered in the same fixed bottom area as the existing "Plan my routine" chip, just above the horizontal preset list):
-- Hide if there's a `confirmation` banner showing.
-- Hide if the user has not yet made any plan (`ubi-has-made-first-plan !== '1'`).
-- Hide if it has already been used today (`ubi-plan-today-used-<today> === '1'`).
-- Hide once the user has sent any message in the current conversation (matches the existing "Plan my routine" chip behaviour, so it only appears at the start of a fresh chat).
+- Extend `signUp(email, password, username)` to send `options.data: { username }` (the trigger will pick it up). Display name continues to be set later in Onboarding, so no `display_name` is passed at signup.
 
-Behaviour on tap (new handler, mirrors `handlePlanRoutineChip`):
-- Guard on `isStreaming` and `canUse('ubi_chat')`.
-- Set the today-used flag in localStorage.
-- `incrementUbiMessageCount()`.
-- `sendMessage("[SYSTEM: ROUTINE_PLANNING_FLOW] I'd like to plan just for today", { displayContent: "Plan today" })` so the edge function jumps into Routine Planning Mode and naturally steers toward the "Just today" option.
+## 4. Profile page (`src/pages/Profile.tsx`)
 
-## 3. Persist "first plan ever made" flag
+- Show the username as `@username` near the top, read-only for now.
+- If the current user has no username yet (legacy account), show a small inline form letting them claim one — same validation + availability check used on signup, then `update profiles set username = …`.
+- Keep the existing display name field unchanged (still used for greetings).
 
-**File:** `src/pages/Ubi.tsx` — inside `writePlan`, after the successful `planner.writeTasks(...)` call, set `localStorage.setItem('ubi-has-made-first-plan', '1')`. This is what gates the daily "Plan today" pill from ever appearing until the user has completed at least one plan of any type.
+## 5. Onboarding (`src/pages/Onboarding.tsx`)
+
+- No changes. Still collects the personal first name into `profiles.display_name`.
 
 ## Out of scope
-- No schema changes; `recurrence: 'one-off'` is already supported and stored as today's date.
-- No changes to the existing "Plan my routine" chip behaviour.
-- No analytics / Pro-gating changes beyond the existing `ubi_chat` guard.
+- The actual social network search/feature (this only lays the schema + signup foundation).
+- Username changes after claim (will need a separate flow with rate-limiting and reserved-name list once the social feature is built).
+- Reserved/blocklist of usernames — can be added later before launching the social feature.

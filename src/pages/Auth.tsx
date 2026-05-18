@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '@/assets/logo.png';
 import { useNavigate } from 'react-router-dom';
@@ -6,15 +6,26 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
 import { motion } from 'framer-motion';
-import { Mail, Lock, User, ArrowRight, Heart } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, Heart, Check, X, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+
+const USERNAME_REGEX = /^[A-Za-z0-9._]{3,30}$/;
+function validateUsernameFormat(value: string): string | null {
+  if (!value) return 'Username is required';
+  if (!USERNAME_REGEX.test(value)) return '3–30 chars: letters, numbers, . or _';
+  if (value.startsWith('.') || value.endsWith('.')) return "Can't start or end with a period";
+  if (value.includes('..')) return "Can't contain consecutive periods";
+  return null;
+}
 
 export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isForgot, setIsForgot] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [displayName, setDisplayName] = useState('');
+  const [username, setUsername] = useState('');
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'invalid'>('idle');
+  const [usernameError, setUsernameError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const { signIn, signUp, user, loading: authLoading } = useAuth();
@@ -26,6 +37,45 @@ export default function Auth() {
       navigate('/home', { replace: true });
     }
   }, [user, authLoading, navigate]);
+
+  // Debounced username availability check
+  useEffect(() => {
+    if (!isSignUp || isForgot) return;
+    const value = username.trim().toLowerCase();
+    if (!value) {
+      setUsernameStatus('idle');
+      setUsernameError(null);
+      return;
+    }
+    const formatError = validateUsernameFormat(value);
+    if (formatError) {
+      setUsernameStatus('invalid');
+      setUsernameError(formatError);
+      return;
+    }
+    setUsernameStatus('checking');
+    setUsernameError(null);
+    const handle = window.setTimeout(async () => {
+      const { data, error } = await supabase.rpc('username_available', { _username: value });
+      if (error) {
+        setUsernameStatus('idle');
+        return;
+      }
+      if (data === true) {
+        setUsernameStatus('available');
+        setUsernameError(null);
+      } else {
+        setUsernameStatus('taken');
+        setUsernameError('That username is taken');
+      }
+    }, 400);
+    return () => window.clearTimeout(handle);
+  }, [username, isSignUp, isForgot]);
+
+  const signUpDisabled = useMemo(() => {
+    if (!isSignUp) return false;
+    return !agreedToTerms || usernameStatus !== 'available';
+  }, [isSignUp, agreedToTerms, usernameStatus]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,9 +95,17 @@ export default function Auth() {
     }
 
     if (isSignUp) {
-      const { error } = await signUp(email, password, displayName);
+      if (usernameStatus !== 'available') {
+        toast({ title: 'Pick an available username', description: usernameError || 'Choose a username before signing up.', variant: 'destructive' });
+        setLoading(false);
+        return;
+      }
+      const { error } = await signUp(email, password, username.trim().toLowerCase());
       if (error) {
-        toast({ title: 'Sign up failed', description: error.message, variant: 'destructive' });
+        const msg = /username/i.test(error.message)
+          ? 'That username was just taken — try another.'
+          : error.message;
+        toast({ title: 'Sign up failed', description: msg, variant: 'destructive' });
       } else {
         toast({
           title: 'Check your email ✨',
@@ -92,14 +150,33 @@ export default function Auth() {
           transition={{ duration: 0.4 }}>
           
           {isSignUp && !isForgot &&
-          <div className="relative">
-              <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <input
-              type="text"
-              placeholder="Display name"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              className="w-full rounded-xl border border-border bg-background pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all" />
+          <div>
+              <div className="relative">
+                <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <span className="absolute left-9 top-1/2 -translate-y-1/2 text-sm text-muted-foreground select-none">@</span>
+                <input
+                  type="text"
+                  placeholder="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value.replace(/\s+/g, '').toLowerCase())}
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  maxLength={30}
+                  required
+                  className="w-full rounded-xl border border-border bg-background pl-14 pr-10 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all" />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2">
+                  {usernameStatus === 'checking' && <Loader2 size={16} className="animate-spin text-muted-foreground" />}
+                  {usernameStatus === 'available' && <Check size={16} className="text-emerald-500" />}
+                  {(usernameStatus === 'taken' || usernameStatus === 'invalid') && <X size={16} className="text-rose-500" />}
+                </span>
+              </div>
+              {usernameError && username && (
+                <p className="text-xs text-rose-500 mt-1.5 ml-1">{usernameError}</p>
+              )}
+              {usernameStatus === 'available' && (
+                <p className="text-xs text-emerald-600 mt-1.5 ml-1">@{username.trim().toLowerCase()} is available</p>
+              )}
             </div>
           }
 
@@ -130,7 +207,7 @@ export default function Auth() {
 
           <motion.button
             type="submit"
-            disabled={loading || (isSignUp && !agreedToTerms)}
+            disabled={loading || signUpDisabled}
             className="soft-button w-full flex items-center justify-center gap-2"
             whileTap={{ scale: 0.98 }}>
             
