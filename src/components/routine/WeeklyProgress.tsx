@@ -198,7 +198,7 @@ export default function WeeklyProgress({ selectedDate, onSelectDate }: WeeklyPro
         </button>
         <span className="text-xs font-medium text-muted-foreground">{weekLabel}</span>
         <button
-          onClick={() => setWeekOffset((o) => Math.min(o + 1, 0))}
+          onClick={() => setWeekOffset((o) => Math.min(o + 1, 4))}
           disabled={weekOffset >= 4}
           className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-30"
         >
