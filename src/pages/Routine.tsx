@@ -18,6 +18,7 @@ import CelebrationOverlay from '@/components/routine/CelebrationOverlay';
 import ReminderSettings from '@/components/routine/ReminderSettings';
 import { useReminders } from '@/hooks/useReminders';
 import PastDayView from '@/components/routine/PastDayView';
+import FutureDayView from '@/components/routine/FutureDayView';
 import UndoRoutineBanner from '@/components/routine/UndoRoutineBanner';
 import { parse, format } from 'date-fns';
 import { useTypewriter } from '@/hooks/useTypewriter';
@@ -29,6 +30,7 @@ export default function Routine() {
   const today = getLocalDateStr();
   const [viewDate, setViewDate] = useState<string>(today);
   const isPast = viewDate < today;
+  const isFuture = viewDate > today;
   const typedTitle = useTypewriter('Your Routine', 45, 200);
 
   // Capture a snapshot of any past days before the user views them.
@@ -118,7 +120,7 @@ export default function Routine() {
    // Initialize reminders hook
     useReminders();
 
-  const headerDateFormatted = isPast
+  const headerDateFormatted = isPast || isFuture
     ? format(parse(viewDate, 'yyyy-MM-dd', new Date()), 'EEEE, d MMM')
     : new Date().toLocaleDateString('en-US', {
         weekday: 'long',
@@ -179,8 +181,14 @@ export default function Routine() {
         {/* Undo most recent Ubi routine change */}
         {!isPast && <UndoRoutineBanner />}
 
-        {/* Core Daily Habits — live today, snapshot for past days */}
-        {isPast ? <PastDayView dateStr={viewDate} /> : <CoreHabitsSection />}
+        {/* Core Daily Habits — live today, snapshot for past, preview for future */}
+        {isPast ? (
+          <PastDayView dateStr={viewDate} />
+        ) : isFuture ? (
+          <FutureDayView dateStr={viewDate} />
+        ) : (
+          <CoreHabitsSection />
+        )}
 
         {/* Empty state when no habits */}
         {!isPast && (!profile.coreHabits || profile.coreHabits.length === 0) && (
@@ -243,7 +251,11 @@ export default function Routine() {
       </div>
 
       {/* Add Task Dialog */}
-      <AddTaskDialog open={showAddTask} onOpenChange={setShowAddTask} />
+      <AddTaskDialog
+        open={showAddTask}
+        onOpenChange={setShowAddTask}
+        defaultOneOffDate={isFuture ? viewDate : undefined}
+      />
 
       {/* Floating Action Button */}
        {!isPast && <motion.button
