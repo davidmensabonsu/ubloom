@@ -420,6 +420,7 @@ export const useUserStore = create<UserStore>()(
   persist(
     (set, get) => ({
       profile: initialProfile,
+      routineUndo: null,
       
       updateProfile: (updates) =>
         set((state) => ({
