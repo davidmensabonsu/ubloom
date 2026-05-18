@@ -224,6 +224,18 @@ export default function Ubi() {
     });
   };
 
+  const handlePlanTodayChip = () => {
+    if (isStreaming) return;
+    if (!canUse('ubi_chat')) return;
+    try {
+      localStorage.setItem(`ubi-plan-today-used-${getLocalDateStr()}`, '1');
+    } catch {}
+    incrementUbiMessageCount();
+    sendMessage(`[SYSTEM: ROUTINE_PLANNING_FLOW] I'd like to plan just for today`, {
+      displayContent: "Plan today",
+    });
+  };
+
   const sendOptionReply = (text: string) => {
     if (isStreaming || !canUse('ubi_chat')) return;
     incrementUbiMessageCount();
@@ -259,6 +271,9 @@ export default function Ubi() {
     });
     setPlanConsumed((prev) => new Set(prev).add(markerKey));
     setDuplicatePrompt(null);
+    if (added > 0) {
+      try { localStorage.setItem('ubi-has-made-first-plan', '1'); } catch {}
+    }
     setConfirmation(
       `Done — I've added ${added} task${added === 1 ? '' : 's'} to your routine${
         replaced ? ` and replaced ${replaced}` : ''
@@ -621,6 +636,29 @@ export default function Ubi() {
               >
                 <span className="text-sm text-foreground flex-1" style={{ fontFamily: 'Jost, sans-serif' }}>
                   Plan my routine
+                </span>
+              </motion.button>
+            </div>
+          );
+        })()}
+
+        {/* "Plan today" preset — appears daily once the user has made their first ever plan, hidden after use for the day */}
+        {(() => {
+          if (confirmation) return null;
+          if (messages.some((m) => m.role === 'user')) return null;
+          if (localStorage.getItem('ubi-has-made-first-plan') !== '1') return null;
+          if (localStorage.getItem(`ubi-plan-today-used-${getLocalDateStr()}`) === '1') return null;
+          return (
+            <div className="max-w-lg mx-auto px-4 pt-1.5 pb-2">
+              <motion.button
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                onClick={handlePlanTodayChip}
+                disabled={isStreaming || !canUse('ubi_chat')}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-white border border-primary/20 hover:border-primary/40 hover:bg-white transition-all text-left shadow-soft disabled:opacity-50"
+              >
+                <span className="text-sm text-foreground flex-1" style={{ fontFamily: 'Jost, sans-serif' }}>
+                  Plan today
                 </span>
               </motion.button>
             </div>
