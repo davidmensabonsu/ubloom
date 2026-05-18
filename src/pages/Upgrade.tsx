@@ -12,6 +12,7 @@ const features = [
   'Unlimited Ubi conversations',
   'Personalised health & cycle insights',
   'Mood trends & analytics',
+  'Voice & video journals',
   'All Wander resources unlocked',
   'Full personalisation experience',
   'Unlimited Ubi routine integration — Ubi adds items directly to your daily plan',
