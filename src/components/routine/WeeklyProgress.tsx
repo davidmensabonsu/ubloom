@@ -234,7 +234,16 @@ export default function WeeklyProgress({ selectedDate, onSelectDate }: WeeklyPro
                     : 'bg-primary/30'
                 }`}
               />
-              {day.percentage >= 100 ? (
+              {day.isFuture ? (
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: index * 0.05 + 0.4 }}
+                  className="absolute inset-0 flex items-center justify-center text-[10px] font-medium text-muted-foreground/70"
+                >
+                  {day.totalHabits > 0 ? `${day.totalHabits} due` : '–'}
+                </motion.span>
+              ) : day.percentage >= 100 ? (
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
