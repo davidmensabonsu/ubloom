@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUserStore, TimeOfDay, HabitFrequency } from '@/stores/userStore';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter, DrawerDescription } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
@@ -18,24 +18,36 @@ const timeOptions: { value: TimeOfDay; label: string; icon: typeof Sun }[] = [
 interface AddTaskDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /**
+   * yyyy-MM-dd. When provided, the dialog is locked to a one-off for that date
+   * (used when adding from a future-day preview).
+   */
+  defaultOneOffDate?: string;
 }
 
-export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps) {
+export default function AddTaskDialog({ open, onOpenChange, defaultOneOffDate }: AddTaskDialogProps) {
   const { profile, setCoreHabits } = useUserStore();
   const [title, setTitle] = useState('');
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>('morning');
   const [icon, setIcon] = useState(taskIconOptions[0].id);
-  const [frequency, setFrequency] = useState<HabitFrequency>('daily');
+  const [frequency, setFrequency] = useState<HabitFrequency>(defaultOneOffDate ? 'one-off' : 'daily');
   const [specificDays, setSpecificDays] = useState<number[]>([]);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [scheduledTime, setScheduledTime] = useState('');
   const [iconSearch, setIconSearch] = useState('');
 
+  // When opened with a default one-off date, lock to one-off.
+  useEffect(() => {
+    if (open && defaultOneOffDate) {
+      setFrequency('one-off');
+    }
+  }, [open, defaultOneOffDate]);
+
   const reset = () => {
     setTitle('');
     setTimeOfDay('morning');
     setIcon(taskIconOptions[0].id);
-    setFrequency('daily');
+    setFrequency(defaultOneOffDate ? 'one-off' : 'daily');
     setSpecificDays([]);
     setShowTimePicker(false);
     setScheduledTime('');
@@ -59,7 +71,7 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
       newHabit.specificDays = specificDays;
     }
     if (frequency === 'one-off') {
-      newHabit.oneOffDate = getLocalDateStr();
+      newHabit.oneOffDate = defaultOneOffDate || getLocalDateStr();
     }
 
     setCoreHabits([...profile.coreHabits, newHabit]);
@@ -71,9 +83,13 @@ export default function AddTaskDialog({ open, onOpenChange }: AddTaskDialogProps
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="max-h-[85vh]">
         <DrawerHeader>
-          <DrawerTitle className="text-xl">Add to-do</DrawerTitle>
+          <DrawerTitle className="text-xl">
+            {defaultOneOffDate ? 'Add to-do for this day' : 'Add to-do'}
+          </DrawerTitle>
           <DrawerDescription className="text-muted-foreground text-sm">
-            Add a new item to your to-do list
+            {defaultOneOffDate
+              ? 'This will appear as a one-off on the selected day only.'
+              : 'Add a new item to your to-do list'}
           </DrawerDescription>
         </DrawerHeader>
 
