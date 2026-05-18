@@ -621,6 +621,31 @@ export const useUserStore = create<UserStore>()(
           return { profile: { ...state.profile, coreHabits: habits } };
         }),
 
+      clearHabitsForDate: (date) =>
+        set((state) => {
+          const next = state.profile.coreHabits
+            .filter((h) => !(h.frequency === 'one-off' && (h.oneOffDate || h.createdDate) === date))
+            .map((h) => {
+              if (!isHabitScheduledForDateLocal(h, date)) return h;
+              const skipped = h.skippedDates || [];
+              if (skipped.includes(date)) return h;
+              return { ...h, skippedDates: [...skipped, date] };
+            });
+          return { profile: { ...state.profile, coreHabits: next } };
+        }),
+
+      unskipHabitForDate: (habitId, date) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            coreHabits: state.profile.coreHabits.map((h) =>
+              h.id === habitId
+                ? { ...h, skippedDates: (h.skippedDates || []).filter((d) => d !== date) }
+                : h,
+            ),
+          },
+        })),
+
       updateReminderSettings: (settings) =>
         set((state) => {
           const current = state.profile.reminderSettings ?? initialProfile.reminderSettings;
