@@ -60,7 +60,13 @@ function setForYouCache(recommendations: { id: string; reason: string }[]) {
   } catch {}
 }
 
-const FREE_RESOURCE_LIMIT = 3;
+const FREE_SUBSECTION_QUOTAS: Record<string, number> = {
+  mindset: 1,
+  finance: 1,
+  creativity: 1,
+  spirituality: 1,
+  wellness: 1,
+};
 
 export default function PodcastsSection() {
   const [activeTopic, setActiveTopic] = useState<TopicKey>('all');
@@ -72,6 +78,17 @@ export default function PodcastsSection() {
 
   const allPodcasts = wonderResources.filter((r) => r.category === 'podcasts');
   const savedIds = profile.savedResources || [];
+
+  const freeAllowedIds = useMemo(() => {
+    if (isActive) return null;
+    const set = new Set<string>();
+    Object.entries(FREE_SUBSECTION_QUOTAS).forEach(([key, n]) => {
+      const tags = topicTagMap[key] || [];
+      const matches = allPodcasts.filter((r) => r.tags.some((t) => tags.includes(t)));
+      matches.slice(0, n).forEach((r) => set.add(r.id));
+    });
+    return set;
+  }, [isActive, allPodcasts]);
 
   // Fetch Apple Podcasts artwork
   const podcastTitles = useMemo(() => allPodcasts.map((p) => p.title), [allPodcasts]);
@@ -137,9 +154,18 @@ export default function PodcastsSection() {
             p.tags.some((t) => topicTagMap[activeTopic]?.includes(t))
           );
 
-  const isGated = !isActive && activeTopic !== 'saved' && activeTopic !== 'for-you';
-  const filtered = isGated ? allFiltered.slice(0, FREE_RESOURCE_LIMIT) : allFiltered;
-  const hiddenCount = isGated ? Math.max(allFiltered.length - FREE_RESOURCE_LIMIT, 0) : 0;
+  const isGated = !isActive && activeTopic !== 'saved';
+  let filtered = allFiltered;
+  let hiddenCount = 0;
+  if (isGated && freeAllowedIds) {
+    if (activeTopic === 'for-you' || activeTopic === 'all') {
+      filtered = allPodcasts.filter((r) => freeAllowedIds.has(r.id));
+      hiddenCount = Math.max(allPodcasts.length - filtered.length, 0);
+    } else {
+      filtered = allFiltered.filter((r) => freeAllowedIds.has(r.id));
+      hiddenCount = Math.max(allFiltered.length - filtered.length, 0);
+    }
+  }
 
   const handleSelect = (r: WonderResource, reason?: string) => {
     setSelectedResource(r);
