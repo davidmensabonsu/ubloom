@@ -5,6 +5,8 @@ export interface PlannedTask {
   days?: string[];          // ["monday", ...]
   icon?: string;
   period?: 'morning' | 'midday' | 'evening';
+  /** yyyy-MM-dd — earliest date this task should appear on. */
+  startsOn?: string;
 }
 
 export type PlanAction = 'add' | 'replace_today' | 'clear_today';
@@ -14,6 +16,8 @@ export interface RoutinePlan {
   action: PlanAction;
   scope: PlanScope;
   tasks: PlannedTask[];
+  /** Optional default startsOn applied to every task that doesn't override it. */
+  startsOn?: string;
 }
 
 const OPTIONS_RE = /<options>([\s\S]*?)<\/options>/i;
@@ -29,8 +33,11 @@ export function parseOptions(content: string): string[] | null {
   return parts.length ? parts : null;
 }
 
-function normalizeTask(t: any): PlannedTask | null {
+function normalizeTask(t: any, defaultStartsOn?: string): PlannedTask | null {
   if (!t || typeof t.title !== 'string' || !t.title.trim()) return null;
+  const startsOn = typeof t.startsOn === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(t.startsOn)
+    ? t.startsOn
+    : defaultStartsOn;
   return {
     title: String(t.title).trim(),
     time: typeof t.time === 'string' ? t.time : undefined,
@@ -39,6 +46,7 @@ function normalizeTask(t: any): PlannedTask | null {
     days: Array.isArray(t.days) ? t.days.map((d: any) => String(d).toLowerCase()) : [],
     icon: typeof t.icon === 'string' ? t.icon : undefined,
     period: ['morning', 'midday', 'evening'].includes(t.period) ? t.period : undefined,
+    startsOn,
   };
 }
 
@@ -49,16 +57,19 @@ export function parseRoutinePlan(content: string): RoutinePlan | null {
     const raw = JSON.parse(m[1].trim());
     // Legacy: bare array of tasks => treat as "add"
     if (Array.isArray(raw)) {
-      const tasks = raw.map(normalizeTask).filter((t): t is PlannedTask => !!t);
+      const tasks = raw.map((t) => normalizeTask(t)).filter((t): t is PlannedTask => !!t);
       return { action: 'add', scope: 'ongoing', tasks };
     }
     if (raw && typeof raw === 'object') {
       const action: PlanAction =
         raw.action === 'replace_today' || raw.action === 'clear_today' ? raw.action : 'add';
       const scope: PlanScope = raw.scope === 'today' ? 'today' : (action === 'add' ? 'ongoing' : 'today');
+      const topStartsOn = typeof raw.startsOn === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(raw.startsOn)
+        ? raw.startsOn
+        : undefined;
       const tasksArr = Array.isArray(raw.tasks) ? raw.tasks : [];
-      const tasks = tasksArr.map(normalizeTask).filter((t): t is PlannedTask => !!t);
-      return { action, scope, tasks };
+      const tasks = tasksArr.map((t: any) => normalizeTask(t, topStartsOn)).filter((t): t is PlannedTask => !!t);
+      return { action, scope, tasks, startsOn: topStartsOn };
     }
     return null;
   } catch {
