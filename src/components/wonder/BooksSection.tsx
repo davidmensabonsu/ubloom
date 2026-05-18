@@ -140,7 +140,12 @@ function BookCard({
   );
 }
 
-const FREE_RESOURCE_LIMIT = 3;
+const FREE_SUBSECTION_QUOTAS: Record<string, number> = {
+  mindset: 1,
+  business: 1,
+  wellness: 1,
+  spirituality: 1,
+};
 
 export default function BooksSection() {
   const [activeTopic, setActiveTopic] = useState<TopicKey>('all');
@@ -152,6 +157,18 @@ export default function BooksSection() {
 
   const allBooks = wonderResources.filter((r) => r.category === 'books');
   const savedIds = profile.savedResources || [];
+
+  // Curated free-tier set: one book per subsection, identical across All / For You / each tab.
+  const freeAllowedIds = useMemo(() => {
+    if (isActive) return null;
+    const set = new Set<string>();
+    Object.entries(FREE_SUBSECTION_QUOTAS).forEach(([key, n]) => {
+      const tags = topicTagMap[key] || [];
+      const matches = allBooks.filter((r) => r.tags.some((t) => tags.includes(t)));
+      matches.slice(0, n).forEach((r) => set.add(r.id));
+    });
+    return set;
+  }, [isActive, allBooks]);
 
   // Book covers are now hardcoded in wonderResources.ts — no API call needed
 
@@ -216,9 +233,18 @@ export default function BooksSection() {
             r.tags.some((t) => topicTagMap[activeTopic]?.includes(t))
           );
 
-  const isGated = !isActive && activeTopic !== 'reading-list' && activeTopic !== 'for-you';
-  const filtered = isGated ? allFiltered.slice(0, FREE_RESOURCE_LIMIT) : allFiltered;
-  const hiddenCount = isGated ? Math.max(allFiltered.length - FREE_RESOURCE_LIMIT, 0) : 0;
+  const isGated = !isActive && activeTopic !== 'reading-list';
+  let filtered = allFiltered;
+  let hiddenCount = 0;
+  if (isGated && freeAllowedIds) {
+    if (activeTopic === 'for-you' || activeTopic === 'all') {
+      filtered = allBooks.filter((r) => freeAllowedIds.has(r.id));
+      hiddenCount = Math.max(allBooks.length - filtered.length, 0);
+    } else {
+      filtered = allFiltered.filter((r) => freeAllowedIds.has(r.id));
+      hiddenCount = Math.max(allFiltered.length - filtered.length, 0);
+    }
+  }
 
   const handleSelect = (r: WonderResource, reason?: string) => {
     setSelectedResource(r);
