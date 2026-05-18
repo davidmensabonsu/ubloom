@@ -78,6 +78,8 @@ interface Props {
   tasks: PlannedTask[];
   action?: PlanAction;
   existingTodayTasks?: CoreHabit[];
+  /** yyyy-MM-dd; when set & in the future, preview is framed as "Starting {date}". */
+  startsOn?: string;
   onApprove: () => void;
   onRequestChanges: () => void;
 }
@@ -86,14 +88,17 @@ export default function PlanPreviewCard({
   tasks,
   action = 'add',
   existingTodayTasks = [],
+  startsOn,
   onApprove,
   onRequestChanges,
 }: Props) {
+  const today = new Date().toISOString().slice(0, 10);
+  const isFutureStart = !!startsOn && startsOn > today && action === 'add';
   // Build the resulting day depending on action.
   const items: PreviewItem[] = [];
 
   if (action !== 'clear_today') {
-    if (action === 'add') {
+    if (action === 'add' && !isFutureStart) {
       existingTodayTasks.forEach((h, i) => {
         items.push({
           key: `ex-${h.id}-${i}`,
@@ -130,7 +135,9 @@ export default function PlanPreviewCard({
   const totalCount = items.length;
 
   const headerLabel =
-    action === 'replace_today'
+    isFutureStart
+      ? `Starting ${startsOn} — today stays the same`
+      : action === 'replace_today'
       ? "Today's new plan (replacing your usual)"
       : action === 'clear_today'
         ? "Today will be cleared"
