@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import flameImg from '@/assets/icons/flame.png';
-import { format, subDays, startOfDay, addDays } from 'date-fns';
+import { format, subDays, startOfDay, addDays, startOfWeek } from 'date-fns';
 import { isHabitScheduledForDate } from '@/components/routine/FrequencyPicker';
 import ubloomLogo from '@/assets/ubloom-flower.png';
 
@@ -24,11 +24,12 @@ export default function WeeklyProgress({ selectedDate, onSelectDate }: WeeklyPro
 
   const weekData = useMemo(() => {
     const today = startOfDay(new Date());
-    const weekEnd = addDays(today, weekOffset * 7);
+    // Calendar week starting Monday, shifted by weekOffset.
+    const weekStart = addDays(startOfWeek(today, { weekStartsOn: 1 }), weekOffset * 7);
     const days = [];
 
-    for (let i = 6; i >= 0; i--) {
-      const date = subDays(weekEnd, i);
+    for (let i = 0; i < 7; i++) {
+      const date = addDays(weekStart, i);
       const dateStr = format(date, 'yyyy-MM-dd');
       const dayName = format(date, 'EEE');
       const isToday = dateStr === format(today, 'yyyy-MM-dd');
@@ -67,8 +68,8 @@ export default function WeeklyProgress({ selectedDate, onSelectDate }: WeeklyPro
     if (weekOffset === -1) return 'Last week';
     if (weekOffset === 1) return 'Next week';
     const today = startOfDay(new Date());
-    const weekEnd = addDays(today, weekOffset * 7);
-    const weekStart = subDays(weekEnd, 6);
+    const weekStart = addDays(startOfWeek(today, { weekStartsOn: 1 }), weekOffset * 7);
+    const weekEnd = addDays(weekStart, 6);
     return `${format(weekStart, 'MMM d')} – ${format(weekEnd, 'MMM d')}`;
   }, [weekOffset]);
 
