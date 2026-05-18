@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bookmark, Sparkles } from 'lucide-react';
 import { wonderResources, type WonderResource } from '@/lib/wonderResources';
@@ -30,7 +30,14 @@ const topicTagMap: Record<string, string[]> = {
   'hands-feet': ['nails', 'hands', 'grooming', 'feet', 'self-care'],
 };
 
-const FREE_RESOURCE_LIMIT = 3;
+const FREE_SUBSECTION_QUOTAS: Record<string, number> = {
+  body: 2,
+  skin: 2,
+  hair: 2,
+  oral: 2,
+  fragrance: 1,
+  'hands-feet': 2,
+};
 
 export default function HygieneSection() {
   const [activeTopic, setActiveTopic] = useState<TopicKey>('all');
@@ -42,6 +49,17 @@ export default function HygieneSection() {
   const allHygiene = wonderResources.filter((r) => r.category === 'hygiene');
   const savedIds = profile.savedResources || [];
 
+  const freeAllowedIds = useMemo(() => {
+    if (isActive) return null;
+    const set = new Set<string>();
+    Object.entries(FREE_SUBSECTION_QUOTAS).forEach(([key, n]) => {
+      const tags = topicTagMap[key] || [];
+      const matches = allHygiene.filter((r) => r.tags.some((t) => tags.includes(t)));
+      matches.slice(0, n).forEach((r) => set.add(r.id));
+    });
+    return set;
+  }, [isActive, allHygiene]);
+
   const allFiltered = activeTopic === 'saved'
     ? allHygiene.filter((r) => savedIds.includes(r.id))
     : activeTopic === 'all'
@@ -51,8 +69,17 @@ export default function HygieneSection() {
         );
 
   const isGated = !isActive && activeTopic !== 'saved';
-  const filtered = isGated ? allFiltered.slice(0, FREE_RESOURCE_LIMIT) : allFiltered;
-  const hiddenCount = isGated ? Math.max(allFiltered.length - FREE_RESOURCE_LIMIT, 0) : 0;
+  let filtered = allFiltered;
+  let hiddenCount = 0;
+  if (isGated && freeAllowedIds) {
+    if (activeTopic === 'all') {
+      filtered = allHygiene.filter((r) => freeAllowedIds.has(r.id));
+      hiddenCount = Math.max(allHygiene.length - filtered.length, 0);
+    } else {
+      filtered = allFiltered.filter((r) => freeAllowedIds.has(r.id));
+      hiddenCount = Math.max(allFiltered.length - filtered.length, 0);
+    }
+  }
 
   const handleSelect = (r: WonderResource) => {
     setSelectedResource(r);

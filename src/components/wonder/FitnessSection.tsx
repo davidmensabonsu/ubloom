@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bookmark, Dumbbell } from 'lucide-react';
 import { fitnessWorkouts, type FitnessWorkout, type FitnessType } from '@/lib/wonderResources';
@@ -25,7 +25,8 @@ const fitnessTabs: { key: TabKey; label: string; icon: string }[] = [
   { key: 'stretches-yoga', label: 'Stretches & Yoga', icon: yogaIcon },
 ];
 
-const FREE_RESOURCE_LIMIT = 3;
+const FREE_PER_TYPE = 2;
+const FITNESS_TYPES: FitnessType[] = ['upper-body', 'lower-body', 'core', 'full-body', 'cardio', 'stretches-yoga'];
 
 export default function FitnessSection() {
   const [activeTab, setActiveTab] = useState<TabKey>('upper-body');
@@ -36,13 +37,27 @@ export default function FitnessSection() {
 
   const savedIds = profile.savedResources || [];
 
+  const freeAllowedIds = useMemo(() => {
+    if (isActive) return null;
+    const set = new Set<string>();
+    FITNESS_TYPES.forEach((type) => {
+      fitnessWorkouts
+        .filter((w) => w.fitnessType === type)
+        .slice(0, FREE_PER_TYPE)
+        .forEach((w) => set.add(w.id));
+    });
+    return set;
+  }, [isActive]);
+
   const allFiltered = activeTab === 'saved'
     ? fitnessWorkouts.filter((w) => savedIds.includes(w.id))
     : fitnessWorkouts.filter((w) => w.fitnessType === activeTab);
 
   const isGated = !isActive && activeTab !== 'saved';
-  const filtered = isGated ? allFiltered.slice(0, FREE_RESOURCE_LIMIT) : allFiltered;
-  const hiddenCount = isGated ? Math.max(allFiltered.length - FREE_RESOURCE_LIMIT, 0) : 0;
+  const filtered = isGated && freeAllowedIds
+    ? allFiltered.filter((w) => freeAllowedIds.has(w.id))
+    : allFiltered;
+  const hiddenCount = isGated ? Math.max(allFiltered.length - filtered.length, 0) : 0;
 
   const handleSelect = (workout: FitnessWorkout) => {
     setSelectedWorkout(workout);

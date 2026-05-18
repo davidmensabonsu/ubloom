@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bookmark, UtensilsCrossed } from 'lucide-react';
 import { mealRecipes, type MealRecipe, type MealType } from '@/lib/wonderResources';
@@ -23,7 +23,8 @@ const mealTabs: { key: TabKey; label: string; icon: string }[] = [
   { key: 'snack', label: 'Snacks', icon: fruitIcon },
 ];
 
-const FREE_RESOURCE_LIMIT = 3;
+const FREE_PER_TYPE = 2;
+const MEAL_TYPES: MealType[] = ['breakfast', 'lunch', 'dinner', 'snack'];
 
 export default function FoodRecipesSection() {
   const [activeMeal, setActiveMeal] = useState<TabKey>('breakfast');
@@ -34,13 +35,27 @@ export default function FoodRecipesSection() {
 
   const savedIds = profile.savedResources || [];
 
+  const freeAllowedIds = useMemo(() => {
+    if (isActive) return null;
+    const set = new Set<string>();
+    MEAL_TYPES.forEach((type) => {
+      mealRecipes
+        .filter((r) => r.mealType === type)
+        .slice(0, FREE_PER_TYPE)
+        .forEach((r) => set.add(r.id));
+    });
+    return set;
+  }, [isActive]);
+
   const allFiltered = activeMeal === 'saved'
     ? mealRecipes.filter((r) => savedIds.includes(r.id))
     : mealRecipes.filter((r) => r.mealType === activeMeal);
 
   const isGated = !isActive && activeMeal !== 'saved';
-  const filtered = isGated ? allFiltered.slice(0, FREE_RESOURCE_LIMIT) : allFiltered;
-  const hiddenCount = isGated ? Math.max(allFiltered.length - FREE_RESOURCE_LIMIT, 0) : 0;
+  const filtered = isGated && freeAllowedIds
+    ? allFiltered.filter((r) => freeAllowedIds.has(r.id))
+    : allFiltered;
+  const hiddenCount = isGated ? Math.max(allFiltered.length - filtered.length, 0) : 0;
 
   const handleSelect = (recipe: MealRecipe) => {
     setSelectedRecipe(recipe);
