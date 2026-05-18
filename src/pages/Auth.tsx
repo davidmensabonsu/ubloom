@@ -88,7 +88,7 @@ export default function Auth() {
       if (error) {
         toast({ title: 'Could not send reset email', description: error.message, variant: 'destructive' });
       } else {
-        toast({ title: 'Check your email ✨', description: 'We sent you a link to reset your password.' });
+        toast({ title: 'Check your email', description: 'We sent you a link to reset your password.' });
       }
       setLoading(false);
       return;
@@ -108,7 +108,7 @@ export default function Auth() {
         toast({ title: 'Sign up failed', description: msg, variant: 'destructive' });
       } else {
         toast({
-          title: 'Check your email ✨',
+          title: 'Check your email',
           description: 'We sent you a confirmation link to verify your account.'
         });
       }
