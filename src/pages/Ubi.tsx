@@ -259,6 +259,9 @@ export default function Ubi() {
     });
     setPlanConsumed((prev) => new Set(prev).add(markerKey));
     setDuplicatePrompt(null);
+    if (added > 0) {
+      try { localStorage.setItem('ubi-has-made-first-plan', '1'); } catch {}
+    }
     setConfirmation(
       `Done — I've added ${added} task${added === 1 ? '' : 's'} to your routine${
         replaced ? ` and replaced ${replaced}` : ''
