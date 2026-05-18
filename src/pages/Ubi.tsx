@@ -224,6 +224,18 @@ export default function Ubi() {
     });
   };
 
+  const handlePlanTodayChip = () => {
+    if (isStreaming) return;
+    if (!canUse('ubi_chat')) return;
+    try {
+      localStorage.setItem(`ubi-plan-today-used-${getLocalDateStr()}`, '1');
+    } catch {}
+    incrementUbiMessageCount();
+    sendMessage(`[SYSTEM: ROUTINE_PLANNING_FLOW] I'd like to plan just for today`, {
+      displayContent: "Plan today",
+    });
+  };
+
   const sendOptionReply = (text: string) => {
     if (isStreaming || !canUse('ubi_chat')) return;
     incrementUbiMessageCount();
