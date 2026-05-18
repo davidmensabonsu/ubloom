@@ -190,8 +190,8 @@ export default function Routine() {
           <CoreHabitsSection />
         )}
 
-        {/* Empty state when no habits */}
-        {!isPast && (!profile.coreHabits || profile.coreHabits.length === 0) && (
+        {/* Empty state when no habits (today only) */}
+        {!isPast && !isFuture && (!profile.coreHabits || profile.coreHabits.length === 0) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
