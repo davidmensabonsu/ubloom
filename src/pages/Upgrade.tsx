@@ -14,6 +14,7 @@ const features = [
   'Mood trends & analytics',
   'All Wander resources unlocked',
   'Full personalisation experience',
+  'Unlimited Ubi routine integration — Ubi adds items directly to your daily plan',
   'Priority access to new features',
 ];
 
