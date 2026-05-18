@@ -311,6 +311,10 @@ interface UserStore {
   removeHabit: (habitId: string) => void;
   updateHabit: (habitId: string, updates: Partial<Omit<CoreHabit, 'id'>>) => void;
   reorderHabit: (habitId: string, direction: 'up' | 'down') => void;
+  /** Hide every recurring habit scheduled for a given date and hard-delete one-offs on that date. */
+  clearHabitsForDate: (date: string) => void;
+  /** Remove a date from a habit's skippedDates list. */
+  unskipHabitForDate: (habitId: string, date: string) => void;
    updateReminderSettings: (settings: Partial<ReminderSettings>) => void;
     markReminderSent: (timeOfDay: TimeOfDay) => void;
   ensureDailySnapshots: () => void;
