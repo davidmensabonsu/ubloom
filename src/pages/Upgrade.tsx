@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowLeft, Check, Sparkles, Crown } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, Check, Sparkles, Crown, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { PLANS } from '@/hooks/useSubscription';
@@ -12,6 +12,7 @@ const features = [
   'Unlimited Ubi conversations',
   'Personalised health & cycle insights',
   'Mood trends & analytics',
+  'Voice & video journals',
   'All Wander resources unlocked',
   'Full personalisation experience',
   'Unlimited Ubi routine integration — Ubi adds items directly to your daily plan',
@@ -22,6 +23,7 @@ export default function Upgrade() {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly');
   const [isLoading, setIsLoading] = useState(false);
+  const [featuresOpen, setFeaturesOpen] = useState(true);
 
   useEffect(() => {
     track('paywall_open', { source: 'upgrade_page', page: '/upgrade' });
@@ -93,18 +95,41 @@ export default function Upgrade() {
           transition={{ delay: 0.1 }}
           className="glass-card rounded-3xl p-5 space-y-3"
         >
-          <div className="flex items-center gap-2 mb-1">
-            <Sparkles size={16} className="text-primary" />
-            <h2 className="font-display font-semibold text-foreground">What's included</h2>
-          </div>
-          {features.map((feature, i) => (
-            <div key={i} className="flex items-center gap-3">
-              <div className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
-                <Check size={12} className="text-primary" />
-              </div>
-              <span className="text-sm text-foreground/90">{feature}</span>
+          <button
+            onClick={() => setFeaturesOpen(!featuresOpen)}
+            className="flex items-center justify-between w-full text-left"
+          >
+            <div className="flex items-center gap-2">
+              <Sparkles size={16} className="text-primary" />
+              <h2 className="font-display font-semibold text-foreground">What's included</h2>
             </div>
-          ))}
+            <motion.div
+              animate={{ rotate: featuresOpen ? 180 : 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <ChevronDown size={18} className="text-muted-foreground" />
+            </motion.div>
+          </button>
+          <AnimatePresence>
+            {featuresOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="overflow-hidden space-y-3"
+              >
+                {features.map((feature, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+                      <Check size={12} className="text-primary" />
+                    </div>
+                    <span className="text-sm text-foreground/90">{feature}</span>
+                  </div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         {/* Plan Picker */}
