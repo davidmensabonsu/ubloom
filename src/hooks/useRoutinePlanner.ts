@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useUserStore, type CoreHabit, type HabitFrequency, type TimeOfDay } from '@/stores/userStore';
 import { taskIconOptions } from '@/lib/taskIcons';
 import { getLocalDateStr } from '@/lib/dateUtils';
-import type { PlannedTask } from '@/lib/routinePlanParser';
+import type { PlannedTask, RoutinePlan } from '@/lib/routinePlanParser';
 import { track } from '@/hooks/useAnalytics';
 
 const DAY_MAP: Record<string, number> = {
@@ -82,6 +82,7 @@ export interface DuplicateMatch {
 export function useRoutinePlanner() {
   const coreHabits = useUserStore((s) => s.profile.coreHabits) || [];
   const setCoreHabits = useUserStore((s) => s.setCoreHabits);
+  const clearHabitsForDate = useUserStore((s) => s.clearHabitsForDate);
 
   const findDuplicates = useCallback(
     (tasks: PlannedTask[]): DuplicateMatch[] => {
@@ -138,5 +139,62 @@ export function useRoutinePlanner() {
     [coreHabits, setCoreHabits, findDuplicates],
   );
 
-  return useMemo(() => ({ findDuplicates, writeTasks }), [findDuplicates, writeTasks]);
+  const applyPlan = useCallback(
+    (
+      plan: RoutinePlan,
+      duplicateMode: 'replace' | 'keep-both' | 'skip' = 'keep-both',
+      meta?: { planType?: string; cyclePhase?: string | null },
+    ): { added: number; replaced: number; cleared: number } => {
+      const today = getLocalDateStr();
+
+      if (plan.action === 'clear_today') {
+        const cleared = coreHabits.filter(
+          (h) =>
+            (h.frequency === 'one-off' && (h.oneOffDate || h.createdDate) === today) ||
+            (h.frequency !== 'one-off' && !(h.skippedDates || []).includes(today)),
+        ).length;
+        clearHabitsForDate(today);
+        track('ubi_routine_plan_created', {
+          source: 'ubi_routine_planner',
+          plan_type: meta?.planType || 'clear_today',
+          tasks_added: 0,
+          tasks_replaced: 0,
+          tasks_cleared: cleared,
+          cycle_phase: meta?.cyclePhase || null,
+          is_premium: true,
+        });
+        return { added: 0, replaced: 0, cleared };
+      }
+
+      if (plan.action === 'replace_today') {
+        const cleared = coreHabits.filter(
+          (h) =>
+            (h.frequency === 'one-off' && (h.oneOffDate || h.createdDate) === today) ||
+            (h.frequency !== 'one-off' && !(h.skippedDates || []).includes(today)),
+        ).length;
+        clearHabitsForDate(today);
+        // Force every task to be a one-off for today
+        const todayTasks: PlannedTask[] = plan.tasks.map((t) => ({
+          ...t,
+          recurrence: 'one-off',
+          days: [],
+        }));
+        const { added } = writeTasks(todayTasks, 'keep-both', {
+          planType: 'replace_today',
+          cyclePhase: meta?.cyclePhase ?? null,
+        });
+        return { added, replaced: 0, cleared };
+      }
+
+      // add (default)
+      const { added, replaced } = writeTasks(plan.tasks, duplicateMode, meta);
+      return { added, replaced, cleared: 0 };
+    },
+    [coreHabits, clearHabitsForDate, writeTasks],
+  );
+
+  return useMemo(
+    () => ({ findDuplicates, writeTasks, applyPlan }),
+    [findDuplicates, writeTasks, applyPlan],
+  );
 }

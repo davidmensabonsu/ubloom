@@ -4,6 +4,7 @@ import { getLocalDateStr } from '@/lib/dateUtils';
 
 /** Inlined to avoid a circular import with FrequencyPicker. */
 function isHabitScheduledForDateLocal(habit: CoreHabit, dateStr: string): boolean {
+  if ((habit.skippedDates || []).includes(dateStr)) return false;
   const freq = habit.frequency;
   if (!freq) {
     const anchor = habit.oneOffDate || habit.createdDate;
@@ -40,6 +41,8 @@ export interface CoreHabit {
   oneOffDate?: string;               // yyyy-MM-dd for one-off habits
   scheduledTime?: string;            // HH:mm format, optional specific time
   createdDate?: string;              // yyyy-MM-dd local date when the habit was added
+  /** yyyy-MM-dd dates where this recurring habit should be hidden for that day only */
+  skippedDates?: string[];
 }
 
 export interface HabitCompletion {
@@ -308,6 +311,10 @@ interface UserStore {
   removeHabit: (habitId: string) => void;
   updateHabit: (habitId: string, updates: Partial<Omit<CoreHabit, 'id'>>) => void;
   reorderHabit: (habitId: string, direction: 'up' | 'down') => void;
+  /** Hide every recurring habit scheduled for a given date and hard-delete one-offs on that date. */
+  clearHabitsForDate: (date: string) => void;
+  /** Remove a date from a habit's skippedDates list. */
+  unskipHabitForDate: (habitId: string, date: string) => void;
    updateReminderSettings: (settings: Partial<ReminderSettings>) => void;
     markReminderSent: (timeOfDay: TimeOfDay) => void;
   ensureDailySnapshots: () => void;
@@ -613,6 +620,31 @@ export const useUserStore = create<UserStore>()(
           [habits[idx], habits[swapIdx]] = [habits[swapIdx], habits[idx]];
           return { profile: { ...state.profile, coreHabits: habits } };
         }),
+
+      clearHabitsForDate: (date) =>
+        set((state) => {
+          const next = state.profile.coreHabits
+            .filter((h) => !(h.frequency === 'one-off' && (h.oneOffDate || h.createdDate) === date))
+            .map((h) => {
+              if (!isHabitScheduledForDateLocal(h, date)) return h;
+              const skipped = h.skippedDates || [];
+              if (skipped.includes(date)) return h;
+              return { ...h, skippedDates: [...skipped, date] };
+            });
+          return { profile: { ...state.profile, coreHabits: next } };
+        }),
+
+      unskipHabitForDate: (habitId, date) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            coreHabits: state.profile.coreHabits.map((h) =>
+              h.id === habitId
+                ? { ...h, skippedDates: (h.skippedDates || []).filter((d) => d !== date) }
+                : h,
+            ),
+          },
+        })),
 
       updateReminderSettings: (settings) =>
         set((state) => {
