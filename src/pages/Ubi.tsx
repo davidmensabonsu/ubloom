@@ -51,6 +51,39 @@ export default function Ubi() {
   const [planConsumed, setPlanConsumed] = useState<Set<string>>(new Set());
   const [duplicatePrompt, setDuplicatePrompt] = useState<{ tasks: PlannedTask[]; duplicateTitles: string[]; markerKey: string } | null>(null);
   const [confirmation, setConfirmation] = useState<string | null>(null);
+  // Forces a re-evaluation of date-keyed UI (like the "Plan today" pill)
+  // exactly when the user's local clock rolls over to the next day.
+  const [todayKey, setTodayKey] = useState<string>(() => getLocalDateStr());
+  useEffect(() => {
+    let timeoutId: number | undefined;
+    const scheduleMidnight = () => {
+      const now = new Date();
+      const nextMidnight = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() + 1,
+        0, 0, 1, 0
+      );
+      const ms = Math.max(1000, nextMidnight.getTime() - now.getTime());
+      timeoutId = window.setTimeout(() => {
+        setTodayKey(getLocalDateStr());
+        scheduleMidnight();
+      }, ms);
+    };
+    const handleVisibility = () => {
+      // Catch the case where the device was asleep across midnight.
+      const current = getLocalDateStr();
+      setTodayKey((prev) => (prev !== current ? current : prev));
+    };
+    scheduleMidnight();
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('focus', handleVisibility);
+    return () => {
+      if (timeoutId) window.clearTimeout(timeoutId);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('focus', handleVisibility);
+    };
+  }, []);
   const updateProfile = useUserStore((s) => s.updateProfile);
   const [input, setInput] = useState('');
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -647,7 +680,8 @@ export default function Ubi() {
           if (confirmation) return null;
           if (messages.some((m) => m.role === 'user')) return null;
           if (localStorage.getItem('ubi-has-made-first-plan') !== '1') return null;
-          if (localStorage.getItem(`ubi-plan-today-used-${getLocalDateStr()}`) === '1') return null;
+          // Keyed on todayKey so we re-evaluate at the user's local midnight.
+          if (localStorage.getItem(`ubi-plan-today-used-${todayKey}`) === '1') return null;
           return (
             <div className="max-w-lg mx-auto px-4 pt-1.5 pb-2">
               <motion.button
