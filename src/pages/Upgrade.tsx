@@ -23,6 +23,7 @@ export default function Upgrade() {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly');
   const [isLoading, setIsLoading] = useState(false);
+  const [featuresOpen, setFeaturesOpen] = useState(true);
 
   useEffect(() => {
     track('paywall_open', { source: 'upgrade_page', page: '/upgrade' });
