@@ -32,6 +32,7 @@ export default function WeeklyProgress({ selectedDate, onSelectDate }: WeeklyPro
       const dateStr = format(date, 'yyyy-MM-dd');
       const dayName = format(date, 'EEE');
       const isToday = dateStr === format(today, 'yyyy-MM-dd');
+      const isFuture = dateStr > format(today, 'yyyy-MM-dd');
 
       const completedHabits = habitCompletions.filter(
         (c) => c.date === dateStr && c.completed && allTrackableIds.has(c.habitId)
@@ -40,13 +41,18 @@ export default function WeeklyProgress({ selectedDate, onSelectDate }: WeeklyPro
       const expectedTotal = coreHabits.filter(h => isHabitScheduledForDate(h, dateStr)).length;
       const totalHabits = isToday
         ? expectedTotal
-        : Math.max(expectedTotal, completedHabits);
-      const percentage = totalHabits > 0 ? (completedHabits / totalHabits) * 100 : 0;
+        : isFuture
+          ? expectedTotal
+          : Math.max(expectedTotal, completedHabits);
+      const percentage = isFuture
+        ? 0
+        : totalHabits > 0 ? (completedHabits / totalHabits) * 100 : 0;
 
       days.push({
         date: dateStr,
         dayName,
         isToday,
+        isFuture,
         completedHabits,
         totalHabits,
         percentage,
@@ -59,6 +65,7 @@ export default function WeeklyProgress({ selectedDate, onSelectDate }: WeeklyPro
   const weekLabel = useMemo(() => {
     if (weekOffset === 0) return 'This week';
     if (weekOffset === -1) return 'Last week';
+    if (weekOffset === 1) return 'Next week';
     const today = startOfDay(new Date());
     const weekEnd = addDays(today, weekOffset * 7);
     const weekStart = subDays(weekEnd, 6);
