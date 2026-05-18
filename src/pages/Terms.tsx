@@ -150,8 +150,8 @@ export default function Terms() {
               uBloom Premium provides unlimited access to all features. Premium is available at the following prices:
             </p>
             <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 ml-2">
-              <li>Monthly plan: £12.99 per month</li>
-              <li>Annual plan: £79.99 per year (equivalent to £6.67 per month)</li>
+              <li>Monthly plan: £4.99 per month</li>
+              <li>Annual plan: £39.99 per year (equivalent to £3.33 per month)</li>
             </ul>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Prices are displayed inclusive of any applicable taxes. We reserve the right to change pricing with 30 days notice to existing subscribers.

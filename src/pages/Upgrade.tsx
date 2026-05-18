@@ -123,14 +123,14 @@ export default function Upgrade() {
             }`}
           >
             <div className="absolute -top-2.5 right-4 px-2.5 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider">
-              Save 25%
+              Save 33%
             </div>
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-semibold text-foreground">Yearly</p>
-                <p className="text-xs text-muted-foreground">£3.75/month, billed annually</p>
+                <p className="text-xs text-muted-foreground">£3.33/month, billed annually</p>
               </div>
-              <p className="text-lg font-bold text-foreground">£45<span className="text-sm font-normal text-muted-foreground">/yr</span></p>
+              <p className="text-lg font-bold text-foreground">£39.99<span className="text-sm font-normal text-muted-foreground">/yr</span></p>
             </div>
           </button>
 

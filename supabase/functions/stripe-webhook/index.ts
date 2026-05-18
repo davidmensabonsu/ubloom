@@ -14,7 +14,7 @@ const log = (step: string, details?: unknown) => {
 
 const PREMIUM_PRICE_IDS = new Set([
   "price_1TKMZaAni5cThJuscqeltmFP", // monthly £4.99
-  "price_1TKMaJAni5cThJus9hNowIo0", // yearly £45
+  "price_1TKMaJAni5cThJus9hNowIo0", // yearly £39.99
 ]);
 
 function planFromPriceId(priceId: string | null | undefined): "free" | "premium" {
