@@ -428,6 +428,46 @@ export default function Profile() {
             </div>
           )}
 
+          {username ? (
+            <p className="text-sm text-primary font-medium mt-1">@{username}</p>
+          ) : (
+            <div className="w-full max-w-xs mt-3">
+              <p className="text-xs text-muted-foreground text-center mb-2">
+                Claim your unique username for the upcoming social feature
+              </p>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground select-none">@</span>
+                  <Input
+                    value={claimUsername}
+                    onChange={(e) => setClaimUsername(e.target.value.replace(/\s+/g, '').toLowerCase())}
+                    placeholder="username"
+                    maxLength={30}
+                    autoCapitalize="off"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    className="pl-7"
+                  />
+                </div>
+                <button
+                  onClick={handleClaimUsername}
+                  disabled={claimStatus !== 'available' || isClaiming}
+                  className="px-3 h-9 rounded-md bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50 shrink-0"
+                >
+                  Claim
+                </button>
+              </div>
+              {claimError && claimUsername && (
+                <p className="text-xs text-rose-500 mt-1.5 text-center">{claimError}</p>
+              )}
+              {claimStatus === 'available' && (
+                <p className="text-xs text-emerald-600 mt-1.5 text-center">@{claimUsername.trim().toLowerCase()} is available</p>
+              )}
+              {claimStatus === 'checking' && (
+                <p className="text-xs text-muted-foreground mt-1.5 text-center">Checking…</p>
+              )}
+            </div>
+          )}
           <p className="text-sm text-muted-foreground mt-1">{user?.email}</p>
         </motion.div>
 
