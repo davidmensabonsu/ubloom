@@ -276,21 +276,25 @@ export default function Ubi() {
     sendMessage(text);
   };
 
-  const approvePlan = (tasks: PlannedTask[], markerKey: string) => {
+  const approvePlan = (plan: RoutinePlan, markerKey: string) => {
     if (!isActive) {
       setUpgradeOpen(true);
       return;
     }
-    const dupes = planner.findDuplicates(tasks);
-    if (dupes.length) {
-      setDuplicatePrompt({
-        tasks,
-        duplicateTitles: dupes.map((d) => d.existing.title),
-        markerKey,
-      });
-      return;
+    // Only the plain "add" flow needs the duplicate prompt — replace/clear
+    // are deliberate today-only swaps.
+    if (plan.action === 'add') {
+      const dupes = planner.findDuplicates(plan.tasks);
+      if (dupes.length) {
+        setDuplicatePrompt({
+          tasks: plan.tasks,
+          duplicateTitles: dupes.map((d) => d.existing.title),
+          markerKey,
+        });
+        return;
+      }
     }
-    writePlan(tasks, 'keep-both', markerKey);
+    applyPlanWithMode(plan, 'keep-both', markerKey);
   };
 
   const writePlan = (
@@ -298,9 +302,17 @@ export default function Ubi() {
     mode: 'replace' | 'keep-both' | 'skip',
     markerKey: string,
   ) => {
+    applyPlanWithMode({ action: 'add', scope: 'ongoing', tasks }, mode, markerKey);
+  };
+
+  const applyPlanWithMode = (
+    plan: RoutinePlan,
+    mode: 'replace' | 'keep-both' | 'skip',
+    markerKey: string,
+  ) => {
     const cyclePhase = profile.cycleData?.setupComplete ? 'tracked' : null;
-    const { added, replaced } = planner.writeTasks(tasks, mode, {
-      planType: 'mixed',
+    const { added, replaced, cleared } = planner.applyPlan(plan, mode, {
+      planType: plan.action,
       cyclePhase,
     });
     setPlanConsumed((prev) => new Set(prev).add(markerKey));
@@ -308,11 +320,17 @@ export default function Ubi() {
     if (added > 0) {
       try { localStorage.setItem('ubi-has-made-first-plan', '1'); } catch {}
     }
-    setConfirmation(
-      `Done — I've added ${added} task${added === 1 ? '' : 's'} to your routine${
+    let msg: string;
+    if (plan.action === 'clear_today') {
+      msg = `Done — I've cleared today's list${cleared ? ` (${cleared} task${cleared === 1 ? '' : 's'} paused)` : ''}. Your recurring tasks will return tomorrow.`;
+    } else if (plan.action === 'replace_today') {
+      msg = `Done — today is now set to your new plan (${added} task${added === 1 ? '' : 's'}). Your usual routine returns tomorrow.`;
+    } else {
+      msg = `Done — I've added ${added} task${added === 1 ? '' : 's'} to your routine${
         replaced ? ` and replaced ${replaced}` : ''
-      }. Head over to the Routine page to see everything in place. You can always edit, reorder, or remove anything that doesn't feel right once you see it in action.`
-    );
+      }. Head over to the Routine page to see everything in place. You can always edit, reorder, or remove anything that doesn't feel right once you see it in action.`;
+    }
+    setConfirmation(msg);
   };
 
   const requestChanges = () => {
