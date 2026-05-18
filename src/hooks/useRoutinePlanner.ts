@@ -83,6 +83,7 @@ export function useRoutinePlanner() {
   const coreHabits = useUserStore((s) => s.profile.coreHabits) || [];
   const setCoreHabits = useUserStore((s) => s.setCoreHabits);
   const clearHabitsForDate = useUserStore((s) => s.clearHabitsForDate);
+  const snapshotRoutineForUndo = useUserStore((s) => s.snapshotRoutineForUndo);
 
   const findDuplicates = useCallback(
     (tasks: PlannedTask[]): DuplicateMatch[] => {
@@ -153,6 +154,7 @@ export function useRoutinePlanner() {
             (h.frequency === 'one-off' && (h.oneOffDate || h.createdDate) === today) ||
             (h.frequency !== 'one-off' && !(h.skippedDates || []).includes(today)),
         ).length;
+        snapshotRoutineForUndo('clear_today');
         clearHabitsForDate(today);
         track('ubi_routine_plan_created', {
           source: 'ubi_routine_planner',
@@ -172,6 +174,7 @@ export function useRoutinePlanner() {
             (h.frequency === 'one-off' && (h.oneOffDate || h.createdDate) === today) ||
             (h.frequency !== 'one-off' && !(h.skippedDates || []).includes(today)),
         ).length;
+        snapshotRoutineForUndo('replace_today');
         clearHabitsForDate(today);
         // Force every task to be a one-off for today
         const todayTasks: PlannedTask[] = plan.tasks.map((t) => ({
@@ -187,10 +190,11 @@ export function useRoutinePlanner() {
       }
 
       // add (default)
+      snapshotRoutineForUndo('add');
       const { added, replaced } = writeTasks(plan.tasks, duplicateMode, meta);
       return { added, replaced, cleared: 0 };
     },
-    [coreHabits, clearHabitsForDate, writeTasks],
+    [coreHabits, clearHabitsForDate, writeTasks, snapshotRoutineForUndo],
   );
 
   return useMemo(
