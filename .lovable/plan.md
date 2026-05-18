@@ -1,97 +1,80 @@
-## Goal
+## The two problems
 
-Give Ubi (Premium / trial) the ability to *modify* today's to-do list — not just append to it — and make the in-chat plan preview show what today will **actually** look like after the change.
+**1. Ubi misreads "from tomorrow" as "today too"**
+When you say "except today, from tomorrow build a daily routine of X/Y/Z", Ubi creates daily habits with `createdDate = today` and `isHabitScheduledForDate` returns true for today, so the tasks appear today as well.
 
-Three supported actions:
+**2. You can't preview future days**
+The week chart only goes back from today, and there's no view for tomorrow / next week. So you can't confirm that the new routine "lands" tomorrow.
 
-1. **Add** — drop one or two extra tasks on top of today's existing list (current behaviour, kept).
-2. **Replace today** — hide every recurring task scheduled for today and use only Ubi's new tasks for today. Recurring tasks (daily / specific-days) come back as normal tomorrow.
-3. **Clear today** — wipe today's list. Recurring tasks return tomorrow.
+---
 
-Tasks marked `daily` or `weekly` in Ubi's plan are still saved as proper recurring habits and apply going forward; only the "for today" semantics change.
+## What we'll build
 
-## How "remove for today only" works
+### A. Teach Ubi a "starts on" concept
 
-Add a per-habit `skippedDates: string[]` (yyyy-MM-dd) to `CoreHabit`. `isHabitScheduledForDate` returns `false` if `dateStr` is in `skippedDates`. One-off habits whose `oneOffDate` is today get hard-deleted instead.
+Extend the `<routine_plan>` JSON with an optional per-task `startsOn` (YYYY-MM-DD) and a top-level `startsOn` default. Update Ubi's system prompt to detect phrases like:
+- "from tomorrow", "starting tomorrow", "except today", "from Monday", "starting next week"
 
-A new store action `clearHabitsForDate(date)`:
-- pushes `date` into `skippedDates` of every habit that is currently scheduled for that date AND is not one-off,
-- removes one-off habits whose `oneOffDate === date`.
+When detected on an `action: "add"`, `scope: "ongoing"` plan, every task gets `startsOn` set to that date (default tomorrow if user said "from tomorrow"/"except today").
 
-A new store action `unskipHabitForDate(habitId, date)` for completeness (used when an "add" later wants to bring something back).
+If the user's phrasing is ambiguous ("build me a daily routine of X, Y, Z" without a date hint), Ubi asks one tap-option question:
+> Start this routine today, or from tomorrow?
+> `<options>Start today|Start tomorrow</options>`
 
-No data migration needed — undefined `skippedDates` is treated as empty.
+### B. Honour `startsOn` in scheduling
 
-## Ubi planning flow changes
+- Add `startsOn?: string` to `CoreHabit`.
+- `plannedToHabit` writes `startsOn` (and also uses it as `createdDate` so historic logic stays consistent).
+- `isHabitScheduledForDate(h, dateStr)` returns `false` when `dateStr < (h.startsOn ?? h.createdDate)`. This single change stops a "from tomorrow" daily habit from showing up today.
 
-### Intent detection (server prompt)
+### C. Future day viewing & editing on Routine page
 
-Extend the existing Routine Planning Mode section in `supabase/functions/ubi-chat/index.ts`:
+- Let `WeeklyProgress` step forward (`weekOffset > 0`) up to +4 weeks. Future days in the bar chart render as empty bars with a small "upcoming" hint instead of a completion ratio.
+- New `FutureDayView` component (mirrors `PastDayView` shape) used when `viewDate > today`:
+  - Header: "Viewing {date} — preview"
+  - Lists every habit where `isHabitScheduledForDate(habit, viewDate) === true`, computed live from `coreHabits` (no snapshot).
+  - No check circles (you can't complete future days). Each row has a subtle "scheduled" pill.
+  - Floating "+" stays visible for future days; tapping it opens `AddTaskDialog` pre-set to a one-off on `viewDate` (small prop addition: `defaultOneOffDate`).
+- `Routine.tsx`: branch on `viewDate < today` → `PastDayView`, `viewDate > today` → `FutureDayView`, else live `CoreHabitsSection`. The Undo banner only shows when viewing today.
 
-- Detect three intents from the user's words:
-  - **clear** — "clear my tasks", "wipe today", "remove everything for today".
-  - **replace** — "plan just for today", "today I want to do X instead", "scrap today and do X", or any "just today" plan that conflicts in number/time with the existing daily routine.
-  - **add** — "also add", "on top of my routine", "just add a run today", or a small (1–3) set of one-off additions.
-- If ambiguous (user gives a sizeable just-today plan without saying replace vs add), Ubi must **ask one clarifying question** before emitting the plan:
-  > "Want me to swap out today's usual routine for this, or add these on top of what's already there?"
-  with `<options>Replace today|Add on top</options>`.
+### D. Ubi preview card reflects the new behaviour
 
-### Richer plan block
+`PlanPreviewCard` already shows "today's projected list". When the plan has `startsOn` in the future:
+- Header changes to "Your routine starting {date}" 
+- Today's list is shown unchanged ("Today stays as-is")
+- The new tasks render under the future date
 
-Augment `<routine_plan>` schema with a top-level wrapper so the action travels with the tasks:
+### E. Memory & state plumbing
 
-```
-<routine_plan>
-{
-  "action": "add" | "replace_today" | "clear_today",
-  "scope": "today" | "ongoing",
-  "tasks": [ {title, time, recurrence, days, icon, period}, ... ]
-}
-</routine_plan>
-```
+- `userStore.CoreHabit`: add `startsOn?: string`. No migration needed (undefined = behaves as before).
+- `FrequencyPicker.isHabitScheduledForDate`: add the `startsOn`/`createdDate` floor check.
+- `routinePlanParser`: extend `PlannedTask` and `RoutinePlan` with optional `startsOn`; parser defaults top-level `startsOn` onto each task that doesn't override it.
+- `useRoutinePlanner.applyPlan`: pass `startsOn` through; for `add` + `ongoing` + `startsOn` in the future, do NOT snapshot today for undo using `clear` semantics — keep behaviour as a pure additive change.
 
-`clear_today` may have `tasks: []`. Backward-compat: if a bare array is received, treat it as `{action: "add", tasks: [...]}`.
+---
 
-Update `src/lib/routinePlanParser.ts` to parse both shapes and return `{ action, scope, tasks }`.
+## Technical notes (for reference)
 
-### Preview = the full resulting day
+Files touched:
+- `supabase/functions/ubi-chat/index.ts` — prompt update only
+- `src/lib/routinePlanParser.ts` — schema + parser
+- `src/stores/userStore.ts` — `startsOn` on `CoreHabit`
+- `src/components/routine/FrequencyPicker.tsx` — start-date floor in `isHabitScheduledForDate`
+- `src/hooks/useRoutinePlanner.ts` — propagate `startsOn` in `plannedToHabit`
+- `src/components/ubi/PlanPreviewCard.tsx` — future-start labelling
+- `src/components/routine/WeeklyProgress.tsx` — allow forward navigation, render future bars
+- `src/components/routine/FutureDayView.tsx` — new
+- `src/components/routine/AddTaskDialog.tsx` — optional `defaultOneOffDate` prop
+- `src/pages/Routine.tsx` — three-way view branch, FAB on future days
 
-`PlanPreviewCard` is reworked to render **today's projected list** instead of only Ubi's new tasks. It receives:
+No database migration. No edge-function deploy needed beyond the prompt change.
 
-- `existingTodayTasks` (from `coreHabits` filtered by `isHabitScheduledForDate(today)` minus already-skipped),
-- `plannedTasks` (from Ubi),
-- `action`.
+---
 
-Render logic:
+## Open question before I build
 
-- `add` → existing tasks (greyed "Already in your day" label) + new tasks (rose accent "Ubi is adding").
-- `replace_today` → only new tasks, with a header chip "Replacing today's usual routine" and a small collapsed footer "X recurring tasks will be paused for today (back tomorrow)".
-- `clear_today` → empty state "Today will be clear — recurring tasks return tomorrow."
+When you're previewing a future day (say next Tuesday) and tap the "+" to add a task, should that task default to:
+- **A one-off just for that specific day** (most common: "add yoga next Tuesday"), or
+- **Open the normal Add Task dialog** so you can also pick daily/weekly recurrence starting that day?
 
-CTA buttons stay: **Looks good, apply** + **I'd like to change something**. For `replace_today` and `clear_today` the apply button copy becomes "Apply to today only".
-
-### Applying the plan
-
-Extend `useRoutinePlanner.writeTasks` (or add `applyPlan`) to take `{ action, tasks }`:
-
-- `add` → existing behaviour (with the existing duplicate prompt).
-- `replace_today` → call `clearHabitsForDate(today)`, then add each `task` as a `one-off` habit dated today (regardless of the recurrence Ubi sent for that task's "just today" intent). Skip the duplicate prompt — it's a deliberate swap.
-- `clear_today` → call `clearHabitsForDate(today)` only; don't add anything.
-
-`Ubi.tsx#approvePlan` is updated to switch on `action` and feed the right path. Confirmation toast copy is updated per action.
-
-## Files to touch
-
-- `supabase/functions/ubi-chat/index.ts` — extend Routine Planning Mode prompt: intent detection, clarifying-question rule, new `<routine_plan>` JSON shape.
-- `src/lib/routinePlanParser.ts` — parse new wrapper, keep legacy array fallback.
-- `src/stores/userStore.ts` — add `skippedDates` to `CoreHabit`, update inline `isHabitScheduledForDateLocal`, add `clearHabitsForDate` / `unskipHabitForDate` actions.
-- `src/components/routine/FrequencyPicker.tsx` — honour `skippedDates` in `isHabitScheduledForDate`.
-- `src/hooks/useRoutinePlanner.ts` — accept `{action, tasks}`, implement replace/clear paths, force `recurrence: 'one-off'` for replace tasks.
-- `src/components/ubi/PlanPreviewCard.tsx` — new preview that shows today's projected list with action-aware labelling.
-- `src/pages/Ubi.tsx` — pass `existingTodayTasks` + `action` to `PlanPreviewCard`, branch `approvePlan` per action, update confirmation copy.
-
-## Non-goals
-
-- No new database tables; everything lives in the existing `user_data` JSONB blob via `coreHabits`.
-- No changes for free-tier users — they still see the human-readable plan with no apply button.
-- No retroactive editing of past days.
+My recommendation is the first — keep "+" on a future day scoped to a one-off for that day, and reserve recurring routine building for Ubi or today's "+". Happy to do the second instead.

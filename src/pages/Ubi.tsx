@@ -528,6 +528,7 @@ export default function Ubi() {
                                 tasks={plan.tasks}
                                 action={plan.action}
                                 existingTodayTasks={existingTodayTasks}
+                                startsOn={plan.startsOn}
                                 onApprove={() => approvePlan(plan, markerKey)}
                                 onRequestChanges={requestChanges}
                               />

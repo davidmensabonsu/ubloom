@@ -78,10 +78,11 @@ export default function FrequencyPicker({
 
 /** Check if a habit should be visible on a given date */
 export function isHabitScheduledForDate(
-  habit: { frequency?: HabitFrequency; specificDays?: number[]; oneOffDate?: string; createdDate?: string; skippedDates?: string[] },
+  habit: { frequency?: HabitFrequency; specificDays?: number[]; oneOffDate?: string; createdDate?: string; skippedDates?: string[]; startsOn?: string },
   dateStr: string,
 ): boolean {
   if ((habit.skippedDates || []).includes(dateStr)) return false;
+  if (habit.startsOn && dateStr < habit.startsOn) return false;
   const freq = habit.frequency;
   // Tasks with no recurrence setting should only appear on the day they were
   // scheduled for (oneOffDate) or, if missing, the day they were created.

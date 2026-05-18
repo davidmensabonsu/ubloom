@@ -58,9 +58,11 @@ function plannedToHabit(t: PlannedTask): CoreHabit {
     if (!specificDays.length) specificDays = [1];
   } else if (t.recurrence === 'one-off') {
     frequency = 'one-off';
-    oneOffDate = today;
+    oneOffDate = t.startsOn || today;
   }
   const icon = t.icon && VALID_ICON_IDS.has(t.icon) ? t.icon : 'star';
+  // For recurring habits, startsOn lets us defer their first appearance.
+  const startsOn = t.startsOn && t.startsOn > today ? t.startsOn : undefined;
   return {
     id: `ubi-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     title: t.title,
@@ -71,6 +73,7 @@ function plannedToHabit(t: PlannedTask): CoreHabit {
     oneOffDate,
     scheduledTime: t.time || undefined,
     createdDate: today,
+    startsOn,
   };
 }
 

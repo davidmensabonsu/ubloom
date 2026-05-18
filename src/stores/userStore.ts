@@ -5,6 +5,9 @@ import { getLocalDateStr } from '@/lib/dateUtils';
 /** Inlined to avoid a circular import with FrequencyPicker. */
 function isHabitScheduledForDateLocal(habit: CoreHabit, dateStr: string): boolean {
   if ((habit.skippedDates || []).includes(dateStr)) return false;
+  // Honour an explicit start date: hide the habit on any day before it.
+  const startsOn = habit.startsOn;
+  if (startsOn && dateStr < startsOn) return false;
   const freq = habit.frequency;
   if (!freq) {
     const anchor = habit.oneOffDate || habit.createdDate;
@@ -43,6 +46,8 @@ export interface CoreHabit {
   createdDate?: string;              // yyyy-MM-dd local date when the habit was added
   /** yyyy-MM-dd dates where this recurring habit should be hidden for that day only */
   skippedDates?: string[];
+  /** yyyy-MM-dd: the earliest date this habit is scheduled to appear on. */
+  startsOn?: string;
 }
 
 export interface HabitCompletion {
