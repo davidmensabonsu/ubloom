@@ -680,7 +680,8 @@ export default function Ubi() {
           if (confirmation) return null;
           if (messages.some((m) => m.role === 'user')) return null;
           if (localStorage.getItem('ubi-has-made-first-plan') !== '1') return null;
-          if (localStorage.getItem(`ubi-plan-today-used-${getLocalDateStr()}`) === '1') return null;
+          // Keyed on todayKey so we re-evaluate at the user's local midnight.
+          if (localStorage.getItem(`ubi-plan-today-used-${todayKey}`) === '1') return null;
           return (
             <div className="max-w-lg mx-auto px-4 pt-1.5 pb-2">
               <motion.button
