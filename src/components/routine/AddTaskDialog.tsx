@@ -228,13 +228,15 @@ export default function AddTaskDialog({ open, onOpenChange, defaultOneOffDate }:
             )}
           </div>
 
-          {/* Frequency */}
-          <FrequencyPicker
-            frequency={frequency}
-            specificDays={specificDays}
-            onFrequencyChange={setFrequency}
-            onSpecificDaysChange={setSpecificDays}
-          />
+          {/* Frequency — hidden when scoped to a specific future day */}
+          {!defaultOneOffDate && (
+            <FrequencyPicker
+              frequency={frequency}
+              specificDays={specificDays}
+              onFrequencyChange={setFrequency}
+              onSpecificDaysChange={setSpecificDays}
+            />
+          )}
 
         </div>
 
