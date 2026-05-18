@@ -46,6 +46,8 @@ export interface CoreHabit {
   createdDate?: string;              // yyyy-MM-dd local date when the habit was added
   /** yyyy-MM-dd dates where this recurring habit should be hidden for that day only */
   skippedDates?: string[];
+  /** yyyy-MM-dd: the earliest date this habit is scheduled to appear on. */
+  startsOn?: string;
 }
 
 export interface HabitCompletion {
