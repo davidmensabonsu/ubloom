@@ -1,22 +1,22 @@
-The empty state is happening because the opening Ubi reply is generated in the browser session, but the assistant reply is not being reliably saved to the database before you leave/reopen. On top of that, the follow-up prompt strip is only kept in temporary page state, so it disappears on reload.
+The source of truth in `useSubscription.ts` already says £4.99/mo and £39.99/yr, but several places still hardcode the old £12.99 / £79.99 / £45 prices. I'll update them all.
 
-Plan:
+### Files to update
 
-1. **Persist Ubi’s opening assistant message correctly**
-   - Keep the existing security rule that users can only create their own user messages.
-   - Move assistant-message persistence into the Ubi backend function, so Ubi replies can be saved safely without weakening database permissions.
-   - Make the frontend pass the active conversation ID and auth token when requesting a Ubi response.
+**`src/components/UpgradeModal.tsx`**
+- Monthly card: `£12.99` → `£4.99`
+- Annual card: `£79.99` → `£39.99`, `£6.67/month` → `£3.33/month`
+- "Save 49%" badge → `Save 33%` (39.99 vs 4.99×12 = 59.88 → 33%)
 
-2. **Restore the exact “left page” state for unfinished chats**
-   - When the Ubi page opens, load the latest conversation if it is still inside the 12-hour window or if the user has not sent a message yet.
-   - If that conversation has an opening assistant message, show it instead of creating a new blank chat.
-   - If a conversation exists but somehow has no saved messages, trigger one fresh opener rather than leaving the screen empty.
+**`src/pages/Upgrade.tsx`**
+- Yearly card: `£45/yr` → `£39.99/yr`, `£3.75/month` → `£3.33/month`, "Save 25%" → "Save 33%"
+- Monthly card already `£4.99` — leave
 
-3. **Reload the horizontal prompts after returning**
-   - Preserve the AI-generated suggested prompts with the saved assistant message instead of only storing them in React state.
-   - When loading a conversation, extract those prompts back into `suggestedPrompts` so the horizontal prompt strip returns with the opening message.
+**`src/pages/Terms.tsx`**
+- Update the two pricing lines to the new amounts (£4.99/mo and £39.99/yr, equivalent ~£3.33/mo)
 
-4. **Keep the restart rules exactly as requested**
-   - New opening message only when the plus button starts a new chat.
-   - New opening message only when 12 hours have passed since the last Ubi/user interaction.
-   - Otherwise, reopening Ubi restores the conversation exactly as it was when the user left.
+**`supabase/functions/stripe-webhook/index.ts`**
+- Update the `// yearly £45` comment to `// yearly £39.99` (comment only — price ID itself untouched)
+
+### Out of scope
+- Stripe price IDs in `useSubscription.ts` — assumed already pointed at the new £4.99/£39.99 prices in Stripe. If not, you'll need to create new prices in Stripe and swap the IDs.
+- Unrelated `$12.99` strings in `bookLinks.ts` (Amazon product prices).
