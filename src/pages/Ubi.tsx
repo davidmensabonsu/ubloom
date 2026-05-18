@@ -519,9 +519,15 @@ export default function Ubi() {
                           const options = parseOptions(msg.content);
                           const plan = parseRoutinePlan(msg.content);
                           if (plan && !planConsumed.has(markerKey)) {
+                            const todayStr = getLocalDateStr();
+                            const existingTodayTasks = (profile.coreHabits || []).filter((h) =>
+                              isHabitScheduledForDate(h, todayStr),
+                            );
                             return (
                               <PlanPreviewCard
-                                tasks={plan}
+                                tasks={plan.tasks}
+                                action={plan.action}
+                                existingTodayTasks={existingTodayTasks}
                                 onApprove={() => approvePlan(plan, markerKey)}
                                 onRequestChanges={requestChanges}
                               />
