@@ -713,35 +713,36 @@ export default function Ubi() {
           );
         })()}
 
-        {/* "Plan today" preset — appears daily once the user has made their first ever plan, hidden after use for the day */}
+        {/* Dynamic plan preset — "Plan today" before 4pm, "Plan tomorrow" from 4pm */}
         {(() => {
           if (confirmation) return null;
           if (messages.some((m) => m.role === 'user')) return null;
           if (localStorage.getItem('ubi-has-made-first-plan') !== '1') return null;
-          // Keyed on todayKey so we re-evaluate at the user's local midnight.
-          if (localStorage.getItem(`ubi-plan-today-used-${todayKey}`) === '1') return null;
-          return (
-            <div className="max-w-lg mx-auto px-4 pt-1.5 pb-2">
-              <motion.button
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                onClick={handlePlanTodayChip}
-                disabled={isStreaming || !canUse('ubi_chat')}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-white border border-primary/20 hover:border-primary/40 hover:bg-white transition-all text-left shadow-soft disabled:opacity-50"
-              >
-                <span className="text-sm text-foreground flex-1" style={{ fontFamily: 'Jost, sans-serif' }}>
-                  Plan today
-                </span>
-              </motion.button>
-            </div>
-          );
-        })()}
 
-        {/* "Plan tomorrow" preset — same gating as "Plan today", hidden after use for the day */}
-        {(() => {
-          if (confirmation) return null;
-          if (messages.some((m) => m.role === 'user')) return null;
-          if (localStorage.getItem('ubi-has-made-first-plan') !== '1') return null;
+          const now = new Date();
+          const hour = now.getHours();
+          const isBefore4pm = hour < 16;
+
+          if (isBefore4pm) {
+            if (localStorage.getItem(`ubi-plan-today-used-${todayKey}`) === '1') return null;
+            return (
+              <div className="max-w-lg mx-auto px-4 pt-1.5 pb-2">
+                <motion.button
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  onClick={handlePlanTodayChip}
+                  disabled={isStreaming || !canUse('ubi_chat')}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-white border border-primary/20 hover:border-primary/40 hover:bg-white transition-all text-left shadow-soft disabled:opacity-50"
+                >
+                  <span className="text-sm text-foreground flex-1" style={{ fontFamily: 'Jost, sans-serif' }}>
+                    Plan today
+                  </span>
+                </motion.button>
+              </div>
+            );
+          }
+
+          // 4pm onwards — show Plan tomorrow
           if (localStorage.getItem(`ubi-plan-tomorrow-used-${todayKey}`) === '1') return null;
           return (
             <div className="max-w-lg mx-auto px-4 pt-1.5 pb-2">
