@@ -94,6 +94,8 @@ export default function PlanPreviewCard({
 }: Props) {
   const today = new Date().toISOString().slice(0, 10);
   const isFutureStart = !!startsOn && startsOn > today && action === 'add';
+  const tomorrowStr = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  const isTomorrow = isFutureStart && startsOn === tomorrowStr;
   // Build the resulting day depending on action.
   const items: PreviewItem[] = [];
 
@@ -135,7 +137,9 @@ export default function PlanPreviewCard({
   const totalCount = items.length;
 
   const headerLabel =
-    isFutureStart
+    isTomorrow
+      ? "Tomorrow's plan — today stays the same"
+      : isFutureStart
       ? `Starting ${startsOn} — today stays the same`
       : action === 'replace_today'
       ? "Today's new plan (replacing your usual)"
