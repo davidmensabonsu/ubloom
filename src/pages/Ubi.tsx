@@ -737,6 +737,29 @@ export default function Ubi() {
           );
         })()}
 
+        {/* "Plan tomorrow" preset — same gating as "Plan today", hidden after use for the day */}
+        {(() => {
+          if (confirmation) return null;
+          if (messages.some((m) => m.role === 'user')) return null;
+          if (localStorage.getItem('ubi-has-made-first-plan') !== '1') return null;
+          if (localStorage.getItem(`ubi-plan-tomorrow-used-${todayKey}`) === '1') return null;
+          return (
+            <div className="max-w-lg mx-auto px-4 pt-1.5 pb-2">
+              <motion.button
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                onClick={handlePlanTomorrowChip}
+                disabled={isStreaming || !canUse('ubi_chat')}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-white border border-primary/20 hover:border-primary/40 hover:bg-white transition-all text-left shadow-soft disabled:opacity-50"
+              >
+                <span className="text-sm text-foreground flex-1" style={{ fontFamily: 'Jost, sans-serif' }}>
+                  Plan tomorrow
+                </span>
+              </motion.button>
+            </div>
+          );
+        })()}
+
         {/* Horizontal scrollable prompts */}
         {!isStreaming && (() => {
           const hasMessages = messages.length > 0;
