@@ -270,6 +270,18 @@ export default function Ubi() {
     });
   };
 
+  const handlePlanTomorrowChip = () => {
+    if (isStreaming) return;
+    if (!canUse('ubi_chat')) return;
+    try {
+      localStorage.setItem(`ubi-plan-tomorrow-used-${getLocalDateStr()}`, '1');
+    } catch {}
+    incrementUbiMessageCount();
+    sendMessage(`[SYSTEM: ROUTINE_PLANNING_FLOW] I'd like to plan just for tomorrow`, {
+      displayContent: "Plan tomorrow",
+    });
+  };
+
   const sendOptionReply = (text: string) => {
     if (isStreaming || !canUse('ubi_chat')) return;
     incrementUbiMessageCount();
