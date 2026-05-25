@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireUser } from "../_shared/auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -10,8 +11,14 @@ const corsHeaders = {
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  const auth = await requireUser(req, corsHeaders);
+  if ("response" in auth) return auth.response;
+  const verifiedUserId = auth.userId;
+
   try {
-    const { messages, userContext, chatHistory, conversationId, userId } = await req.json();
+    const { messages, userContext, chatHistory, conversationId } = await req.json();
+    // Always derive userId from the verified JWT — never trust the request body.
+    const userId = verifiedUserId;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -21,11 +28,39 @@ serve(async (req) => {
       ? createClient(SUPABASE_URL, SERVICE_ROLE)
       : null;
 
+    // If a conversationId was supplied, verify it belongs to this user.
+    if (conversationId && admin) {
+      const { data: convo } = await admin
+        .from("ubi_conversations")
+        .select("id")
+        .eq("id", conversationId)
+        .eq("user_id", verifiedUserId)
+        .maybeSingle();
+      if (!convo) {
+        return new Response(JSON.stringify({ error: "Forbidden" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
+    // Derive premium status server-side from the subscribers table.
+    // Never trust client-supplied isPremium / isTrial flags.
+    let isPremium = false;
+    if (admin) {
+      const { data: sub } = await admin
+        .from("subscribers")
+        .select("plan, status")
+        .eq("user_id", verifiedUserId)
+        .maybeSingle();
+      isPremium = !!(sub && sub.plan && sub.plan !== "free" &&
+        (sub.status === "active" || sub.status === "trialing"));
+    }
+
     const chatHistorySection = chatHistory
       ? `\n\n## Past Conversations\nThe user has had previous chats with you. Here are recent conversation summaries:\n${chatHistory}\nIf the user references a past conversation, use this context naturally. Don't mention these unless relevant.`
       : "";
 
-    const isPremium = !!(userContext && (userContext.isPremium || userContext.isTrial));
     const validIcons = (userContext && Array.isArray(userContext.validIcons)) ? userContext.validIcons.join(", ") : "";
 
     const _today = new Date();
