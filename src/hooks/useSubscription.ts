@@ -58,36 +58,36 @@ export function useSubscription() {
   const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(
     cached?.currentPeriodEnd ?? null,
   );
+  // Server-managed trial start (from subscribers.trial_started_at). Falls back
+  // to the cached snapshot for instant render; replaced by DB value on load.
+  const [trialStartedAt, setTrialStartedAt] = useState<string | null>(
+    cached?.trialStartedAt ?? null,
+  );
   // Only show "loading" if we have no cached snapshot to render from.
   const [isLoading, setIsLoading] = useState(!cached);
 
   const stripeSubscribed =
     plan === 'premium' && (subscriberStatus === 'active' || subscriberStatus === 'trialing');
 
-  // Ensure trial_started_at is set on first load
-  useEffect(() => {
-    if (user && !profile.trialStartedAt) {
-      updateProfile({ trialStartedAt: new Date().toISOString() });
-    }
-  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
-
   // Read subscription from the subscribers table; fall back to live Stripe check
   // only if no row exists yet (first-time check or pre-webhook state).
   const checkSubscription = useCallback(async (opts?: { forceLive?: boolean }) => {
     if (!user) { setIsLoading(false); return; }
 
-    const applyFromDb = (row: { plan: string; status: string; current_period_end: string | null }) => {
+    const applyFromDb = (row: { plan: string; status: string; current_period_end: string | null; trial_started_at: string | null }) => {
       const nextPlan: SubscriptionPlan = row.plan === 'premium' ? 'premium' : 'free';
       const nextStatus = (row.status as SubscriberStatus) ?? 'inactive';
       setPlan(nextPlan);
       setSubscriberStatus(nextStatus);
       setSubscriptionEnd(row.current_period_end);
+      setTrialStartedAt(row.trial_started_at);
       // Persist snapshot for instant render on next cold start.
       updateProfile({
         subscription: {
           plan: nextPlan,
           status: nextStatus,
           currentPeriodEnd: row.current_period_end,
+          trialStartedAt: row.trial_started_at,
           updatedAt: new Date().toISOString(),
         },
       });
@@ -97,7 +97,7 @@ export function useSubscription() {
       if (!opts?.forceLive) {
         const { data: row, error: dbError } = await supabase
           .from('subscribers')
-          .select('plan, status, current_period_end')
+          .select('plan, status, current_period_end, trial_started_at')
           .eq('user_id', user.id)
           .maybeSingle();
 
@@ -117,11 +117,20 @@ export function useSubscription() {
         setPlan(nextPlan);
         setSubscriberStatus(nextStatus);
         setSubscriptionEnd(data.subscription_end || null);
+        // After live check, the edge function will have upserted a row.
+        // Re-read trial_started_at so the trial window is enforced by the DB value.
+        const { data: row2 } = await supabase
+          .from('subscribers')
+          .select('trial_started_at')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        if (row2?.trial_started_at) setTrialStartedAt(row2.trial_started_at);
         updateProfile({
           subscription: {
             plan: nextPlan,
             status: nextStatus,
             currentPeriodEnd: data.subscription_end || null,
+            trialStartedAt: row2?.trial_started_at ?? null,
             updatedAt: new Date().toISOString(),
           },
         });
@@ -152,18 +161,20 @@ export function useSubscription() {
           filter: `user_id=eq.${user.id}`,
         },
         (payload) => {
-          const row = payload.new as { plan?: string; status?: string; current_period_end?: string | null } | null;
+          const row = payload.new as { plan?: string; status?: string; current_period_end?: string | null; trial_started_at?: string | null } | null;
           if (!row) return;
           const nextPlan: SubscriptionPlan = row.plan === 'premium' ? 'premium' : 'free';
           const nextStatus = (row.status as SubscriberStatus) ?? 'inactive';
           setPlan(nextPlan);
           setSubscriberStatus(nextStatus);
           setSubscriptionEnd(row.current_period_end ?? null);
+          if (row.trial_started_at) setTrialStartedAt(row.trial_started_at);
           updateProfile({
             subscription: {
               plan: nextPlan,
               status: nextStatus,
               currentPeriodEnd: row.current_period_end ?? null,
+              trialStartedAt: row.trial_started_at ?? null,
               updatedAt: new Date().toISOString(),
             },
           });
@@ -176,21 +187,21 @@ export function useSubscription() {
   const status: SubscriptionStatus = useMemo(() => {
     if (isLoading) return 'loading';
     if (isAdmin || stripeSubscribed) return 'active';
-    if (profile.trialStartedAt) {
-      const trialEnd = new Date(profile.trialStartedAt);
+    if (trialStartedAt) {
+      const trialEnd = new Date(trialStartedAt);
       trialEnd.setDate(trialEnd.getDate() + TRIAL_DAYS);
       if (new Date() < trialEnd) return 'trial';
     }
     return 'expired';
-  }, [isLoading, isAdmin, stripeSubscribed, profile.trialStartedAt]);
+  }, [isLoading, isAdmin, stripeSubscribed, trialStartedAt]);
 
   const trialDaysLeft = useMemo(() => {
-    if (!profile.trialStartedAt) return 0;
-    const trialEnd = new Date(profile.trialStartedAt);
+    if (!trialStartedAt) return 0;
+    const trialEnd = new Date(trialStartedAt);
     trialEnd.setDate(trialEnd.getDate() + TRIAL_DAYS);
     const diff = Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
     return Math.max(0, diff);
-  }, [profile.trialStartedAt]);
+  }, [trialStartedAt]);
 
   const isActive = status === 'active' || status === 'trial';
   const isTrial = status === 'trial';
