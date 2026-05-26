@@ -147,6 +147,7 @@ export interface UserProfile {
     plan: 'free' | 'premium';
     status: 'active' | 'inactive' | 'cancelled' | 'past_due' | 'trialing';
     currentPeriodEnd: string | null;
+    trialStartedAt?: string | null;
     updatedAt: string; // ISO
   };
 
