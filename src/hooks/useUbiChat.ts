@@ -26,6 +26,20 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ubi-chat`;
 const MAX_MESSAGES = 50;
 const PROMPTS_REGEX = /<!--PROMPTS:(.*?)-->/;
 
+// Returns a fresh access token, refreshing the session if it's missing or
+// within 60s of expiring. Returns null if the user has no valid session.
+export async function getFreshAccessToken(): Promise<string | null> {
+  const { data: { session } } = await supabase.auth.getSession();
+  const expiresAt = session?.expires_at ? session.expires_at * 1000 : 0;
+  const needsRefresh = !session || !session.access_token || (expiresAt - Date.now() < 60_000);
+  if (needsRefresh) {
+    const { data, error } = await supabase.auth.refreshSession();
+    if (error || !data.session?.access_token) return null;
+    return data.session.access_token;
+  }
+  return session.access_token;
+}
+
 async function buildUserContext(
   profile: ReturnType<typeof useUserStore.getState>['profile'],
   userId: string | null,
@@ -130,8 +144,7 @@ async function extractAndSaveMemories(params: {
 
     const last10 = params.messages.slice(-10).map((m) => ({ role: m.role, content: m.content }));
 
-    const { data: { session } } = await supabase.auth.getSession();
-    const accessToken = session?.access_token;
+    const accessToken = await getFreshAccessToken();
     if (!accessToken) return;
 
     const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ubi-memory-extract`, {
@@ -443,15 +456,14 @@ export function useUbiChat() {
       let assistantSoFar = '';
 
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        const accessToken = session?.access_token;
+        let accessToken = await getFreshAccessToken();
         if (!accessToken) {
-          const errorMsg: UbiMessage = { role: 'assistant', content: 'You need to be signed in to chat with Ubi.' };
+          const errorMsg: UbiMessage = { role: 'assistant', content: 'Your session has expired. Please sign back in to keep chatting.' };
           setMessages([...displayMessages, errorMsg]);
           setIsStreaming(false);
           return;
         }
-        const resp = await fetch(CHAT_URL, {
+        let resp = await fetch(CHAT_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -467,6 +479,36 @@ export function useUbiChat() {
           }),
           signal: controller.signal,
         });
+
+        // If the edge function rejected our token, force a refresh and retry once.
+        if (resp.status === 401) {
+          const refreshed = await getFreshAccessToken();
+          if (refreshed && refreshed !== accessToken) {
+            accessToken = refreshed;
+            resp = await fetch(CHAT_URL, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+                apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+              },
+              body: JSON.stringify({
+                messages: apiMessages.map((m) => ({ role: m.role, content: m.content })),
+                userContext,
+                chatHistory,
+                conversationId: convoId,
+                userId,
+              }),
+              signal: controller.signal,
+            });
+          }
+          if (resp.status === 401) {
+            const errorMsg: UbiMessage = { role: 'assistant', content: 'Your session has expired. Please sign back in to keep chatting.' };
+            setMessages([...displayMessages, errorMsg]);
+            setIsStreaming(false);
+            return;
+          }
+        }
 
         if (!resp.ok) {
           const err = await resp.json().catch(() => ({ error: 'Something went wrong' }));
