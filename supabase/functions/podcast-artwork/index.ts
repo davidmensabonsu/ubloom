@@ -1,3 +1,5 @@
+import { requireUser } from "../_shared/auth.ts";
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -9,6 +11,9 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const auth = await requireUser(req, corsHeaders);
+    if ('response' in auth) return auth.response;
+
     const { searchTerms } = await req.json()
 
     if (!Array.isArray(searchTerms) || searchTerms.length === 0 || searchTerms.length > 20) {
