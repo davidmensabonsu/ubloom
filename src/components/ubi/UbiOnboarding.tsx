@@ -153,11 +153,16 @@ export default function UbiOnboarding({ onComplete }: Props) {
         `Never forget: ${collected.neverForget || profile.neverForget || ''}. ` +
         `Write a warm, personal 3-4 sentence paragraph starting with their preferred name that summarises what you now know about them and what kind of mentor you will be for them. Speak directly to them as Ubi. Make it feel like the beginning of something real.`;
 
+      const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token;
+      if (!accessToken) throw new Error('Not authenticated');
+
       const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ubi-chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${accessToken}`,
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
         body: JSON.stringify({
           messages: [{ role: 'user', content: userMsg }],
