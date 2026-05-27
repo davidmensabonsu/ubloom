@@ -130,11 +130,16 @@ async function extractAndSaveMemories(params: {
 
     const last10 = params.messages.slice(-10).map((m) => ({ role: m.role, content: m.content }));
 
+    const { data: { session } } = await supabase.auth.getSession();
+    const accessToken = session?.access_token;
+    if (!accessToken) return;
+
     const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ubi-memory-extract`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        Authorization: `Bearer ${accessToken}`,
+        apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
       },
       body: JSON.stringify({
         messages: last10,
@@ -438,11 +443,20 @@ export function useUbiChat() {
       let assistantSoFar = '';
 
       try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const accessToken = session?.access_token;
+        if (!accessToken) {
+          const errorMsg: UbiMessage = { role: 'assistant', content: 'You need to be signed in to chat with Ubi.' };
+          setMessages([...displayMessages, errorMsg]);
+          setIsStreaming(false);
+          return;
+        }
         const resp = await fetch(CHAT_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            Authorization: `Bearer ${accessToken}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
           },
           body: JSON.stringify({
             messages: apiMessages.map((m) => ({ role: m.role, content: m.content })),
