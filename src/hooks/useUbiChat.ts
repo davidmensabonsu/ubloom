@@ -26,6 +26,20 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ubi-chat`;
 const MAX_MESSAGES = 50;
 const PROMPTS_REGEX = /<!--PROMPTS:(.*?)-->/;
 
+// Returns a fresh access token, refreshing the session if it's missing or
+// within 60s of expiring. Returns null if the user has no valid session.
+export async function getFreshAccessToken(): Promise<string | null> {
+  const { data: { session } } = await supabase.auth.getSession();
+  const expiresAt = session?.expires_at ? session.expires_at * 1000 : 0;
+  const needsRefresh = !session || !session.access_token || (expiresAt - Date.now() < 60_000);
+  if (needsRefresh) {
+    const { data, error } = await supabase.auth.refreshSession();
+    if (error || !data.session?.access_token) return null;
+    return data.session.access_token;
+  }
+  return session.access_token;
+}
+
 async function buildUserContext(
   profile: ReturnType<typeof useUserStore.getState>['profile'],
   userId: string | null,
