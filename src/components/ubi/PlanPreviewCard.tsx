@@ -93,9 +93,11 @@ export default function PlanPreviewCard({
   onRequestChanges,
 }: Props) {
   const today = new Date().toISOString().slice(0, 10);
-  const isFutureStart = !!startsOn && startsOn > today && action === 'add';
   const tomorrowStr = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-  const isTomorrow = isFutureStart && startsOn === tomorrowStr;
+  const isFutureStart = !!startsOn && startsOn > today && action === 'add';
+  const isFutureReplace = !!startsOn && startsOn > today && action === 'replace_today';
+  const isFutureClear = !!startsOn && startsOn > today && action === 'clear_today';
+  const isTomorrow = !!startsOn && startsOn === tomorrowStr;
   // Build the resulting day depending on action.
   const items: PreviewItem[] = [];
 
@@ -137,7 +139,15 @@ export default function PlanPreviewCard({
   const totalCount = items.length;
 
   const headerLabel =
-    isTomorrow
+    isFutureReplace
+      ? isTomorrow
+        ? "Tomorrow's new plan (replacing what's there)"
+        : `Plan for ${startsOn} (replacing what's there)`
+      : isFutureClear
+      ? isTomorrow
+        ? 'Tomorrow will be cleared'
+        : `${startsOn} will be cleared`
+      : isTomorrow && action === 'add'
       ? "Tomorrow's plan — today stays the same"
       : isFutureStart
       ? `Starting ${startsOn} — today stays the same`
@@ -156,9 +166,13 @@ export default function PlanPreviewCard({
 
   const approveLabel =
     action === 'replace_today'
-      ? 'Apply to today only'
+      ? isFutureReplace
+        ? (isTomorrow ? 'Apply to tomorrow only' : `Apply to ${startsOn} only`)
+        : 'Apply to today only'
       : action === 'clear_today'
-        ? 'Clear today'
+        ? isFutureClear
+          ? (isTomorrow ? 'Clear tomorrow' : `Clear ${startsOn}`)
+          : 'Clear today'
         : 'Looks good, add to my routine';
 
   return (
@@ -177,7 +191,9 @@ export default function PlanPreviewCard({
         </div>
         {action === 'clear_today' && (
           <div className="px-4 py-6 text-center text-sm text-muted-foreground" style={{ fontFamily: 'Jost, sans-serif' }}>
-            Today's list will be empty.
+            {isFutureClear
+              ? (isTomorrow ? "Tomorrow's list will be empty." : `${startsOn} will be empty.`)
+              : "Today's list will be empty."}
             <br />
             Your recurring tasks come back tomorrow.
           </div>

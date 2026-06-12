@@ -532,8 +532,16 @@ export default function Ubi() {
                           const plan = parseRoutinePlan(msg.content);
                           if (plan && !planConsumed.has(markerKey)) {
                             const todayStr = getLocalDateStr();
+                            // For replace/clear targeting a future date (e.g. tomorrow),
+                            // show what currently lives on THAT date so the user can see
+                            // exactly what will be wiped.
+                            const targetDate =
+                              (plan.action === 'replace_today' || plan.action === 'clear_today') &&
+                              plan.startsOn && /^\d{4}-\d{2}-\d{2}$/.test(plan.startsOn)
+                                ? plan.startsOn
+                                : todayStr;
                             const existingTodayTasks = (profile.coreHabits || []).filter((h) =>
-                              isHabitScheduledForDate(h, todayStr),
+                              isHabitScheduledForDate(h, targetDate),
                             );
                             return (
                               <PlanPreviewCard
