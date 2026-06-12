@@ -187,7 +187,9 @@ export default function PlanPreviewCard({
         </div>
         {action === 'clear_today' && (
           <div className="px-4 py-6 text-center text-sm text-muted-foreground" style={{ fontFamily: 'Jost, sans-serif' }}>
-            Today's list will be empty.
+            {isFutureClear
+              ? (isTomorrow ? "Tomorrow's list will be empty." : `${startsOn} will be empty.`)
+              : "Today's list will be empty."}
             <br />
             Your recurring tasks come back tomorrow.
           </div>
