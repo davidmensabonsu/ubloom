@@ -152,13 +152,16 @@ export function useRoutinePlanner() {
       const today = getLocalDateStr();
 
       if (plan.action === 'clear_today') {
+        const targetDate = plan.startsOn && /^\d{4}-\d{2}-\d{2}$/.test(plan.startsOn)
+          ? plan.startsOn
+          : today;
         const cleared = coreHabits.filter(
           (h) =>
-            (h.frequency === 'one-off' && (h.oneOffDate || h.createdDate) === today) ||
-            (h.frequency !== 'one-off' && !(h.skippedDates || []).includes(today)),
+            (h.frequency === 'one-off' && (h.oneOffDate || h.createdDate) === targetDate) ||
+            (h.frequency !== 'one-off' && !(h.skippedDates || []).includes(targetDate)),
         ).length;
         snapshotRoutineForUndo('clear_today');
-        clearHabitsForDate(today);
+        clearHabitsForDate(targetDate);
         track('ubi_routine_plan_created', {
           source: 'ubi_routine_planner',
           plan_type: meta?.planType || 'clear_today',
