@@ -93,9 +93,11 @@ export default function PlanPreviewCard({
   onRequestChanges,
 }: Props) {
   const today = new Date().toISOString().slice(0, 10);
-  const isFutureStart = !!startsOn && startsOn > today && action === 'add';
   const tomorrowStr = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-  const isTomorrow = isFutureStart && startsOn === tomorrowStr;
+  const isFutureStart = !!startsOn && startsOn > today && action === 'add';
+  const isFutureReplace = !!startsOn && startsOn > today && action === 'replace_today';
+  const isFutureClear = !!startsOn && startsOn > today && action === 'clear_today';
+  const isTomorrow = !!startsOn && startsOn === tomorrowStr;
   // Build the resulting day depending on action.
   const items: PreviewItem[] = [];
 
