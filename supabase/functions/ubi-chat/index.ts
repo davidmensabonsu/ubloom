@@ -151,32 +151,46 @@ Use these memories naturally when relevant. Do not list them back or announce th
         const reader = response.body!.getReader();
         const decoder = new TextDecoder();
         let fullContent = "";
+        let sseBuffer = "";
+
+        // Process a single complete SSE line: forward it to the client (minus
+        // upstream [DONE]) and accumulate any delta.content into fullContent.
+        // CRITICAL: we MUST line-buffer across reads — when a data: {...} event
+        // spans two TCP chunks, parsing the split halves silently drops tokens
+        // and corrupts the persisted assistant message (mangled <routine_plan>
+        // JSON, missing characters, etc).
+        const flushLine = async (rawLine: string) => {
+          const line = rawLine.endsWith("\r") ? rawLine.slice(0, -1) : rawLine;
+          const trimmed = line.trim();
+          if (trimmed === "data: [DONE]") return; // strip upstream DONE; we emit our own later
+          // Forward verbatim so the client's own SSE parser sees the same bytes.
+          await writer.write(encoder.encode(line + "\n"));
+          if (!trimmed.startsWith("data: ")) return;
+          const jsonStr = trimmed.slice(6).trim();
+          if (!jsonStr || jsonStr === "[DONE]") return;
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) fullContent += content;
+          } catch {
+            // Should not happen with proper line buffering — log for visibility.
+            console.error("ubi-chat: failed to parse SSE line", jsonStr.slice(0, 120));
+          }
+        };
 
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-
-          // Filter out [DONE] from upstream so we can append prompts before our own [DONE]
-          const chunk = decoder.decode(value, { stream: true });
-          const lines = chunk.split("\n");
-          const filtered: string[] = [];
-          for (const line of lines) {
-            const cleaned = line.replace(/\r$/, "").trim();
-            if (cleaned === "data: [DONE]") continue; // strip upstream DONE
-            filtered.push(line);
-
-            if (cleaned.startsWith("data: ") && cleaned !== "data: [DONE]") {
-              const jsonStr = cleaned.slice(6).trim();
-              try {
-                const parsed = JSON.parse(jsonStr);
-                const content = parsed.choices?.[0]?.delta?.content;
-                if (content) fullContent += content;
-              } catch { /* ignore */ }
-            }
+          sseBuffer += decoder.decode(value, { stream: true });
+          let nl: number;
+          while ((nl = sseBuffer.indexOf("\n")) !== -1) {
+            const line = sseBuffer.slice(0, nl);
+            sseBuffer = sseBuffer.slice(nl + 1);
+            await flushLine(line);
           }
-          const filteredChunk = filtered.join("\n");
-          if (filteredChunk.trim()) await writer.write(encoder.encode(filteredChunk));
         }
+        // Flush any trailing partial line (rare — upstream usually ends with \n).
+        if (sseBuffer.length) await flushLine(sseBuffer);
 
         try {
           const lastUserMsg = [...messages].reverse().find((m: any) => m.role === "user")?.content || "";
