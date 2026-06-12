@@ -166,9 +166,13 @@ export default function PlanPreviewCard({
 
   const approveLabel =
     action === 'replace_today'
-      ? 'Apply to today only'
+      ? isFutureReplace
+        ? (isTomorrow ? 'Apply to tomorrow only' : `Apply to ${startsOn} only`)
+        : 'Apply to today only'
       : action === 'clear_today'
-        ? 'Clear today'
+        ? isFutureClear
+          ? (isTomorrow ? 'Clear tomorrow' : `Clear ${startsOn}`)
+          : 'Clear today'
         : 'Looks good, add to my routine';
 
   return (
