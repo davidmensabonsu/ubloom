@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { requireUser } from "../_shared/auth.ts";
+import { isPremiumUser } from "../_shared/premium.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -48,19 +49,8 @@ serve(async (req) => {
     // Never trust client-supplied isPremium / isTrial flags.
     let isPremium = false;
     if (admin) {
-      const { data: sub } = await admin
-        .from("subscribers")
-        .select("plan, status, trial_started_at")
-        .eq("user_id", verifiedUserId)
-        .maybeSingle();
-      const paidActive = !!(sub && sub.plan && sub.plan !== "free" &&
-        (sub.status === "active" || sub.status === "trialing"));
-      // Honour the in-app 3-day free trial granted at signup so newly
-      // signed-up users can actually receive a <routine_plan> JSON block.
-      const TRIAL_DAYS = 3;
-      const trialActive = !!(sub?.trial_started_at &&
-        (Date.now() - new Date(sub.trial_started_at).getTime()) < TRIAL_DAYS * 86_400_000);
-      isPremium = paidActive || trialActive;
+      // Admin role, paid sub, or in-app trial all count as premium.
+      isPremium = await isPremiumUser(admin, verifiedUserId);
     }
 
     const chatHistorySection = chatHistory
