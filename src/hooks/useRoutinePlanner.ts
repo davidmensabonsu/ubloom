@@ -172,21 +172,26 @@ export function useRoutinePlanner() {
       }
 
       if (plan.action === 'replace_today') {
+        // Target date: honour plan.startsOn (e.g. tomorrow). Falls back to today.
+        const targetDate = plan.startsOn && /^\d{4}-\d{2}-\d{2}$/.test(plan.startsOn)
+          ? plan.startsOn
+          : today;
         const cleared = coreHabits.filter(
           (h) =>
-            (h.frequency === 'one-off' && (h.oneOffDate || h.createdDate) === today) ||
-            (h.frequency !== 'one-off' && !(h.skippedDates || []).includes(today)),
+            (h.frequency === 'one-off' && (h.oneOffDate || h.createdDate) === targetDate) ||
+            (h.frequency !== 'one-off' && !(h.skippedDates || []).includes(targetDate)),
         ).length;
         snapshotRoutineForUndo('replace_today');
-        clearHabitsForDate(today);
-        // Force every task to be a one-off for today
+        clearHabitsForDate(targetDate);
+        // Force every task to be a one-off pinned to the target date.
         const todayTasks: PlannedTask[] = plan.tasks.map((t) => ({
           ...t,
           recurrence: 'one-off',
           days: [],
+          startsOn: targetDate,
         }));
         const { added } = writeTasks(todayTasks, 'keep-both', {
-          planType: 'replace_today',
+          planType: targetDate === today ? 'replace_today' : 'replace_date',
           cyclePhase: meta?.cyclePhase ?? null,
         });
         return { added, replaced: 0, cleared };
