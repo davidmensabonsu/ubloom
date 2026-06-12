@@ -139,7 +139,15 @@ export default function PlanPreviewCard({
   const totalCount = items.length;
 
   const headerLabel =
-    isTomorrow
+    isFutureReplace
+      ? isTomorrow
+        ? "Tomorrow's new plan (replacing what's there)"
+        : `Plan for ${startsOn} (replacing what's there)`
+      : isFutureClear
+      ? isTomorrow
+        ? 'Tomorrow will be cleared'
+        : `${startsOn} will be cleared`
+      : isTomorrow && action === 'add'
       ? "Tomorrow's plan — today stays the same"
       : isFutureStart
       ? `Starting ${startsOn} — today stays the same`
