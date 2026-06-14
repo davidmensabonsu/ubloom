@@ -107,77 +107,88 @@ export default function Home() {
     <div className="min-h-[100dvh] flex flex-col gradient-background">
       {/* Hero gradient header */}
       <div
-        className="px-5 pt-10 pb-8 shrink-0"
+        className="px-5 pt-10 pb-8 shrink-0 relative"
         style={{
           background:
             'linear-gradient(135deg, hsl(var(--primary) / 0.15) 0%, hsl(var(--primary) / 0.05) 50%, transparent 100%)',
         }}
       >
-        <div className="flex items-center justify-between">
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-2 text-muted-foreground"
-          >
-            <GreetingIcon size={16} />
-            <span className="text-sm">{todayFormatted}</span>
-          </motion.div>
-          <div className="flex items-center gap-2">
-            <ProfileButton />
-            <motion.img
-              alt="uBloom"
-              className="h-10 w-10 object-contain"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.15 }}
-              src={logo}
-            />
+        <div className="relative z-10">
+          <div className="flex items-center justify-between">
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-2 text-muted-foreground"
+            >
+              <GreetingIcon size={16} />
+              <span className="text-sm">{todayFormatted}</span>
+            </motion.div>
+            <div className="flex items-center gap-2">
+              <ProfileButton />
+              <motion.img
+                alt="uBloom"
+                className="h-10 w-10 object-contain"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.15 }}
+                src={logo}
+              />
+            </div>
           </div>
-        </div>
-        <motion.h1
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="font-display text-5xl font-normal leading-tight text-foreground mt-6"
-        >
-          {greeting.text}, {preferredName || 'beautiful'}
-        </motion.h1>
+          <motion.h1
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="font-display text-5xl font-normal leading-tight text-foreground mt-6"
+          >
+            {greeting.text}, {preferredName || 'beautiful'}
+          </motion.h1>
 
-        {subtitle && (
-          <motion.p
+          {subtitle && (
+            <motion.p
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.14 }}
+              className="font-body text-sm font-normal text-foreground/70 tracking-wide mt-2"
+            >
+              {subtitle}
+            </motion.p>
+          )}
+
+          {/* Weekly consistency tracker */}
+          <motion.div
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.14 }}
-            className="font-body text-sm font-normal text-foreground/70 tracking-wide mt-2"
+            transition={{ delay: 0.18 }}
+            className="mt-5"
           >
-            {subtitle}
-          </motion.p>
-        )}
+            <div className="flex items-center gap-2.5">
+              {week.days.map((d, i) => {
+                const base = d.isToday ? 'w-3 h-3' : 'w-2.5 h-2.5';
+                const fill = d.completed
+                  ? 'bg-primary shadow-[0_0_8px_hsl(var(--primary)/0.4)]'
+                  : 'bg-transparent border border-primary/50';
+                return (
+                  <span
+                    key={i}
+                    className={`${base} ${fill} rounded-full transition-all`}
+                    aria-label={`${d.dateStr}${d.completed ? ' completed' : ''}${d.isToday ? ' (today)' : ''}`}
+                  />
+                );
+              })}
+            </div>
+            <p className="mt-3 text-xs font-normal text-foreground/60 tracking-wide">{week.label}</p>
+          </motion.div>
+        </div>
 
-        {/* Weekly consistency tracker */}
-        <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.18 }}
-          className="mt-5"
-        >
-          <div className="flex items-center gap-2.5">
-            {week.days.map((d, i) => {
-              const base = d.isToday ? 'w-3 h-3' : 'w-2.5 h-2.5';
-              const fill = d.completed
-                ? 'bg-primary shadow-[0_0_8px_hsl(var(--primary)/0.4)]'
-                : 'bg-transparent border border-primary/50';
-              return (
-                <span
-                  key={i}
-                  className={`${base} ${fill} rounded-full transition-all`}
-                  aria-label={`${d.dateStr}${d.completed ? ' completed' : ''}${d.isToday ? ' (today)' : ''}`}
-                />
-              );
-            })}
-          </div>
-          <p className="mt-3 text-xs font-normal text-foreground/60 tracking-wide">{week.label}</p>
-        </motion.div>
+        {/* Decorative blobs */}
+        <div className="absolute bottom-[-16px] right-[-16px] w-[120px] h-[120px] rounded-full bg-primary/[0.10] blur-xl pointer-events-none z-0" />
+        <div className="absolute bottom-6 right-14 w-20 h-20 rounded-full bg-primary/[0.08] blur-xl pointer-events-none z-0" />
+        <div className="absolute bottom-16 right-[-4px] w-[50px] h-[50px] rounded-full bg-primary/[0.12] blur-xl pointer-events-none z-0" />
+
+        {/* Sparkles */}
+        <span className="absolute top-[120px] right-5 text-xs text-primary/40 pointer-events-none z-0">✦</span>
+        <span className="absolute bottom-14 right-7 text-xs text-primary/40 pointer-events-none z-0">✦</span>
       </div>
 
       {/* Main content */}
