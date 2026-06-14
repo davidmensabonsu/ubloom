@@ -24,7 +24,8 @@ import nutritionImg from '@/assets/wonder/icons/nutrition.png';
 import calmAsset from '@/assets/wonder/icons/calm.png.asset.json';
 const calmImg = calmAsset.url;
 import vitaminsImg from '@/assets/wonder/icons/vitamins.png';
-import lifestyleImg from '@/assets/wonder/icons/lifestyle.png';
+import lifestyleAsset from '@/assets/wonder/icons/lifestyle.png.asset.json';
+const lifestyleImg = lifestyleAsset.url;
 
 interface CategoryCard {
   key: string;
@@ -44,7 +45,7 @@ const categoryCards: CategoryCard[] = [
   { key: 'podcasts', label: 'Podcasts', subtitle: 'Listen & learn', image: podcastImg, tint: '#fdf0f3' },
   { key: 'vitamins', label: 'Vitamins', subtitle: 'Boost from within', image: vitaminsImg, tint: '#fcf1dc' },
   { key: 'hygiene', label: 'Skincare & Hygiene', subtitle: 'Glow up tips', image: skincareImg, tall: true, tint: '#fbe7e7' },
-  { key: 'lifestyle', label: 'Lifestyle', subtitle: 'Design your life', image: lifestyleImg, tint: '#e7f1ee' },
+  { key: 'lifestyle', label: 'Lifestyle', subtitle: 'Design your life', image: lifestyleImg, tint: '#f4f3f1' },
 ];
 
 // Category cards include 'books' via the dedicated banner — for ordering we treat banner separately.
@@ -319,7 +320,7 @@ export default function Wonder2() {
                   <img
                     src={card.image}
                     alt={card.label}
-                    className={card.key === 'calm' || card.key === 'podcasts' || card.key === 'wellness' || card.key === 'mindset' ? 'w-2/3 h-2/3 object-contain' : 'w-1/2 h-1/2 object-contain'}
+                    className={card.key === 'calm' || card.key === 'podcasts' || card.key === 'wellness' || card.key === 'mindset' || card.key === 'lifestyle' ? 'w-2/3 h-2/3 object-contain' : 'w-1/2 h-1/2 object-contain'}
                     loading="lazy"
                   />
                 </div>
