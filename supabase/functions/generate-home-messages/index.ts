@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { requireUser } from "../_shared/auth.ts";
+import { parseJsonBody, clampString, clampArray } from "../_shared/payload.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -19,7 +20,20 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const { journalEntries, identityStatement, dreamSelf, moodHistory, currentFeeling, struggles, reactionStyle, wantsMoreOf, dreamSelfFeels, futureNote } = await req.json();
+    const parsed = await parseJsonBody<Record<string, unknown>>(req, corsHeaders, 50_000);
+    if ("response" in parsed) return parsed.response;
+    const b = parsed.data;
+    const journalEntries = clampArray<{ content: string; mood?: string }>(b.journalEntries, 10)
+      .map((e) => ({ content: clampString(e?.content, 2000), mood: typeof e?.mood === "string" ? e.mood : undefined }));
+    const identityStatement = clampString(b.identityStatement, 1000);
+    const dreamSelf = b.dreamSelf;
+    const moodHistory = clampArray<{ moods: string[] }>(b.moodHistory, 30);
+    const currentFeeling = clampString(b.currentFeeling, 500);
+    const struggles = clampArray<string>(b.struggles, 20).map((s) => clampString(s, 200));
+    const reactionStyle = clampString(b.reactionStyle, 500);
+    const wantsMoreOf = clampArray<string>(b.wantsMoreOf, 20).map((s) => clampString(s, 200));
+    const dreamSelfFeels = clampArray<string>(b.dreamSelfFeels, 20).map((s) => clampString(s, 200));
+    const futureNote = clampString(b.futureNote, 2000);
 
     // Build context from user data
     const journalContext = (journalEntries || [])
