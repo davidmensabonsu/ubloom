@@ -106,12 +106,18 @@ export default function Home() {
   return (
     <div className="min-h-[100dvh] flex flex-col gradient-background">
       {/* Hero gradient header */}
-      <div className="hero-gradient px-5 pt-10 pb-8 shrink-0">
+      <div
+        className="px-5 pt-10 pb-8 shrink-0"
+        style={{
+          background:
+            'linear-gradient(135deg, hsl(var(--primary) / 0.15) 0%, hsl(var(--primary) / 0.05) 50%, transparent 100%)',
+        }}
+      >
         <div className="flex items-center justify-between">
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-2 text-white/85"
+            className="flex items-center gap-2 text-muted-foreground"
           >
             <GreetingIcon size={16} />
             <span className="text-xs">{todayFormatted}</span>
@@ -120,7 +126,7 @@ export default function Home() {
             <ProfileButton />
             <motion.img
               alt="uBloom"
-              className="h-10 w-10 object-contain clay-icon"
+              className="h-10 w-10 object-contain"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.15 }}
@@ -132,7 +138,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="font-display text-2xl md:text-3xl font-normal tracking-tight text-white mt-2"
+          className="font-display text-2xl md:text-3xl font-normal tracking-tight text-foreground mt-2"
         >
           {greeting.text}, {preferredName || 'beautiful'}
         </motion.h1>
@@ -142,7 +148,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.14 }}
-            className="font-body text-xs md:text-sm text-white/80 mt-1.5"
+            className="font-body text-xs md:text-sm text-muted-foreground mt-1.5"
           >
             {subtitle}
           </motion.p>
@@ -159,8 +165,8 @@ export default function Home() {
             {week.days.map((d, i) => {
               const base = d.isToday ? 'w-2.5 h-2.5' : 'w-2 h-2';
               const fill = d.completed
-                ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.5)]'
-                : 'bg-transparent border border-white/45';
+                ? 'bg-primary shadow-[0_0_8px_hsl(var(--primary)/0.4)]'
+                : 'bg-transparent border border-primary/50';
               return (
                 <span
                   key={i}
@@ -170,7 +176,7 @@ export default function Home() {
               );
             })}
           </div>
-          <p className="mt-2 text-[11px] text-white/70 tracking-wide">{week.label}</p>
+          <p className="mt-2 text-[11px] text-muted-foreground tracking-wide">{week.label}</p>
         </motion.div>
       </div>
 
@@ -181,20 +187,21 @@ export default function Home() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: intentionDone ? 0.7 : 1, y: 0 }}
           transition={{ delay: 0.18 }}
-          className="dark-accent-card p-4"
+          className="bg-white border border-primary/20 rounded-2xl p-4"
+          style={{ boxShadow: 'var(--shadow-soft)' }}
         >
-          <div className="flex items-center gap-1.5 text-white/60 font-body text-[10px] uppercase tracking-[0.14em] mb-2">
-            <span aria-hidden>◆</span>
+          <div className="flex items-center gap-1.5 text-primary font-body text-[10px] uppercase tracking-[0.14em] mb-2">
+            <span aria-hidden className="text-primary">◆</span>
             <span>Today's intention — chosen by Ubi</span>
           </div>
 
           {intentionLoading ? (
             <div className="space-y-2 py-1" aria-busy="true" aria-label="Generating today's intention">
-              <div className="h-4 w-11/12 rounded-full bg-white/15 animate-pulse blur-[1px]" />
-              <div className="h-4 w-3/4 rounded-full bg-white/15 animate-pulse blur-[1px]" />
+              <div className="h-4 w-11/12 rounded-full bg-primary/10 animate-pulse blur-[1px]" />
+              <div className="h-4 w-3/4 rounded-full bg-primary/10 animate-pulse blur-[1px]" />
             </div>
           ) : (
-            <p className="font-display italic text-lg md:text-xl leading-snug text-white">
+            <p className="font-display italic text-lg md:text-xl leading-snug text-foreground">
               {intention}
             </p>
           )}
@@ -203,7 +210,7 @@ export default function Home() {
             type="button"
             onClick={toggleIntentionDone}
             disabled={intentionLoading}
-            className="mt-3 w-full flex items-center justify-between text-white/80 hover:text-white transition-colors disabled:opacity-50"
+            className="mt-3 w-full flex items-center justify-between text-primary hover:text-primary/80 transition-colors disabled:opacity-50"
             aria-pressed={intentionDone}
             aria-label={intentionDone ? "Mark today's intention as not done" : "Mark today's intention as done"}
           >
@@ -213,11 +220,11 @@ export default function Home() {
             <span
               className={`flex items-center justify-center w-6 h-6 rounded-full border transition-all ${
                 intentionDone
-                  ? 'bg-white/90 border-white/90'
-                  : 'bg-transparent border-white/40'
+                  ? 'bg-primary border-primary'
+                  : 'bg-transparent border-primary'
               }`}
             >
-              {intentionDone && <Check size={14} strokeWidth={3} className="text-foreground/80" />}
+              {intentionDone && <Check size={14} strokeWidth={3} className="text-primary-foreground" />}
             </span>
           </button>
         </motion.div>
@@ -227,41 +234,40 @@ export default function Home() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.22 }}
-          className="dark-accent-card p-4"
+          className="bg-white border border-primary/15 rounded-2xl p-4"
+          style={{ boxShadow: 'var(--shadow-soft)' }}
         >
-          <h2 className="text-sm md:text-base font-display font-semibold tracking-tight text-white mb-1 flex items-center gap-2">
-            <Heart size={14} className="text-white/80 shrink-0" />
+          <h2 className="text-sm md:text-base font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
+            <Heart size={14} className="text-primary shrink-0" />
             From your future self
           </h2>
           {loading ? (
             <div className="space-y-1.5">
-              <Skeleton className="h-3 w-full bg-white/15" />
-              <Skeleton className="h-3 w-4/5 bg-white/15" />
+              <Skeleton className="h-3 w-full bg-primary/10" />
+              <Skeleton className="h-3 w-4/5 bg-primary/10" />
             </div>
           ) : (
             <>
               {isPremium ? (
                 <>
-                  <p className="font-display text-xs md:text-sm leading-relaxed text-white/95 italic line-clamp-2">
+                  <p className="font-display text-xs md:text-sm leading-relaxed text-muted-foreground italic line-clamp-2">
                     "{futureSelfMessage}"
                   </p>
                   <button
                     onClick={() => setLetterOpen(true)}
                     className="mt-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
-                    style={{ color: 'hsl(var(--primary))' }}
                   >
                     Read full letter →
                   </button>
                 </>
               ) : (
                 <>
-                  <p className="font-display text-xs md:text-sm leading-relaxed text-white/95 italic">
+                  <p className="font-display text-xs md:text-sm leading-relaxed text-muted-foreground italic">
                     "{(futureSelfMessage || '').split(/(?<=[.!?])\s+/)[0]}"
                   </p>
                   <button
                     onClick={() => setLetterModalOpen(true)}
-                    className="mt-2 text-xs font-medium transition-colors"
-                    style={{ color: 'hsl(var(--primary))' }}
+                    className="mt-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
                   >
                     Unlock full letter — Upgrade to Premium →
                   </button>
@@ -325,10 +331,13 @@ function QuickAction({ icon, title, href }: { icon: string; title: string; href:
   return (
     <motion.a
       href={href}
-      className="glass-card rounded-xl p-3 flex flex-col items-center gap-1.5"
+      className="bg-white border border-primary/15 rounded-xl p-3 flex flex-col items-center gap-1.5"
+      style={{ boxShadow: 'var(--shadow-soft)' }}
       whileTap={{ scale: 0.97 }}
     >
-      <img src={icon} alt="" className="w-7 h-7 object-contain clay-icon" />
+      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+        <img src={icon} alt="" className="w-6 h-6 object-contain clay-icon" />
+      </div>
       <span className="text-xs font-medium text-foreground">{title}</span>
     </motion.a>
   );
