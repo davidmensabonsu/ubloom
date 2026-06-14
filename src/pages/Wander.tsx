@@ -44,7 +44,7 @@ const categoryCards: CategoryCard[] = [
   { key: 'mindset', label: 'Mindset', subtitle: 'Level up your mind', image: mindsetImg, tall: true, tint: '#f7eff7' },
   { key: 'nutrition', label: 'Food & Recipes', subtitle: 'Nourish yourself', image: nutritionImg, tall: true, tint: '#fdeede' },
   { key: 'podcasts', label: 'Podcasts', subtitle: 'Listen & learn', image: podcastImg, tint: '#fdf0f3' },
-  { key: 'vitamins', label: 'Vitamins', subtitle: 'Boost from within', image: vitaminsImg, tint: '#fcf1dc' },
+  { key: 'vitamins', label: 'Vitamins', subtitle: 'Boost from within', image: vitaminsImg, tint: '#fff7f2' },
   { key: 'hygiene', label: 'Skincare & Hygiene', subtitle: 'Glow up tips', image: skincareImg, tall: true, tint: '#fbe7e7' },
   { key: 'lifestyle', label: 'Lifestyle', subtitle: 'Design your life', image: lifestyleImg, tint: '#f4f3f1' },
 ];
