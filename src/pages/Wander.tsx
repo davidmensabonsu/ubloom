@@ -23,7 +23,8 @@ const wellnessImg = wellnessAsset.url;
 import nutritionImg from '@/assets/wonder/icons/nutrition.png';
 import calmAsset from '@/assets/wonder/icons/calm.png.asset.json';
 const calmImg = calmAsset.url;
-import vitaminsImg from '@/assets/wonder/icons/vitamins.png';
+import vitaminsAsset from '@/assets/wonder/icons/vitamins.png.asset.json';
+const vitaminsImg = vitaminsAsset.url;
 import lifestyleAsset from '@/assets/wonder/icons/lifestyle.png.asset.json';
 const lifestyleImg = lifestyleAsset.url;
 
