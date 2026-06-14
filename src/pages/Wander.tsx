@@ -18,7 +18,8 @@ import podcastImg from '@/assets/wonder/icons/podcasts.png';
 import mindsetImg from '@/assets/wonder/icons/mindset.png';
 import wellnessImg from '@/assets/wonder/icons/wellness.png';
 import nutritionImg from '@/assets/wonder/icons/nutrition.png';
-import calmImg from '@/assets/wonder/icons/calm.png';
+import calmAsset from '@/assets/wonder/icons/calm.png.asset.json';
+const calmImg = calmAsset.url;
 import vitaminsImg from '@/assets/wonder/icons/vitamins.png';
 import lifestyleImg from '@/assets/wonder/icons/lifestyle.png';
 
