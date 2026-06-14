@@ -148,7 +148,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.14 }}
-            className="font-body text-base text-muted-foreground mt-2"
+            className="font-body text-sm font-normal text-foreground/70 tracking-wide mt-2"
           >
             {subtitle}
           </motion.p>
