@@ -250,24 +250,24 @@ export default function Home() {
             <>
               {isPremium ? (
                 <>
-                  <p className="font-display text-base leading-relaxed text-muted-foreground">
+                  <p className="font-display italic text-base font-normal leading-relaxed text-foreground/80">
                     "{futureSelfMessage}"
                   </p>
                   <button
                     onClick={() => setLetterOpen(true)}
-                    className="mt-3 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                    className="mt-3 text-sm font-normal text-primary hover:text-primary/80 transition-colors"
                   >
                     Read full letter →
                   </button>
                 </>
               ) : (
                 <>
-                  <p className="font-display text-base leading-relaxed text-muted-foreground">
+                  <p className="font-display italic text-base font-normal leading-relaxed text-foreground/80">
                     "{(futureSelfMessage || '').split(/(?<=[.!?])\s+/)[0]}"
                   </p>
                   <button
                     onClick={() => setLetterModalOpen(true)}
-                    className="mt-3 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                    className="mt-3 text-sm font-normal text-primary hover:text-primary/80 transition-colors"
                   >
                     Unlock full letter — Upgrade to Premium →
                   </button>
