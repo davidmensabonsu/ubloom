@@ -29,7 +29,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import ReminderSettings from '@/components/routine/ReminderSettings';
+
 import BottomNav from '@/components/BottomNav';
 import ManageSubscriptionDialog from '@/components/ManageSubscriptionDialog';
 
