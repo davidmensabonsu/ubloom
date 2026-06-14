@@ -176,7 +176,7 @@ export default function Home() {
               );
             })}
           </div>
-          <p className="mt-3 text-sm text-muted-foreground tracking-wide">{week.label}</p>
+          <p className="mt-3 text-xs font-normal text-foreground/60 tracking-wide">{week.label}</p>
         </motion.div>
       </div>
 
