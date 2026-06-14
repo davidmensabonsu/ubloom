@@ -12,15 +12,15 @@ import type { WonderResource } from '@/lib/wonderResources';
 import { getCurrentCycleDay, getCurrentPhase, type CyclePhase } from '@/lib/cycleUtils';
 
 import booksBanner from '@/assets/wonder/icons/books-banner.png';
-import fitnessImg from '@/assets/wonder/icons/fitness.png';
-import skincareImg from '@/assets/wonder/icons/hygiene.png';
-import podcastImg from '@/assets/wonder/icons/podcasts.png';
-import mindsetImg from '@/assets/wonder/icons/mindset.png';
-import wellnessImg from '@/assets/wonder/icons/wellness.png';
-import nutritionImg from '@/assets/wonder/icons/nutrition.png';
-import calmImg from '@/assets/wonder/icons/calm.png';
-import vitaminsImg from '@/assets/wonder/icons/vitamins.png';
-import lifestyleImg from '@/assets/wonder/icons/lifestyle.png';
+import fitnessImg from '@/assets/wonder/categories/fitness.png.asset.json';
+import skincareImg from '@/assets/wonder/categories/hygiene.png.asset.json';
+import podcastImg from '@/assets/wonder/categories/podcasts.png.asset.json';
+import mindsetImg from '@/assets/wonder/categories/mindset.png.asset.json';
+import wellnessImg from '@/assets/wonder/categories/wellness.png.asset.json';
+import nutritionImg from '@/assets/wonder/categories/nutrition.png.asset.json';
+import calmImg from '@/assets/wonder/categories/calm.png.asset.json';
+import vitaminsImg from '@/assets/wonder/categories/vitamins.png.asset.json';
+import lifestyleImg from '@/assets/wonder/categories/lifestyle.png.asset.json';
 
 interface CategoryCard {
   key: string;
@@ -32,15 +32,15 @@ interface CategoryCard {
 }
 
 const categoryCards: CategoryCard[] = [
-  { key: 'fitness', label: 'Fitness', subtitle: 'Move your body', image: fitnessImg, tall: true, tint: '#fce7ef' },
-  { key: 'wellness', label: 'Wellness', subtitle: 'Feel your best', image: wellnessImg, tint: '#e8f0e4' },
-  { key: 'calm', label: 'Calm', subtitle: 'Find your peace', image: calmImg, tint: '#e6eef7' },
-  { key: 'mindset', label: 'Mindset', subtitle: 'Level up your mind', image: mindsetImg, tall: true, tint: '#efe7f7' },
-  { key: 'nutrition', label: 'Food & Recipes', subtitle: 'Nourish yourself', image: nutritionImg, tall: true, tint: '#fdeede' },
-  { key: 'podcasts', label: 'Podcasts', subtitle: 'Listen & learn', image: podcastImg, tint: '#f5e7f0' },
-  { key: 'vitamins', label: 'Vitamins', subtitle: 'Boost from within', image: vitaminsImg, tint: '#fcf1dc' },
-  { key: 'hygiene', label: 'Skincare & Hygiene', subtitle: 'Glow up tips', image: skincareImg, tall: true, tint: '#fbe7e7' },
-  { key: 'lifestyle', label: 'Lifestyle', subtitle: 'Design your life', image: lifestyleImg, tint: '#e7f1ee' },
+  { key: 'fitness', label: 'Fitness', subtitle: 'Move your body', image: fitnessImg.url, tall: true, tint: '#fce7ef' },
+  { key: 'wellness', label: 'Wellness', subtitle: 'Feel your best', image: wellnessImg.url, tint: '#e8f0e4' },
+  { key: 'calm', label: 'Calm', subtitle: 'Find your peace', image: calmImg.url, tint: '#e6eef7' },
+  { key: 'mindset', label: 'Mindset', subtitle: 'Level up your mind', image: mindsetImg.url, tall: true, tint: '#efe7f7' },
+  { key: 'nutrition', label: 'Food & Recipes', subtitle: 'Nourish yourself', image: nutritionImg.url, tall: true, tint: '#fdeede' },
+  { key: 'podcasts', label: 'Podcasts', subtitle: 'Listen & learn', image: podcastImg.url, tint: '#f5e7f0' },
+  { key: 'vitamins', label: 'Vitamins', subtitle: 'Boost from within', image: vitaminsImg.url, tint: '#fcf1dc' },
+  { key: 'hygiene', label: 'Skincare & Hygiene', subtitle: 'Glow up tips', image: skincareImg.url, tall: true, tint: '#fbe7e7' },
+  { key: 'lifestyle', label: 'Lifestyle', subtitle: 'Design your life', image: lifestyleImg.url, tint: '#e7f1ee' },
 ];
 
 // Category cards include 'books' via the dedicated banner — for ordering we treat banner separately.
@@ -308,14 +308,11 @@ export default function Wonder2() {
                 className="break-inside-avoid rounded-2xl overflow-hidden bg-card border border-border/30 relative cursor-pointer"
                 onClick={() => { track('wander_category_tap', { category: card.key, source: 'wander_explore_grid' }); navigate(`/wander/${card.key}`); }}
               >
-                <div
-                  className={`w-full flex items-center justify-center ${card.tall ? 'aspect-[3/4]' : 'aspect-square'}`}
-                  style={{ backgroundColor: card.tint }}
-                >
+                <div className={`w-full ${card.tall ? 'aspect-[3/4]' : 'aspect-square'}`}>
                   <img
                     src={card.image}
                     alt={card.label}
-                    className="w-1/2 h-1/2 object-contain"
+                    className="w-full h-full object-cover"
                     loading="lazy"
                   />
                 </div>
