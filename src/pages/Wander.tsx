@@ -29,6 +29,8 @@ import vitaminsAsset from '@/assets/wonder/icons/vitamins.png.asset.json';
 const vitaminsImg = vitaminsAsset.url;
 import lifestyleAsset from '@/assets/wonder/icons/lifestyle.png.asset.json';
 const lifestyleImg = lifestyleAsset.url;
+import travelAsset from '@/assets/wonder/icons/travel.png.asset.json';
+const travelImg = travelAsset.url;
 
 interface CategoryCard {
   key: string;
@@ -49,16 +51,17 @@ const categoryCards: CategoryCard[] = [
   { key: 'vitamins', label: 'Vitamins', subtitle: 'Boost from within', image: vitaminsImg, tint: '#fff7f2' },
   { key: 'hygiene', label: 'Skincare & Hygiene', subtitle: 'Glow up tips', image: skincareImg, tall: true, tint: '#fdf0f3' },
   { key: 'lifestyle', label: 'Lifestyle', subtitle: 'Design your life', image: lifestyleImg, tint: '#f4f3f1' },
+  { key: 'travel', label: 'Travel & Adventure', subtitle: 'Explore the world', image: travelImg, tint: '#f4eae5' },
 ];
 
 // Category cards include 'books' via the dedicated banner — for ordering we treat banner separately.
 // Order arrays use the same keys as categoryCards.
 const phaseOrder: Record<CyclePhase | 'default', string[]> = {
-  Menstrual: ['calm', 'wellness', 'nutrition', 'vitamins', 'hygiene', 'podcasts', 'mindset', 'lifestyle', 'fitness'],
-  Follicular: ['fitness', 'mindset', 'lifestyle', 'podcasts', 'wellness', 'nutrition', 'hygiene', 'vitamins', 'calm'],
-  Ovulatory: ['fitness', 'hygiene', 'lifestyle', 'podcasts', 'mindset', 'nutrition', 'wellness', 'vitamins', 'calm'],
-  Luteal: ['calm', 'nutrition', 'wellness', 'hygiene', 'vitamins', 'podcasts', 'mindset', 'lifestyle', 'fitness'],
-  default: ['mindset', 'wellness', 'fitness', 'nutrition', 'calm', 'podcasts', 'hygiene', 'lifestyle', 'vitamins'],
+  Menstrual: ['calm', 'wellness', 'nutrition', 'vitamins', 'hygiene', 'podcasts', 'mindset', 'lifestyle', 'fitness', 'travel'],
+  Follicular: ['fitness', 'mindset', 'lifestyle', 'podcasts', 'wellness', 'nutrition', 'hygiene', 'vitamins', 'calm', 'travel'],
+  Ovulatory: ['fitness', 'hygiene', 'lifestyle', 'podcasts', 'mindset', 'nutrition', 'wellness', 'vitamins', 'calm', 'travel'],
+  Luteal: ['calm', 'nutrition', 'wellness', 'hygiene', 'vitamins', 'podcasts', 'mindset', 'lifestyle', 'fitness', 'travel'],
+  default: ['mindset', 'wellness', 'fitness', 'nutrition', 'calm', 'podcasts', 'hygiene', 'lifestyle', 'vitamins', 'travel'],
 };
 
 interface CuratedCard {
@@ -323,7 +326,7 @@ export default function Wonder2() {
                   <img
                     src={card.image}
                     alt={card.label}
-                    className={card.key === 'calm' || card.key === 'podcasts' || card.key === 'wellness' || card.key === 'mindset' || card.key === 'lifestyle' || card.key === 'vitamins' || card.key === 'fitness' || card.key === 'hygiene' ? 'w-2/3 h-2/3 object-contain' : 'w-1/2 h-1/2 object-contain'}
+                    className={card.key === 'calm' || card.key === 'podcasts' || card.key === 'wellness' || card.key === 'mindset' || card.key === 'lifestyle' || card.key === 'vitamins' || card.key === 'fitness' || card.key === 'hygiene' || card.key === 'travel' ? 'w-2/3 h-2/3 object-contain' : 'w-1/2 h-1/2 object-contain'}
                     loading="lazy"
                   />
                 </div>
