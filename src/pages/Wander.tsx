@@ -29,6 +29,8 @@ import vitaminsAsset from '@/assets/wonder/icons/vitamins.png.asset.json';
 const vitaminsImg = vitaminsAsset.url;
 import lifestyleAsset from '@/assets/wonder/icons/lifestyle.png.asset.json';
 const lifestyleImg = lifestyleAsset.url;
+import travelAsset from '@/assets/wonder/icons/travel.png.asset.json';
+const travelImg = travelAsset.url;
 
 interface CategoryCard {
   key: string;
