@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import { getCurrentCycleDay, getCurrentPhase } from '@/lib/cycleUtils';
+import { supabase } from '@/integrations/supabase/client';
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ubi-chat`;
 const PROMPTS_REGEX = /<!--PROMPTS:(.*?)-->/;
@@ -38,11 +39,14 @@ export function useUbiJournalPrompt(): JournalPromptResult {
     try {
       const userMsg = `Based on this user's current cycle phase (${cyclePhase || 'unknown'}, Day ${cycleDay ?? '?'}) and recent mood pattern (${profile.dailyCheckinState || 'no check-in'}, recent moods: ${recentMoods.join(', ') || 'none logged'}), write one journalling prompt for today. It should be a single open question, maximum 20 words, that helps them reflect on something meaningful. Make it specific to their phase and mood — not generic. Return only the question.`;
 
+      const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token;
+      if (!accessToken) throw new Error('no session');
       const resp = await fetch(CHAT_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
           messages: [{ role: 'user', content: userMsg }],
