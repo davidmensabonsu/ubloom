@@ -237,8 +237,8 @@ export default function Home() {
           className="bg-white border border-primary/15 rounded-2xl p-5"
           style={{ boxShadow: 'var(--shadow-soft)' }}
         >
-          <h2 className="text-lg font-display font-normal italic text-foreground mb-2 flex items-center gap-2">
-            <Heart size={16} className="text-primary shrink-0" />
+          <h2 className="font-body text-xs uppercase tracking-[0.14em] text-primary mb-3 flex items-center gap-1.5">
+            <Heart size={14} className="text-primary shrink-0" />
             From your future self
           </h2>
           {loading ? (
@@ -250,7 +250,7 @@ export default function Home() {
             <>
               {isPremium ? (
                 <>
-                  <p className="font-display italic text-base font-normal leading-relaxed text-foreground/80">
+                  <p className="font-body text-base font-normal leading-relaxed text-foreground">
                     "{futureSelfMessage}"
                   </p>
                   <button
@@ -262,7 +262,7 @@ export default function Home() {
                 </>
               ) : (
                 <>
-                  <p className="font-display italic text-base font-normal leading-relaxed text-foreground/80">
+                  <p className="font-body text-base font-normal leading-relaxed text-foreground">
                     "{(futureSelfMessage || '').split(/(?<=[.!?])\s+/)[0]}"
                   </p>
                   <button
