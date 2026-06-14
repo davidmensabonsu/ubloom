@@ -251,7 +251,7 @@ export default function Home() {
               {isPremium ? (
                 <>
                   <p className="font-body text-base font-normal leading-relaxed text-foreground">
-                    "{futureSelfMessage}"
+                    "{(futureSelfMessage || '').split(/(?<=[.!?])\s+/)[0]}"
                   </p>
                   <button
                     onClick={() => setLetterOpen(true)}
@@ -295,21 +295,21 @@ export default function Home() {
       <Sheet open={letterOpen} onOpenChange={setLetterOpen}>
         <SheetContent
           side="bottom"
-          className="dark-accent-card border-0 rounded-t-3xl max-h-[80vh] overflow-y-auto p-6"
+          className="bg-white border-0 rounded-t-3xl max-h-[80vh] overflow-y-auto p-6"
         >
-          <div className="mx-auto -mt-2 mb-4 h-1.5 w-12 rounded-full bg-white/25" />
+          <div className="mx-auto -mt-2 mb-4 h-1.5 w-12 rounded-full bg-primary/20" />
           <SheetHeader>
-            <SheetTitle className="text-base font-display font-semibold text-white flex items-center gap-2 text-left">
-              <Heart size={16} className="text-white/80" />
+            <SheetTitle className="font-body text-xs uppercase tracking-[0.14em] text-primary flex items-center gap-1.5 text-left">
+              <Heart size={14} className="text-primary shrink-0" />
               From your future self
             </SheetTitle>
           </SheetHeader>
-          <p className="font-display text-sm leading-relaxed text-white/95 italic whitespace-pre-line mt-4">
+          <p className="font-body text-base font-normal leading-relaxed text-foreground whitespace-pre-line mt-4">
             "{futureSelfMessage}"
           </p>
           <button
             onClick={() => setLetterOpen(false)}
-            className="mt-6 w-full py-2.5 rounded-full bg-white/15 hover:bg-white/25 transition-colors text-white text-sm font-medium"
+            className="mt-6 w-full py-2.5 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors text-primary text-sm font-normal"
           >
             Close
           </button>
