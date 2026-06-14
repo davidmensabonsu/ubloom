@@ -182,9 +182,9 @@ export default function Home() {
         </div>
 
         {/* Decorative blobs */}
-        <div className="absolute bottom-[-16px] right-[-16px] w-[120px] h-[120px] rounded-full bg-primary/[0.10] blur-xl pointer-events-none z-0" />
-        <div className="absolute bottom-6 right-14 w-20 h-20 rounded-full bg-primary/[0.08] blur-xl pointer-events-none z-0" />
-        <div className="absolute bottom-16 right-[-4px] w-[50px] h-[50px] rounded-full bg-primary/[0.12] blur-xl pointer-events-none z-0" />
+        <div className="absolute bottom-[-16px] right-[-16px] w-[120px] h-[120px] rounded-full bg-primary/[0.18] blur-xl pointer-events-none z-0" />
+        <div className="absolute bottom-6 right-14 w-20 h-20 rounded-full bg-primary/[0.15] blur-xl pointer-events-none z-0" />
+        <div className="absolute bottom-16 right-[-4px] w-[50px] h-[50px] rounded-full bg-primary/[0.20] blur-xl pointer-events-none z-0" />
 
         {/* Sparkles */}
         <span className="absolute top-[120px] right-5 text-xs text-primary/40 pointer-events-none z-0">✦</span>
