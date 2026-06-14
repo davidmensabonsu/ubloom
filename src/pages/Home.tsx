@@ -181,10 +181,13 @@ export default function Home() {
           </motion.div>
         </div>
 
-        {/* Decorative blobs */}
-        <div className="absolute bottom-[-16px] right-[-16px] w-[120px] h-[120px] rounded-full bg-primary/[0.18] blur-xl pointer-events-none z-0" />
-        <div className="absolute bottom-6 right-14 w-20 h-20 rounded-full bg-primary/[0.15] blur-xl pointer-events-none z-0" />
-        <div className="absolute bottom-16 right-[-4px] w-[50px] h-[50px] rounded-full bg-primary/[0.20] blur-xl pointer-events-none z-0" />
+        {/* Soft decorative cloud */}
+        <div className="absolute bottom-[-30px] right-[-30px] w-[200px] h-[140px] pointer-events-none z-0">
+          <div className="absolute bottom-0 right-4 w-[150px] h-[90px] rounded-full bg-primary/[0.14] blur-2xl" />
+          <div className="absolute bottom-6 right-0 w-[110px] h-[110px] rounded-full bg-primary/[0.12] blur-2xl" />
+          <div className="absolute bottom-10 right-20 w-[90px] h-[90px] rounded-full bg-primary/[0.13] blur-2xl" />
+          <div className="absolute bottom-16 right-10 w-[70px] h-[70px] rounded-full bg-primary/[0.10] blur-2xl" />
+        </div>
 
         {/* Sparkles */}
         <span className="absolute top-[120px] right-5 text-xs text-primary/40 pointer-events-none z-0">✦</span>
