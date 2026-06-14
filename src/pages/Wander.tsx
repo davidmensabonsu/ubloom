@@ -275,10 +275,10 @@ export default function Wonder2() {
                 </button>
               </div>
               <div
-                className="w-40 h-32 shrink-0 flex items-center justify-center rounded-r-2xl"
+                className="w-40 h-32 shrink-0 flex items-center justify-center rounded-r-2xl p-4"
                 style={{ backgroundColor: '#fce7ef' }}
               >
-                <img src={booksBanner} alt="Books" className="w-24 h-24 object-contain" loading="lazy" />
+                <CategoryIllustration category="books" className="w-24 h-24" />
               </div>
             </div>
           </motion.div>
@@ -301,12 +301,7 @@ export default function Wonder2() {
                   className={`w-full flex items-center justify-center ${card.tall ? 'aspect-[3/4]' : 'aspect-square'}`}
                   style={{ backgroundColor: card.tint }}
                 >
-                  <img
-                    src={card.image}
-                    alt={card.label}
-                    className="w-1/2 h-1/2 object-contain"
-                    loading="lazy"
-                  />
+                  <CategoryIllustration category={card.key} className="w-3/5 h-3/5" />
                 </div>
                 <div className="p-3 flex items-end justify-between gap-2">
                   <div className="min-w-0">
