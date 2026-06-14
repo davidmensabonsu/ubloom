@@ -6,30 +6,41 @@ import { useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
 import ProfileButton from '@/components/ProfileButton';
 import ResourceDetailSheet from '@/components/wonder/ResourceDetailSheet';
-import CategoryIllustration from '@/components/wonder/CategoryIllustration';
 import { useUserStore } from '@/stores/userStore';
 import { wonderResources, mealRecipes, fitnessWorkouts } from '@/lib/wonderResources';
 import type { WonderResource } from '@/lib/wonderResources';
 import { getCurrentCycleDay, getCurrentPhase, type CyclePhase } from '@/lib/cycleUtils';
 
+import booksBanner from '@/assets/wonder/icons/books-banner.png';
+import fitnessImg from '@/assets/wonder/icons/fitness.png';
+import skincareImg from '@/assets/wonder/icons/hygiene.png';
+import podcastImg from '@/assets/wonder/icons/podcasts.png';
+import mindsetImg from '@/assets/wonder/icons/mindset.png';
+import wellnessImg from '@/assets/wonder/icons/wellness.png';
+import nutritionImg from '@/assets/wonder/icons/nutrition.png';
+import calmImg from '@/assets/wonder/icons/calm.png';
+import vitaminsImg from '@/assets/wonder/icons/vitamins.png';
+import lifestyleImg from '@/assets/wonder/icons/lifestyle.png';
+
 interface CategoryCard {
   key: string;
   label: string;
   subtitle: string;
+  image: string;
   tall?: boolean;
   tint: string;
 }
 
 const categoryCards: CategoryCard[] = [
-  { key: 'fitness', label: 'Fitness', subtitle: 'Move your body', tall: true, tint: '#fbe6ee' },
-  { key: 'wellness', label: 'Wellness', subtitle: 'Feel your best', tint: '#fcebec' },
-  { key: 'calm', label: 'Calm', subtitle: 'Find your peace', tint: '#ece7f5' },
-  { key: 'mindset', label: 'Mindset', subtitle: 'Level up your mind', tall: true, tint: '#f0e8f5' },
-  { key: 'nutrition', label: 'Food & Recipes', subtitle: 'Nourish yourself', tall: true, tint: '#fbeede' },
-  { key: 'podcasts', label: 'Podcasts', subtitle: 'Listen & learn', tint: '#fbe6ec' },
-  { key: 'vitamins', label: 'Vitamins', subtitle: 'Boost from within', tint: '#fce7ef' },
-  { key: 'hygiene', label: 'Skincare & Hygiene', subtitle: 'Glow up tips', tall: true, tint: '#fbe7ea' },
-  { key: 'lifestyle', label: 'Lifestyle', subtitle: 'Design your life', tint: '#e9ede6' },
+  { key: 'fitness', label: 'Fitness', subtitle: 'Move your body', image: fitnessImg, tall: true, tint: '#fce7ef' },
+  { key: 'wellness', label: 'Wellness', subtitle: 'Feel your best', image: wellnessImg, tint: '#e8f0e4' },
+  { key: 'calm', label: 'Calm', subtitle: 'Find your peace', image: calmImg, tint: '#e6eef7' },
+  { key: 'mindset', label: 'Mindset', subtitle: 'Level up your mind', image: mindsetImg, tall: true, tint: '#efe7f7' },
+  { key: 'nutrition', label: 'Food & Recipes', subtitle: 'Nourish yourself', image: nutritionImg, tall: true, tint: '#fdeede' },
+  { key: 'podcasts', label: 'Podcasts', subtitle: 'Listen & learn', image: podcastImg, tint: '#f5e7f0' },
+  { key: 'vitamins', label: 'Vitamins', subtitle: 'Boost from within', image: vitaminsImg, tint: '#fcf1dc' },
+  { key: 'hygiene', label: 'Skincare & Hygiene', subtitle: 'Glow up tips', image: skincareImg, tall: true, tint: '#fbe7e7' },
+  { key: 'lifestyle', label: 'Lifestyle', subtitle: 'Design your life', image: lifestyleImg, tint: '#e7f1ee' },
 ];
 
 // Category cards include 'books' via the dedicated banner — for ordering we treat banner separately.
@@ -275,10 +286,10 @@ export default function Wonder2() {
                 </button>
               </div>
               <div
-                className="w-40 h-32 shrink-0 flex items-center justify-center rounded-r-2xl p-4"
+                className="w-40 h-32 shrink-0 flex items-center justify-center rounded-r-2xl"
                 style={{ backgroundColor: '#fce7ef' }}
               >
-                <CategoryIllustration category="books" className="w-24 h-24" />
+                <img src={booksBanner} alt="Books" className="w-24 h-24 object-contain" loading="lazy" />
               </div>
             </div>
           </motion.div>
@@ -301,7 +312,12 @@ export default function Wonder2() {
                   className={`w-full flex items-center justify-center ${card.tall ? 'aspect-[3/4]' : 'aspect-square'}`}
                   style={{ backgroundColor: card.tint }}
                 >
-                  <CategoryIllustration category={card.key} className="w-3/5 h-3/5" />
+                  <img
+                    src={card.image}
+                    alt={card.label}
+                    className="w-1/2 h-1/2 object-contain"
+                    loading="lazy"
+                  />
                 </div>
                 <div className="p-3 flex items-end justify-between gap-2">
                   <div className="min-w-0">
