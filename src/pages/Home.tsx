@@ -237,7 +237,7 @@ export default function Home() {
           className="bg-white border border-primary/15 rounded-2xl p-5"
           style={{ boxShadow: 'var(--shadow-soft)' }}
         >
-          <h2 className="text-lg font-display font-normal text-foreground mb-2 flex items-center gap-2">
+          <h2 className="text-lg font-display font-normal italic text-foreground mb-2 flex items-center gap-2">
             <Heart size={16} className="text-primary shrink-0" />
             From your future self
           </h2>
