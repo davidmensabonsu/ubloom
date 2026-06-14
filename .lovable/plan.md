@@ -1,19 +1,21 @@
-## Plan: Update Podcasts Cover Image
+## Plan: Fix Stripe Payment Integration
 
-Apply the same 4-step treatment used for the Calm cover to the newly uploaded podcasts illustration.
+### 1. Update the Secret Key
+Replace the existing `STRIPE_SECRET_KEY` project secret with your new key using the secure update flow.
 
-### Steps
+### 2. Verify the Key Works
+Call Stripe’s API from an edge function to confirm the new key is valid and accepted.
 
-1. **Trim white edge** — Inspect the uploaded podcasts.png and, if present, crop any white line at the edge using Python/PIL (same approach as Calm).
+### 3. Test the Payment Flow
+- Create a test checkout session via `create-checkout`
+- Confirm `check-subscription` and `customer-portal` edge functions respond correctly
+- Spot-check any existing webhook endpoint if relevant
 
-2. **Upload as CDN asset** — Run `lovable-assets create` on the cleaned image and write the resulting `.asset.json` pointer to `src/assets/wonder/icons/podcasts.png.asset.json`.
+### 4. Confirm Frontend Pro/Trial Logic
+After the backend is verified, do a quick end-to-end check that the upgrade button and Pro-gated features behave as expected.
 
-3. **Sample background colour** — Extract the dominant light pink/lavender background from the illustration and update the `tint` value for the `podcasts` card in `src/pages/Wander.tsx`.
+---
 
-4. **Enlarge illustration & wire asset** — In `src/pages/Wander.tsx`:
-   - Replace the direct `podcasts.png` import with an import of the new `podcasts.png.asset.json`.
-   - Change the podcasts card’s illustration class from the default `w-1/2 h-1/2` to `w-2/3 h-2/3` (matching Calm).
-
-### Files changed
-- `src/assets/wonder/icons/podcasts.png.asset.json` (new)
-- `src/pages/Wander.tsx`
+**Technical notes:**
+- The integration code (`create-checkout`, `check-subscription`, `customer-portal`, `stripe-webhook`) is already in place and reads `STRIPE_SECRET_KEY` from environment variables — no code changes are needed.
+- After updating the secret, the edge functions will automatically pick up the new value on their next invocation.
