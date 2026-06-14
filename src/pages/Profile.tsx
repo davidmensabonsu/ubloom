@@ -696,15 +696,6 @@ export default function Profile() {
           </Collapsible>
         </motion.div>
 
-        {/* Reminder Settings */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <ReminderSettings />
-        </motion.div>
-
         {/* uBloom Society */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
