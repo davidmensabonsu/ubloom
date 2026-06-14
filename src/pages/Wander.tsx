@@ -17,7 +17,8 @@ import skincareImg from '@/assets/wonder/icons/hygiene.png';
 import podcastAsset from '@/assets/wonder/icons/podcasts.png.asset.json';
 const podcastImg = podcastAsset.url;
 import mindsetImg from '@/assets/wonder/icons/mindset.png';
-import wellnessImg from '@/assets/wonder/icons/wellness.png';
+import wellnessAsset from '@/assets/wonder/icons/wellness.png.asset.json';
+const wellnessImg = wellnessAsset.url;
 import nutritionImg from '@/assets/wonder/icons/nutrition.png';
 import calmAsset from '@/assets/wonder/icons/calm.png.asset.json';
 const calmImg = calmAsset.url;
@@ -35,7 +36,7 @@ interface CategoryCard {
 
 const categoryCards: CategoryCard[] = [
   { key: 'fitness', label: 'Fitness', subtitle: 'Move your body', image: fitnessImg, tall: true, tint: '#fce7ef' },
-  { key: 'wellness', label: 'Wellness', subtitle: 'Feel your best', image: wellnessImg, tint: '#e8f0e4' },
+  { key: 'wellness', label: 'Wellness', subtitle: 'Feel your best', image: wellnessImg, tint: '#fdf7f3' },
   { key: 'calm', label: 'Calm', subtitle: 'Find your peace', image: calmImg, tint: '#faf2fa' },
   { key: 'mindset', label: 'Mindset', subtitle: 'Level up your mind', image: mindsetImg, tall: true, tint: '#efe7f7' },
   { key: 'nutrition', label: 'Food & Recipes', subtitle: 'Nourish yourself', image: nutritionImg, tall: true, tint: '#fdeede' },
@@ -317,7 +318,7 @@ export default function Wonder2() {
                   <img
                     src={card.image}
                     alt={card.label}
-                    className={card.key === 'calm' || card.key === 'podcasts' ? 'w-2/3 h-2/3 object-contain' : 'w-1/2 h-1/2 object-contain'}
+                    className={card.key === 'calm' || card.key === 'podcasts' || card.key === 'wellness' ? 'w-2/3 h-2/3 object-contain' : 'w-1/2 h-1/2 object-contain'}
                     loading="lazy"
                   />
                 </div>
