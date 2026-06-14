@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { requireUser } from "../_shared/auth.ts";
 import { isPremiumUser } from "../_shared/premium.ts";
+import { parseJsonBody, clampArray, clampString } from "../_shared/payload.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -17,7 +18,22 @@ serve(async (req) => {
   const verifiedUserId = auth.userId;
 
   try {
-    const { messages, userContext, chatHistory, conversationId } = await req.json();
+    const parsed = await parseJsonBody<{
+      messages?: Array<{ role?: string; content?: string }>;
+      userContext?: unknown;
+      chatHistory?: string;
+      conversationId?: string;
+    }>(req, corsHeaders, 100_000);
+    if ("response" in parsed) return parsed.response;
+    const body = parsed.data;
+    // Cap message history to last 20 turns, content trimmed to 4000 chars each.
+    const messages = clampArray<{ role?: string; content?: string }>(body.messages, 20).map((m) => ({
+      role: m?.role,
+      content: clampString(m?.content, 4000),
+    }));
+    const userContext = body.userContext;
+    const chatHistory = clampString(body.chatHistory, 8000);
+    const conversationId = body.conversationId;
     // Always derive userId from the verified JWT — never trust the request body.
     const userId = verifiedUserId;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");

@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { requireUser } from "../_shared/auth.ts";
+import { parseJsonBody } from "../_shared/payload.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,7 +14,19 @@ serve(async (req) => {
   if ("response" in auth) return auth.response;
 
   try {
-    const { context } = await req.json();
+    const parsed = await parseJsonBody<{ context?: Record<string, unknown> }>(req, corsHeaders, 50_000);
+    if ("response" in parsed) return parsed.response;
+    const rawContext = parsed.data.context || {};
+    // Cap unbounded arrays/strings before they reach the prompt.
+    const context: Record<string, unknown> = { ...rawContext };
+    if (Array.isArray((context as any).recentJournals)) {
+      (context as any).recentJournals = (context as any).recentJournals
+        .slice(-20)
+        .map((s: unknown) => (typeof s === "string" ? s.slice(0, 2000) : s));
+    }
+    if (Array.isArray((context as any).moodHistory)) {
+      (context as any).moodHistory = (context as any).moodHistory.slice(-30);
+    }
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
