@@ -201,7 +201,7 @@ export default function Home() {
               <div className="h-4 w-3/4 rounded-full bg-primary/10 animate-pulse blur-[1px]" />
             </div>
           ) : (
-            <p className="font-display text-lg leading-relaxed text-foreground">
+            <p className="font-body text-base font-normal leading-relaxed text-foreground">
               {intention}
             </p>
           )}
@@ -214,7 +214,7 @@ export default function Home() {
             aria-pressed={intentionDone}
             aria-label={intentionDone ? "Mark today's intention as not done" : "Mark today's intention as done"}
           >
-            <span className="text-sm font-medium">
+            <span className="text-sm font-normal">
               {intentionDone ? 'Done for today' : 'Mark as done'}
             </span>
             <span
@@ -237,7 +237,7 @@ export default function Home() {
           className="bg-white border border-primary/15 rounded-2xl p-5"
           style={{ boxShadow: 'var(--shadow-soft)' }}
         >
-          <h2 className="text-base font-display font-medium tracking-tight text-foreground mb-2 flex items-center gap-2">
+          <h2 className="text-lg font-display font-normal text-foreground mb-2 flex items-center gap-2">
             <Heart size={16} className="text-primary shrink-0" />
             From your future self
           </h2>
