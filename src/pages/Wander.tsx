@@ -14,7 +14,8 @@ import { getCurrentCycleDay, getCurrentPhase, type CyclePhase } from '@/lib/cycl
 import booksBanner from '@/assets/wonder/icons/books-banner.png';
 import fitnessImg from '@/assets/wonder/icons/fitness.png';
 import skincareImg from '@/assets/wonder/icons/hygiene.png';
-import podcastImg from '@/assets/wonder/icons/podcasts.png';
+import podcastAsset from '@/assets/wonder/icons/podcasts.png.asset.json';
+const podcastImg = podcastAsset.url;
 import mindsetImg from '@/assets/wonder/icons/mindset.png';
 import wellnessImg from '@/assets/wonder/icons/wellness.png';
 import nutritionImg from '@/assets/wonder/icons/nutrition.png';
@@ -38,7 +39,7 @@ const categoryCards: CategoryCard[] = [
   { key: 'calm', label: 'Calm', subtitle: 'Find your peace', image: calmImg, tint: '#faf2fa' },
   { key: 'mindset', label: 'Mindset', subtitle: 'Level up your mind', image: mindsetImg, tall: true, tint: '#efe7f7' },
   { key: 'nutrition', label: 'Food & Recipes', subtitle: 'Nourish yourself', image: nutritionImg, tall: true, tint: '#fdeede' },
-  { key: 'podcasts', label: 'Podcasts', subtitle: 'Listen & learn', image: podcastImg, tint: '#f5e7f0' },
+  { key: 'podcasts', label: 'Podcasts', subtitle: 'Listen & learn', image: podcastImg, tint: '#fdf0f3' },
   { key: 'vitamins', label: 'Vitamins', subtitle: 'Boost from within', image: vitaminsImg, tint: '#fcf1dc' },
   { key: 'hygiene', label: 'Skincare & Hygiene', subtitle: 'Glow up tips', image: skincareImg, tall: true, tint: '#fbe7e7' },
   { key: 'lifestyle', label: 'Lifestyle', subtitle: 'Design your life', image: lifestyleImg, tint: '#e7f1ee' },
@@ -316,7 +317,7 @@ export default function Wonder2() {
                   <img
                     src={card.image}
                     alt={card.label}
-                    className={card.key === 'calm' ? 'w-2/3 h-2/3 object-contain' : 'w-1/2 h-1/2 object-contain'}
+                    className={card.key === 'calm' || card.key === 'podcasts' ? 'w-2/3 h-2/3 object-contain' : 'w-1/2 h-1/2 object-contain'}
                     loading="lazy"
                   />
                 </div>
