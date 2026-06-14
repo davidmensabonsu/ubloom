@@ -12,7 +12,8 @@ import type { WonderResource } from '@/lib/wonderResources';
 import { getCurrentCycleDay, getCurrentPhase, type CyclePhase } from '@/lib/cycleUtils';
 
 import booksBanner from '@/assets/wonder/icons/books-banner.png';
-import fitnessImg from '@/assets/wonder/icons/fitness.png';
+import fitnessAsset from '@/assets/wonder/icons/fitness.png.asset.json';
+const fitnessImg = fitnessAsset.url;
 import skincareImg from '@/assets/wonder/icons/hygiene.png';
 import podcastAsset from '@/assets/wonder/icons/podcasts.png.asset.json';
 const podcastImg = podcastAsset.url;
@@ -38,7 +39,7 @@ interface CategoryCard {
 }
 
 const categoryCards: CategoryCard[] = [
-  { key: 'fitness', label: 'Fitness', subtitle: 'Move your body', image: fitnessImg, tall: true, tint: '#fce7ef' },
+  { key: 'fitness', label: 'Fitness', subtitle: 'Move your body', image: fitnessImg, tall: true, tint: '#fef1f4' },
   { key: 'wellness', label: 'Wellness', subtitle: 'Feel your best', image: wellnessImg, tint: '#fdf7f3' },
   { key: 'calm', label: 'Calm', subtitle: 'Find your peace', image: calmImg, tint: '#faf2fa' },
   { key: 'mindset', label: 'Mindset', subtitle: 'Level up your mind', image: mindsetImg, tall: true, tint: '#f7eff7' },
@@ -321,7 +322,7 @@ export default function Wonder2() {
                   <img
                     src={card.image}
                     alt={card.label}
-                    className={card.key === 'calm' || card.key === 'podcasts' || card.key === 'wellness' || card.key === 'mindset' || card.key === 'lifestyle' || card.key === 'vitamins' ? 'w-2/3 h-2/3 object-contain' : 'w-1/2 h-1/2 object-contain'}
+                    className={card.key === 'calm' || card.key === 'podcasts' || card.key === 'wellness' || card.key === 'mindset' || card.key === 'lifestyle' || card.key === 'vitamins' || card.key === 'fitness' ? 'w-2/3 h-2/3 object-contain' : 'w-1/2 h-1/2 object-contain'}
                     loading="lazy"
                   />
                 </div>
