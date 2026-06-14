@@ -138,7 +138,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="font-display text-4xl md:text-5xl font-normal tracking-tight text-foreground mt-6"
+          className="font-display text-5xl font-normal leading-tight text-foreground mt-6"
         >
           {greeting.text}, {preferredName || 'beautiful'}
         </motion.h1>
@@ -148,7 +148,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.14 }}
-            className="font-body text-base text-muted-foreground mt-2"
+            className="font-body text-sm font-normal text-foreground/70 tracking-wide mt-2"
           >
             {subtitle}
           </motion.p>
@@ -176,7 +176,7 @@ export default function Home() {
               );
             })}
           </div>
-          <p className="mt-3 text-sm text-muted-foreground tracking-wide">{week.label}</p>
+          <p className="mt-3 text-xs font-normal text-foreground/60 tracking-wide">{week.label}</p>
         </motion.div>
       </div>
 
@@ -201,7 +201,7 @@ export default function Home() {
               <div className="h-4 w-3/4 rounded-full bg-primary/10 animate-pulse blur-[1px]" />
             </div>
           ) : (
-            <p className="font-display text-lg leading-relaxed text-foreground">
+            <p className="font-body text-base font-normal leading-relaxed text-foreground">
               {intention}
             </p>
           )}
@@ -214,7 +214,7 @@ export default function Home() {
             aria-pressed={intentionDone}
             aria-label={intentionDone ? "Mark today's intention as not done" : "Mark today's intention as done"}
           >
-            <span className="text-sm font-medium">
+            <span className="text-sm font-normal">
               {intentionDone ? 'Done for today' : 'Mark as done'}
             </span>
             <span
@@ -237,7 +237,7 @@ export default function Home() {
           className="bg-white border border-primary/15 rounded-2xl p-5"
           style={{ boxShadow: 'var(--shadow-soft)' }}
         >
-          <h2 className="text-base font-display font-medium tracking-tight text-foreground mb-2 flex items-center gap-2">
+          <h2 className="text-lg font-display font-normal text-foreground mb-2 flex items-center gap-2">
             <Heart size={16} className="text-primary shrink-0" />
             From your future self
           </h2>
@@ -250,24 +250,24 @@ export default function Home() {
             <>
               {isPremium ? (
                 <>
-                  <p className="font-display text-base leading-relaxed text-muted-foreground">
+                  <p className="font-display italic text-base font-normal leading-relaxed text-foreground/80">
                     "{futureSelfMessage}"
                   </p>
                   <button
                     onClick={() => setLetterOpen(true)}
-                    className="mt-3 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                    className="mt-3 text-sm font-normal text-primary hover:text-primary/80 transition-colors"
                   >
                     Read full letter →
                   </button>
                 </>
               ) : (
                 <>
-                  <p className="font-display text-base leading-relaxed text-muted-foreground">
+                  <p className="font-display italic text-base font-normal leading-relaxed text-foreground/80">
                     "{(futureSelfMessage || '').split(/(?<=[.!?])\s+/)[0]}"
                   </p>
                   <button
                     onClick={() => setLetterModalOpen(true)}
-                    className="mt-3 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                    className="mt-3 text-sm font-normal text-primary hover:text-primary/80 transition-colors"
                   >
                     Unlock full letter — Upgrade to Premium →
                   </button>
@@ -338,7 +338,7 @@ function QuickAction({ icon, title, href }: { icon: string; title: string; href:
       <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
         <img src={icon} alt="" className="w-5 h-5 object-contain clay-icon" />
       </div>
-      <span className="text-base font-medium text-foreground">{title}</span>
+      <span className="text-sm font-normal text-foreground text-center">{title}</span>
     </motion.a>
   );
 }
