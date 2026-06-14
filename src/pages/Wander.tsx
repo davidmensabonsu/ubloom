@@ -39,7 +39,7 @@ const categoryCards: CategoryCard[] = [
   { key: 'fitness', label: 'Fitness', subtitle: 'Move your body', image: fitnessImg, tall: true, tint: '#fce7ef' },
   { key: 'wellness', label: 'Wellness', subtitle: 'Feel your best', image: wellnessImg, tint: '#fdf7f3' },
   { key: 'calm', label: 'Calm', subtitle: 'Find your peace', image: calmImg, tint: '#faf2fa' },
-  { key: 'mindset', label: 'Mindset', subtitle: 'Level up your mind', image: mindsetImg, tall: true, tint: '#efe7f7' },
+  { key: 'mindset', label: 'Mindset', subtitle: 'Level up your mind', image: mindsetImg, tall: true, tint: '#f7eff7' },
   { key: 'nutrition', label: 'Food & Recipes', subtitle: 'Nourish yourself', image: nutritionImg, tall: true, tint: '#fdeede' },
   { key: 'podcasts', label: 'Podcasts', subtitle: 'Listen & learn', image: podcastImg, tint: '#fdf0f3' },
   { key: 'vitamins', label: 'Vitamins', subtitle: 'Boost from within', image: vitaminsImg, tint: '#fcf1dc' },
@@ -319,7 +319,7 @@ export default function Wonder2() {
                   <img
                     src={card.image}
                     alt={card.label}
-                    className={card.key === 'calm' || card.key === 'podcasts' || card.key === 'wellness' ? 'w-2/3 h-2/3 object-contain' : 'w-1/2 h-1/2 object-contain'}
+                    className={card.key === 'calm' || card.key === 'podcasts' || card.key === 'wellness' || card.key === 'mindset' ? 'w-2/3 h-2/3 object-contain' : 'w-1/2 h-1/2 object-contain'}
                     loading="lazy"
                   />
                 </div>
