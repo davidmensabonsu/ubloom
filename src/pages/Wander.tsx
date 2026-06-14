@@ -52,7 +52,7 @@ const categoryCards: CategoryCard[] = [
   { key: 'vitamins', label: 'Vitamins', subtitle: 'Boost from within', image: vitaminsImg, tint: '#fff7f2' },
   { key: 'hygiene', label: 'Skincare & Hygiene', subtitle: 'Glow up tips', image: skincareImg, tall: true, tint: '#fdf0f3' },
   { key: 'lifestyle', label: 'Lifestyle', subtitle: 'Design your life', image: lifestyleImg, tint: '#f4f3f1' },
-  { key: 'travel', label: 'Travel & Adventure', subtitle: 'Explore the world', image: travelImg, tint: '#f4eae5' },
+  { key: 'travel', label: 'Travel & Adventure', subtitle: 'Explore the world', image: travelImg, tint: '#fdf6f3' },
 ];
 
 // Category cards include 'books' via the dedicated banner — for ordering we treat banner separately.
