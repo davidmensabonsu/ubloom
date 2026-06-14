@@ -1,15 +1,19 @@
-## Remove notification toggle, keep time pickers
+## Plan: Update Podcasts Cover Image
 
-### Goal
-Remove the "Enable notifications" toggle from the ReminderSettings UI while keeping the morning/midday/evening time pickers visible unconditionally.
+Apply the same 4-step treatment used for the Calm cover to the newly uploaded podcasts illustration.
 
-### Changes
-1. **src/components/routine/ReminderSettings.tsx**
-   - Remove the `Switch` toggle and the header row that contains it (bell icon, title, subtitle).
-   - Remove the conditional rendering (`reminderSettings.enabled && ...`) around the time pickers so they are always visible.
-   - Optionally simplify: remove unused `handleToggle`, `permissionStatus`, and `isSupported` imports/variables from this component — the underlying `useReminders` hook remains untouched.
+### Steps
 
-### What stays
-- The `useReminders` hook and all reminder-scheduling logic (no backend changes).
-- The time picker inputs and their `handleTimeChange` behavior.
-- `updateReminderSettings` store updates when users change times.
+1. **Trim white edge** — Inspect the uploaded podcasts.png and, if present, crop any white line at the edge using Python/PIL (same approach as Calm).
+
+2. **Upload as CDN asset** — Run `lovable-assets create` on the cleaned image and write the resulting `.asset.json` pointer to `src/assets/wonder/icons/podcasts.png.asset.json`.
+
+3. **Sample background colour** — Extract the dominant light pink/lavender background from the illustration and update the `tint` value for the `podcasts` card in `src/pages/Wander.tsx`.
+
+4. **Enlarge illustration & wire asset** — In `src/pages/Wander.tsx`:
+   - Replace the direct `podcasts.png` import with an import of the new `podcasts.png.asset.json`.
+   - Change the podcasts card’s illustration class from the default `w-1/2 h-1/2` to `w-2/3 h-2/3` (matching Calm).
+
+### Files changed
+- `src/assets/wonder/icons/podcasts.png.asset.json` (new)
+- `src/pages/Wander.tsx`
