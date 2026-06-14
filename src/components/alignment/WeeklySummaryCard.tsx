@@ -5,6 +5,7 @@ import { useUserStore } from '@/stores/userStore';
 import { getLocalDateStr } from '@/lib/dateUtils';
 import { computeBloomScore } from '@/lib/bloomScore';
 import { getCurrentCycleDay, getCurrentPhase } from '@/lib/cycleUtils';
+import { supabase } from '@/integrations/supabase/client';
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ubi-chat`;
 const PROMPTS_REGEX = /<!--PROMPTS:(.*?)-->/;
@@ -106,11 +107,14 @@ export default function WeeklySummaryCard() {
     try {
       const userMsg = `Write a short personal letter to ${profile.preferredName || 'them'} summarising their week. Reference their actual data: ${stats.alignedDays} aligned days, ${stats.habitRatePct}% habit completion, ${stats.positiveMoodPercent}% positive mood, Bloom Score: ${bloom.total}/100, cycle phase: ${cyclePhase || 'unknown'}. Write in Ubi's voice — warm, direct, honest. 3-4 sentences. Reference one specific pattern you noticed. End with one forward-looking encouragement. Return only the letter text.`;
 
+      const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token;
+      if (!accessToken) throw new Error('no session');
       const resp = await fetch(CHAT_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
           messages: [{ role: 'user', content: userMsg }],
