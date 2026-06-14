@@ -19,7 +19,7 @@ export default function Terms() {
           className="glass-card rounded-2xl p-6 space-y-6"
         >
           <h1 className="text-2xl font-display font-bold text-foreground">Terms &amp; Conditions</h1>
-          <p className="text-xs text-muted-foreground">Last updated: [DATE]</p>
+          <p className="text-xs text-muted-foreground">Last updated: June 2026</p>
 
           <section className="space-y-2">
             <h2 className="text-base font-semibold text-foreground">1. About uBloom</h2>
@@ -27,7 +27,7 @@ export default function Terms() {
               uBloom is a personal wellness and self-growth application designed to help you build positive daily routines, track your mood and menstrual cycle, journal, explore curated wellness content, and engage with an AI-powered mentor called Ubi.
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              uBloom is operated by [COMPANY NAME], registered at [REGISTERED ADDRESS], and directed by Jojo Carter. For all legal and operational enquiries, please contact us at [CONTACT EMAIL].
+              uBloom is operated by Ubloom, registered at Dubai, United Arab Emirates, and directed by Jojo Carter. For all legal and operational enquiries, please contact us at ubloom@gmail.com.
             </p>
           </section>
 
@@ -70,7 +70,7 @@ export default function Terms() {
               <li>Provide accurate and complete registration information</li>
               <li>Keep your login credentials confidential at all times</li>
               <li>Not share your account with anyone else</li>
-              <li>Notify us immediately at [CONTACT EMAIL] if you suspect any unauthorized access to your account</li>
+              <li>Notify us immediately at ubloom@gmail.com if you suspect any unauthorized access to your account</li>
               <li>Take responsibility for all activity that occurs under your account</li>
             </ul>
             <p className="text-sm text-muted-foreground leading-relaxed">
@@ -169,7 +169,7 @@ export default function Terms() {
 
             <h3 className="text-sm font-semibold text-foreground mt-3">Cancellation</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              You may cancel your subscription at any time from the Profile page within the app or by contacting us at [CONTACT EMAIL]. Cancellation takes effect at the end of your current billing period. You will retain access to Premium features until that date.
+              You may cancel your subscription at any time from the Profile page within the app or by contacting us at ubloom@gmail.com. Cancellation takes effect at the end of your current billing period. You will retain access to Premium features until that date.
             </p>
 
             <h3 className="text-sm font-semibold text-foreground mt-3">Refund Policy</h3>
@@ -217,7 +217,7 @@ export default function Terms() {
           <section className="space-y-2">
             <h2 className="text-base font-semibold text-foreground">12. Intellectual Property</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              uBloom, including its name, logo, design, technology, content, and all associated intellectual property rights, is owned by [COMPANY NAME] and protected by applicable intellectual property laws. Nothing in these terms grants you any rights to use uBloom's intellectual property other than as necessary to use the service in accordance with these terms.
+              uBloom, including its name, logo, design, technology, content, and all associated intellectual property rights, is owned by Ubloom and protected by applicable intellectual property laws. Nothing in these terms grants you any rights to use uBloom's intellectual property other than as necessary to use the service in accordance with these terms.
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
               The uBloom flower logo, the Ubi AI mentor concept, the Bloom Score system, and all original content within the app are proprietary to uBloom.
@@ -238,7 +238,7 @@ export default function Terms() {
               <li>You have the right to access, correct, port, and delete your personal data at any time</li>
             </ul>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              To exercise your data rights or to request deletion of your account and all associated data, please use the Delete Account feature in the Profile page or contact us at [CONTACT EMAIL]. All data deletion requests will be processed within 30 days.
+              To exercise your data rights or to request deletion of your account and all associated data, please use the Delete Account feature in the Profile page or contact us at ubloom@gmail.com. All data deletion requests will be processed within 30 days.
             </p>
           </section>
 
@@ -272,7 +272,7 @@ export default function Terms() {
           <section className="space-y-2">
             <h2 className="text-base font-semibold text-foreground">16. Dispute Resolution</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              In the event of any dispute arising from these terms or your use of uBloom, you agree to first contact us at [CONTACT EMAIL] and allow 30 days for us to attempt to resolve the dispute in good faith before initiating any formal legal proceedings.
+              In the event of any dispute arising from these terms or your use of uBloom, you agree to first contact us at ubloom@gmail.com and allow 30 days for us to attempt to resolve the dispute in good faith before initiating any formal legal proceedings.
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Nothing in this clause prevents you from seeking urgent injunctive relief or from exercising any mandatory statutory rights available to you under applicable consumer protection law.
@@ -309,9 +309,9 @@ export default function Terms() {
               For any questions, concerns, or legal notices regarding these Terms and Conditions, please contact:
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              [COMPANY NAME]<br />
-              [REGISTERED ADDRESS]<br />
-              [CONTACT EMAIL]
+              Ubloom<br />
+              Dubai, United Arab Emirates<br />
+              ubloom@gmail.com
             </p>
           </section>
 
