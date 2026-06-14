@@ -338,7 +338,7 @@ function QuickAction({ icon, title, href }: { icon: string; title: string; href:
       <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
         <img src={icon} alt="" className="w-5 h-5 object-contain clay-icon" />
       </div>
-      <span className="text-base font-medium text-foreground">{title}</span>
+      <span className="text-sm font-normal text-foreground text-center">{title}</span>
     </motion.a>
   );
 }
