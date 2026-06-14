@@ -29,7 +29,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import ReminderSettings from '@/components/routine/ReminderSettings';
+
 import BottomNav from '@/components/BottomNav';
 import ManageSubscriptionDialog from '@/components/ManageSubscriptionDialog';
 
@@ -694,15 +694,6 @@ export default function Profile() {
               </div>
             </CollapsibleContent>
           </Collapsible>
-        </motion.div>
-
-        {/* Reminder Settings */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <ReminderSettings />
         </motion.div>
 
         {/* uBloom Society */}
