@@ -19,7 +19,7 @@ export default function CookiePolicy() {
           className="glass-card rounded-2xl p-6 space-y-6"
         >
           <h1 className="text-2xl font-display font-bold text-foreground">uBloom — Cookie Policy</h1>
-          <p className="text-xs text-muted-foreground">Last updated: [DATE]</p>
+          <p className="text-xs text-muted-foreground">Last updated: June 2026</p>
 
           {/* 1 */}
           <section className="space-y-2">
@@ -153,9 +153,9 @@ export default function CookiePolicy() {
               If you have any questions about this Cookie Policy or how we use local storage, please contact us at:
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              [COMPANY NAME]<br />
-              [REGISTERED ADDRESS]<br />
-              [CONTACT EMAIL]
+              Ubloom<br />
+              Dubai, United Arab Emirates<br />
+              ubloom@gmail.com
             </p>
           </section>
         </motion.div>
