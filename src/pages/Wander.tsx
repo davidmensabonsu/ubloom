@@ -321,7 +321,7 @@ export default function Wonder2() {
                   <img
                     src={card.image}
                     alt={card.label}
-                    className={card.key === 'calm' || card.key === 'podcasts' || card.key === 'wellness' || card.key === 'mindset' || card.key === 'lifestyle' ? 'w-2/3 h-2/3 object-contain' : 'w-1/2 h-1/2 object-contain'}
+                    className={card.key === 'calm' || card.key === 'podcasts' || card.key === 'wellness' || card.key === 'mindset' || card.key === 'lifestyle' || card.key === 'vitamins' ? 'w-2/3 h-2/3 object-contain' : 'w-1/2 h-1/2 object-contain'}
                     loading="lazy"
                   />
                 </div>
