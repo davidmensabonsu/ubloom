@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { requireUser } from "../_shared/auth.ts";
+import { parseJsonBody, clampString, clampArray } from "../_shared/payload.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,7 +14,18 @@ serve(async (req) => {
   if ("response" in auth) return auth.response;
 
   try {
-    const { struggles, dreamSelfFeels, wantsMoreOf, identityStatement, recentMoods, recentJournals, habitCategories, resourceIds, interests } = await req.json();
+    const parsed = await parseJsonBody<Record<string, unknown>>(req, corsHeaders, 50_000);
+    if ("response" in parsed) return parsed.response;
+    const b = parsed.data;
+    const struggles = clampArray<string>(b.struggles, 20).map((s) => clampString(s, 200));
+    const dreamSelfFeels = clampArray<string>(b.dreamSelfFeels, 20).map((s) => clampString(s, 200));
+    const wantsMoreOf = clampArray<string>(b.wantsMoreOf, 20).map((s) => clampString(s, 200));
+    const identityStatement = clampString(b.identityStatement, 1000);
+    const recentMoods = clampArray<string>(b.recentMoods, 30).map((s) => clampString(s, 100));
+    const recentJournals = clampArray<string>(b.recentJournals, 10).map((s) => clampString(s, 2000));
+    const habitCategories = clampArray<string>(b.habitCategories, 30).map((s) => clampString(s, 100));
+    const resourceIds = clampArray<{ id: string; title: string; tags: string[] }>(b.resourceIds, 500);
+    const interests = clampArray<string>(b.interests, 50).map((s) => clampString(s, 100));
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
