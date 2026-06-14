@@ -120,7 +120,7 @@ export default function Home() {
             className="flex items-center gap-2 text-muted-foreground"
           >
             <GreetingIcon size={16} />
-            <span className="text-xs">{todayFormatted}</span>
+            <span className="text-sm">{todayFormatted}</span>
           </motion.div>
           <div className="flex items-center gap-2">
             <ProfileButton />
@@ -138,7 +138,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="font-display text-2xl md:text-3xl font-normal tracking-tight text-foreground mt-2"
+          className="font-display text-4xl md:text-5xl font-normal tracking-tight text-foreground mt-6"
         >
           {greeting.text}, {preferredName || 'beautiful'}
         </motion.h1>
@@ -148,7 +148,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.14 }}
-            className="font-body text-xs md:text-sm text-muted-foreground mt-1.5"
+            className="font-body text-base text-muted-foreground mt-2"
           >
             {subtitle}
           </motion.p>
@@ -159,11 +159,11 @@ export default function Home() {
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.18 }}
-          className="mt-4"
+          className="mt-5"
         >
           <div className="flex items-center gap-2.5">
             {week.days.map((d, i) => {
-              const base = d.isToday ? 'w-2.5 h-2.5' : 'w-2 h-2';
+              const base = d.isToday ? 'w-3 h-3' : 'w-2.5 h-2.5';
               const fill = d.completed
                 ? 'bg-primary shadow-[0_0_8px_hsl(var(--primary)/0.4)]'
                 : 'bg-transparent border border-primary/50';
@@ -176,7 +176,7 @@ export default function Home() {
               );
             })}
           </div>
-          <p className="mt-2 text-[11px] text-muted-foreground tracking-wide">{week.label}</p>
+          <p className="mt-3 text-sm text-muted-foreground tracking-wide">{week.label}</p>
         </motion.div>
       </div>
 
@@ -187,10 +187,10 @@ export default function Home() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: intentionDone ? 0.7 : 1, y: 0 }}
           transition={{ delay: 0.18 }}
-          className="bg-white border border-primary/20 rounded-2xl p-4"
+          className="bg-white border border-primary/20 rounded-2xl p-5"
           style={{ boxShadow: 'var(--shadow-soft)' }}
         >
-          <div className="flex items-center gap-1.5 text-primary font-body text-[10px] uppercase tracking-[0.14em] mb-2">
+          <div className="flex items-center gap-1.5 text-primary font-body text-xs uppercase tracking-[0.14em] mb-3">
             <span aria-hidden className="text-primary">◆</span>
             <span>Today's intention — chosen by Ubi</span>
           </div>
@@ -201,7 +201,7 @@ export default function Home() {
               <div className="h-4 w-3/4 rounded-full bg-primary/10 animate-pulse blur-[1px]" />
             </div>
           ) : (
-            <p className="font-display italic text-lg md:text-xl leading-snug text-foreground">
+            <p className="font-display text-lg leading-relaxed text-foreground">
               {intention}
             </p>
           )}
@@ -210,11 +210,11 @@ export default function Home() {
             type="button"
             onClick={toggleIntentionDone}
             disabled={intentionLoading}
-            className="mt-3 w-full flex items-center justify-between text-primary hover:text-primary/80 transition-colors disabled:opacity-50"
+            className="mt-4 w-full flex items-center justify-between text-primary hover:text-primary/80 transition-colors disabled:opacity-50"
             aria-pressed={intentionDone}
             aria-label={intentionDone ? "Mark today's intention as not done" : "Mark today's intention as done"}
           >
-            <span className="text-xs font-medium">
+            <span className="text-sm font-medium">
               {intentionDone ? 'Done for today' : 'Mark as done'}
             </span>
             <span
@@ -234,11 +234,11 @@ export default function Home() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.22 }}
-          className="bg-white border border-primary/15 rounded-2xl p-4"
+          className="bg-white border border-primary/15 rounded-2xl p-5"
           style={{ boxShadow: 'var(--shadow-soft)' }}
         >
-          <h2 className="text-sm md:text-base font-display font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-            <Heart size={14} className="text-primary shrink-0" />
+          <h2 className="text-base font-display font-medium tracking-tight text-foreground mb-2 flex items-center gap-2">
+            <Heart size={16} className="text-primary shrink-0" />
             From your future self
           </h2>
           {loading ? (
@@ -250,24 +250,24 @@ export default function Home() {
             <>
               {isPremium ? (
                 <>
-                  <p className="font-display text-xs md:text-sm leading-relaxed text-muted-foreground italic line-clamp-2">
+                  <p className="font-display text-base leading-relaxed text-muted-foreground">
                     "{futureSelfMessage}"
                   </p>
                   <button
                     onClick={() => setLetterOpen(true)}
-                    className="mt-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+                    className="mt-3 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
                   >
                     Read full letter →
                   </button>
                 </>
               ) : (
                 <>
-                  <p className="font-display text-xs md:text-sm leading-relaxed text-muted-foreground italic">
+                  <p className="font-display text-base leading-relaxed text-muted-foreground">
                     "{(futureSelfMessage || '').split(/(?<=[.!?])\s+/)[0]}"
                   </p>
                   <button
                     onClick={() => setLetterModalOpen(true)}
-                    className="mt-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+                    className="mt-3 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
                   >
                     Unlock full letter — Upgrade to Premium →
                   </button>
@@ -282,7 +282,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="grid grid-cols-2 gap-2 shrink-0"
+          className="grid grid-cols-2 gap-3 shrink-0"
         >
           <QuickAction icon={quickActionIcons.journal} title="Journal" href="/alignment" />
           <QuickAction icon={quickActionIcons.routine} title="Routine" href="/routine" />
@@ -331,14 +331,14 @@ function QuickAction({ icon, title, href }: { icon: string; title: string; href:
   return (
     <motion.a
       href={href}
-      className="bg-white border border-primary/15 rounded-xl p-3 flex flex-col items-center gap-1.5"
+      className="bg-white border border-primary/15 rounded-2xl p-4 flex flex-row items-center gap-3 justify-start"
       style={{ boxShadow: 'var(--shadow-soft)' }}
       whileTap={{ scale: 0.97 }}
     >
-      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-        <img src={icon} alt="" className="w-6 h-6 object-contain clay-icon" />
+      <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+        <img src={icon} alt="" className="w-5 h-5 object-contain clay-icon" />
       </div>
-      <span className="text-xs font-medium text-foreground">{title}</span>
+      <span className="text-base font-medium text-foreground">{title}</span>
     </motion.a>
   );
 }
