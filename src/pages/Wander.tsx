@@ -316,7 +316,7 @@ export default function Wonder2() {
                   <img
                     src={card.image}
                     alt={card.label}
-                    className="w-1/2 h-1/2 object-contain"
+                    className={card.key === 'calm' ? 'w-full h-full object-cover' : 'w-1/2 h-1/2 object-contain'}
                     loading="lazy"
                   />
                 </div>
