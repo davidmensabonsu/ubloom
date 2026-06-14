@@ -14,7 +14,8 @@ import { getCurrentCycleDay, getCurrentPhase, type CyclePhase } from '@/lib/cycl
 import booksBanner from '@/assets/wonder/icons/books-banner.png';
 import fitnessAsset from '@/assets/wonder/icons/fitness.png.asset.json';
 const fitnessImg = fitnessAsset.url;
-import skincareImg from '@/assets/wonder/icons/hygiene.png';
+import skincareAsset from '@/assets/wonder/icons/hygiene.png.asset.json';
+const skincareImg = skincareAsset.url;
 import podcastAsset from '@/assets/wonder/icons/podcasts.png.asset.json';
 const podcastImg = podcastAsset.url;
 import mindsetAsset from '@/assets/wonder/icons/mindset.png.asset.json';
@@ -46,7 +47,7 @@ const categoryCards: CategoryCard[] = [
   { key: 'nutrition', label: 'Food & Recipes', subtitle: 'Nourish yourself', image: nutritionImg, tall: true, tint: '#fdeede' },
   { key: 'podcasts', label: 'Podcasts', subtitle: 'Listen & learn', image: podcastImg, tint: '#fdf0f3' },
   { key: 'vitamins', label: 'Vitamins', subtitle: 'Boost from within', image: vitaminsImg, tint: '#fff7f2' },
-  { key: 'hygiene', label: 'Skincare & Hygiene', subtitle: 'Glow up tips', image: skincareImg, tall: true, tint: '#fbe7e7' },
+  { key: 'hygiene', label: 'Skincare & Hygiene', subtitle: 'Glow up tips', image: skincareImg, tall: true, tint: '#fdf0f3' },
   { key: 'lifestyle', label: 'Lifestyle', subtitle: 'Design your life', image: lifestyleImg, tint: '#f4f3f1' },
 ];
 
@@ -322,7 +323,7 @@ export default function Wonder2() {
                   <img
                     src={card.image}
                     alt={card.label}
-                    className={card.key === 'calm' || card.key === 'podcasts' || card.key === 'wellness' || card.key === 'mindset' || card.key === 'lifestyle' || card.key === 'vitamins' || card.key === 'fitness' ? 'w-2/3 h-2/3 object-contain' : 'w-1/2 h-1/2 object-contain'}
+                    className={card.key === 'calm' || card.key === 'podcasts' || card.key === 'wellness' || card.key === 'mindset' || card.key === 'lifestyle' || card.key === 'vitamins' || card.key === 'fitness' || card.key === 'hygiene' ? 'w-2/3 h-2/3 object-contain' : 'w-1/2 h-1/2 object-contain'}
                     loading="lazy"
                   />
                 </div>
