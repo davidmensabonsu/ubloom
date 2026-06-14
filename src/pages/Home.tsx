@@ -138,7 +138,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="font-display text-4xl md:text-5xl font-normal tracking-tight text-foreground mt-6"
+          className="font-display text-5xl font-normal leading-tight text-foreground mt-6"
         >
           {greeting.text}, {preferredName || 'beautiful'}
         </motion.h1>
