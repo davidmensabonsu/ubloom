@@ -15,7 +15,7 @@ import AddTaskDialog from '@/components/routine/AddTaskDialog';
 import { useCallback } from 'react';
 import WeeklyProgress from '@/components/routine/WeeklyProgress';
 import CelebrationOverlay from '@/components/routine/CelebrationOverlay';
-import ReminderSettings from '@/components/routine/ReminderSettings';
+
 import { useReminders } from '@/hooks/useReminders';
 import PastDayView from '@/components/routine/PastDayView';
 import FutureDayView from '@/components/routine/FutureDayView';
@@ -243,11 +243,6 @@ export default function Routine() {
 
 
 
-         {/* Reminder Settings */}
-         <div className="pt-2">
-           <h2 className="section-title mb-3">Settings</h2>
-           <ReminderSettings />
-         </div>
       </div>
 
       {/* Add Task Dialog */}
