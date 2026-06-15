@@ -153,7 +153,7 @@ export default function WeeklyProgress({ selectedDate, onSelectDate }: WeeklyPro
       className="glass-card rounded-3xl p-5"
     >
       {/* Stats Row */}
-      <div className="grid grid-cols-1 xs:grid-cols-3 gap-3 mb-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
         <div className="flex items-center gap-3 bg-primary/10 px-4 py-3 rounded-2xl">
           <img src={flameImg} alt="Streak" className="w-8 h-8 object-contain shrink-0" style={{ filter: 'none' }} />
           <div className="min-w-0">
