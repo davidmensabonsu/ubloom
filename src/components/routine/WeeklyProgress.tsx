@@ -153,38 +153,36 @@ export default function WeeklyProgress({ selectedDate, onSelectDate }: WeeklyPro
       className="glass-card rounded-3xl p-5"
     >
       {/* Stats Row */}
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-primary/10 px-3 py-2 rounded-2xl">
-            <img src={flameImg} alt="Streak" className="w-8 h-8 object-contain" style={{ filter: 'none' }} />
-            <div>
-              <p className="text-xs text-muted-foreground font-medium">Streak</p>
-              <p className="font-semibold text-lg leading-none">
-                {streak} {streak === 1 ? 'day' : 'days'}
-              </p>
-            </div>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+        <div className="flex items-center gap-3 bg-primary/10 px-4 py-3 rounded-2xl">
+          <img src={flameImg} alt="Streak" className="w-8 h-8 object-contain shrink-0" style={{ filter: 'none' }} />
+          <div className="min-w-0">
+            <p className="text-xs text-muted-foreground font-medium">Streak</p>
+            <p className="font-semibold text-lg leading-none">
+              {streak} {streak === 1 ? 'day' : 'days'}
+            </p>
           </div>
-          <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-2xl">
-            <TrendingUp size={18} strokeWidth={2.5} className="text-muted-foreground" />
-            <div>
-              <p className="text-xs text-muted-foreground font-medium">Weekly avg</p>
-              <p className="font-semibold text-lg leading-none">{weeklyAverage}%</p>
-            </div>
+        </div>
+        <div className="flex items-center gap-3 bg-muted px-4 py-3 rounded-2xl">
+          <TrendingUp size={20} strokeWidth={2.5} className="text-muted-foreground shrink-0" />
+          <div className="min-w-0">
+            <p className="text-xs text-muted-foreground font-medium">Weekly avg</p>
+            <p className="font-semibold text-lg leading-none">{weeklyAverage}%</p>
           </div>
-          <div className={`flex items-center gap-2 px-3 py-2 rounded-2xl transition-colors duration-500 ${
-            streak > 0 && streak >= longestStreak ? 'bg-primary/10' : 'bg-muted'
-          }`}>
-            <img src={flameImg} alt="Best" className={`w-6 h-6 object-contain transition-opacity duration-500 ${
-              streak > 0 && streak >= longestStreak ? 'opacity-100' : 'opacity-50'
-            }`} style={{ filter: 'none' }} />
-            <div>
-              <p className={`text-xs font-medium transition-colors duration-500 ${
-                streak > 0 && streak >= longestStreak ? 'text-primary' : 'text-muted-foreground'
-              }`}>Best</p>
-              <p className="font-semibold text-lg leading-none">
-                {longestStreak}d
-              </p>
-            </div>
+        </div>
+        <div className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-colors duration-500 ${
+          streak > 0 && streak >= longestStreak ? 'bg-primary/10' : 'bg-muted'
+        }`}>
+          <img src={flameImg} alt="Best" className={`w-6 h-6 object-contain shrink-0 transition-opacity duration-500 ${
+            streak > 0 && streak >= longestStreak ? 'opacity-100' : 'opacity-50'
+          }`} style={{ filter: 'none' }} />
+          <div className="min-w-0">
+            <p className={`text-xs font-medium transition-colors duration-500 ${
+              streak > 0 && streak >= longestStreak ? 'text-primary' : 'text-muted-foreground'
+            }`}>Best</p>
+            <p className="font-semibold text-lg leading-none">
+              {longestStreak}d
+            </p>
           </div>
         </div>
       </div>
