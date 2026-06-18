@@ -1,0 +1,1 @@
+CREATE POLICY "Deny all access to trial_history for non-service roles" ON public.trial_history AS RESTRICTIVE FOR ALL TO authenticated, anon USING (false) WITH CHECK (false);
