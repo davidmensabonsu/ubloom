@@ -152,6 +152,24 @@ export type Database = {
         }
         Relationships: []
       }
+      trial_history: {
+        Row: {
+          created_at: string
+          email_hash: string
+          first_trial_started_at: string
+        }
+        Insert: {
+          created_at?: string
+          email_hash: string
+          first_trial_started_at: string
+        }
+        Update: {
+          created_at?: string
+          email_hash?: string
+          first_trial_started_at?: string
+        }
+        Relationships: []
+      }
       ubi_conversations: {
         Row: {
           created_at: string
