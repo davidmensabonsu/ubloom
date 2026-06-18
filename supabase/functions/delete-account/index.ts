@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
+import { createHash } from "node:crypto";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -39,6 +40,35 @@ serve(async (req) => {
     logStep("User authenticated", { userId: user.id });
 
     const userId = user.id;
+
+    // 0. Record trial history BEFORE deleting the subscribers row, so a future
+    //    signup with the same email cannot reset the 3-day free trial.
+    try {
+      const { data: subRow } = await supabaseAdmin
+        .from("subscribers")
+        .select("trial_started_at")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      const trialStartedAt = subRow?.trial_started_at ?? new Date().toISOString();
+      const emailHash = createHash("sha256")
+        .update(user.email.trim().toLowerCase())
+        .digest("hex");
+
+      const { error: histErr } = await supabaseAdmin
+        .from("trial_history")
+        .upsert(
+          { email_hash: emailHash, first_trial_started_at: trialStartedAt },
+          { onConflict: "email_hash", ignoreDuplicates: true },
+        );
+      if (histErr) {
+        logStep("Trial history upsert error (non-fatal)", { error: histErr.message });
+      } else {
+        logStep("Trial history recorded");
+      }
+    } catch (histThrown) {
+      logStep("Trial history capture threw (non-fatal)", { error: String(histThrown) });
+    }
 
     // 1. Cancel Stripe subscription if exists
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
