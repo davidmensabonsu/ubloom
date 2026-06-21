@@ -1,14 +1,38 @@
- import { useEffect, useCallback, useRef } from 'react';
- import { getLocalDateStr } from '@/lib/dateUtils';
- import { useUserStore, TimeOfDay } from '@/stores/userStore';
- import { isHabitScheduledForDate } from '@/components/routine/FrequencyPicker';
- import { toast } from 'sonner';
- 
- const timeOfDayLabels: Record<TimeOfDay, string> = {
-   morning: '🌅 Good morning!',
-   midday: '☀️ Midday check-in!',
-   evening: '🌙 Evening reminder!',
- };
+import { useEffect, useCallback, useRef } from 'react';
+import { getLocalDateStr } from '@/lib/dateUtils';
+import { useUserStore, TimeOfDay } from '@/stores/userStore';
+import { isHabitScheduledForDate } from '@/components/routine/FrequencyPicker';
+import { toast } from 'sonner';
+
+const timeOfDayLabels: Record<TimeOfDay, string> = {
+  morning: '🌅 Good morning!',
+  midday: '☀️ Midday check-in!',
+  evening: '🌙 Evening reminder!',
+};
+
+interface DespiaLocalPush {
+  schedule: (options: {
+    title: string;
+    body: string;
+    id?: string;
+    scheduleAt?: Date;
+  }) => Promise<void>;
+  requestPermission?: () => Promise<'granted' | 'denied' | 'prompt'>;
+  checkPermissions?: () => Promise<{ receive?: 'granted' | 'denied' | 'prompt' }>;
+}
+
+interface DespiaRuntime {
+  LocalPush: DespiaLocalPush;
+}
+
+declare global {
+  interface Window {
+    Despia?: DespiaRuntime;
+  }
+}
+
+const getDespiaPush = (): DespiaLocalPush | undefined => window.Despia?.LocalPush;
+const isDespiaRuntime = () => typeof window !== 'undefined' && !!getDespiaPush();
  
 export function useReminders() {
   const { profile, markReminderSent, isHabitCompletedToday } = useUserStore();
@@ -33,6 +57,21 @@ export function useReminders() {
   const HEADS_UP_MINUTES = 30;
  
    const requestPermission = useCallback(async () => {
+     const despia = getDespiaPush();
+     if (despia) {
+       try {
+         if (despia.requestPermission) {
+           const result = await despia.requestPermission();
+           return result === 'granted';
+         }
+         const permissions = await despia.checkPermissions?.();
+         return permissions?.receive === 'granted';
+       } catch (error) {
+         toast.error('Could not enable Despia push notifications');
+         return false;
+       }
+     }
+
      if (!('Notification' in window)) {
        toast.error('Notifications not supported in this browser');
        return false;
@@ -52,6 +91,15 @@ export function useReminders() {
    }, []);
  
    const sendNotification = useCallback((title: string, body: string, tag: string) => {
+     const despia = getDespiaPush();
+     if (despia) {
+       despia.schedule({ title, body, id: tag }).catch(() => {
+         toast(title, { description: body, duration: 5000 });
+       });
+       toast(title, { description: body, duration: 5000 });
+       return;
+     }
+
      if (Notification.permission !== 'granted') return;
  
      try {
@@ -174,9 +222,11 @@ export function useReminders() {
  
    return {
      requestPermission,
-     isSupported: 'Notification' in window,
-     permissionStatus: typeof window !== 'undefined' && 'Notification' in window 
-       ? Notification.permission 
-       : 'denied',
+     isSupported: isDespiaRuntime() || 'Notification' in window,
+     permissionStatus: isDespiaRuntime()
+       ? 'prompt'
+       : typeof window !== 'undefined' && 'Notification' in window
+         ? Notification.permission
+         : 'denied',
    };
  }
