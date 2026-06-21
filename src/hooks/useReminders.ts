@@ -222,9 +222,11 @@ export function useReminders() {
  
    return {
      requestPermission,
-     isSupported: 'Notification' in window,
-     permissionStatus: typeof window !== 'undefined' && 'Notification' in window 
-       ? Notification.permission 
-       : 'denied',
+     isSupported: isDespiaRuntime() || 'Notification' in window,
+     permissionStatus: isDespiaRuntime()
+       ? 'prompt'
+       : typeof window !== 'undefined' && 'Notification' in window
+         ? Notification.permission
+         : 'denied',
    };
  }
