@@ -1,14 +1,38 @@
- import { useEffect, useCallback, useRef } from 'react';
- import { getLocalDateStr } from '@/lib/dateUtils';
- import { useUserStore, TimeOfDay } from '@/stores/userStore';
- import { isHabitScheduledForDate } from '@/components/routine/FrequencyPicker';
- import { toast } from 'sonner';
- 
- const timeOfDayLabels: Record<TimeOfDay, string> = {
-   morning: '🌅 Good morning!',
-   midday: '☀️ Midday check-in!',
-   evening: '🌙 Evening reminder!',
- };
+import { useEffect, useCallback, useRef } from 'react';
+import { getLocalDateStr } from '@/lib/dateUtils';
+import { useUserStore, TimeOfDay } from '@/stores/userStore';
+import { isHabitScheduledForDate } from '@/components/routine/FrequencyPicker';
+import { toast } from 'sonner';
+
+const timeOfDayLabels: Record<TimeOfDay, string> = {
+  morning: '🌅 Good morning!',
+  midday: '☀️ Midday check-in!',
+  evening: '🌙 Evening reminder!',
+};
+
+interface DespiaLocalPush {
+  schedule: (options: {
+    title: string;
+    body: string;
+    id?: string;
+    scheduleAt?: Date;
+  }) => Promise<void>;
+  requestPermission?: () => Promise<'granted' | 'denied' | 'prompt'>;
+  checkPermissions?: () => Promise<{ receive?: 'granted' | 'denied' | 'prompt' }>;
+}
+
+interface DespiaRuntime {
+  LocalPush: DespiaLocalPush;
+}
+
+declare global {
+  interface Window {
+    Despia?: DespiaRuntime;
+  }
+}
+
+const getDespiaPush = (): DespiaLocalPush | undefined => window.Despia?.LocalPush;
+const isDespiaRuntime = () => typeof window !== 'undefined' && !!getDespiaPush();
  
 export function useReminders() {
   const { profile, markReminderSent, isHabitCompletedToday } = useUserStore();
