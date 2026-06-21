@@ -28,6 +28,8 @@ declare global {
 
 const getDespiaPush = (): DespiaLocalPush | undefined => window.Despia?.LocalPush;
 const isDespiaRuntime = () => typeof window !== "undefined" && !!getDespiaPush();
+const isDespiaNative = (): boolean =>
+  typeof window !== "undefined" && /despia/i.test(navigator.userAgent);
 
 export function useReminders() {
   const { profile, markReminderSent, isHabitCompletedToday } = useUserStore();
@@ -52,6 +54,8 @@ export function useReminders() {
   const HEADS_UP_MINUTES = 30;
 
   const requestPermission = useCallback(async () => {
+    if (isDespiaNative()) return true;
+
     const despia = getDespiaPush();
     if (despia) {
       try {
@@ -98,13 +102,19 @@ export function useReminders() {
     if (Notification.permission !== "granted") return;
 
     try {
-      new Notification(title, {
-        body,
-        icon: "/favicon.ico",
-        badge: "/favicon.ico",
-        tag,
-        requireInteraction: false,
-      });
+      if (isDespiaNative()) {
+        const encodedTitle = encodeURIComponent(title);
+        const encodedBody = encodeURIComponent(body);
+        window.location.href = `localpush://send?title=${encodedTitle}&body=${encodedBody}&tag=${tag}`;
+      } else {
+        new Notification(title, {
+          body,
+          icon: "/favicon.ico",
+          badge: "/favicon.ico",
+          tag,
+          requireInteraction: false,
+        });
+      }
 
       toast(title, {
         description: body,
