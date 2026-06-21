@@ -57,6 +57,21 @@ export function useReminders() {
   const HEADS_UP_MINUTES = 30;
  
    const requestPermission = useCallback(async () => {
+     const despia = getDespiaPush();
+     if (despia) {
+       try {
+         if (despia.requestPermission) {
+           const result = await despia.requestPermission();
+           return result === 'granted';
+         }
+         const permissions = await despia.checkPermissions?.();
+         return permissions?.receive === 'granted';
+       } catch (error) {
+         toast.error('Could not enable Despia push notifications');
+         return false;
+       }
+     }
+
      if (!('Notification' in window)) {
        toast.error('Notifications not supported in this browser');
        return false;
@@ -76,6 +91,15 @@ export function useReminders() {
    }, []);
  
    const sendNotification = useCallback((title: string, body: string, tag: string) => {
+     const despia = getDespiaPush();
+     if (despia) {
+       despia.schedule({ title, body, id: tag }).catch(() => {
+         toast(title, { description: body, duration: 5000 });
+       });
+       toast(title, { description: body, duration: 5000 });
+       return;
+     }
+
      if (Notification.permission !== 'granted') return;
  
      try {
