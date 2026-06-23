@@ -23,6 +23,7 @@ interface DespiaRuntime {
 declare global {
   interface Window {
     Despia?: DespiaRuntime;
+    despia?: string;
   }
 }
 
