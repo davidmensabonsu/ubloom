@@ -124,6 +124,11 @@ export default function Routine() {
    // Initialize reminders hook
     useReminders();
 
+  useEffect(() => {
+    if (!isDespiaNative()) return;
+    window.despia = `widget://?url=${encodeURIComponent(widgetUrl)}&size=medium`;
+  }, []);
+
   const headerDateFormatted = isPast || isFuture
     ? format(parse(viewDate, 'yyyy-MM-dd', new Date()), 'EEEE, d MMM')
     : new Date().toLocaleDateString('en-US', {
