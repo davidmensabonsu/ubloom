@@ -106,7 +106,7 @@ export function useReminders() {
       if (isDespiaNative()) {
         const encodedTitle = encodeURIComponent(title);
         const encodedBody = encodeURIComponent(body);
-        window.location.href = `localpush://send?title=${encodedTitle}&body=${encodedBody}&tag=${tag}`;
+        window.despia = `sendlocalpushmsg://?title=${encodedTitle}&body=${encodedBody}&tag=${tag}`;
       } else {
         new Notification(title, {
           body,
