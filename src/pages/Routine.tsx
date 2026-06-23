@@ -17,6 +17,8 @@ import WeeklyProgress from '@/components/routine/WeeklyProgress';
 import CelebrationOverlay from '@/components/routine/CelebrationOverlay';
 
 import { useReminders } from '@/hooks/useReminders';
+import { isDespiaNative } from '@/hooks/useReminders';
+import { Switch } from '@/components/ui/switch';
 import PastDayView from '@/components/routine/PastDayView';
 import FutureDayView from '@/components/routine/FutureDayView';
 import UndoRoutineBanner from '@/components/routine/UndoRoutineBanner';
@@ -29,6 +31,8 @@ export default function Routine() {
   const [showAddTask, setShowAddTask] = useState(false);
   const today = getLocalDateStr();
   const [viewDate, setViewDate] = useState<string>(today);
+  const [widgetEnabled, setWidgetEnabled] = useState(false);
+  const widgetUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/widget-svg`;
   const isPast = viewDate < today;
   const isFuture = viewDate > today;
   const typedTitle = useTypewriter('Your Routine', 45, 200);
@@ -116,9 +120,21 @@ export default function Routine() {
    const handleCelebrationComplete = () => {
      setCelebration({ show: false, type: 'all-complete' });
    };
+
+   const handleWidgetToggle = (enabled: boolean) => {
+     setWidgetEnabled(enabled);
+     window.despia = enabled
+       ? `widget://?url=${encodeURIComponent(widgetUrl)}&size=medium`
+       : 'widget://remove';
+   };
  
    // Initialize reminders hook
     useReminders();
+
+  useEffect(() => {
+    if (!isDespiaNative()) return;
+    window.despia = `widget://?url=${encodeURIComponent(widgetUrl)}&size=medium`;
+  }, []);
 
   const headerDateFormatted = isPast || isFuture
     ? format(parse(viewDate, 'yyyy-MM-dd', new Date()), 'EEEE, d MMM')
@@ -172,6 +188,16 @@ export default function Routine() {
           </span>
         </motion.div>
       </div>
+
+      {isDespiaNative() && (
+        <div className="mx-4 mb-4 p-4 bg-white/80 rounded-2xl shadow-sm border border-rose-100 flex items-center justify-between">
+          <div>
+            <p className="text-sm font-semibold text-[#2d1b2e]">Home Screen Widget</p>
+            <p className="text-xs text-[#9c7a8b] mt-0.5">Show your routine on your iPhone home screen</p>
+          </div>
+          <Switch checked={widgetEnabled} onCheckedChange={handleWidgetToggle} />
+        </div>
+      )}
 
       {/* Content */}
       <div className="px-5 space-y-6">
