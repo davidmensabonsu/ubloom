@@ -31,6 +31,8 @@ export default function Routine() {
   const [showAddTask, setShowAddTask] = useState(false);
   const today = getLocalDateStr();
   const [viewDate, setViewDate] = useState<string>(today);
+  const [widgetEnabled, setWidgetEnabled] = useState(false);
+  const widgetUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/widget-svg`;
   const isPast = viewDate < today;
   const isFuture = viewDate > today;
   const typedTitle = useTypewriter('Your Routine', 45, 200);
