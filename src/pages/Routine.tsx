@@ -120,6 +120,13 @@ export default function Routine() {
    const handleCelebrationComplete = () => {
      setCelebration({ show: false, type: 'all-complete' });
    };
+
+   const handleWidgetToggle = (enabled: boolean) => {
+     setWidgetEnabled(enabled);
+     window.despia = enabled
+       ? `widget://?url=${encodeURIComponent(widgetUrl)}&size=medium`
+       : 'widget://remove';
+   };
  
    // Initialize reminders hook
     useReminders();
