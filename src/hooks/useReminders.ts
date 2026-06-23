@@ -29,7 +29,7 @@ declare global {
 
 const getDespiaPush = (): DespiaLocalPush | undefined => window.Despia?.LocalPush;
 const isDespiaRuntime = () => typeof window !== "undefined" && !!getDespiaPush();
-const isDespiaNative = (): boolean =>
+export const isDespiaNative = (): boolean =>
   typeof window !== "undefined" && /despia/i.test(navigator.userAgent);
 
 export function useReminders() {
