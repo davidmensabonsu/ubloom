@@ -17,6 +17,8 @@ import WeeklyProgress from '@/components/routine/WeeklyProgress';
 import CelebrationOverlay from '@/components/routine/CelebrationOverlay';
 
 import { useReminders } from '@/hooks/useReminders';
+import { isDespiaNative } from '@/hooks/useReminders';
+import { Switch } from '@/components/ui/switch';
 import PastDayView from '@/components/routine/PastDayView';
 import FutureDayView from '@/components/routine/FutureDayView';
 import UndoRoutineBanner from '@/components/routine/UndoRoutineBanner';
