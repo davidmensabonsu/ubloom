@@ -189,6 +189,16 @@ export default function Routine() {
         </motion.div>
       </div>
 
+      {isDespiaNative() && (
+        <div className="mx-4 mb-4 p-4 bg-white/80 rounded-2xl shadow-sm border border-rose-100 flex items-center justify-between">
+          <div>
+            <p className="text-sm font-semibold text-[#2d1b2e]">Home Screen Widget</p>
+            <p className="text-xs text-[#9c7a8b] mt-0.5">Show your routine on your iPhone home screen</p>
+          </div>
+          <Switch checked={widgetEnabled} onCheckedChange={handleWidgetToggle} />
+        </div>
+      )}
+
       {/* Content */}
       <div className="px-5 space-y-6">
         {/* Weekly Progress & Streak */}
