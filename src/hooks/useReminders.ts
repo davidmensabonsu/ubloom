@@ -222,6 +222,28 @@ export function useReminders() {
     return () => clearInterval(interval);
   }, [reminderSettings.enabled, checkAndNotify]);
 
+  useEffect(() => {
+    if (!reminderSettings.enabled) return;
+    const now = new Date();
+    const target = new Date();
+    target.setHours(20, 30, 0, 0);
+    const msUntil = target.getTime() - now.getTime();
+    if (msUntil <= 0) return;
+    const tid = setTimeout(() => {
+      const today = getLocalDateStr();
+      const todaysHabits = (profile.coreHabits ?? []).filter(h => isHabitScheduledForDate(h, today));
+      const allDone = todaysHabits.every(h => isHabitCompletedToday(h.id));
+      if (!allDone && todaysHabits.length > 0) {
+        sendNotification(
+          "Don't break your streak 🌸",
+          "You haven't finished your routine today. Bloom before the day ends!",
+          "streak-reminder-8pm"
+        );
+      }
+    }, msUntil);
+    return () => clearTimeout(tid);
+  }, [reminderSettings.enabled, profile, isHabitCompletedToday, sendNotification]);
+
   return {
     requestPermission,
     isSupported: isDespiaRuntime() || "Notification" in window,
