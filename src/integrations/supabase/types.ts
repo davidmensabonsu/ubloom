@@ -345,6 +345,30 @@ export type Database = {
         }
         Relationships: []
       }
+      widget_tokens: {
+        Row: {
+          created_at: string
+          expires_at: string
+          last_used_at: string | null
+          token: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          last_used_at?: string | null
+          token: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          last_used_at?: string | null
+          token?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -357,6 +381,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      rotate_widget_token: { Args: never; Returns: string }
       username_available: { Args: { _username: string }; Returns: boolean }
     }
     Enums: {
