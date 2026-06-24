@@ -24,7 +24,11 @@ import FutureDayView from '@/components/routine/FutureDayView';
 import UndoRoutineBanner from '@/components/routine/UndoRoutineBanner';
 import { parse, format } from 'date-fns';
 import { useTypewriter } from '@/hooks/useTypewriter';
-import { supabase } from '@/integrations/supabase/client';
+import {
+  enableRoutineWidget,
+  refreshRoutineWidget,
+  getStoredWidgetEnabled,
+} from '@/lib/enableRoutineWidget';
 
 
 export default function Routine() {
@@ -32,22 +36,10 @@ export default function Routine() {
   const [showAddTask, setShowAddTask] = useState(false);
   const today = getLocalDateStr();
   const [viewDate, setViewDate] = useState<string>(today);
-  const [widgetEnabled, setWidgetEnabled] = useState(false);
-  const [widgetToken, setWidgetToken] = useState<string>('');
-  const widgetUrl = widgetToken
-    ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/widget-svg?token=${encodeURIComponent(widgetToken)}`
-    : `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/widget-svg`;
+  const [widgetEnabled, setWidgetEnabled] = useState(() => getStoredWidgetEnabled());
   const isPast = viewDate < today;
   const isFuture = viewDate > today;
   const typedTitle = useTypewriter('Your Routine', 45, 200);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session?.access_token) {
-        setWidgetToken(data.session.access_token);
-      }
-    });
-  }, []);
 
   // Capture a snapshot of any past days before the user views them.
   useEffect(() => {
@@ -135,22 +127,17 @@ export default function Routine() {
 
    const handleWidgetToggle = (enabled: boolean) => {
      setWidgetEnabled(enabled);
-     const url = widgetToken
-       ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/widget-svg?token=${encodeURIComponent(widgetToken)}`
-       : `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/widget-svg`;
-     window.despia = enabled
-       ? `widget://?url=${encodeURIComponent(url)}&size=medium`
-       : 'widget://remove';
+     void enableRoutineWidget(enabled);
    };
  
    // Initialize reminders hook
     useReminders();
 
+  // Refresh the widget token on every Routine open so the SVG stays current
+  // and the token lifetime exposure stays short.
   useEffect(() => {
-    if (!isDespiaNative() || !widgetToken) return;
-    const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/widget-svg?token=${encodeURIComponent(widgetToken)}`;
-    window.despia = `widget://?url=${encodeURIComponent(url)}&size=medium`;
-  }, [widgetToken]);
+    void refreshRoutineWidget();
+  }, []);
 
   const headerDateFormatted = isPast || isFuture
     ? format(parse(viewDate, 'yyyy-MM-dd', new Date()), 'EEEE, d MMM')
