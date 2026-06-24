@@ -1,21 +1,46 @@
-## Plan: Fix Stripe Payment Integration
+Your message cut off after "tell me" — I'll default to a broad read-only audit. Approve and I'll run it; reply with a narrower scope if you want me to focus.
 
-### 1. Update the Secret Key
-Replace the existing `STRIPE_SECRET_KEY` project secret with your new key using the secure update flow.
+## What I'll audit (no code changes)
 
-### 2. Verify the Key Works
-Call Stripe’s API from an edge function to confirm the new key is valid and accepted.
+1. **Auth configuration**
+   - Email confirmation / auto-confirm
+   - Password min length, HIBP leaked-password check, any complexity rules
+   - OAuth providers enabled (Google, Apple, etc.) and redirect URLs
+   - Session/JWT settings, password reset redirect
+   - Anonymous sign-ups
 
-### 3. Test the Payment Flow
-- Create a test checkout session via `create-checkout`
-- Confirm `check-subscription` and `customer-portal` edge functions respond correctly
-- Spot-check any existing webhook endpoint if relevant
+2. **Database & RLS**
+   - All `public.*` tables: columns, RLS enabled?, policies, GRANTs
+   - `user_roles` setup and `has_role` usage (privilege-escalation check)
+   - SECURITY DEFINER functions and `search_path`
+   - Triggers (e.g. `handle_new_user`, `protect_trial_started_at`, username validation)
+   - Run `supabase--linter` and `security--run_security_scan`
 
-### 4. Confirm Frontend Pro/Trial Logic
-After the backend is verified, do a quick end-to-end check that the upgrade button and Pro-gated features behave as expected.
+3. **Storage buckets**
+   - `vision-images`, `voice-journals`, `video-journals`, `routine-icons` — public flag, policies, expected access pattern
 
----
+4. **Edge functions**
+   - List of functions, which have `verify_jwt = false` in `config.toml` and whether each justifies it
+   - Auth handling (Authorization header vs query token, e.g. `widget-svg`)
+   - Secrets each function depends on (Stripe, Lovable AI, Supabase service role)
+   - Any function exposing service-role key paths to unauthenticated callers
 
-**Technical notes:**
-- The integration code (`create-checkout`, `check-subscription`, `customer-portal`, `stripe-webhook`) is already in place and reads `STRIPE_SECRET_KEY` from environment variables — no code changes are needed.
-- After updating the secret, the edge functions will automatically pick up the new value on their next invocation.
+5. **Client-side**
+   - `src/integrations/supabase/client.ts` usage, localStorage session storage
+   - `useAuth`, `ProtectedRoute`, route guards
+   - Any role/admin checks done client-side only
+   - Password rules in `Auth.tsx` / `ResetPassword.tsx` vs. backend rules
+
+6. **Secrets inventory**
+   - Cross-check stored secrets against what functions actually use; flag unused or duplicated entries (e.g. `SUPABASE_PUBLISHABLE_KEY` vs `SUPABASE_PUBLISHABLE_KEYS`)
+
+## Deliverable
+
+A single written report grouped by the sections above, with concrete findings (file:line where relevant), severity tags (info / warning / critical), and recommended fixes — but **no file edits or backend changes** will be made. You decide what to act on afterward.
+
+## Out of scope unless you say otherwise
+
+- Performance / query tuning
+- UX or design review
+- Bundle size / build config
+- Dependency CVE scan
