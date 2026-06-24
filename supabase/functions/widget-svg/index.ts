@@ -1,225 +1,95 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers':
-    'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const sizeMap = {
-  small: { width: 169, height: 169, fontSize: 14, titleSize: 12, radius: 22 },
-  medium: { width: 345, height: 157, fontSize: 18, titleSize: 13, radius: 22 },
-  large: { width: 345, height: 345, fontSize: 22, titleSize: 14, radius: 28 },
-} as const
+const escapeXml = (s: string) =>
+  s.replace(/[<>&'"]/g, (c: string) => ({'<':'&lt;','>':'&gt;','&':'&amp;',"'":'&apos;','"':'&quot;'}[c] as string))
 
-type WidgetSize = keyof typeof sizeMap
+const trunc = (s: string, n: number) => s.length > n ? s.slice(0, n - 1) + '…' : s
 
-const escapeXml = (unsafe: string) =>
-  unsafe.replace(/[<>&'"]/g, (c) =>
-    ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' }[c]!))
-
-const renderWidget = (params: {
-  size: WidgetSize
-  theme: 'light' | 'dark'
-  title: string
-  message: string
-  accent: string
-  bloom?: string
-  sublabel?: string
-}) => {
-  const { size, theme, title, message, accent, bloom, sublabel } = params
-  const isDark = theme === 'dark'
-  const bg = isDark ? '#0F172A' : '#FAFAFA'
-  const bgEnd = isDark ? '#1E293B' : '#FFFFFF'
-  const text = isDark ? '#F8FAFC' : '#1E293B'
-  const muted = isDark ? '#94A3B8' : '#64748B'
-  const dims = sizeMap[size]
-
-  const bloomPill = bloom
-    ? `<rect x="${dims.width - 24}" y="24" width="${Math.max(44, bloom.length * 8 + 24)}" height="26" rx="13" fill="${accent}" opacity="0.15"/>
-      <text x="${dims.width - 24 + Math.max(44, bloom.length * 8 + 24) / 2}" y="42" text-anchor="middle" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13" font-weight="700" fill="${accent}">Bloom ${bloom}</text>`
-    : ''
-
-  const sublabelText = sublabel
-    ? `<text x="24" y="${dims.height - 22}" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" fill="${muted}">${escapeXml(sublabel)}</text>`
-    : ''
-
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${dims.width}" height="${dims.height}" viewBox="0 0 ${dims.width} ${dims.height}">
-  <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${bg}"/>
-      <stop offset="100%" stop-color="${bgEnd}"/>
-    </linearGradient>
-  </defs>
-  <rect width="${dims.width}" height="${dims.height}" rx="${dims.radius}" fill="url(#bg)"/>
-  ${bloomPill}
-  <circle cx="24" cy="34" r="8" fill="${accent}"/>
-  <text x="38" y="38" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="${dims.titleSize}" font-weight="600" fill="${text}">${escapeXml(title)}</text>
-  <text x="24" y="${dims.height / 2 + 4}" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="${dims.fontSize}" font-weight="700" fill="${text}">${escapeXml(message)}</text>
-  ${sublabelText}
-</svg>`
-}
-
-const truncate = (s: string, n: number) =>
-  s.length > n ? s.slice(0, n - 1) + '…' : s
-
-const renderRoutineWidget = (
-  tasks: { title: string; completed: boolean }[],
-  streak: number,
-) => {
-  const width = 345
-  const height = 157
-  const visible = tasks.slice(0, 5)
-  const overflow = tasks.length - visible.length
-
-  const rows = visible
-    .map((t, i) => {
-      const y = 50 + i * 20
-      const prefix = t.completed ? '✓' : '•'
-      const color = t.completed ? '#c084a0' : '#2d1b2e'
-      const weight = t.completed ? 600 : 400
-      return `<text x="24" y="${y}" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13" font-weight="${weight}" fill="${color}">${escapeXml(prefix + ' ' + truncate(t.title, 28))}</text>`
-    })
-    .join('\n  ')
-
-  const overflowRow = overflow > 0
-    ? `<text x="24" y="${50 + visible.length * 20}" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" fill="#9c7a8b">+${overflow} more</text>`
-    : ''
-
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-  <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FDF2F4"/>
-      <stop offset="100%" stop-color="#FFFFFF"/>
-    </linearGradient>
-  </defs>
-  <rect width="${width}" height="${height}" rx="22" fill="url(#bg)"/>
-  <circle cx="20" cy="24" r="6" fill="#e07a8a"/>
-  <text x="32" y="28" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" fill="#9c7a8b">uBloom Routine</text>
-  ${rows}
-  ${overflowRow}
-  <text x="${width - 16}" y="${height - 14}" text-anchor="end" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" fill="#e07a8a">🔥 ${streak} day streak</text>
-</svg>`
-}
-
-const todayUtcStr = () => {
+function getTodayStr() {
   const d = new Date()
-  const y = d.getUTCFullYear()
-  const m = String(d.getUTCMonth() + 1).padStart(2, '0')
-  const day = String(d.getUTCDate()).padStart(2, '0')
-  return `${y}-${m}-${day}`
+  return d.getUTCFullYear() + '-' + String(d.getUTCMonth()+1).padStart(2,'0') + '-' + String(d.getUTCDate()).padStart(2,'0')
 }
 
-const isScheduled = (habit: any, dow: number) => {
-  if (!habit?.frequency || habit.frequency === 'daily') return true
-  if (habit.frequency === 'weekly')
-    return Array.isArray(habit.weeklyDays) && habit.weeklyDays.includes(dow)
-  if (habit.frequency === 'custom')
-    return Array.isArray(habit.customDays) && habit.customDays.includes(dow)
-  return false
+function isScheduledToday(habit: any): boolean {
+  const dow = new Date().getUTCDay()
+  if (habit.frequency === 'daily') return true
+  if (habit.frequency === 'weekly') return Array.isArray(habit.weeklyDays) && habit.weeklyDays.includes(dow)
+  if (habit.frequency === 'custom') return Array.isArray(habit.customDays) && habit.customDays.includes(dow)
+  return true
 }
 
-const computeStreak = (coreHabits: any[], completions: any[]) => {
-  if (!coreHabits?.length) return 0
+function calcStreak(habits: any[], completions: any[]): number {
+  if (!habits.length) return 0
   let streak = 0
-  const today = new Date()
-  today.setUTCHours(0, 0, 0, 0)
+  const today = new Date(); today.setUTCHours(0,0,0,0)
   for (let i = 0; i <= 365; i++) {
-    const d = new Date(today)
-    d.setUTCDate(d.getUTCDate() - i)
-    const y = d.getUTCFullYear()
-    const m = String(d.getUTCMonth() + 1).padStart(2, '0')
-    const day = String(d.getUTCDate()).padStart(2, '0')
-    const dateStr = `${y}-${m}-${day}`
+    const d = new Date(today); d.setUTCDate(d.getUTCDate() - i)
+    const dateStr = d.getUTCFullYear() + '-' + String(d.getUTCMonth()+1).padStart(2,'0') + '-' + String(d.getUTCDate()).padStart(2,'0')
     const dow = d.getUTCDay()
-    const scheduled = coreHabits.filter((h) => isScheduled(h, dow))
-    if (scheduled.length === 0) continue
-    const scheduledIds = new Set(scheduled.map((h) => h.id))
-    const done = completions.filter(
-      (c) => c.date === dateStr && c.completed && scheduledIds.has(c.habitId),
-    ).length
-    const rate = done / scheduled.length
-    if (rate >= 0.5) streak++
-    else if (i > 0) break
+    const scheduled = habits.filter(h => {
+      if (h.frequency === 'daily') return true
+      if (h.frequency === 'weekly') return Array.isArray(h.weeklyDays) && h.weeklyDays.includes(dow)
+      if (h.frequency === 'custom') return Array.isArray(h.customDays) && h.customDays.includes(dow)
+      return true
+    })
+    if (!scheduled.length) continue
+    const doneIds = new Set(completions.filter((c:any) => c.date === dateStr && c.completed === true).map((c:any) => c.habitId))
+    const rate = scheduled.filter((h:any) => doneIds.has(h.id)).length / scheduled.length
+    if (rate >= 0.5) { streak++ } else if (i > 0) { break }
   }
   return streak
 }
 
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
-  }
+function renderFallback(): string {
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="345" height="157" viewBox="0 0 345 157"><defs><linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FDF2F4"/><stop offset="100%" stop-color="#FFFFFF"/></linearGradient></defs><rect width="345" height="157" rx="22" fill="url(#bg)"/><circle cx="24" cy="32" r="7" fill="#c084a0"/><text x="38" y="37" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="600" fill="#2d1b2e">uBloom Routine</text><text x="24" y="85" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="700" fill="#2d1b2e">Bloom today</text><text x="24" y="135" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#9c7a8b">Open the app to see your routine</text></svg>'
+}
 
-  const url = new URL(req.url)
-
-  // Try authenticated routine widget first
-  try {
-    const authHeader = req.headers.get('Authorization') || ''
-    const headerToken = authHeader.toLowerCase().startsWith('bearer ')
-      ? authHeader.slice(7).trim()
-      : ''
-    const queryToken = url.searchParams.get('token') || ''
-    const token = headerToken || queryToken
-
-    if (token) {
-      const supaUrl = Deno.env.get('SUPABASE_URL')!
-      const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-      const authClient = createClient(supaUrl, serviceKey)
-      const { data: userData, error: userErr } = await authClient.auth.getUser(token)
-      if (!userErr && userData?.user) {
-        const uid = userData.user.id
-        const { data: row } = await authClient
-          .from('user_data')
-          .select('data')
-          .eq('user_id', uid)
-          .maybeSingle()
-        const data = (row?.data as any) || {}
-        const coreHabits: any[] = Array.isArray(data.coreHabits) ? data.coreHabits : []
-        const completions: any[] = Array.isArray(data.habitCompletions) ? data.habitCompletions : []
-        const todayStr = todayUtcStr()
-        const dow = new Date().getUTCDay()
-        const scheduled = coreHabits.filter((h) => isScheduled(h, dow))
-        const tasks = scheduled.map((h) => ({
-          title: String(h.title ?? h.name ?? 'Habit'),
-          completed: completions.some(
-            (c) => c.habitId === h.id && c.date === todayStr && c.completed === true,
-          ),
-        }))
-        const streak = computeStreak(coreHabits, completions)
-        const svg = renderRoutineWidget(tasks, streak)
-        return new Response(svg, {
-          headers: {
-            ...corsHeaders,
-            'Content-Type': 'image/svg+xml; charset=utf-8',
-            'Cache-Control': 'no-cache',
-          },
-          status: 200,
-        })
-      }
-    }
-  } catch (_e) {
-    // fall through to generic fallback
-  }
-
-  const size = (url.searchParams.get('size') as WidgetSize) ?? 'medium'
-  const theme = url.searchParams.get('theme') === 'light' ? 'light' : 'dark'
-  const title = url.searchParams.get('title') || 'uBloom'
-  const message = url.searchParams.get('message') || 'Bloom today'
-  const accent = url.searchParams.get('accent') || '#3B82F6'
-  const bloom = url.searchParams.get('bloom') || ''
-  const sublabel = url.searchParams.get('sublabel') || ''
-
-  const validSize = sizeMap[size] ? size : 'medium'
-  const svg = renderWidget({ size: validSize, theme, title, message, accent, bloom, sublabel })
-
-  return new Response(svg, {
-    headers: {
-      ...corsHeaders,
-      'Content-Type': 'image/svg+xml; charset=utf-8',
-      'Cache-Control': 'no-cache',
-    },
-    status: 200,
+function renderRoutine(tasks: {title: string; done: boolean}[], streak: number): string {
+  const MAX = 5
+  const shown = tasks.slice(0, MAX)
+  const extra = tasks.length - MAX
+  let rows = ''
+  shown.forEach((t, i) => {
+    const y = 52 + i * 20
+    const prefix = t.done ? 'v' : '-'
+    const color = t.done ? '#c084a0' : '#2d1b2e'
+    const weight = t.done ? '600' : '400'
+    rows += '<text x="24" y="' + y + '" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="' + weight + '" fill="' + color + '">' + escapeXml(prefix + ' ' + trunc(t.title, 28)) + '</text>'
   })
+  if (extra > 0) {
+    const y = 52 + MAX * 20
+    rows += '<text x="24" y="' + y + '" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#9c7a8b">+' + extra + ' more</text>'
+  }
+  const streakLabel = streak > 0 ? streak + ' day streak' : ''
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="345" height="157" viewBox="0 0 345 157"><defs><linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FDF2F4"/><stop offset="100%" stop-color="#FFFFFF"/></linearGradient></defs><rect width="345" height="157" rx="22" fill="url(#bg)"/><circle cx="24" cy="32" r="7" fill="#c084a0"/><text x="38" y="37" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="600" fill="#2d1b2e">uBloom Routine</text>' + rows + '<text x="329" y="145" text-anchor="end" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#e07a8a">' + escapeXml(streakLabel) + '</text></svg>'
+}
+
+Deno.serve(async (req: Request) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  try {
+    const url = new URL(req.url)
+    const token = url.searchParams.get('token') || req.headers.get('authorization')?.replace('Bearer ', '')
+    if (!token) return new Response(renderFallback(), { headers: { ...corsHeaders, 'Content-Type': 'image/svg+xml; charset=utf-8', 'Cache-Control': 'no-cache' } })
+    const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
+    const { data: { user }, error: authErr } = await supabase.auth.getUser(token)
+    if (authErr || !user) return new Response(renderFallback(), { headers: { ...corsHeaders, 'Content-Type': 'image/svg+xml; charset=utf-8', 'Cache-Control': 'no-cache' } })
+    const { data: ud } = await supabase.from('user_data').select('data').eq('user_id', user.id).single()
+    const data = ud?.data ?? {}
+    const habits: any[] = data.coreHabits ?? []
+    const completions: any[] = data.habitCompletions ?? []
+    const todayStr = getTodayStr()
+    const todayHabits = habits.filter(isScheduledToday)
+    const doneIds = new Set(completions.filter((c:any) => c.date === todayStr && c.completed === true).map((c:any) => c.habitId))
+    const tasks = todayHabits.map((h:any) => ({ title: h.title ?? 'Task', done: doneIds.has(h.id) }))
+    const streak = calcStreak(habits, completions)
+    const svg = tasks.length > 0 ? renderRoutine(tasks, streak) : renderFallback()
+    return new Response(svg, { headers: { ...corsHeaders, 'Content-Type': 'image/svg+xml; charset=utf-8', 'Cache-Control': 'no-cache' } })
+  } catch (_e) {
+    return new Response(renderFallback(), { headers: { ...corsHeaders, 'Content-Type': 'image/svg+xml; charset=utf-8', 'Cache-Control': 'no-cache' } })
+  }
 })
