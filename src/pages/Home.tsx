@@ -107,7 +107,7 @@ export default function Home() {
     <div className="min-h-[100dvh] flex flex-col gradient-background">
       {/* Hero gradient header */}
       <div
-        className="px-5 pt-10 pb-8 shrink-0 relative"
+        className="px-5 pt-10 pb-8 shrink-0 relative overflow-hidden"
         style={{
           background:
             'linear-gradient(135deg, hsl(var(--primary) / 0.15) 0%, hsl(var(--primary) / 0.05) 50%, transparent 100%)',
