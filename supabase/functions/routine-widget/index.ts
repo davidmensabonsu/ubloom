@@ -16,35 +16,48 @@ const escapeXml = (s: string) =>
 
 const trunc = (s: string, n: number) => (s.length > n ? s.slice(0, n - 1) + '…' : s)
 
-function getTodayStr() {
-  const d = new Date()
-  return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0') + '-' + String(d.getUTCDate()).padStart(2, '0')
+// Returns the wall-clock parts (year/month/day/weekday) for `date` in the given IANA timezone.
+// Falls back to UTC if the timezone is invalid or missing.
+function getZonedParts(date: Date, tz: string): { dateStr: string; dow: number } {
+  let parts: Intl.DateTimeFormatPart[]
+  try {
+    parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz,
+      year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short',
+    }).formatToParts(date)
+  } catch {
+    parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'UTC',
+      year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short',
+    }).formatToParts(date)
+  }
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? ''
+  const dowMap: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 }
+  return {
+    dateStr: `${get('year')}-${get('month')}-${get('day')}`,
+    dow: dowMap[get('weekday')] ?? 0,
+  }
 }
 
-function isScheduledToday(habit: any): boolean {
-  const dow = new Date().getUTCDay()
+function isScheduledOn(habit: any, dow: number): boolean {
   if (habit.frequency === 'daily') return true
   if (habit.frequency === 'weekly') return Array.isArray(habit.weeklyDays) && habit.weeklyDays.includes(dow)
   if (habit.frequency === 'custom') return Array.isArray(habit.customDays) && habit.customDays.includes(dow)
   return true
 }
 
-function calcStreak(habits: any[], completions: any[]): number {
+function calcStreak(habits: any[], completions: any[], tz: string): number {
   if (!habits.length) return 0
   let streak = 0
-  const today = new Date(); today.setUTCHours(0, 0, 0, 0)
+  const now = Date.now()
   for (let i = 0; i <= 365; i++) {
-    const d = new Date(today); d.setUTCDate(d.getUTCDate() - i)
-    const dateStr = d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0') + '-' + String(d.getUTCDate()).padStart(2, '0')
-    const dow = d.getUTCDay()
-    const scheduled = habits.filter(h => {
-      if (h.frequency === 'daily') return true
-      if (h.frequency === 'weekly') return Array.isArray(h.weeklyDays) && h.weeklyDays.includes(dow)
-      if (h.frequency === 'custom') return Array.isArray(h.customDays) && h.customDays.includes(dow)
-      return true
-    })
+    const d = new Date(now - i * 86400000)
+    const { dateStr, dow } = getZonedParts(d, tz)
+    const scheduled = habits.filter((h) => isScheduledOn(h, dow))
     if (!scheduled.length) continue
-    const doneIds = new Set(completions.filter((c: any) => c.date === dateStr && c.completed === true).map((c: any) => c.habitId))
+    const doneIds = new Set(
+      completions.filter((c: any) => c.date === dateStr && c.completed === true).map((c: any) => c.habitId),
+    )
     const rate = scheduled.filter((h: any) => doneIds.has(h.id)).length / scheduled.length
     if (rate >= 0.5) { streak++ } else if (i > 0) { break }
   }
@@ -80,6 +93,7 @@ Deno.serve(async (req: Request) => {
   try {
     const url = new URL(req.url)
     const token = url.searchParams.get('token')
+    const tz = url.searchParams.get('tz') || 'UTC'
     if (!token || token.length < 20 || token.length > 128) {
       return new Response(renderFallback(), { headers: svgHeaders })
     }
@@ -107,11 +121,11 @@ Deno.serve(async (req: Request) => {
     const data: any = ud?.data ?? {}
     const habits: any[] = data.coreHabits ?? []
     const completions: any[] = data.habitCompletions ?? []
-    const todayStr = getTodayStr()
-    const todayHabits = habits.filter(isScheduledToday)
+    const { dateStr: todayStr, dow: todayDow } = getZonedParts(new Date(), tz)
+    const todayHabits = habits.filter((h) => isScheduledOn(h, todayDow))
     const doneIds = new Set(completions.filter((c: any) => c.date === todayStr && c.completed === true).map((c: any) => c.habitId))
     const tasks = todayHabits.map((h: any) => ({ title: h.title ?? 'Task', done: doneIds.has(h.id) }))
-    const streak = calcStreak(habits, completions)
+    const streak = calcStreak(habits, completions, tz)
     const svg = tasks.length > 0 ? renderRoutine(tasks, streak) : renderFallback()
     return new Response(svg, { headers: svgHeaders })
   } catch (_e) {
