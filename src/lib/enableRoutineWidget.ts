@@ -35,7 +35,8 @@ async function mintToken(): Promise<string | null> {
 }
 
 function buildWidgetUrl(token: string): string {
-  return `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/routine-widget?token=${encodeURIComponent(token)}`;
+  const tzOffset = new Date().getTimezoneOffset() * -1;
+  return `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/routine-widget?token=${encodeURIComponent(token)}&tzOffset=${tzOffset}`;
 }
 
 /** Toggle the home-screen widget on/off. Safe to call from non-native web (no-op). */
