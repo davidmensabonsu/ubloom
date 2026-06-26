@@ -28,7 +28,7 @@ export default function Privacy() {
               uBloom is a personal wellness and self-growth application operated by Ubloom, registered at Dubai, United Arab Emirates ("we", "us", "our"). We are the data controller for all personal data collected through the uBloom application.
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              For all data protection inquiries please contact us at ubloom@gmail.com.
+              For all data protection inquiries please contact us at ubloomsupport@gmail.com.
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
               We are registered with the Information Commissioner's Office (ICO) under registration number [ICO REGISTRATION NUMBER — to be added once registered].
@@ -150,7 +150,7 @@ export default function Privacy() {
               <li><strong>Mental wellbeing data</strong> — mood logs, journal entries, emotional check-in responses</li>
             </ul>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              We process this special category data based on your <strong>explicit consent</strong>, provided when you voluntarily enter this information into the app and agree to this Privacy Policy. You have the right to withdraw this consent at any time by deleting your account or contacting us at ubloom@gmail.com.
+              We process this special category data based on your <strong>explicit consent</strong>, provided when you voluntarily enter this information into the app and agree to this Privacy Policy. You have the right to withdraw this consent at any time by deleting your account or contacting us at ubloomsupport@gmail.com.
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
               We rely on Article 9(2)(a) of UK GDPR — explicit consent — as our condition for processing special category data.
@@ -174,7 +174,7 @@ export default function Privacy() {
               <li><strong>Weekly summaries</strong> — your weekly data including mood logs, habit completions, and cycle phase are processed by an AI to generate a personalized weekly letter</li>
             </ul>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              <strong>Your rights regarding automated processing:</strong> You have the right not to be subject to solely automated decisions that produce significant legal or similarly significant effects on you. The AI features in uBloom are designed to support and inform your wellness journey — they don't make binding decisions about you. If you have concerns about automated processing of your data please contact us at ubloom@gmail.com.
+              <strong>Your rights regarding automated processing:</strong> You have the right not to be subject to solely automated decisions that produce significant legal or similarly significant effects on you. The AI features in uBloom are designed to support and inform your wellness journey — they don't make binding decisions about you. If you have concerns about automated processing of your data please contact us at ubloomsupport@gmail.com.
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
               You can limit AI processing of your data by choosing not to use Ubi or by deleting your account entirely.
@@ -224,7 +224,7 @@ export default function Privacy() {
               </table>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              For our legitimate interests processing we have assessed that our interests do not override your fundamental rights and freedoms. You have the right to object to legitimate interests processing by contacting us at ubloom@gmail.com.
+              For our legitimate interests processing we have assessed that our interests do not override your fundamental rights and freedoms. You have the right to object to legitimate interests processing by contacting us at ubloomsupport@gmail.com.
             </p>
           </section>
 
@@ -352,15 +352,15 @@ export default function Privacy() {
             <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2 ml-2">
               <li><strong>Right of access</strong> — You may request a copy of all personal data we hold about you. We will respond within 30 days free of charge.</li>
               <li><strong>Right to rectification</strong> — You may correct any inaccurate or incomplete personal data. Most data can be updated directly within the app.</li>
-              <li><strong>Right to erasure (right to be forgotten)</strong> — You may request deletion of your account and all associated personal data using the Delete Account feature in Profile settings or by contacting us at ubloom@gmail.com. We will process deletion within 30 days.</li>
-              <li><strong>Right to data portability</strong> — You may request your personal data in a structured, commonly used, machine-readable format. Contact us at ubloom@gmail.com to make this request.</li>
+              <li><strong>Right to erasure (right to be forgotten)</strong> — You may request deletion of your account and all associated personal data using the Delete Account feature in Profile settings or by contacting us at ubloomsupport@gmail.com. We will process deletion within 30 days.</li>
+              <li><strong>Right to data portability</strong> — You may request your personal data in a structured, commonly used, machine-readable format. Contact us at ubloomsupport@gmail.com to make this request.</li>
               <li><strong>Right to restrict processing</strong> — You may request that we restrict processing of your personal data in certain circumstances — for example while a complaint is being investigated.</li>
               <li><strong>Right to object</strong> — You may object to processing based on legitimate interests at any time. You may also object to automated AI processing of your personal data.</li>
-              <li><strong>Right to withdraw consent</strong> — You may withdraw your consent to processing of special category data at any time without affecting the lawfulness of processing before withdrawal. To withdraw consent delete your account or contact us at ubloom@gmail.com.</li>
+              <li><strong>Right to withdraw consent</strong> — You may withdraw your consent to processing of special category data at any time without affecting the lawfulness of processing before withdrawal. To withdraw consent delete your account or contact us at ubloomsupport@gmail.com.</li>
               <li><strong>Right to lodge a complaint</strong> — If you believe we have not handled your personal data correctly you have the right to lodge a complaint with the Information Commissioner's Office at <a href="https://ico.org.uk" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">ico.org.uk</a> or by calling 0303 123 1113.</li>
             </ul>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              To exercise any of these rights please contact us at ubloom@gmail.com. We will respond within 30 days and may need to verify your identity before processing your request.
+              To exercise any of these rights please contact us at ubloomsupport@gmail.com. We will respond within 30 days and may need to verify your identity before processing your request.
             </p>
           </section>
 
@@ -399,7 +399,7 @@ export default function Privacy() {
               uBloom is strictly intended for users aged 18 and over. We do not knowingly collect personal data from anyone under the age of 18. The special category health and wellbeing data we process requires users to be adults capable of providing informed explicit consent.
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              If you believe a person under 18 has created an account or provided us with personal data please contact us immediately at ubloom@gmail.com. We will immediately suspend the account and permanently delete all associated data.
+              If you believe a person under 18 has created an account or provided us with personal data please contact us immediately at ubloomsupport@gmail.com. We will immediately suspend the account and permanently delete all associated data.
             </p>
           </section>
 
@@ -440,7 +440,7 @@ export default function Privacy() {
             <p className="text-sm text-muted-foreground leading-relaxed">
               Ubloom<br />
               Dubai, United Arab Emirates<br />
-              ubloom@gmail.com
+              ubloomsupport@gmail.com
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
               We aim to respond to all data protection inquiries within 30 days.
