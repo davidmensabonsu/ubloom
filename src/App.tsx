@@ -17,6 +17,8 @@ import PageViewTracker from "@/components/PageViewTracker";
 import SubscriptionGate from "@/components/SubscriptionGate";
 import CookieConsentBanner from "@/components/CookieConsentBanner";
 import { getLocalDateStr } from "@/lib/dateUtils";
+import { Capacitor } from '@capacitor/core';
+import { Purchases, LOG_LEVEL } from '@revenuecat/purchases-capacitor';
 
 // Pages
 import Welcome from "./pages/Welcome";
@@ -186,7 +188,22 @@ function AnimatedRoutes() {
   );
 }
 
-const App = () => (
+const App = () => {
+  useEffect(() => {
+    async function configurePurchases() {
+      if (!Capacitor.isNativePlatform()) return;
+      await Purchases.setLogLevel({ level: LOG_LEVEL.DEBUG });
+      const platform = Capacitor.getPlatform();
+      if (platform === 'ios') {
+        await Purchases.configure({ apiKey: "test_KKwoARcNsxGaYhczNkeuRlGWjlW" });
+      } else if (platform === 'android') {
+        await Purchases.configure({ apiKey: "test_KKwoARcNsxGaYhczNkeuRlGWjlW" });
+      }
+    }
+    configurePurchases();
+  }, []);
+
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
@@ -201,6 +218,7 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
