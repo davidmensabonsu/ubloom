@@ -33,7 +33,8 @@ export default function SubscriptionGate() {
   const onMainRoute =
     mainRoutes.includes(location.pathname) || location.pathname.startsWith('/wander/');
 
-  if (!onMainRoute || isLoading || isPremium) return null;
+  const hasAccess = isNative ? nativeStatus === 'entitled' : isPremium;
+  if (!onMainRoute || isLoading || hasAccess) return null;
 
   const showLockout = isExpired && !acknowledgedFreeTier;
 
@@ -64,19 +65,37 @@ export default function SubscriptionGate() {
         )}
       </AnimatePresence>
 
-      <UpgradeModal
-        open={bannerModalOpen}
-        onClose={() => setBannerModalOpen(false)}
-        source="trial_banner"
-      />
+      {isNative ? (
+        bannerModalOpen && (
+          <NativePaywall
+            onClose={() => setBannerModalOpen(false)}
+            onSuccess={checkEntitlement}
+          />
+        )
+      ) : (
+        <UpgradeModal
+          open={bannerModalOpen}
+          onClose={() => setBannerModalOpen(false)}
+          source="trial_banner"
+        />
+      )}
 
       {/* Post-trial lockout — non-dismissible upgrade modal */}
-      <UpgradeModal
-        open={showLockout}
-        lockout
-        title="Your free trial has ended"
-        source="trial_expired_lockout"
-      />
+      {isNative ? (
+        showLockout && (
+          <NativePaywall
+            onClose={() => {}}
+            onSuccess={checkEntitlement}
+          />
+        )
+      ) : (
+        <UpgradeModal
+          open={showLockout}
+          lockout
+          title="Your free trial has ended"
+          source="trial_expired_lockout"
+        />
+      )}
     </>
   );
 }
