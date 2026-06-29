@@ -19,7 +19,7 @@ const FEATURES = [
   'Priority support',
 ];
 
-export default function NativePaywallpaper({ onClose, onSuccess }: NativePaywallProps) {
+export default function NativePaywall({ onClose, onSuccess }: NativePaywallProps) {
   const { packages, isLoading, error, purchasePackage, restorePurchases } = usePurchases();
 
   const monthly = packages.find(p => p.product.identifier === 'monthly_paywall.1');
