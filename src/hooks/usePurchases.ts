@@ -37,7 +37,7 @@ export function usePurchases() {
   const fetchOfferings = useCallback(async () => {
     if (!isNative) return;
     try {
-      const { offerings } = await Purchases.getOfferings();
+      const offerings = await Purchases.getOfferings();
       const offering = offerings.all[OFFERING_ID] ?? offerings.current;
       if (offering) { setPackages(offering.availablePackages); }
     } catch (e) { console.error('RevenueCat fetch offerings failed:', e); }
