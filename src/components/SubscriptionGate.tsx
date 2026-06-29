@@ -20,6 +20,8 @@ import NativePaywall from './NativePaywall';
 export default function SubscriptionGate() {
   const location = useLocation();
   const { isTrial, isExpired, isLoading, trialDaysLeft, isPremium } = useSubscription();
+  const isNative = Capacitor.isNativePlatform();
+  const { status: nativeStatus, checkEntitlement } = usePurchases();
   const acknowledgedFreeTier = useUserStore((s) => s.profile.acknowledgedFreeTier);
   const [bannerModalOpen, setBannerModalOpen] = useState(false);
 
