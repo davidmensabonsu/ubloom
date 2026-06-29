@@ -32,6 +32,8 @@ import {
 
 import BottomNav from '@/components/BottomNav';
 import ManageSubscriptionDialog from '@/components/ManageSubscriptionDialog';
+import { Capacitor } from '@capacitor/core';
+import { openCustomerCenter } from '@/components/NativeCustomerCenter';
 
 const aesthetics = [
   { id: 'rose', name: 'Warm Rose', preview: 'bg-gradient-to-br from-rose-100 to-pink-200', accent: 'bg-rose-300', gradient: 'linear-gradient(135deg, hsl(344 40% 57%), hsl(344 55% 78%))' },
@@ -608,7 +610,13 @@ export default function Profile() {
                 </p>
               )}
               <button
-                onClick={() => setManageOpen(true)}
+                onClick={() => {
+                  if (Capacitor.isNativePlatform()) {
+                    openCustomerCenter();
+                  } else {
+                    setManageOpen(true);
+                  }
+                }}
                 className="text-sm text-primary font-medium hover:underline"
               >
                 Manage subscription →
