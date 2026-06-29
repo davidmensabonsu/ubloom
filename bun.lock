@@ -5,10 +5,10 @@
     "": {
       "name": "vite_react_shadcn_ts",
       "dependencies": {
-        "@capacitor/android": "^8.3.4",
+        "@capacitor/android": "^8.0.3",
         "@capacitor/browser": "^8.0.3",
-        "@capacitor/core": "^8.3.4",
-        "@capacitor/ios": "^8.3.4",
+        "@capacitor/core": "^8.0.3",
+        "@capacitor/ios": "^8.0.3",
         "@dnd-kit/core": "^6.3.1",
         "@dnd-kit/sortable": "^10.0.0",
         "@dnd-kit/utilities": "^3.2.2",
