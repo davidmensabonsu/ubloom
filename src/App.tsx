@@ -195,9 +195,7 @@ const App = () => {
       await Purchases.setLogLevel({ level: LOG_LEVEL.DEBUG });
       const platform = Capacitor.getPlatform();
       if (platform === 'ios') {
-        await Purchases.configure({ apiKey: "test_KKwoARcNsxGaYhczNkeuRlGWjlW" });
-      } else if (platform === 'android') {
-        await Purchases.configure({ apiKey: "test_KKwoARcNsxGaYhczNkeuRlGWjlW" });
+        await Purchases.configure({ apiKey: "YOUR_IOS_API_KEY_HERE" });
       }
     }
     configurePurchases();
