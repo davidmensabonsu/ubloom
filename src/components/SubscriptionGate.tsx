@@ -5,6 +5,9 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { useUserStore } from '@/stores/userStore';
 import { track } from '@/hooks/useAnalytics';
 import UpgradeModal from './UpgradeModal';
+import { Capacitor } from '@capacitor/core';
+import { usePurchases } from '@/hooks/usePurchases';
+import NativePaywall from './NativePaywall';
 
 /**
  * Global subscription overlay layer:
