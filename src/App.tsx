@@ -195,7 +195,7 @@ const App = () => {
       if (!Capacitor.isNativePlatform()) return;
       await Purchases.setLogLevel({ level: LOG_LEVEL.DEBUG });
       if (Capacitor.getPlatform() === 'ios') {
-        await Purchases.configure({ apiKey: "YOUR_IOS_API_KEY_HERE" });
+        await Purchases.configure({ apiKey: "appl_tVNOZdhirczyijlnynyjAGqgcgL" });
         try {
           const { data: { user } } = await supabase.auth.getUser();
           if (user?.id) {
