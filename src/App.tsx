@@ -194,9 +194,16 @@ const App = () => {
     async function configurePurchases() {
       if (!Capacitor.isNativePlatform()) return;
       await Purchases.setLogLevel({ level: LOG_LEVEL.DEBUG });
-      const platform = Capacitor.getPlatform();
-      if (platform === 'ios') {
+      if (Capacitor.getPlatform() === 'ios') {
         await Purchases.configure({ apiKey: "YOUR_IOS_API_KEY_HERE" });
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user?.id) {
+            await Purchases.logIn({ appUserID: user.id });
+          }
+        } catch (e) {
+          console.error('RevenueCat login failed:', e);
+        }
       }
     }
     configurePurchases();
