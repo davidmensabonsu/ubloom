@@ -8,7 +8,7 @@ workflows:
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.davidmensabonsu.ubloom
+        bundle_identifier: com.despia.ubloom
       node: 20
     scripts:
       - name: Install dependencies
