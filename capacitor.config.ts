@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.davidmensabonsu.ubloom',
+  appId: 'com.despia.ubloom',
   appName: 'uBloom',
   webDir: 'dist',
   server: {
