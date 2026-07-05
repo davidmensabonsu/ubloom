@@ -25,7 +25,8 @@ workflows:
           xcode-project build-ipa \
             --workspace ios/App/App.xcodeproj/project.xcworkspace \
             --scheme App \
-            --config Release
+            --config Release \
+            --archive-xcargs "CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=8C5YTZYL7J"
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
