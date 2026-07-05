@@ -25,14 +25,26 @@ workflows:
         script: |
           nvm use 22
           npx cap sync ios
-      - name: Set up code signing
-        script: xcode-project use-profiles
       - name: Build iOS
         script: |
-          xcode-project build-ipa \
-            --workspace ios/App/App.xcodeproj/project.xcworkspace \
-            --scheme App \
-            --config Release
+          ARCHIVE_PATH="$CM_BUILD_DIR/build/ios/xcarchive/App.xcarchive"
+          IPA_PATH="$CM_BUILD_DIR/build/ios/ipa"
+          mkdir -p "$IPA_PATH"
+          
+          xcodebuild \
+            -workspace ios/App/App.xcodeproj/project.xcworkspace \
+            -scheme App \
+            -config Release \
+            -archivePath "$ARCHIVE_PATH" \
+            CODE_SIGN_STYLE=Automatic \
+            DEVELOPMENT_TEAM=8C5YTZYL7J \
+            archive
+          
+          xcodebuild \
+            -exportArchive \
+            -archivePath "$ARCHIVE_PATH" \
+            -exportPath "$IPA_PATH" \
+            -exportOptionsPlist /Users/builder/export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
