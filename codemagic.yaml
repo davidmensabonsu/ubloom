@@ -10,6 +10,7 @@ workflows:
         distribution_type: app_store
         bundle_identifier: com.despia.ubloom
       node: 20
+      xcode: latest
     scripts:
       - name: Install dependencies
         script: npm install
@@ -18,12 +19,13 @@ workflows:
       - name: Capacitor sync
         script: npx cap sync ios
       - name: Set up code signing
-        script: xcode-project use-profiles
+        script: xcode-project use-profiles --profile-types app-store
       - name: Build iOS
         script: |
           xcode-project build-ipa \
             --workspace ios/App/App.xcworkspace \
-            --scheme App
+            --scheme App \
+            --config Release
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
