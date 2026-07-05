@@ -23,7 +23,7 @@ workflows:
       - name: Build iOS
         script: |
           xcode-project build-ipa \
-            --workspace ios/App/App.xcworkspace \
+            --workspace ios/App/App.xcodeproj/project.xcworkspace \
             --scheme App \
             --config Release
     artifacts:
