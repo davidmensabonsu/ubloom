@@ -13,11 +13,18 @@ workflows:
       xcode: latest
     scripts:
       - name: Install dependencies
-        script: npm install
+        script: |
+          nvm install 22
+          nvm use 22
+          npm install
       - name: Build web assets
-        script: npm run build
+        script: |
+          nvm use 22
+          npm run build
       - name: Capacitor sync
-        script: npx cap sync ios
+        script: |
+          nvm use 22
+          npx cap sync ios
       - name: Build iOS
         script: |
           xcode-project build-ipa \
