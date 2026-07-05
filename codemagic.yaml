@@ -30,7 +30,24 @@ workflows:
           ARCHIVE_PATH="$CM_BUILD_DIR/build/ios/xcarchive/App.xcarchive"
           IPA_PATH="$CM_BUILD_DIR/build/ios/ipa"
           mkdir -p "$IPA_PATH"
-          
+
+          cat > /tmp/export_options.plist << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store-connect</string>
+            <key>teamID</key>
+            <string>8C5YTZYL7J</string>
+            <key>uploadBitcode</key>
+            <false/>
+            <key>uploadSymbols</key>
+            <true/>
+          </dict>
+          </plist>
+          EOF
+
           xcodebuild \
             -workspace ios/App/App.xcodeproj/project.xcworkspace \
             -scheme App \
@@ -39,12 +56,12 @@ workflows:
             CODE_SIGN_STYLE=Automatic \
             DEVELOPMENT_TEAM=8C5YTZYL7J \
             archive
-          
+
           xcodebuild \
             -exportArchive \
             -archivePath "$ARCHIVE_PATH" \
             -exportPath "$IPA_PATH" \
-            -exportOptionsPlist /Users/builder/export_options.plist
+            -exportOptionsPlist /tmp/export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
