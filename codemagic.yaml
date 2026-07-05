@@ -53,6 +53,7 @@ workflows:
             -scheme App \
             -config Release \
             -archivePath "$ARCHIVE_PATH" \
+            -allowProvisioningUpdates \
             CODE_SIGN_STYLE=Automatic \
             DEVELOPMENT_TEAM=8C5YTZYL7J \
             archive
