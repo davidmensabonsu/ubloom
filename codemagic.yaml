@@ -9,8 +9,6 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.despia.ubloom
-        certificate: uBloom_Distribution
-        provisioning_profile: uBloom App Store
       node: 20
       xcode: latest
     scripts:
