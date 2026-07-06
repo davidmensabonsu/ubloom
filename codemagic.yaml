@@ -12,6 +12,10 @@ workflows:
       node: 22
       xcode: latest
     scripts:
+      - name: Set build number
+        script: |
+          LATEST_BUILD=$(app-store-connect get-latest-testflight-build-number "6784313632" --pre-release-version 1.0 2>/dev/null || echo "1")
+          agvtool new-version -all $((LATEST_BUILD + 1))
       - name: Install dependencies
         script: |
           nvm install 22
