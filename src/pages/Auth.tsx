@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
 import { Mail, Lock, User, ArrowRight, Heart, Check, X, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Capacitor } from '@capacitor/core';
 
 const USERNAME_REGEX = /^[A-Za-z0-9._]{3,30}$/;
 function validateUsernameFormat(value: string): string | null {
@@ -20,6 +21,7 @@ function validateUsernameFormat(value: string): string | null {
 export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isForgot, setIsForgot] = useState(false);
+  const isNative = Capacitor.isNativePlatform();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
@@ -234,6 +236,13 @@ export default function Auth() {
             type="button"
             disabled={isSignUp && !agreedToTerms}
             onClick={async () => {
+              if (isNative) {
+                toast({
+                  title: 'Google sign-in unavailable',
+                  description: 'Google sign-in isn\u2019t supported in the app yet. Please sign in with your email and password.',
+                });
+                return;
+              }
               const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
