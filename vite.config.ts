@@ -19,4 +19,9 @@ export default defineConfig(({ mode }) => ({
       "@lovable.dev/cloud-auth-js": path.resolve(__dirname, "./src/lib/lovable-auth-stub.ts"),
     },
   },
+  build: {
+    rollupOptions: {
+      plugins: [],
+    },
+  },
 }));
