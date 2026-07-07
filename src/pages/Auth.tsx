@@ -236,6 +236,13 @@ export default function Auth() {
             type="button"
             disabled={isSignUp && !agreedToTerms}
             onClick={async () => {
+              if (isNative) {
+                toast({
+                  title: 'Google sign-in unavailable',
+                  description: 'Google sign-in isn\u2019t supported in the app yet. Please sign in with your email and password.',
+                });
+                return;
+              }
               const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
