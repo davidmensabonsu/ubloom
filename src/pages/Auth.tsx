@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
-import { Mail, Lock, User, ArrowRight, Heart, Check, X, Loader2 } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, Heart, Check, X, Loader2, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Capacitor } from '@capacitor/core';
 
