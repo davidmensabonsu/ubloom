@@ -18,8 +18,8 @@ import PageViewTracker from "@/components/PageViewTracker";
 import SubscriptionGate from "@/components/SubscriptionGate";
 import CookieConsentBanner from "@/components/CookieConsentBanner";
 import { getLocalDateStr } from "@/lib/dateUtils";
-import { Capacitor } from '@capacitor/core';
-import { Purchases, LOG_LEVEL } from '@revenuecat/purchases-capacitor';
+// import { Capacitor } from '@capacitor/core';
+// import { Purchases, LOG_LEVEL } from '@revenuecat/purchases-capacitor';
 
 // Pages
 import Welcome from "./pages/Welcome";
@@ -190,28 +190,28 @@ function AnimatedRoutes() {
 }
 
 const App = () => {
-  useEffect(() => {
-    async function configurePurchases() {
-      try {
-        if (!Capacitor.isNativePlatform()) return;
-        await Purchases.setLogLevel({ level: LOG_LEVEL.DEBUG });
-        if (Capacitor.getPlatform() === 'ios') {
-          await Purchases.configure({ apiKey: "appl_tVNOZdhirczyijlnynyjAGqgcgL" });
-          try {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user?.id) {
-              await Purchases.logIn({ appUserID: user.id });
-            }
-          } catch (e) {
-            console.error('RevenueCat login failed:', e);
-          }
-        }
-      } catch (e) {
-        console.error('RevenueCat configuration failed:', e);
-      }
-    }
-    configurePurchases();
-  }, []);
+  // useEffect(() => {
+  //   async function configurePurchases() {
+  //     try {
+  //       if (!Capacitor.isNativePlatform()) return;
+  //       await Purchases.setLogLevel({ level: LOG_LEVEL.DEBUG });
+  //       if (Capacitor.getPlatform() === 'ios') {
+  //         await Purchases.configure({ apiKey: "appl_tVNOZdhirczyijlnynyjAGqgcgL" });
+  //         try {
+  //           const { data: { user } } = await supabase.auth.getUser();
+  //           if (user?.id) {
+  //             await Purchases.logIn({ appUserID: user.id });
+  //           }
+  //         } catch (e) {
+  //           console.error('RevenueCat login failed:', e);
+  //         }
+  //       }
+  //     } catch (e) {
+  //       console.error('RevenueCat configuration failed:', e);
+  //     }
+  //   }
+  //   configurePurchases();
+  // }, []);
 
   return (
   <QueryClientProvider client={queryClient}>
