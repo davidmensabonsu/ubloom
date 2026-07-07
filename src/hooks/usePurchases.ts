@@ -1,16 +1,19 @@
 // Temporarily disabled
+export type PurchaseStatus = 'loading' | 'entitled' | 'not_entitled' | 'unavailable';
+
 export function usePurchases() {
   return {
-    status: 'unavailable' as const,
+    status: 'unavailable' as PurchaseStatus,
     customerInfo: null,
     packages: [],
     isLoading: false,
     error: null,
-    purchasePackage: async () => false,
+    purchasePackage: async (_pkg?: any) => false,
     restorePurchases: async () => false,
     checkEntitlement: async () => {},
   };
 }
+
 
 // import { useState, useEffect, useCallback } from 'react';
 // import { Capacitor } from '@capacitor/core';
