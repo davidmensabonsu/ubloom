@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, Crown } from 'lucide-react';
-import { PurchasesPackage } from '@revenuecat/purchases-capacitor';
+// Temporarily disabled: import { PurchasesPackage } from '@revenuecat/purchases-capacitor';
+type PurchasesPackage = any;
 import { usePurchases } from '@/hooks/usePurchases';
 import logo from '@/assets/ubloom-flower.png';
 import { toast } from 'sonner';
