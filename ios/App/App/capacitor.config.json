@@ -1,0 +1,8 @@
+{
+	"appId": "com.despia.ubloom",
+	"appName": "uBloom",
+	"webDir": "dist",
+	"packageClassList": [
+		"CAPBrowserPlugin"
+	]
+}
