@@ -16,7 +16,15 @@ workflows:
     scripts:
       - name: Set build number
         script: |
-          LATEST_BUILD=$(app-store-connect get-latest-testflight-build-number "6784313632" --pre-release-version 1.0 2>/dev/null || echo "1")
+          LATEST_BUILD=$(app-store-connect get-latest-testflight-build-number "6784313632")
+          if [ -z "$LATEST_BUILD" ]; then
+            echo "ERROR: could not fetch latest TestFlight build number; refusing to guess." >&2
+            echo "A guessed number can collide with an existing build, and App Store Connect" >&2
+            echo "silently drops duplicate build numbers after upload - TestFlight then keeps" >&2
+            echo "serving the previous binary even though this build reports success." >&2
+            exit 1
+          fi
+          echo "Latest TestFlight build: $LATEST_BUILD -> new build: $((LATEST_BUILD + 1))"
           cd ios/App
           agvtool new-version -all $((LATEST_BUILD + 1))
       - name: Install dependencies
@@ -32,6 +40,19 @@ workflows:
         script: |
           nvm use 22
           npx cap sync ios
+      - name: Verify shipped config has no remote server URL
+        script: |
+          echo "--- ios/App/App/capacitor.config.json (this exact file ships in the ipa) ---"
+          cat ios/App/App/capacitor.config.json
+          if grep -nE '"url"|lovableproject\.com' ios/App/App/capacitor.config.json; then
+            echo "ERROR: synced Capacitor config contains a server URL - the app would load a remote page instead of the bundled assets." >&2
+            exit 1
+          fi
+          if grep -Rln 'lovableproject\.com' dist ios/App/App/public; then
+            echo "ERROR: lovableproject.com reference found in built web assets." >&2
+            exit 1
+          fi
+          echo "OK: config is clean, app will load from the local bundle."
       - name: Set up code signing
         script: xcode-project use-profiles
       - name: Build iOS
