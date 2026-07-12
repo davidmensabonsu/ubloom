@@ -38,7 +38,7 @@ export default function TrialWelcomeModal({ open, onDismiss }: TrialWelcomeModal
                 animate={{ scale: [1, 1.1, 1] }}
                 transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
               >
-                <img src={ubloomFlower} alt="uBloom" className="w-14 h-14 clay-icon" />
+                <img src={ubloomFlower} alt="uBloom" className="w-14 h-14 object-contain clay-icon" />
               </motion.div>
 
               {/* Headline */}
