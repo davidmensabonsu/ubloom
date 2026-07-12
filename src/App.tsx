@@ -18,7 +18,9 @@ import PageViewTracker from "@/components/PageViewTracker";
 import SubscriptionGate from "@/components/SubscriptionGate";
 import CookieConsentBanner from "@/components/CookieConsentBanner";
 import { getLocalDateStr } from "@/lib/dateUtils";
-// import { Capacitor } from '@capacitor/core';
+import { Capacitor } from '@capacitor/core';
+import { LocalNotifications } from '@capacitor/local-notifications';
+import { useNavigate } from 'react-router-dom';
 // import { Purchases, LOG_LEVEL } from '@revenuecat/purchases-capacitor';
 
 // Pages
@@ -47,6 +49,24 @@ import LegalConsent from "./pages/LegalConsent";
 import CookiePolicy from "./pages/CookiePolicy";
 
 const queryClient = new QueryClient();
+
+// Opens the Routine page when a task reminder notification is tapped
+function NotificationTapHandler() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+    const handle = LocalNotifications.addListener('localNotificationActionPerformed', (event) => {
+      const route = (event.notification.extra as { route?: string } | undefined)?.route;
+      if (route) navigate(route);
+    });
+    return () => {
+      void handle.then((h) => h.remove());
+    };
+  }, [navigate]);
+
+  return null;
+}
 
 // Theme manager component
 function ThemeManager() {
@@ -222,6 +242,7 @@ const App = () => {
         <AuthProvider>
           <CloudSyncProvider>
             <ThemeManager />
+            <NotificationTapHandler />
             <AnimatedRoutes />
           </CloudSyncProvider>
         </AuthProvider>

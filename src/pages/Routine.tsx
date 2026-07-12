@@ -22,6 +22,7 @@ import { Switch } from '@/components/ui/switch';
 import PastDayView from '@/components/routine/PastDayView';
 import FutureDayView from '@/components/routine/FutureDayView';
 import UndoRoutineBanner from '@/components/routine/UndoRoutineBanner';
+import ReminderSettings from '@/components/routine/ReminderSettings';
 import { parse, format } from 'date-fns';
 import { useTypewriter } from '@/hooks/useTypewriter';
 import {
@@ -218,6 +219,9 @@ export default function Routine() {
         ) : (
           <CoreHabitsSection />
         )}
+
+        {/* Reminder settings — today view only */}
+        {!isPast && !isFuture && <ReminderSettings />}
 
         {/* Empty state when no habits (today only) */}
         {!isPast && !isFuture && (!profile.coreHabits || profile.coreHabits.length === 0) && (

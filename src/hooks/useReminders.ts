@@ -3,6 +3,11 @@ import { getLocalDateStr } from "@/lib/dateUtils";
 import { useUserStore, TimeOfDay } from "@/stores/userStore";
 import { isHabitScheduledForDate } from "@/components/routine/FrequencyPicker";
 import { toast } from "sonner";
+import {
+  isCapacitorNative,
+  requestReminderPermission,
+  syncNativeReminders,
+} from "@/lib/nativeReminders";
 
 const timeOfDayLabels: Record<TimeOfDay, string> = {
   morning: "Good morning!",
@@ -55,6 +60,7 @@ export function useReminders() {
   const HEADS_UP_MINUTES = 30;
 
   const requestPermission = useCallback(async () => {
+    if (isCapacitorNative()) return requestReminderPermission();
     if (isDespiaNative()) return true;
 
     const despia = getDespiaPush();
@@ -202,8 +208,39 @@ export function useReminders() {
     });
   }, [reminderSettings, coreHabits, isHabitCompletedToday, sendNotification, markReminderSent]);
 
+  // Native app: hand reminders to the OS so they fire while the app is
+  // closed, and reschedule whenever tasks/completions/settings change or the
+  // app returns to the foreground. The minute-interval checks below are the
+  // web fallback and only work while the page is open.
+  const timesKey = JSON.stringify(reminderSettings.times);
+  useEffect(() => {
+    if (!isCapacitorNative()) return;
+    let cancelled = false;
+    const sync = () => {
+      if (cancelled) return;
+      void syncNativeReminders({
+        enabled: reminderSettings.enabled,
+        habits: coreHabits,
+        times: reminderSettings.times,
+        isCompletedToday: isHabitCompletedToday,
+      }).catch((e) => console.error("Reminder sync failed:", e));
+    };
+    const debounce = window.setTimeout(sync, 400);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") sync();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(debounce);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reminderSettings.enabled, timesKey, coreHabits, profile.habitCompletions, isHabitCompletedToday]);
+
   // Check every minute + reset sent habit reminders at midnight
   useEffect(() => {
+    if (isCapacitorNative()) return;
     if (!reminderSettings.enabled) return;
 
     checkAndNotify();
@@ -223,6 +260,7 @@ export function useReminders() {
   }, [reminderSettings.enabled, checkAndNotify]);
 
   useEffect(() => {
+    if (isCapacitorNative()) return;
     if (!reminderSettings.enabled) return;
     const now = new Date();
     const target = new Date();
@@ -246,8 +284,8 @@ export function useReminders() {
 
   return {
     requestPermission,
-    isSupported: isDespiaRuntime() || "Notification" in window,
-    permissionStatus: isDespiaRuntime()
+    isSupported: isCapacitorNative() || isDespiaRuntime() || "Notification" in window,
+    permissionStatus: isCapacitorNative() || isDespiaRuntime()
       ? "prompt"
       : typeof window !== "undefined" && "Notification" in window
         ? Notification.permission
