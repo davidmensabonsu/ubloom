@@ -6,8 +6,6 @@ workflows:
     integrations:
       app_store_connect: CodeMagic
     environment:
-      groups:
-        - production
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.despia.ubloom
