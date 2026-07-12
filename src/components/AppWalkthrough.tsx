@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 import { Home, Compass, Calendar, Search, Heart, ArrowRight, Check, Activity } from 'lucide-react';
-import ubloomFlower from '@/assets/ubloom-flower.png';
 
 const walkthroughSteps = [
   {
@@ -101,10 +100,6 @@ export default function AppWalkthrough() {
           className="relative z-10 w-full max-w-md mx-4 mb-24 pointer-events-auto"
         >
           <div className="glass-card rounded-3xl p-6 shadow-2xl border border-primary/20">
-            {/* Logo */}
-            <div className="flex justify-center mb-4">
-              <img src={ubloomFlower} alt="uBloom" className="w-10 h-10 clay-icon" />
-            </div>
             <div className="flex items-center justify-center gap-1.5 mb-5">
               {walkthroughSteps.map((_, i) => (
                 <motion.div
