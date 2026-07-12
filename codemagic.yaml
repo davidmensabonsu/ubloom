@@ -52,7 +52,17 @@ workflows:
             echo "ERROR: lovableproject.com reference found in built web assets." >&2
             exit 1
           fi
-          echo "OK: config is clean, app will load from the local bundle."
+          echo "Checking which Supabase credentials were baked into the bundle..."
+          env | grep -o '^VITE_[A-Za-z_]*' && echo "WARNING: the VITE_ variables above are set in the CI environment and OVERRIDE the committed .env" || echo "No VITE_ overrides in CI environment (good - .env is the source of truth)"
+          if ! grep -rq 'dgyynvfzoepjhcpjpdbs' dist/assets; then
+            echo "ERROR: built bundle does not contain the expected Supabase project URL." >&2
+            exit 1
+          fi
+          if ! grep -rq '2D3AbsR1MluVwLZutBuy1UAo7c8qvdVL1' dist/assets; then
+            echo "ERROR: built bundle does not contain the expected Supabase publishable key from .env - a stale CI environment variable is likely overriding it." >&2
+            exit 1
+          fi
+          echo "OK: config is clean, correct Supabase credentials baked in, app will load from the local bundle."
       - name: Set up code signing
         script: xcode-project use-profiles
       - name: Build iOS
