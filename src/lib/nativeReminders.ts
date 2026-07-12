@@ -14,11 +14,11 @@ const MAX_NOTIFICATIONS = 60;
 const STREAK_REMINDER_TIME = '20:30';
 
 const BUCKET_TITLES: Record<TimeOfDay, string> = {
-  morning: 'Good morning 🌅',
-  midday: 'Midday check-in ☀️',
-  evening: 'Evening wind-down 🌙',
+  morning: 'Good morning',
+  midday: 'Midday check-in',
+  evening: 'Evening wind-down',
 };
-const BUCKET_BODY = 'A gentle nudge to complete your tasks — small steps, big blooms 🌸';
+const BUCKET_BODY = 'A gentle nudge to complete your tasks — small steps, big blooms.';
 
 export const isCapacitorNative = () => Capacitor.isNativePlatform();
 
@@ -88,7 +88,7 @@ export async function syncNativeReminders({ enabled, habits, times, isCompletedT
     for (const habit of dayHabits) {
       if (!habit.scheduledTime) continue;
       if (isToday && isCompletedToday(habit.id)) continue;
-      push(`⏰ Time for: ${habit.title}`, `Scheduled for ${format12(habit.scheduledTime)}`, dateAt(day, habit.scheduledTime));
+      push(`Time for: ${habit.title}`, `Scheduled for ${format12(habit.scheduledTime)}`, dateAt(day, habit.scheduledTime));
     }
 
     // Morning/midday/evening buckets: one generic streak-style nudge each.
@@ -102,7 +102,7 @@ export async function syncNativeReminders({ enabled, habits, times, isCompletedT
     // End-of-day streak reminder if anything is still open.
     if (!(isToday && dayHabits.every((h) => isCompletedToday(h.id)))) {
       push(
-        "Don't break your streak 🌸",
+        "Don't break your streak",
         'You still have tasks today — bloom before the day ends!',
         dateAt(day, STREAK_REMINDER_TIME),
       );

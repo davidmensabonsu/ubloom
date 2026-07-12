@@ -189,7 +189,7 @@ export function useReminders() {
         // Only fire if heads-up time is on the same day (avoid weird negative times like 00:15 → -00:15)
         if (currentTime === headsUpTime && headsUpDate.getDate() === now.getDate()) {
           sendNotification(
-            `⏰ Coming up: ${habit.title}`,
+            `Coming up: ${habit.title}`,
             `In ${HEADS_UP_MINUTES} minutes — scheduled for ${timeStr}`,
             `habit-upcoming-${habit.id}`,
           );
@@ -202,7 +202,7 @@ export function useReminders() {
       if (sentHabitRemindersRef.current.has(key)) return;
 
       if (currentTime === habit.scheduledTime) {
-        sendNotification(`⏰ Time for: ${habit.title}`, `Scheduled for ${timeStr}`, `habit-time-${habit.id}`);
+        sendNotification(`Time for: ${habit.title}`, `Scheduled for ${timeStr}`, `habit-time-${habit.id}`);
         sentHabitRemindersRef.current.add(key);
       }
     });
@@ -273,7 +273,7 @@ export function useReminders() {
       const allDone = todaysHabits.every(h => isHabitCompletedToday(h.id));
       if (!allDone && todaysHabits.length > 0) {
         sendNotification(
-          "Don't break your streak 🌸",
+          "Don't break your streak",
           "You haven't finished your routine today. Bloom before the day ends!",
           "streak-reminder-8pm"
         );

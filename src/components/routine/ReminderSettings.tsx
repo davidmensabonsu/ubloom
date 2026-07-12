@@ -30,7 +30,7 @@ export default function ReminderSettings() {
       return;
     }
     updateReminderSettings({ enabled: true });
-    toast.success("Reminders on — we'll nudge you about your tasks 🌸");
+    toast.success("Reminders on — we'll nudge you about your tasks.");
   };
 
   const handleTimeChange = (timeOfDay: TimeOfDay, time: string) => {
@@ -61,9 +61,9 @@ export default function ReminderSettings() {
       {enabled && (
         <div className="space-y-3 mt-4 pt-4 border-t border-border/60">
           {[
-            { key: 'morning' as const, label: '🌅 Morning' },
-            { key: 'midday' as const, label: '☀️ Midday' },
-            { key: 'evening' as const, label: '🌙 Evening' },
+            { key: 'morning' as const, label: 'Morning' },
+            { key: 'midday' as const, label: 'Midday' },
+            { key: 'evening' as const, label: 'Evening' },
           ].map(({ key, label }) => (
             <div key={key} className="flex items-center justify-between">
               <span className="text-sm font-medium">{label}</span>
