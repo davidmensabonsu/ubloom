@@ -95,14 +95,20 @@ export default function JournalModes() {
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
+      // iOS records AAC in an mp4 container and cannot play webm at all, so
+      // pick a supported container and label the blob with the REAL mime type
+      // (hardcoding audio/webm made iOS refuse to play back its own recordings).
+      const mimeType = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm'].find((t) =>
+        MediaRecorder.isTypeSupported(t)
+      );
+      const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
       mediaRecorderRef.current = recorder;
       chunksRef.current = [];
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) chunksRef.current.push(e.data);
       };
       recorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        const blob = new Blob(chunksRef.current, { type: recorder.mimeType || mimeType || 'audio/mp4' });
         setRecordedBlob(blob);
         setRecordedUrl(URL.createObjectURL(blob));
         stream.getTracks().forEach((t) => t.stop());
