@@ -12,26 +12,27 @@ import type { WonderResource } from '@/lib/wonderResources';
 import { getCurrentCycleDay, getCurrentPhase, type CyclePhase } from '@/lib/cycleUtils';
 
 import booksBanner from '@/assets/wonder/icons/books-banner.png';
+import { lovableAssetUrl } from '@/lib/lovableAsset';
 import fitnessAsset from '@/assets/wonder/icons/fitness.png.asset.json';
-const fitnessImg = fitnessAsset.url;
+const fitnessImg = lovableAssetUrl(fitnessAsset.url);
 import skincareAsset from '@/assets/wonder/icons/hygiene.png.asset.json';
-const skincareImg = skincareAsset.url;
+const skincareImg = lovableAssetUrl(skincareAsset.url);
 import podcastAsset from '@/assets/wonder/icons/podcasts.png.asset.json';
-const podcastImg = podcastAsset.url;
+const podcastImg = lovableAssetUrl(podcastAsset.url);
 import mindsetAsset from '@/assets/wonder/icons/mindset.png.asset.json';
-const mindsetImg = mindsetAsset.url;
+const mindsetImg = lovableAssetUrl(mindsetAsset.url);
 import wellnessAsset from '@/assets/wonder/icons/wellness.png.asset.json';
-const wellnessImg = wellnessAsset.url;
+const wellnessImg = lovableAssetUrl(wellnessAsset.url);
 import nutritionAsset from '@/assets/wonder/icons/nutrition.png.asset.json';
-const nutritionImg = nutritionAsset.url;
+const nutritionImg = lovableAssetUrl(nutritionAsset.url);
 import calmAsset from '@/assets/wonder/icons/calm.png.asset.json';
-const calmImg = calmAsset.url;
+const calmImg = lovableAssetUrl(calmAsset.url);
 import vitaminsAsset from '@/assets/wonder/icons/vitamins.png.asset.json';
-const vitaminsImg = vitaminsAsset.url;
+const vitaminsImg = lovableAssetUrl(vitaminsAsset.url);
 import lifestyleAsset from '@/assets/wonder/icons/lifestyle.png.asset.json';
-const lifestyleImg = lifestyleAsset.url;
+const lifestyleImg = lovableAssetUrl(lifestyleAsset.url);
 import travelAsset from '@/assets/wonder/icons/travel.png.asset.json';
-const travelImg = travelAsset.url;
+const travelImg = lovableAssetUrl(travelAsset.url);
 
 interface CategoryCard {
   key: string;
@@ -180,9 +181,9 @@ export default function Wonder2() {
   );
 
   return (
-    <div className="min-h-screen pb-24" style={{ backgroundColor: 'hsl(var(--background))' }}>
+    <div className="min-h-screen safe-bottom" style={{ backgroundColor: 'hsl(var(--background))' }}>
       {/* Hero gradient header */}
-      <div className="hero-gradient px-4 pt-12 pb-8">
+      <div className="hero-gradient px-4 pt-[max(3rem,calc(env(safe-area-inset-top)+0.75rem))] pb-8">
         <div className="flex items-center justify-between mb-3">
           <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="page-title text-white">
             Wander

@@ -329,9 +329,9 @@ export default function Profile() {
   const hasIdentity = profile.identityStatement || (profile.dreamSelfFeels && profile.dreamSelfFeels.length > 0);
 
   return (
-    <div className="min-h-screen gradient-background pb-24">
+    <div className="min-h-screen gradient-background safe-bottom">
       {/* Header */}
-      <div className="px-5 pt-12 pb-6 text-center">
+      <div className="px-5 pt-[max(3rem,calc(env(safe-area-inset-top)+0.75rem))] pb-6 text-center">
         <motion.h1
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

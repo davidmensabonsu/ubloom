@@ -386,7 +386,7 @@ export default function Ubi() {
   return (
     <div className="min-h-screen gradient-background flex flex-col">
       {/* Hero gradient header */}
-      <div className="sticky top-0 z-10 hero-gradient px-4 pt-7 pb-8">
+      <div className="sticky top-0 z-10 hero-gradient px-4 pt-[max(1.75rem,calc(env(safe-area-inset-top)+0.5rem))] pb-8">
         <div className="max-w-lg mx-auto flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="w-14 h-14 rounded-full flex items-center justify-center bg-white/25 border border-white/30 shadow-sm backdrop-blur-sm shrink-0">

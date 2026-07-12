@@ -104,7 +104,7 @@ export default function Moodboard() {
   };
 
   return (
-    <div className="min-h-screen gradient-background pb-24">
+    <div className="min-h-screen gradient-background safe-bottom">
       <input
         ref={fileInputRef}
         type="file"
@@ -114,7 +114,7 @@ export default function Moodboard() {
       />
 
       {/* Header */}
-      <div className="px-5 pt-12 pb-4">
+      <div className="px-5 pt-[max(3rem,calc(env(safe-area-inset-top)+0.75rem))] pb-4">
         <div className="flex items-center justify-between">
           <motion.h1
             initial={{ opacity: 0, y: 10 }}

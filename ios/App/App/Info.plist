@@ -35,8 +35,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
@@ -63,5 +61,9 @@
         <key>NSAllowsArbitraryLoads</key>
         <true/>
     </dict>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>uBloom uses the microphone so you can record voice journal entries and speak to Ubi.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>uBloom uses the camera so you can record video journal entries.</string>
 </dict>
 </plist>

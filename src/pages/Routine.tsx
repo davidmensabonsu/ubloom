@@ -150,7 +150,7 @@ export default function Routine() {
   const currentMood = profile.moodHistory[0]?.moods[0] || 'peaceful';
 
   return (
-    <div className="min-h-screen gradient-background pb-24">
+    <div className="min-h-screen gradient-background safe-bottom">
        {/* Celebration Overlay */}
        <CelebrationOverlay
          show={celebration.show}
@@ -160,7 +160,7 @@ export default function Routine() {
        />
 
       {/* Header — hero gradient */}
-      <div className="hero-gradient px-5 pt-12 pb-8">
+      <div className="hero-gradient px-5 pt-[max(3rem,calc(env(safe-area-inset-top)+0.75rem))] pb-8">
         <div className="flex items-center justify-between mb-1">
           <motion.p
             initial={{ opacity: 0 }}

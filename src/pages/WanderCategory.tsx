@@ -61,7 +61,7 @@ export default function Wonder2Category() {
   };
 
   return (
-    <div className="min-h-screen pb-24" style={{ backgroundColor: 'hsl(var(--background))' }}>
+    <div className="min-h-screen safe-bottom" style={{ backgroundColor: 'hsl(var(--background))' }}>
       {/* Header */}
       <div className="px-4 pt-12 pb-4">
         <motion.div

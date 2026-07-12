@@ -107,7 +107,7 @@ export default function Home() {
     <div className="min-h-[100dvh] flex flex-col gradient-background">
       {/* Hero gradient header */}
       <div
-        className="px-5 pt-10 pb-8 shrink-0 relative overflow-hidden"
+        className="px-5 pt-[max(2.5rem,calc(env(safe-area-inset-top)+0.75rem))] pb-8 shrink-0 relative overflow-hidden"
         style={{
           background:
             'linear-gradient(135deg, hsl(var(--primary) / 0.15) 0%, hsl(var(--primary) / 0.05) 50%, transparent 100%)',
@@ -195,7 +195,7 @@ export default function Home() {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 px-5 pb-24 pt-3 flex flex-col gap-3">
+      <div className="flex-1 px-5 safe-bottom pt-3 flex flex-col gap-3">
         {/* Today's Intention — chosen by Ubi */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}

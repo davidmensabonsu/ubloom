@@ -126,6 +126,7 @@ import fwPowerWalk from '@/assets/wonder/fw-power-walk.jpg';
 import fwStairClimber from '@/assets/wonder/fw-stair-climber.jpg';
 
 // Videos (CDN asset pointers)
+import { lovableAssetUrl } from '@/lib/lovableAsset';
 import videoMorningStretch from '@/assets/wonder/video-morning-stretch.mp4.asset.json';
 import videoPilates from '@/assets/wonder/video-pilates.mp4.asset.json';
 import videoYoga from '@/assets/wonder/video-yoga.mp4.asset.json';
@@ -243,7 +244,7 @@ export const resourceThumbnails: Record<string, string> = {
   'book-16': bookFallApart,
   'calm-6': thumbProgressiveRelaxation,
   'calm-7': thumbJournalingCalm,
-  'calm-8': videoNervousReset.url,
+  'calm-8': lovableAssetUrl(videoNervousReset.url),
   // Meals
   'meal-1': mealOvernightOats,
   'meal-2': mealAvocadoToast,
@@ -325,10 +326,10 @@ export const fitnessThumbnails: Record<string, string> = {
 
 /** AI-generated demo videos for exercise / video-type resources */
 export const resourceVideos: Record<string, string> = {
-  'fit-1': videoMorningStretch.url,
-  'fit-3': videoPilates.url,
-  'fit-5': videoYoga.url,
-  'fit-6': videoStrength.url,
-  'calm-8': videoNervousReset.url,
+  'fit-1': lovableAssetUrl(videoMorningStretch.url),
+  'fit-3': lovableAssetUrl(videoPilates.url),
+  'fit-5': lovableAssetUrl(videoYoga.url),
+  'fit-6': lovableAssetUrl(videoStrength.url),
+  'calm-8': lovableAssetUrl(videoNervousReset.url),
   
 };

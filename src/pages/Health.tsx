@@ -102,8 +102,8 @@ export default function Health() {
   }
 
   return (
-    <div className="min-h-screen gradient-background pb-24">
-      <div className="hero-gradient px-5 pt-12 pb-8">
+    <div className="min-h-screen gradient-background safe-bottom">
+      <div className="hero-gradient px-5 pt-[max(3rem,calc(env(safe-area-inset-top)+0.75rem))] pb-8">
         <div className="flex items-center justify-between mb-1">
           <button onClick={() => navigate('/alignment')} className="flex items-center gap-1 text-white/85 hover:text-white transition-colors">
             <ArrowLeft size={18} />

@@ -664,8 +664,10 @@
 }
 
 @layer utilities {
+  /* Clearance for content above the fixed bottom nav: nav content (~64px)
+     + home-indicator inset + breathing room so nothing sits flush against it. */
   .safe-bottom {
-    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0));
+    padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px));
   }
 
   .scrollbar-hide::-webkit-scrollbar { display: none; }
