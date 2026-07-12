@@ -47,7 +47,10 @@ serve(async (req) => {
       customerId = customers.data[0].id;
     }
 
-    const origin = req.headers.get("origin") || "https://ubloom.lovable.app";
+    // Native app requests arrive with Origin "capacitor://localhost", which
+    // Stripe rejects as a redirect URL - only trust http(s) origins.
+    const rawOrigin = req.headers.get("origin");
+    const origin = rawOrigin?.startsWith("http") ? rawOrigin : "https://ubloom.lovable.app";
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,

@@ -6,9 +6,9 @@ export default function Privacy() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen gradient-background px-4 py-8 pb-24">
+    <div className="min-h-screen gradient-background px-4 pt-[max(2rem,calc(env(safe-area-inset-top)+0.75rem))] pb-24">
       <div className="max-w-2xl mx-auto">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm text-muted-foreground mb-6 hover:text-foreground transition-colors">
+        <button onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/'))} className="flex items-center gap-2 text-sm text-muted-foreground mb-6 py-2 hover:text-foreground transition-colors">
           <ArrowLeft size={16} />
           Back
         </button>

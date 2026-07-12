@@ -295,9 +295,9 @@ export default function Auth() {
             />
             <span className="text-xs text-muted-foreground leading-snug">
               I agree to the{' '}
-              <Link to="/terms" className="text-primary hover:underline" target="_blank">Terms &amp; Conditions</Link>
+              <Link to="/terms" className="text-primary hover:underline">Terms &amp; Conditions</Link>
               {' '}and{' '}
-              <Link to="/privacy" className="text-primary hover:underline" target="_blank">Privacy Policy</Link>
+              <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
             </span>
           </label>
         )}
@@ -306,9 +306,9 @@ export default function Auth() {
         {!isSignUp && !isForgot && (
           <p className="text-center mt-4 text-xs text-muted-foreground">
             By signing in, you agree to our{' '}
-            <Link to="/terms" className="text-primary hover:underline" target="_blank">Terms</Link>
+            <Link to="/terms" className="text-primary hover:underline">Terms</Link>
             {' '}and{' '}
-            <Link to="/privacy" className="text-primary hover:underline" target="_blank">Privacy Policy</Link>.
+            <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
           </p>
         )}
 

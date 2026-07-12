@@ -62,7 +62,6 @@ export default function LegalConsent() {
             >
               <Link
                 to={link}
-                target="_blank"
                 className="glass-card rounded-2xl p-4 flex items-start gap-3 group hover:bg-muted/30 transition-colors block"
               >
                 <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -95,9 +94,9 @@ export default function LegalConsent() {
             />
             <span className="text-sm text-muted-foreground leading-snug">
               I have read and agree to the{' '}
-              <Link to="/terms" target="_blank" className="text-primary hover:underline">Terms & Conditions</Link>,{' '}
-              <Link to="/cookie-policy" target="_blank" className="text-primary hover:underline">Cookie Policy</Link>, and{' '}
-              <Link to="/privacy" target="_blank" className="text-primary hover:underline">Privacy Policy</Link>.
+              <Link to="/terms" className="text-primary hover:underline">Terms & Conditions</Link>,{' '}
+              <Link to="/cookie-policy" className="text-primary hover:underline">Cookie Policy</Link>, and{' '}
+              <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
             </span>
           </label>
 
