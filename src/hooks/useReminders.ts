@@ -3,6 +3,11 @@ import { getLocalDateStr } from "@/lib/dateUtils";
 import { useUserStore, TimeOfDay } from "@/stores/userStore";
 import { isHabitScheduledForDate } from "@/components/routine/FrequencyPicker";
 import { toast } from "sonner";
+import {
+  isCapacitorNative,
+  requestReminderPermission,
+  syncNativeReminders,
+} from "@/lib/nativeReminders";
 
 const timeOfDayLabels: Record<TimeOfDay, string> = {
   morning: "Good morning!",
@@ -55,6 +60,7 @@ export function useReminders() {
   const HEADS_UP_MINUTES = 30;
 
   const requestPermission = useCallback(async () => {
+    if (isCapacitorNative()) return requestReminderPermission();
     if (isDespiaNative()) return true;
 
     const despia = getDespiaPush();
@@ -183,7 +189,7 @@ export function useReminders() {
         // Only fire if heads-up time is on the same day (avoid weird negative times like 00:15 → -00:15)
         if (currentTime === headsUpTime && headsUpDate.getDate() === now.getDate()) {
           sendNotification(
-            `⏰ Coming up: ${habit.title}`,
+            `Coming up: ${habit.title}`,
             `In ${HEADS_UP_MINUTES} minutes — scheduled for ${timeStr}`,
             `habit-upcoming-${habit.id}`,
           );
@@ -196,14 +202,45 @@ export function useReminders() {
       if (sentHabitRemindersRef.current.has(key)) return;
 
       if (currentTime === habit.scheduledTime) {
-        sendNotification(`⏰ Time for: ${habit.title}`, `Scheduled for ${timeStr}`, `habit-time-${habit.id}`);
+        sendNotification(`Time for: ${habit.title}`, `Scheduled for ${timeStr}`, `habit-time-${habit.id}`);
         sentHabitRemindersRef.current.add(key);
       }
     });
   }, [reminderSettings, coreHabits, isHabitCompletedToday, sendNotification, markReminderSent]);
 
+  // Native app: hand reminders to the OS so they fire while the app is
+  // closed, and reschedule whenever tasks/completions/settings change or the
+  // app returns to the foreground. The minute-interval checks below are the
+  // web fallback and only work while the page is open.
+  const timesKey = JSON.stringify(reminderSettings.times);
+  useEffect(() => {
+    if (!isCapacitorNative()) return;
+    let cancelled = false;
+    const sync = () => {
+      if (cancelled) return;
+      void syncNativeReminders({
+        enabled: reminderSettings.enabled,
+        habits: coreHabits,
+        times: reminderSettings.times,
+        isCompletedToday: isHabitCompletedToday,
+      }).catch((e) => console.error("Reminder sync failed:", e));
+    };
+    const debounce = window.setTimeout(sync, 400);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") sync();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(debounce);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reminderSettings.enabled, timesKey, coreHabits, profile.habitCompletions, isHabitCompletedToday]);
+
   // Check every minute + reset sent habit reminders at midnight
   useEffect(() => {
+    if (isCapacitorNative()) return;
     if (!reminderSettings.enabled) return;
 
     checkAndNotify();
@@ -223,6 +260,7 @@ export function useReminders() {
   }, [reminderSettings.enabled, checkAndNotify]);
 
   useEffect(() => {
+    if (isCapacitorNative()) return;
     if (!reminderSettings.enabled) return;
     const now = new Date();
     const target = new Date();
@@ -235,7 +273,7 @@ export function useReminders() {
       const allDone = todaysHabits.every(h => isHabitCompletedToday(h.id));
       if (!allDone && todaysHabits.length > 0) {
         sendNotification(
-          "Don't break your streak 🌸",
+          "Don't break your streak",
           "You haven't finished your routine today. Bloom before the day ends!",
           "streak-reminder-8pm"
         );
@@ -246,8 +284,8 @@ export function useReminders() {
 
   return {
     requestPermission,
-    isSupported: isDespiaRuntime() || "Notification" in window,
-    permissionStatus: isDespiaRuntime()
+    isSupported: isCapacitorNative() || isDespiaRuntime() || "Notification" in window,
+    permissionStatus: isCapacitorNative() || isDespiaRuntime()
       ? "prompt"
       : typeof window !== "undefined" && "Notification" in window
         ? Notification.permission

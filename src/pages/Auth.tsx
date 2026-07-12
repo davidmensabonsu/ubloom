@@ -129,8 +129,8 @@ export default function Auth() {
   const handleNativeGoogleSignIn = async () => {
     setLoading(true);
     try {
-      const idToken = await nativeGoogleSignIn();
-      const { error } = await supabase.auth.signInWithIdToken({ provider: 'google', token: idToken });
+      const { idToken, nonce } = await nativeGoogleSignIn();
+      const { error } = await supabase.auth.signInWithIdToken({ provider: 'google', token: idToken, nonce });
       if (error) throw error;
       navigate('/home');
     } catch (err) {
@@ -147,8 +147,8 @@ export default function Auth() {
   const handleNativeAppleSignIn = async () => {
     setLoading(true);
     try {
-      const idToken = await nativeAppleSignIn();
-      const { error } = await supabase.auth.signInWithIdToken({ provider: 'apple', token: idToken });
+      const { idToken, nonce } = await nativeAppleSignIn();
+      const { error } = await supabase.auth.signInWithIdToken({ provider: 'apple', token: idToken, nonce });
       if (error) throw error;
       navigate('/home');
     } catch (err) {
@@ -170,7 +170,7 @@ export default function Auth() {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
-          <img alt="uBloom logo" className="w-[160px] h-[160px] mx-auto mb-2 drop-shadow-lg object-contain clay-icon" src={logo} />
+          <img alt="uBloom logo" className="w-[88px] h-[88px] mx-auto mb-3 drop-shadow-lg object-contain clay-icon" src={logo} />
           <h1 className="text-4xl font-display tracking-tight text-foreground font-extrabold">
             uBloom
           </h1>

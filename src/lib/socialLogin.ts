@@ -22,23 +22,39 @@ function ensureInitialized(): Promise<void> {
   return initPromise;
 }
 
-export async function nativeGoogleSignIn(): Promise<string> {
+// The native SDKs embed a nonce in the ID token (Google's SDK generates one
+// itself when none is supplied), and Supabase rejects the token unless the
+// same nonce is passed to signInWithIdToken. Generate our own so both sides
+// agree.
+function makeNonce(): string {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+export interface NativeSignInResult {
+  idToken: string;
+  nonce: string;
+}
+
+export async function nativeGoogleSignIn(): Promise<NativeSignInResult> {
   await ensureInitialized();
+  const nonce = makeNonce();
   const { result } = await SocialLogin.login({
     provider: 'google',
-    options: { scopes: ['email', 'profile'] },
+    options: { scopes: ['email', 'profile'], nonce },
   });
   const idToken = result && 'idToken' in result ? result.idToken : null;
   if (!idToken) throw new Error('Google did not return an ID token');
-  return idToken;
+  return { idToken, nonce };
 }
 
-export async function nativeAppleSignIn(): Promise<string> {
+export async function nativeAppleSignIn(): Promise<NativeSignInResult> {
   await ensureInitialized();
+  const nonce = makeNonce();
   const { result } = await SocialLogin.login({
     provider: 'apple',
-    options: { scopes: ['email', 'name'] },
+    options: { scopes: ['email', 'name'], nonce },
   });
   if (!result.idToken) throw new Error('Apple did not return an ID token');
-  return result.idToken;
+  return { idToken: result.idToken, nonce };
 }

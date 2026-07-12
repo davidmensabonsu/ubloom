@@ -498,7 +498,7 @@ export default function Ubi() {
       </div>
 
       {/* Messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 pb-52 pt-4">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 pb-[calc(13rem+env(safe-area-inset-bottom,0px))] pt-4">
         <div className="max-w-lg mx-auto space-y-4">
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
@@ -693,7 +693,7 @@ export default function Ubi() {
       </div>
 
       {/* Input area with prompts strip */}
-      <div className="fixed bottom-16 left-0 right-0 bg-background/90 backdrop-blur-md border-t border-border/50 z-10">
+      <div className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom,0px))] left-0 right-0 bg-background/90 backdrop-blur-md border-t border-border/50 z-10">
         {/* "Plan my routine" preset — shown at the start of every new chat until the user uses it once */}
         {(() => {
           if (confirmation) return null;

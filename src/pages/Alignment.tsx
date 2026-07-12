@@ -54,8 +54,8 @@ export default function Alignment() {
     weekday: 'long', month: 'long', day: 'numeric',
   });
 
-  // Previous entries — last 5
-  const recentEntries = (profile.journalEntries || []).slice(0, 5);
+  // Previous entries — last 2 inline; the "View all entries" sheet shows the rest
+  const recentEntries = (profile.journalEntries || []).slice(0, 2);
 
   const formatEntryDate = (dateString: string) => {
     const date = new Date(dateString);
