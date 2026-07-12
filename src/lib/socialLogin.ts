@@ -23,12 +23,20 @@ function ensureInitialized(): Promise<void> {
 }
 
 // The native SDKs embed a nonce in the ID token (Google's SDK generates one
-// itself when none is supplied), and Supabase rejects the token unless the
-// same nonce is passed to signInWithIdToken. Generate our own so both sides
-// agree.
+// itself when none is supplied), and Supabase verifies it by comparing the
+// token's nonce claim against the SHA-256 hash of the nonce passed to
+// signInWithIdToken. So the native SDK must receive the HASHED nonce (which
+// lands in the token) while Supabase receives the RAW one.
 function makeNonce(): string {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
   return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+async function sha256Hex(input: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 export interface NativeSignInResult {
@@ -38,23 +46,23 @@ export interface NativeSignInResult {
 
 export async function nativeGoogleSignIn(): Promise<NativeSignInResult> {
   await ensureInitialized();
-  const nonce = makeNonce();
+  const rawNonce = makeNonce();
   const { result } = await SocialLogin.login({
     provider: 'google',
-    options: { scopes: ['email', 'profile'], nonce },
+    options: { scopes: ['email', 'profile'], nonce: await sha256Hex(rawNonce) },
   });
   const idToken = result && 'idToken' in result ? result.idToken : null;
   if (!idToken) throw new Error('Google did not return an ID token');
-  return { idToken, nonce };
+  return { idToken, nonce: rawNonce };
 }
 
 export async function nativeAppleSignIn(): Promise<NativeSignInResult> {
   await ensureInitialized();
-  const nonce = makeNonce();
+  const rawNonce = makeNonce();
   const { result } = await SocialLogin.login({
     provider: 'apple',
-    options: { scopes: ['email', 'name'], nonce },
+    options: { scopes: ['email', 'name'], nonce: await sha256Hex(rawNonce) },
   });
   if (!result.idToken) throw new Error('Apple did not return an ID token');
-  return { idToken: result.idToken, nonce };
+  return { idToken: result.idToken, nonce: rawNonce };
 }
