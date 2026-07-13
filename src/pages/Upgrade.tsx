@@ -7,6 +7,8 @@ import { PLANS } from '@/hooks/useSubscription';
 import { track } from '@/hooks/useAnalytics';
 import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
+import { Capacitor } from '@capacitor/core';
+import NativePaywall from '@/components/NativePaywall';
 
 const features = [
   'Unlimited Ubi conversations',
@@ -25,9 +27,22 @@ export default function Upgrade() {
   const [isLoading, setIsLoading] = useState(false);
   const [featuresOpen, setFeaturesOpen] = useState(true);
 
+  const isNative = Capacitor.isNativePlatform();
+
   useEffect(() => {
     track('paywall_open', { source: 'upgrade_page', page: '/upgrade' });
   }, []);
+
+  // On iOS, digital subscriptions must go through Apple's In-App Purchase
+  // (RevenueCat), not Stripe. Show the native paywall instead of the web flow.
+  if (isNative) {
+    return (
+      <NativePaywall
+        onClose={() => navigate(-1)}
+        onSuccess={() => navigate('/home')}
+      />
+    );
+  }
 
   const handleSubscribe = async () => {
     setIsLoading(true);

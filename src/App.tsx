@@ -21,7 +21,8 @@ import { getLocalDateStr } from "@/lib/dateUtils";
 import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { useNavigate } from 'react-router-dom';
-// import { Purchases, LOG_LEVEL } from '@revenuecat/purchases-capacitor';
+import { Purchases, LOG_LEVEL } from '@revenuecat/purchases-capacitor';
+import { REVENUECAT_APPLE_API_KEY } from '@/lib/revenueCat';
 
 // Pages
 import Welcome from "./pages/Welcome";
@@ -49,6 +50,45 @@ import LegalConsent from "./pages/LegalConsent";
 import CookiePolicy from "./pages/CookiePolicy";
 
 const queryClient = new QueryClient();
+
+// Configure RevenueCat once on native launch and keep it tied to the signed-in
+// user so purchases follow the account across devices and reinstalls.
+let purchasesConfigured = false;
+function PurchasesProvider() {
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform() || Capacitor.getPlatform() !== 'ios') return;
+    if (purchasesConfigured) return;
+    purchasesConfigured = true;
+    (async () => {
+      try {
+        await Purchases.setLogLevel({ level: LOG_LEVEL.ERROR });
+        await Purchases.configure({ apiKey: REVENUECAT_APPLE_API_KEY });
+      } catch (e) {
+        console.error('RevenueCat configuration failed:', e);
+      }
+    })();
+  }, []);
+
+  // Identify the user to RevenueCat whenever the auth state resolves.
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform() || Capacitor.getPlatform() !== 'ios') return;
+    (async () => {
+      try {
+        if (user?.id) {
+          await Purchases.logIn({ appUserID: user.id });
+        } else {
+          await Purchases.logOut().catch(() => {});
+        }
+      } catch (e) {
+        console.error('RevenueCat login sync failed:', e);
+      }
+    })();
+  }, [user?.id]);
+
+  return null;
+}
 
 // Opens the Routine page when a task reminder notification is tapped
 function NotificationTapHandler() {
@@ -210,29 +250,6 @@ function AnimatedRoutes() {
 }
 
 const App = () => {
-  // useEffect(() => {
-  //   async function configurePurchases() {
-  //     try {
-  //       if (!Capacitor.isNativePlatform()) return;
-  //       await Purchases.setLogLevel({ level: LOG_LEVEL.DEBUG });
-  //       if (Capacitor.getPlatform() === 'ios') {
-  //         await Purchases.configure({ apiKey: "appl_tVNOZdhirczyijlnynyjAGqgcgL" });
-  //         try {
-  //           const { data: { user } } = await supabase.auth.getUser();
-  //           if (user?.id) {
-  //             await Purchases.logIn({ appUserID: user.id });
-  //           }
-  //         } catch (e) {
-  //           console.error('RevenueCat login failed:', e);
-  //         }
-  //       }
-  //     } catch (e) {
-  //       console.error('RevenueCat configuration failed:', e);
-  //     }
-  //   }
-  //   configurePurchases();
-  // }, []);
-
   return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -242,6 +259,7 @@ const App = () => {
         <AuthProvider>
           <CloudSyncProvider>
             <ThemeManager />
+            <PurchasesProvider />
             <NotificationTapHandler />
             <AnimatedRoutes />
           </CloudSyncProvider>
