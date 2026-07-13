@@ -7,7 +7,7 @@ import { useUserStore } from '@/stores/userStore';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { Check, Camera, LogOut, Trash2, Pencil, BookOpen, Target, Lock, KeyRound, Sparkles, Eye, EyeOff, Shield, Heart, Crown, AlertTriangle } from 'lucide-react';
+import { Check, Camera, LogOut, Trash2, Pencil, BookOpen, Target, Lock, KeyRound, Sparkles, Eye, EyeOff, Shield, Heart, Crown, AlertTriangle, ChevronDown } from 'lucide-react';
 import { useAdminCheck } from '@/hooks/useAdminCheck';
 import ubloomLogo from '@/assets/ubloom-flower.png';
 import flameIcon from '@/assets/icons/flame.png';
@@ -280,7 +280,7 @@ export default function Profile() {
 
     setAvatarUrl(imageUrl);
     setIsUploading(false);
-    toast({ title: 'Avatar updated ✨' });
+    toast({ title: 'Avatar updated', duration: 3000 });
   };
 
   const handleChangePassword = async () => {
@@ -470,7 +470,17 @@ export default function Profile() {
               )}
             </div>
           )}
-          <p className="text-sm text-muted-foreground mt-1">{user?.email}</p>
+          {user?.email && (
+            <Collapsible className="mt-1">
+              <CollapsibleTrigger className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors group">
+                <span>Account email</span>
+                <ChevronDown size={12} className="transition-transform group-data-[state=open]:rotate-180" />
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <p className="text-xs text-muted-foreground mt-1 break-all max-w-xs text-center">{user.email}</p>
+              </CollapsibleContent>
+            </Collapsible>
+          )}
         </motion.div>
 
         {/* Identity Statement */}

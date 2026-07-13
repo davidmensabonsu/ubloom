@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useUserStore } from '@/stores/userStore';
-import { track } from '@/hooks/useAnalytics';
 import UpgradeModal from './UpgradeModal';
 import { Capacitor } from '@capacitor/core';
 import { usePurchases } from '@/hooks/usePurchases';
@@ -19,7 +18,7 @@ import NativePaywall from './NativePaywall';
  */
 export default function SubscriptionGate() {
   const location = useLocation();
-  const { isTrial, isExpired, isLoading, trialDaysLeft, isPremium } = useSubscription();
+  const { isTrial, isExpired, isLoading, isPremium } = useSubscription();
   const isNative = Capacitor.isNativePlatform();
   const { status: nativeStatus, checkEntitlement } = usePurchases();
   const acknowledgedFreeTier = useUserStore((s) => s.profile.acknowledgedFreeTier);
@@ -40,30 +39,9 @@ export default function SubscriptionGate() {
 
   return (
     <>
-      {/* Slim trial banner — pinned above everything */}
-      <AnimatePresence>
-        {isTrial && (
-          <motion.button
-            key="trial-banner"
-            initial={{ y: -32, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -32, opacity: 0 }}
-            onClick={() => {
-              track('trial_banner_click', {
-                page: location.pathname,
-                trial_days_left: trialDaysLeft,
-              });
-              setBannerModalOpen(true);
-            }}
-            className="fixed top-0 inset-x-0 z-[60] w-full px-4 py-2 text-center bg-primary/10 backdrop-blur-sm border-b border-primary/15 hover:bg-primary/15 transition-colors"
-            style={{ fontFamily: 'Jost, sans-serif' }}
-          >
-            <span className="text-[12px] text-primary font-medium">
-              {trialDaysLeft} day{trialDaysLeft !== 1 ? 's' : ''} left in your free trial — Upgrade to keep full access →
-            </span>
-          </motion.button>
-        )}
-      </AnimatePresence>
+      {/* Trial status now lives on the Profile page (under the avatar), so the
+          old fixed top-of-page banner — which sat under the status bar on
+          every screen — has been removed. */}
 
       {isNative ? (
         bannerModalOpen && (
