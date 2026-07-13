@@ -12,7 +12,7 @@ interface FutureDayViewProps {
 function ItemIcon({ iconId }: { iconId?: string }) {
   const opt = iconId ? getTaskIcon(iconId) : undefined;
   if (opt?.imageSrc) {
-    return <img src={opt.imageSrc} alt={opt.label} className="object-contain w-11 h-11 flex-shrink-0 clay-icon" />;
+    return <img src={opt.imageSrc} alt={opt.label} className={`object-contain w-11 h-11 flex-shrink-0 clay-icon${opt.id === 'ubloom' ? ' p-1.5' : ''}`} />;
   }
   return <div className="icon-3d-sm">{opt ? renderTaskIcon(opt, 20) : null}</div>;
 }
