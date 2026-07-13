@@ -62,6 +62,7 @@ export default function SubscriptionGate() {
       {isNative ? (
         showLockout && (
           <NativePaywall
+            lockout
             onClose={() => {}}
             onSuccess={checkEntitlement}
           />
