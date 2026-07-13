@@ -14,6 +14,7 @@ interface NativePaywallProps {
 
 const FEATURES = [
   'Unlimited Ubi AI companion chats',
+  'Unlimited Ubi routine plan integration — Ubi adds items directly to your daily plan',
   'Full cycle & health tracking',
   'Daily reflections & journaling',
   'Personalised routines',
@@ -22,7 +23,7 @@ const FEATURES = [
 ];
 
 export default function NativePaywall({ onClose, onSuccess, lockout }: NativePaywallProps) {
-  const { packages, isLoading, error, purchasePackage, restorePurchases } = usePurchases();
+  const { packages, offeringsLoaded, isLoading, error, purchasePackage, restorePurchases } = usePurchases();
 
   const yearly =
     packages.find((p) => p.product.identifier === PRODUCT_ID_YEARLY) ??
@@ -49,7 +50,10 @@ export default function NativePaywall({ onClose, onSuccess, lockout }: NativePay
     }
   }
 
-  const loadingPackages = packages.length === 0 && !error;
+  // Only show the loading spinner until the offerings fetch has actually
+  // settled. Once it has, an empty list falls through to the "plans
+  // unavailable" message below instead of spinning forever.
+  const loadingPackages = !offeringsLoaded && packages.length === 0 && !error;
 
   return (
     <AnimatePresence>
