@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>uBloom — App Development Agreement &amp; Invoice</title>
+<style>
+  /* PandaDoc-safe static build: light theme only, no JavaScript, no form controls.
+     Signature / date / option boxes are static — drop PandaDoc fields on top of them. */
+  :root {
+    --paper: #ffffff;
+    --canvas: #f4edef;
+    --ink: #2a2228;
+    --ink-soft: #574b52;
+    --muted: #8a7c83;
+    --faint: #b7a9b0;
+    --hair: #eadfe3;
+    --hair-strong: #ddccd3;
+    --accent: #b1476b;
+    --accent-soft: #f6e9ee;
+    --accent-ink: #8a2f50;
+    --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+    --script: "Snell Roundhand", "Segoe Script", "Brush Script MT", cursive;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  /* Paper */
+  .paper {
+    background: var(--paper);
+    border-radius: 6px;
+    border: 1px solid var(--hair);
+    overflow: hidden;
+  }
+  .pad { padding: clamp(28px, 6vw, 68px); }
+
+  /* Masthead */
+  .masthead { border-bottom: 1px solid var(--hair); }
+  .eyebrow {
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 18px;
+  }
+  h1.doctitle {
+    font-family: var(--serif); font-weight: 600; font-size: clamp(30px, 6vw, 46px);
+    line-height: 1.05; letter-spacing: -.01em; margin: 0 0 6px;
+  }
+  .subtitle { font-family: var(--serif); font-style: italic; color: var(--muted); font-size: clamp(16px,2.5vw,19px); margin: 0 0 28px; }
+  .meta-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 18px 24px;
+    margin-top: 8px;
+  }
+  .meta-item .k { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--faint); margin: 0 0 4px; }
+  .meta-item .v { font-size: 15px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .blankline { display: inline-block; min-width: 130px; border-bottom: 1px solid var(--hair-strong); height: 1.1em; vertical-align: baseline; }
+
+  /* Parties */
+  .parties { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-bottom: 1px solid var(--hair); }
+  .party { padding: clamp(24px,4vw,40px) clamp(28px,6vw,68px); }
+  .party + .party { border-left: 1px solid var(--hair); }
+  .party .role { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+  .party .name { font-family: var(--serif); font-size: 20px; font-weight: 600; margin: 0 0 4px; }
+  .party .line { font-size: 14px; color: var(--muted); }
+
+  /* Sections */
+  section.clause { display: grid; grid-template-columns: 54px 1fr; gap: 0 22px; padding: 34px 0; border-bottom: 1px solid var(--hair); }
+  section.clause:last-of-type { border-bottom: 0; }
+  .num { font-family: var(--serif); font-size: 20px; color: var(--accent); font-variant-numeric: tabular-nums; padding-top: 2px; }
+  .clause h2 { font-family: var(--serif); font-size: 21px; font-weight: 600; margin: 2px 0 14px; letter-spacing: -.005em; }
+  .clause p { margin: 0 0 12px; color: var(--ink-soft); }
+  .clause p:last-child { margin-bottom: 0; }
+  .clause strong { color: var(--ink); font-weight: 600; }
+  ul.clean { list-style: none; margin: 6px 0 0; padding: 0; }
+  ul.clean li { position: relative; padding: 7px 0 7px 22px; color: var(--ink-soft); border-bottom: 1px dashed var(--hair); }
+  ul.clean li:last-child { border-bottom: 0; }
+  ul.clean li::before { content: ""; position: absolute; left: 2px; top: 15px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+  /* Payment schedule */
+  .milestones { display: grid; gap: 14px; margin-top: 6px; }
+  .ms { display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 8px 16px; padding: 16px 18px; border: 1px solid var(--hair-strong); border-radius: 8px; background: var(--canvas); }
+  .ms .mlabel { font-weight: 600; color: var(--ink); }
+  .ms .mwhen { font-size: 13.5px; color: var(--muted); margin-top: 3px; }
+  .ms .mamt { font-family: var(--mono); font-size: 17px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+  /* Option chooser — static tick boxes (mark one; or place a PandaDoc checkbox field) */
+  .options { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+  .opt {
+    position: relative; display: block;
+    border: 1.5px solid var(--hair-strong); border-radius: 12px; padding: 20px 20px 18px; background: var(--paper);
+  }
+  .opt .tag { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .opt .otitle { font-family: var(--serif); font-size: 19px; font-weight: 600; margin: 8px 0 8px; display: flex; align-items: center; gap: 10px; }
+  .opt .odesc { font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; }
+  .box { width: 22px; height: 22px; border-radius: 5px; border: 1.6px solid var(--hair-strong); flex: 0 0 auto; background: var(--paper); }
+  .choice-echo { margin-top: 16px; font-size: 14px; color: var(--muted); }
+
+  /* Invoice */
+  .invoice { margin: 6px clamp(28px,6vw,68px) 0; }
+  .inv-card { border: 1px solid var(--hair-strong); border-radius: 12px; overflow: hidden; }
+  .inv-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px; background: var(--canvas); border-bottom: 1px solid var(--hair-strong); flex-wrap: wrap; }
+  .inv-head .it { font-family: var(--serif); font-size: 22px; font-weight: 600; }
+  .inv-head .im { font-family: var(--mono); font-size: 12px; color: var(--muted); text-align: right; line-height: 1.7; }
+  .inv-body { padding: 8px 24px 20px; }
+  table.lines { width: 100%; border-collapse: collapse; }
+  table.lines th { text-align: left; font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); font-weight: 500; padding: 14px 0 10px; border-bottom: 1px solid var(--hair); }
+  table.lines th.r, table.lines td.r { text-align: right; font-variant-numeric: tabular-nums; }
+  table.lines td { padding: 16px 0; vertical-align: top; color: var(--ink-soft); border-bottom: 1px solid var(--hair); }
+  table.lines td .desc { color: var(--ink); font-weight: 600; }
+  table.lines td .sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+  table.lines td.r { font-family: var(--mono); color: var(--ink); }
+  .totals { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; padding-top: 16px; }
+  .totrow { display: grid; grid-template-columns: auto 120px; gap: 24px; align-items: baseline; }
+  .totrow .tl { color: var(--muted); font-size: 14px; text-align: right; }
+  .totrow .tv { font-family: var(--mono); text-align: right; font-variant-numeric: tabular-nums; color: var(--ink-soft); }
+  .totrow.grand .tl { color: var(--ink); font-weight: 600; font-size: 15px; }
+  .totrow.grand .tv { color: var(--accent-ink); font-size: 20px; font-weight: 700; }
+  .pay-to { margin-top: 18px; padding: 16px 18px; border: 1px dashed var(--hair-strong); border-radius: 8px; font-size: 13.5px; color: var(--ink-soft); }
+  .pay-to .k { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+
+  /* Signatures — static lines; place PandaDoc signature / name / date fields on top */
+  .signwrap { padding: 8px clamp(28px,6vw,68px) 4px; }
+  .agree-box { display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border: 1.5px solid var(--hair-strong); border-radius: 10px; background: var(--canvas); margin-bottom: 26px; }
+  .agree-box .box { margin-top: 1px; }
+  .agree-box .txt { font-size: 14px; color: var(--ink-soft); }
+  .sigs { display: grid; grid-template-columns: 1fr 1fr; gap: 34px; }
+  .sig .slabel { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--faint); margin-bottom: 8px; }
+  .sig .sigline { height: 44px; border-bottom: 1.5px solid var(--hair-strong); }
+  .sig .row2 { display: flex; gap: 16px; margin-top: 14px; }
+  .sig .row2 > div { flex: 1; }
+  .sig .fldline { height: 26px; border-bottom: 1px solid var(--hair); }
+  .fcap { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); margin-top: 6px; }
+
+  /* Footer / disclaimer */
+  .disc { margin-top: 30px; padding: 22px clamp(28px,6vw,68px) 40px; border-top: 1px solid var(--hair); color: var(--muted); font-size: 12.5px; line-height: 1.7; }
+  .disc b { color: var(--ink-soft); }
+
+  .divider-label { font-family: var(--mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--faint); text-align: center; padding: 26px 0 10px; }
+
+  @media (max-width: 620px) {
+    .parties, .options, .sigs { grid-template-columns: 1fr; }
+    .party + .party { border-left: 0; border-top: 1px solid var(--hair); }
+    section.clause { grid-template-columns: 1fr; gap: 4px; }
+    .num { padding-top: 0; }
+  }
+
+  @media print {
+    body { background: #fff; color: #000; }
+    .wrap { padding: 0; max-width: none; }
+    .paper { box-shadow: none; border: 0; border-radius: 0; }
+    .inv-card, .ms, .agree-box, .sigs, .invoice, .signwrap { break-inside: avoid; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="paper">
+
+    <!-- Masthead -->
+    <div class="masthead pad">
+      <p class="eyebrow">Software Development · Service Agreement</p>
+      <h1 class="doctitle">uBloom — App Development &amp; Licence Agreement</h1>
+      <p class="subtitle">Design &amp; build of the uBloom iOS application, and the terms of payment between the parties below.</p>
+      <div class="meta-grid">
+        <div class="meta-item"><p class="k">Agreement date</p><p class="v"><span class="blankline"></span></p></div>
+        <div class="meta-item"><p class="k">Reference</p><p class="v">UBL-DEV-001</p></div>
+        <div class="meta-item"><p class="k">Total fee</p><p class="v">£2,500.00 GBP</p></div>
+        <div class="meta-item"><p class="k">Status</p><p class="v">Awaiting signature</p></div>
+      </div>
+    </div>
+
+    <!-- Parties -->
+    <div class="parties">
+      <div class="party">
+        <p class="role">The Developer</p>
+        <p class="name">David Mensa-Bonsu</p>
+        <p class="line">
+          david@systemaxai.com
+        </p>
+      </div>
+      <div class="party">
+        <p class="role">The Client</p>
+        <p class="name">Jojo Carter</p>
+        <p class="line">
+          jojocarterugc@gmail.com
+        </p>
+      </div>
+    </div>
+
+    <!-- Clauses -->
+    <div class="pad" style="padding-top: 8px; padding-bottom: 8px;">
+
+      <section class="clause">
+        <div class="num">1</div>
+        <div>
+          <h2>The work &amp; what has been delivered</h2>
+          <p>The Developer has designed and built <strong>uBloom</strong>, a native iOS application, on the Client's behalf. The delivered work includes:</p>
+          <ul class="clean">
+            <li>A complete iOS app (React / Capacitor) with the uBloom design system and theming.</li>
+            <li>Account sign-up and sign-in, including native Google and Apple sign-in.</li>
+            <li>A Supabase backend — database, authentication and server functions.</li>
+            <li>Subscriptions and the checkout experience (Stripe on web, Apple In-App Purchase via RevenueCat on iOS), including free-trial handling.</li>
+            <li>The "Ubi" AI companion, cycle &amp; health tracking, journaling, routines, mood insights, and the Wander library.</li>
+            <li>A build &amp; release pipeline for TestFlight and the App Store.</li>
+          </ul>
+          <p style="margin-top:14px;">The build is <strong>complete</strong>. Remaining steps to publish (App Store submission and review) depend on the Client providing the required account access and information described in clause&nbsp;3.</p>
+        </div>
+      </section>
+
+      <section class="clause">
+        <div class="num">2</div>
+        <div>
+          <h2>Fee</h2>
+          <p>The total fee for the development work is <strong>£2,500.00 GBP</strong>, payable in two equal instalments as set out in clause&nbsp;3. The fee covers the build described in clause&nbsp;1. Ongoing revenue is dealt with separately in clause&nbsp;4, and running costs in clause&nbsp;5.</p>
+        </div>
+      </section>
+
+      <section class="clause">
+        <div class="num">3</div>
+        <div>
+          <h2>Payment schedule</h2>
+          <div class="milestones">
+            <div class="ms">
+              <div>
+                <div class="mlabel">Milestone 1 — Deposit (work delivered to date)</div>
+                <div class="mwhen">Due on signing this agreement. Invoiced below.</div>
+              </div>
+              <div class="mamt">£1,250.00</div>
+            </div>
+            <div class="ms">
+              <div>
+                <div class="mlabel">Milestone 2 — On App Store approval</div>
+                <div class="mwhen">Due when the app is approved by Apple and live on the App Store.</div>
+              </div>
+              <div class="mamt">£1,250.00</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="clause">
+        <div class="num">4</div>
+        <div>
+          <h2>Ongoing arrangement — please choose one</h2>
+          <p>In addition to the fee above, the parties agree to <strong>one</strong> of the following. The Client marks the preferred option below; the chosen option forms part of this agreement once signed.</p>
+          <div class="options">
+            <div class="opt">
+              <span class="tag">Option A</span>
+              <span class="otitle">
+                <span class="box"></span>
+                5% revenue share
+              </span>
+              <span class="odesc">The Developer receives <strong>5% of net subscription revenue</strong> (after Apple and RevenueCat fees) for as long as the Developer maintains the app. Simple, pays as the app earns, and requires no company to be formed.</span>
+            </div>
+            <div class="opt">
+              <span class="tag">Option B</span>
+              <span class="otitle">
+                <span class="box"></span>
+                5% equity
+              </span>
+              <span class="odesc">The Developer receives a <strong>5% ownership stake</strong> in the uBloom business. This takes effect once the Client incorporates a company and both parties sign a short shareholders' agreement.</span>
+            </div>
+          </div>
+          <p class="choice-echo">Mark one box above (Option A or Option B) to record the chosen arrangement.</p>
+        </div>
+      </section>
+
+      <section class="clause">
+        <div class="num">5</div>
+        <div>
+          <h2>Running costs</h2>
+          <p>From launch, the Client is responsible for all ongoing running costs of the app, including:</p>
+          <ul class="clean">
+            <li>Lovable subscription — <strong>£22 / month</strong>.</li>
+            <li>Supabase — backend &amp; hosting, once past the free tier.</li>
+            <li>RevenueCat — free up to its revenue threshold, then its published fee.</li>
+            <li>Ubi AI usage — the per-message AI / API cost, which scales with the number of users.</li>
+            <li>Any other third-party service the app depends on.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="clause">
+        <div class="num">6</div>
+        <div>
+          <h2>Intellectual property</h2>
+          <p>On receipt of the <strong>full £2,500.00 fee</strong>, the Developer assigns to the Client all intellectual property rights in the uBloom application created under this agreement. Until the fee is paid in full, the Developer retains ownership of the work.</p>
+          <p>The Developer may reference the project and display non-confidential screenshots in a portfolio or as a work sample.</p>
+        </div>
+      </section>
+
+      <section class="clause">
+        <div class="num">7</div>
+        <div>
+          <h2>Maintenance &amp; support</h2>
+          <p>Where <strong>Option A (revenue share)</strong> is chosen, the Developer will provide reasonable ongoing maintenance — bug fixes, keeping the app working through iOS and Apple policy changes, and small updates — for as long as the revenue share continues.</p>
+          <p>Larger new features or redesigns are outside this agreement and will be quoted separately. Where <strong>Option B (equity)</strong> is chosen, the parties will set out maintenance expectations in the shareholders' agreement.</p>
+        </div>
+      </section>
+
+      <section class="clause">
+        <div class="num">8</div>
+        <div>
+          <h2>General</h2>
+          <p>This agreement is governed by the laws of England &amp; Wales. It sets out the whole agreement between the parties on this work and replaces any earlier discussions. Any change must be agreed by both parties in writing.</p>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Invoice -->
+    <div class="divider-label">— Invoice · Milestone 1 —</div>
+    <div class="invoice">
+      <div class="inv-card">
+        <div class="inv-head">
+          <div class="it">Invoice</div>
+          <div class="im">
+            No. UBL-001<br>
+            Issued 26 Jul 2026 · Due on receipt
+          </div>
+        </div>
+        <div class="inv-body">
+          <table class="lines">
+            <thead>
+              <tr><th>Description</th><th class="r">Amount</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="desc">uBloom iOS app — development</div>
+                  <div class="sub">Milestone 1: 50% deposit for work delivered to date (clause 1). Remaining 50% invoiced on App Store approval per clause 3.</div>
+                </td>
+                <td class="r">£1,250.00</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="totals">
+            <div class="totrow"><div class="tl">Subtotal</div><div class="tv">£1,250.00</div></div>
+            <div class="totrow"><div class="tl">VAT (not registered)</div><div class="tv">£0.00</div></div>
+            <div class="totrow grand"><div class="tl">Total due now</div><div class="tv">£1,250.00</div></div>
+          </div>
+          <div class="pay-to">
+            <span class="k">Pay to</span><br>
+            David Mensa-Bonsu · Sort code 60-60-06 · Account 55812031<br>
+            Reference: UBL-001
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Signatures -->
+    <div class="divider-label">— Acceptance &amp; signatures —</div>
+    <div class="signwrap">
+      <div class="agree-box">
+        <span class="box"></span>
+        <span class="txt">The Client confirms they have read and agree to this agreement, including the payment schedule, the selected ongoing arrangement in clause&nbsp;4, and the running costs in clause&nbsp;5.</span>
+      </div>
+      <div class="sigs">
+        <div class="sig">
+          <p class="slabel">Signed — the Developer</p>
+          <div class="sigline"></div>
+          <div class="fcap">Signature</div>
+          <div class="row2">
+            <div>
+              <div class="fldline"></div>
+              <div class="fcap">Printed name</div>
+            </div>
+            <div>
+              <div class="fldline"></div>
+              <div class="fcap">Date</div>
+            </div>
+          </div>
+        </div>
+        <div class="sig">
+          <p class="slabel">Signed — the Client</p>
+          <div class="sigline"></div>
+          <div class="fcap">Signature</div>
+          <div class="row2">
+            <div>
+              <div class="fldline"></div>
+              <div class="fcap">Printed name</div>
+            </div>
+            <div>
+              <div class="fldline"></div>
+              <div class="fcap">Date</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="disc">
+      <p style="margin:0 0 8px;"><b>Before signing.</b> This is a plain-English agreement, not legal advice — for the equity option in particular (clause&nbsp;4, Option&nbsp;B), have a solicitor review the shareholders' agreement and the ownership/liability set-up before it is signed.</p>
+      <p style="margin:0;">Prepared for uBloom. Amounts in GBP.</p>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
