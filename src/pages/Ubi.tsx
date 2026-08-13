@@ -375,6 +375,7 @@ export default function Ubi() {
 
   const handleNewChat = () => {
     startNewChat();
+    setOpenerSent(false);
     setHistoryOpen(false);
   };
 
