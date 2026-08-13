@@ -731,8 +731,10 @@ export default function Ubi() {
           if (hasUserMessage) return null; // AI suggestions now shown inline in chat after engagement
           // No user messages yet — show presets filtered by today's used list
           const usedToday: string[] = JSON.parse(localStorage.getItem(`ubi-used-presets-${getLocalDateStr()}`) || '[]');
-          const filtered = presetPrompts.filter(p => !usedToday.includes(p.text));
-          if (filtered.length === 0) return null;
+          const unused = presetPrompts.filter(p => !usedToday.includes(p.text));
+          // Never leave a new chat without starting options — fall back to the
+          // full set once everything has been used today.
+          const filtered = unused.length > 0 ? unused : presetPrompts;
           return (
             <div className="max-w-lg mx-auto px-4 pt-1.5 pb-2">
               <div className="overflow-x-auto scrollbar-hide -mx-1">
