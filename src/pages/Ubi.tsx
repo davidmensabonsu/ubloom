@@ -801,11 +801,12 @@ export default function Ubi() {
                   handlePlanRoutineChip();
                 }}
                 disabled={isStreaming || !canUse('ubi_chat')}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-white border border-primary/20 hover:border-primary/40 hover:bg-white transition-all text-left shadow-soft disabled:opacity-50"
+                className="w-full flex items-center justify-center px-4 py-3 rounded-2xl bg-white border border-primary/20 hover:border-primary/40 hover:bg-white transition-all shadow-soft disabled:opacity-50"
               >
-                <span className="text-sm text-foreground flex-1" style={{ fontFamily: 'Jost, sans-serif' }}>
+                <span className="text-sm text-foreground" style={{ fontFamily: 'Jost, sans-serif' }}>
                   Plan my routine
                 </span>
+
               </motion.button>
             </div>
           );
