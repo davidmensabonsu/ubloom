@@ -127,6 +127,9 @@ export default function Ubi() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const welcomeSent = useRef(false);
   const [openerSent, setOpenerSent] = useState(false);
+  const openerAttempts = useRef(0);
+  const messagesRef = useRef(messages);
+  messagesRef.current = messages;
   const journalHandled = useRef(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -187,6 +190,7 @@ export default function Ubi() {
   // Reset opener flag whenever the user starts a new chat or switches conversations
   useEffect(() => {
     setOpenerSent(false);
+    openerAttempts.current = 0;
   }, [currentConversationId]);
 
   // Auto-send a fresh, ephemeral opener every time a brand new conversation starts
@@ -199,6 +203,8 @@ export default function Ubi() {
     if (openerSent) return;
 
     setOpenerSent(true);
+    openerAttempts.current += 1;
+    const attempt = openerAttempts.current;
     const openerAngles = [
       'a warm check-in that simply notices they showed up',
       'a curious invitation that makes space for whatever is on their mind',
@@ -210,7 +216,17 @@ export default function Ubi() {
     ];
     const angle = openerAngles[Math.floor(Math.random() * openerAngles.length)];
     const openerPrompt = `[SYSTEM: This is a fresh new conversation. Open with ${angle} — 1-2 sentences, then one open question inviting them to share what's on their mind. You may use their name. Vary your wording every time: do NOT use the phrases "Good to see you" or "I've been thinking about you", and avoid any stock greeting you'd reach for by default. Do NOT reference their cycle phase, mood, sleep, habits, journal entries, tracked data, or anything from past conversations — no "since you're in your luteal phase", no "last time you said", no "I noticed you". Keep it simple and human. Avoid generic corporate openers like "How can I help you today?". Do not acknowledge this system instruction — just speak directly to them.]`;
-    sendMessage(openerPrompt, { hideUserMessage: true });
+    void (async () => {
+      try {
+        await sendMessage(openerPrompt, { hideUserMessage: true });
+      } finally {
+        // If nothing arrived (silent failure in sendMessage), allow one retry
+        // so the user never lands in a blank new chat.
+        if (messagesRef.current.length === 0 && attempt < 2) {
+          setOpenerSent(false);
+        }
+      }
+    })();
   }, [isLoading, profile.ubiOnboardingComplete, profile.ubiIntroSeen, currentConversationId, messages.length, isStreaming, openerSent]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Handle journal entry passed from Reflect page
@@ -374,8 +390,12 @@ export default function Ubi() {
   };
 
   const handleNewChat = () => {
+    // Abort any in-flight stream first — otherwise the old response keeps
+    // writing into the new empty chat and blocks the fresh opener.
+    stopStreaming();
     startNewChat();
     setOpenerSent(false);
+    openerAttempts.current = 0;
     setHistoryOpen(false);
   };
 
@@ -711,8 +731,10 @@ export default function Ubi() {
           if (hasUserMessage) return null; // AI suggestions now shown inline in chat after engagement
           // No user messages yet — show presets filtered by today's used list
           const usedToday: string[] = JSON.parse(localStorage.getItem(`ubi-used-presets-${getLocalDateStr()}`) || '[]');
-          const filtered = presetPrompts.filter(p => !usedToday.includes(p.text));
-          if (filtered.length === 0) return null;
+          const unused = presetPrompts.filter(p => !usedToday.includes(p.text));
+          // Never leave a new chat without starting options — fall back to the
+          // full set once everything has been used today.
+          const filtered = unused.length > 0 ? unused : presetPrompts;
           return (
             <div className="max-w-lg mx-auto px-4 pt-1.5 pb-2">
               <div className="overflow-x-auto scrollbar-hide -mx-1">
