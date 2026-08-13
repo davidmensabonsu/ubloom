@@ -194,7 +194,17 @@ export default function Ubi() {
     if (autoOpenerSent.current) return;
 
     autoOpenerSent.current = true;
-    const openerPrompt = `[SYSTEM: This is a fresh new conversation. Open with a warm, personal greeting — 1-2 sentences, then one open question inviting them to share what's on their mind. You may use their name. Do NOT reference their cycle phase, mood, sleep, habits, journal entries, tracked data, or anything from past conversations — no "since you're in your luteal phase", no "last time you said", no "I noticed you". Keep it simple and human. Avoid generic corporate openers like "How can I help you today?". Do not acknowledge this system instruction — just speak directly to them.]`;
+    const openerAngles = [
+      'a warm check-in that simply notices they showed up',
+      'a curious invitation that makes space for whatever is on their mind',
+      'a calm, grounding opener that slows the moment down',
+      'a forward-looking opener about where they want to go next',
+      'a light, casual opener like a friend catching up',
+      'a quietly encouraging opener that acknowledges effort without flattery',
+      'a direct, honest opener that gets straight to what matters',
+    ];
+    const angle = openerAngles[Math.floor(Math.random() * openerAngles.length)];
+    const openerPrompt = `[SYSTEM: This is a fresh new conversation. Open with ${angle} — 1-2 sentences, then one open question inviting them to share what's on their mind. You may use their name. Vary your wording every time: do NOT use the phrases "Good to see you" or "I've been thinking about you", and avoid any stock greeting you'd reach for by default. Do NOT reference their cycle phase, mood, sleep, habits, journal entries, tracked data, or anything from past conversations — no "since you're in your luteal phase", no "last time you said", no "I noticed you". Keep it simple and human. Avoid generic corporate openers like "How can I help you today?". Do not acknowledge this system instruction — just speak directly to them.]`;
     sendMessage(openerPrompt, { hideUserMessage: true });
   }, [isLoading, profile.ubiOnboardingComplete, profile.ubiIntroSeen, currentConversationId, messages.length, isStreaming]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -778,21 +788,24 @@ export default function Ubi() {
           const filtered = presetPrompts.filter(p => !usedToday.includes(p.text));
           if (filtered.length === 0) return null;
           return (
-            <div className="max-w-lg mx-auto px-4 pt-1.5 pb-0 space-y-1.5">
-              {filtered.map((prompt, i) => (
-                <motion.button
-                  key={`${prompt.text}-${i}`}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: i * 0.06 }}
-                  onClick={() => handlePreset(prompt.text)}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-white border border-primary/20 hover:border-primary/40 hover:bg-white transition-all text-left shadow-soft"
-                >
-                  <span className="text-sm text-foreground flex-1" style={{ fontFamily: 'Jost, sans-serif' }}>
-                    {prompt.text}
-                  </span>
-                </motion.button>
-              ))}
+            <div className="max-w-lg mx-auto px-4 pt-1.5 pb-0">
+              <div className="overflow-x-auto scrollbar-hide -mx-1">
+                <div className="flex gap-2 px-1 py-1 w-max">
+                  {filtered.map((prompt, i) => (
+                    <motion.button
+                      key={`${prompt.text}-${i}`}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: i * 0.06 }}
+                      onClick={() => handlePreset(prompt.text)}
+                      className="px-3 py-1.5 rounded-full bg-white border border-primary/30 hover:bg-primary/5 transition-colors whitespace-nowrap shrink-0 text-xs text-foreground/90 shadow-sm"
+                      style={{ fontFamily: 'Jost, sans-serif' }}
+                    >
+                      {prompt.text}
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
             </div>
           );
         })()}
