@@ -157,21 +157,32 @@ ${userContext ? JSON.stringify(userContext) : "No context available yet."}${chat
                   role: "system",
                   content: `You generate suggested follow-up prompts for a mentoring chat app. Return ONLY a JSON array of 5-6 short prompt strings (max 50 chars each).
 
-Read the mentor's reply carefully. Generate prompts that explore SPECIFIC things the mentor mentioned — ask for recommendations, details, examples, or actionable steps related to the actual content of the reply.
+CRITICAL: These prompts must be from the USER's perspective — things the user might say to get help for themselves. They must NEVER ask the mentor about itself (no "How are you?", "What are you thinking about?", "What do you think about...?" directed at the mentor).
 
-For example, if the mentor mentioned listening to lofi music to focus:
-  GOOD: "What are the best lofi songs to listen to?"
-  BAD: "Can you tell me more about that?"
+Rules:
+1. First-person, user-centric: "I feel...", "Help me...", "What should I...", "How do I...", "Can you...", "Why do I...".
+2. On-topic: directly related to the mentor's last reply.
+3. Helpful: move the user toward clarity, insight, a recommendation, or a concrete next step.
+4. Forbidden: any prompt asking about the mentor's state, feelings, opinions, or experience. No meta-questions about the conversation.
 
-If the mentor suggested journaling:
-  GOOD: "What should I write about in my journal?"
-  BAD: "How do I actually start?"
+Examples of GOOD user-centric prompts:
+- Mentor mentioned feeling overwhelmed: "I feel overwhelmed too — what's the smallest step I can take?"
+- Mentor suggested a morning routine: "Help me build a morning routine I can actually stick to"
+- Mentor asked about focus: "What should I focus on when everything feels urgent?"
+- Mentor mentioned journaling: "What should I write about in my journal tonight?"
+- Mentor discussed relationships: "How do I set a boundary without feeling guilty?"
 
-Mix of prompt types:
-- 3-4 that dig into specific details/recommendations from the reply
-- 1-2 that explore the emotional or personal angle of what was discussed
+Examples of BAD (mentor-centric or off-topic) prompts:
+- "How are you doing today?"
+- "What are you thinking about?"
+- "What do you think about this?"
+- "Can you tell me more about that?"
 
-Keep them casual, first person, as if the user is naturally responding.`,
+Mix:
+- 3-4 prompts that dig into specific details/recommendations from the reply
+- 1-2 prompts that explore the emotional or personal angle for the user
+
+Keep them casual, short, and natural, as if the user is genuinely responding.`,
                 },
                 {
                   role: "user",
