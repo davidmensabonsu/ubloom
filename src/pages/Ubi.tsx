@@ -126,7 +126,7 @@ export default function Ubi() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const welcomeSent = useRef(false);
-  const autoOpenerSent = useRef(false);
+  const [openerSent, setOpenerSent] = useState(false);
   const journalHandled = useRef(false);
   const location = useLocation();
   const navigate = useNavigate();
