@@ -705,29 +705,33 @@ export default function Ubi() {
 
       {/* Input area with prompts strip */}
       <div className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom,0px))] left-0 right-0 bg-background/90 backdrop-blur-md border-t border-border/50 z-10">
-        {/* "Plan my routine" preset — shown at the start of every new chat until the user uses it once */}
-        {(() => {
-          if (confirmation) return null;
-          if (localStorage.getItem('ubi-plan-routine-used') === '1') return null;
-          // "Beginning of a new chat" = the user hasn't sent anything yet in this conversation
-          if (messages.some((m) => m.role === 'user')) return null;
+        {/* Initial user-centric preset prompts — shown until the user sends their first real message */}
+        {!isStreaming && (() => {
+          const hasUserMessage = messages.some((m) => m.role === 'user');
+          if (hasUserMessage) return null; // AI suggestions now shown inline in chat after engagement
+          // No user messages yet — show presets filtered by today's used list
+          const usedToday: string[] = JSON.parse(localStorage.getItem(`ubi-used-presets-${getLocalDateStr()}`) || '[]');
+          const filtered = presetPrompts.filter(p => !usedToday.includes(p.text));
+          if (filtered.length === 0) return null;
           return (
             <div className="max-w-lg mx-auto px-4 pt-1.5 pb-2">
-              <motion.button
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                onClick={() => {
-                  if (isStreaming || !canUse('ubi_chat')) return;
-                  localStorage.setItem('ubi-plan-routine-used', '1');
-                  handlePlanRoutineChip();
-                }}
-                disabled={isStreaming || !canUse('ubi_chat')}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-white border border-primary/20 hover:border-primary/40 hover:bg-white transition-all text-left shadow-soft disabled:opacity-50"
-              >
-                <span className="text-sm text-foreground flex-1" style={{ fontFamily: 'Jost, sans-serif' }}>
-                  Plan my routine
-                </span>
-              </motion.button>
+              <div className="overflow-x-auto scrollbar-hide -mx-1">
+                <div className="flex gap-2 px-1 py-1 w-max">
+                  {filtered.map((prompt, i) => (
+                    <motion.button
+                      key={`${prompt.text}-${i}`}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: i * 0.06 }}
+                      onClick={() => handlePreset(prompt.text)}
+                      className="px-3 py-1.5 rounded-full bg-white border border-primary/30 hover:bg-primary/5 transition-colors whitespace-nowrap shrink-0 text-xs text-foreground/90 shadow-sm"
+                      style={{ fontFamily: 'Jost, sans-serif' }}
+                    >
+                      {prompt.text}
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
             </div>
           );
         })()}
@@ -780,31 +784,31 @@ export default function Ubi() {
           );
         })()}
 
-        {/* Initial user-centric preset prompts — shown until the user sends their first real message */}
-        {!isStreaming && (() => {
-          const hasUserMessage = messages.some((m) => m.role === 'user');
-          if (hasUserMessage) return null; // AI suggestions now shown inline in chat after engagement
-          // No user messages yet — show presets filtered by today's used list
-          const usedToday: string[] = JSON.parse(localStorage.getItem(`ubi-used-presets-${getLocalDateStr()}`) || '[]');
-          const filtered = presetPrompts.filter(p => !usedToday.includes(p.text));
-          if (filtered.length === 0) return null;
+        {/* "Plan my routine" preset — shown at the start of every new chat until the user uses it once */}
+        {(() => {
+          if (confirmation) return null;
+          if (localStorage.getItem('ubi-plan-routine-used') === '1') return null;
+          // "Beginning of a new chat" = the user hasn't sent anything yet in this conversation
+          if (messages.some((m) => m.role === 'user')) return null;
           return (
             <div className="max-w-lg mx-auto px-4 pt-1.5 pb-0">
               <div className="overflow-x-auto scrollbar-hide -mx-1">
                 <div className="flex gap-2 px-1 py-1 w-max">
-                  {filtered.map((prompt, i) => (
-                    <motion.button
-                      key={`${prompt.text}-${i}`}
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: i * 0.06 }}
-                      onClick={() => handlePreset(prompt.text)}
-                      className="px-3 py-1.5 rounded-full bg-white border border-primary/30 hover:bg-primary/5 transition-colors whitespace-nowrap shrink-0 text-xs text-foreground/90 shadow-sm"
-                      style={{ fontFamily: 'Jost, sans-serif' }}
-                    >
-                      {prompt.text}
-                    </motion.button>
-                  ))}
+                  <motion.button
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.06 }}
+                    onClick={() => {
+                      if (isStreaming || !canUse('ubi_chat')) return;
+                      localStorage.setItem('ubi-plan-routine-used', '1');
+                      handlePlanRoutineChip();
+                    }}
+                    disabled={isStreaming || !canUse('ubi_chat')}
+                    className="px-3 py-1.5 rounded-full bg-white border border-primary/30 hover:bg-primary/5 transition-colors whitespace-nowrap shrink-0 text-xs text-foreground/90 shadow-sm"
+                    style={{ fontFamily: 'Jost, sans-serif' }}
+                  >
+                    Plan my routine
+                  </motion.button>
                 </div>
               </div>
             </div>
