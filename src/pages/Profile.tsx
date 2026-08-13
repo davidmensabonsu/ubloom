@@ -116,6 +116,15 @@ export default function Profile() {
     }
   };
 
+  // Derive a friendly name from an email's local part (e.g. "david@x.com" ->
+  // "David"). Used as a fallback so the full email never shows as the name —
+  // it lives only in the collapsible "Account email" field below.
+  const friendlyNameFromEmail = (email?: string | null) => {
+    const local = (email || '').split('@')[0];
+    if (!local) return '';
+    return local.charAt(0).toUpperCase() + local.slice(1);
+  };
+
   // Load profile data from Supabase
   useEffect(() => {
     if (!user) return;
@@ -125,12 +134,17 @@ export default function Profile() {
         .select('display_name, avatar_url, username')
         .eq('user_id', user.id)
         .single();
+      // Never surface the raw email as the display name. Legacy accounts had
+      // display_name seeded to the email by the old signup trigger, so treat a
+      // display_name that equals the email as "unset" and fall back to the
+      // friendly local part.
+      const stored = data?.display_name;
+      const name =
+        stored && stored !== user.email ? stored : friendlyNameFromEmail(user.email);
+      setDisplayName(name);
       if (data) {
-        setDisplayName(data.display_name || user.email || '');
         setAvatarUrl(data.avatar_url);
         setUsername(data.username);
-      } else {
-        setDisplayName(user.email || '');
       }
     };
     loadProfile();

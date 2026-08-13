@@ -18,6 +18,7 @@ export function usePurchases() {
   const [status, setStatus] = useState<PurchaseStatus>('loading');
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
   const [packages, setPackages] = useState<PurchasesPackage[]>([]);
+  const [offeringsLoaded, setOfferingsLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,6 +47,12 @@ export function usePurchases() {
       setPackages(offering?.availablePackages ?? []);
     } catch (e) {
       console.error('RevenueCat fetch offerings failed:', e);
+    } finally {
+      // Mark the fetch as settled either way so the paywall can stop showing a
+      // spinner and fall back to the "plans unavailable" message when the
+      // offering came back empty (e.g. products not yet live in App Store
+      // Connect / RevenueCat) instead of spinning forever.
+      setOfferingsLoaded(true);
     }
   }, [isNative]);
 
@@ -91,6 +98,7 @@ export function usePurchases() {
   useEffect(() => {
     if (!isNative) {
       setStatus('unavailable');
+      setOfferingsLoaded(true);
       return;
     }
     checkEntitlement();
@@ -101,6 +109,7 @@ export function usePurchases() {
     status,
     customerInfo,
     packages,
+    offeringsLoaded,
     isLoading,
     error,
     purchasePackage,
