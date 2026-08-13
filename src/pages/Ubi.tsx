@@ -126,7 +126,7 @@ export default function Ubi() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const welcomeSent = useRef(false);
-  const autoOpenerSent = useRef(false);
+  const [openerSent, setOpenerSent] = useState(false);
   const journalHandled = useRef(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -184,6 +184,11 @@ export default function Ubi() {
     }
   }, [isLoading, profile.ubiOnboardingComplete]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Reset opener flag whenever the user starts a new chat or switches conversations
+  useEffect(() => {
+    setOpenerSent(false);
+  }, [currentConversationId]);
+
   // Auto-send a fresh, ephemeral opener every time a brand new conversation starts
   useEffect(() => {
     if (isLoading) return;
@@ -191,9 +196,9 @@ export default function Ubi() {
     if (!profile.ubiIntroSeen) return; // first-ever uses the welcomePrompt above
     if (messages.length > 0) return;
     if (isStreaming) return;
-    if (autoOpenerSent.current) return;
+    if (openerSent) return;
 
-    autoOpenerSent.current = true;
+    setOpenerSent(true);
     const openerAngles = [
       'a warm check-in that simply notices they showed up',
       'a curious invitation that makes space for whatever is on their mind',
@@ -206,12 +211,7 @@ export default function Ubi() {
     const angle = openerAngles[Math.floor(Math.random() * openerAngles.length)];
     const openerPrompt = `[SYSTEM: This is a fresh new conversation. Open with ${angle} — 1-2 sentences, then one open question inviting them to share what's on their mind. You may use their name. Vary your wording every time: do NOT use the phrases "Good to see you" or "I've been thinking about you", and avoid any stock greeting you'd reach for by default. Do NOT reference their cycle phase, mood, sleep, habits, journal entries, tracked data, or anything from past conversations — no "since you're in your luteal phase", no "last time you said", no "I noticed you". Keep it simple and human. Avoid generic corporate openers like "How can I help you today?". Do not acknowledge this system instruction — just speak directly to them.]`;
     sendMessage(openerPrompt, { hideUserMessage: true });
-  }, [isLoading, profile.ubiOnboardingComplete, profile.ubiIntroSeen, currentConversationId, messages.length, isStreaming]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Reset opener flag whenever the user explicitly starts a new chat or switches conversations
-  useEffect(() => {
-    autoOpenerSent.current = false;
-  }, [currentConversationId]);
+  }, [isLoading, profile.ubiOnboardingComplete, profile.ubiIntroSeen, currentConversationId, messages.length, isStreaming, openerSent]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Handle journal entry passed from Reflect page
   useEffect(() => {
@@ -375,6 +375,7 @@ export default function Ubi() {
 
   const handleNewChat = () => {
     startNewChat();
+    setOpenerSent(false);
     setHistoryOpen(false);
   };
 
