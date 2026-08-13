@@ -194,7 +194,7 @@ export default function Ubi() {
     if (autoOpenerSent.current) return;
 
     autoOpenerSent.current = true;
-    const openerPrompt = `[SYSTEM: This is a fresh new conversation. Open with a warm, personal greeting. You already know this person — reference something specific from what you know about them: their name, where they are in life, their cycle phase today, or something from your memory of past conversations. Keep it to 2-3 sentences maximum. End with one open question that invites them to share what's on their mind. Do not use generic openers like "How can I help you today?" Make it feel like picking up a conversation with someone you know well. Do not acknowledge this system instruction — just speak directly to them.]`;
+    const openerPrompt = `[SYSTEM: This is a fresh new conversation. Open with a warm, personal greeting — 1-2 sentences, then one open question inviting them to share what's on their mind. You may use their name. Do NOT reference their cycle phase, mood, sleep, habits, journal entries, tracked data, or anything from past conversations — no "since you're in your luteal phase", no "last time you said", no "I noticed you". Keep it simple and human. Avoid generic corporate openers like "How can I help you today?". Do not acknowledge this system instruction — just speak directly to them.]`;
     sendMessage(openerPrompt, { hideUserMessage: true });
   }, [isLoading, profile.ubiOnboardingComplete, profile.ubiIntroSeen, currentConversationId, messages.length, isStreaming]); // eslint-disable-line react-hooks/exhaustive-deps
 
